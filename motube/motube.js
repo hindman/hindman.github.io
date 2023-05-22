@@ -47,29 +47,18 @@ Reference:
 
     https://developers.google.com/youtube/iframe_api_reference#Playback_status
 
-  - Some videos.
+  - Some videos to use when working on the code.
 
-    Muddy:   https://www.youtube.com/watch?v=bnsw4sySaxw
-    Ruch:    https://www.youtube.com/watch?v=WUm3X_BBQw0
-    Country: https://www.youtube.com/watch?v=8HBvQ9hAr9Y
-    Hudson:  https://www.youtube.com/watch?v=HxTU8xylgMw
-    Catfish: https://www.youtube.com/watch?v=zP4lYpsfL8c
+    Catfish:   https://www.youtube.com/watch?v=zP4lYpsfL8c
+    Muddy:     https://www.youtube.com/watch?v=bnsw4sySaxw
+    Hudson:    https://www.youtube.com/watch?v=HxTU8xylgMw
+    Jack Ruch: https://www.youtube.com/watch?v=WUm3X_BBQw0
+    Country:   https://www.youtube.com/watch?v=8HBvQ9hAr9Y
 
   - Conclusion about blocked YouTube videos:
 
     - YouTube won't show some videos if the URL is an IP address.
     - But switching to a hostname (even localhost) will resolve problem.
-
-  - Keyboard event attributes:
-
-    key
-    code
-    keyCode
-    ctrlKey
-    altKey
-    shiftKey
-    metaKey
-    location
 
 */
 
@@ -238,14 +227,21 @@ function handleKeyDown(event) {
   e = {
     code: event.code,
     shiftKey: event.shiftKey,
-    ctrlKey: event.ctrlKey
+    ctrlKey: event.ctrlKey,
+    altKey: event.altKey,
+    metaKey: event.metaKey,
+    keyCode: event.keyCode,
+    key: event.key,
+    location: event.location
   };
+
+  // None of the MoTube shortcuts use metaKey (CMD on MacOS).
+  if (e.metaKey) return;
 
   // Play/pause or change video URL.
   if (e.code == 'Space') {
     doPlayPause();
   } else if (e.code == 'KeyU') {
-    // #HERE
     setUrl();
 
   // FF, Rew, go to start.
