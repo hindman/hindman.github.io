@@ -6,6 +6,14 @@ TODO:
 
   Share URL
 
+    buildInitialVideoInfo() has most of this working. Currently it returns early.
+
+    If someone gives you a MoTube URL for video X -- but you already have your
+    preferred settings for that video -- do you want to accept the URL's
+    settings? If yes, a downstream consequence is that the URL's settings will
+    become your settings, eventually overwriting whatever preferences you had
+    for the video before.
+
 Keyboard shortcuts:
 
   Category    | Shortcut     | Operation
@@ -39,7 +47,7 @@ Keyboard shortcuts:
   .           | SHIFT-I      | Display application information
   .           | SHIFT-S      | Save application information as JSON file
   .           | CTRL-SHIFT-S | Restore application information from JSON text
-  .           | CTRL-SHIFT-C | Clear application information
+  .           | CTRL-SHIFT-C | Clear application information: all; favorites; or for one video (prompted).
 
 Reference:
 
@@ -68,6 +76,7 @@ Reference:
 
 const APP_NAME = 'motube';
 
+// Keyboard code.
 const BRACKET_CODES = ['BracketLeft', 'BracketRight'];
 const SEEK_START_CODES = ['Digit0', 'Numpad0', 'ArrowUp'];
 const DIGIT_CODES = [
@@ -75,10 +84,16 @@ const DIGIT_CODES = [
   'Numpad1', 'Numpad2', 'Numpad3', 'Numpad4', 'Numpad5', 'Numpad6'
 ];
 
+// Attributes of vi.
 const MARK_KEYS = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6'];
+const VI_KEYS = ['vid', 'loop', 'start', 'end', 'speed', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6'];
+
+// Attributes of localStorage.
 const FAVS_KEY = 'FAVORITES';
 const VID_KEY = 'VID';
+const NON_VIDEO_KEYS = [FAVS_KEY, VID_KEY];
 
+// HTML.
 const HTML_ITEM_SEP = ' | ';
 const HTML_MISSING = '_'
 
@@ -123,10 +138,49 @@ function buildFavoritesInfo() {
 function buildInitialVideoInfo() {
   // Gets the video ID from the app's URL or localStorage.
   // Returns an object holding that ID and the current vi_version.
-  return {
+
+  // Partial progress toward getting URL params.
+  var p, u, k, names, useUrl, d;
+
+  // Get search params.
+  // Determine if it has sufficient params to warrant using it.
+  p = new URL(window.location.href).searchParams;
+  names = Array.from(p.keys());
+  useUrl = names.includes('vid') && names.length > 1;
+
+  // Put all relevant params into an object.
+  u = {};
+  for (k of VI_KEYS) {
+    u[k] = p.get(k);
+  }
+
+  // Convert its values to expected types.
+  u.loop = !! u.loop;
+  u.start = Number(u.start);
+  u.end = Number(u.end) || null;
+  u.speed = Number(u.speed) || DEFAULTS.speed.def;
+  for (k of MARK_KEYS) {
+    u[k] = Number(u[k]) || null;
+  }
+
+  // Initialize object that will become vi.
+  d = {
     vi_version: DEFAULTS.vi_version,
-    vid: urlToVideoId(window.location.href) || localStorage.getItem(VID_KEY)
+    vid: u.vid || localStorage.getItem(VID_KEY)
   };
+
+  return d;
+
+  // Copy info from u into that object, if we are using the URL.
+  if (useUrl) {
+    for (k of VI_KEYS) {
+      d[k] = u[k];
+    }
+    d.usedUrl = true;
+  }
+
+  // Done.
+  return d;
 }
 
 function updateVideoInfo(vid) {
@@ -134,6 +188,9 @@ function updateVideoInfo(vid) {
   // the stored video info or to default values.
   // Called after vi is defined and subsequently whenever the video changes.
   var d, k;
+
+  // console.log('VI_LEN', Object.keys(vi).length);
+
   vi.duration = null;
   d = getStoredVideoInfo(vid);
   if (d) {
@@ -281,7 +338,7 @@ function handleKeyDown(event) {
   } else if (e.code == 'KeyM' && e.shiftKey && e.ctrlKey) {
     clearMarks();
   } else if (e.code == 'KeyI' && e.shiftKey) {
-    doLog('APP-INFO', appInfoJson());
+    doLog('APP-INFO', e.ctrlKey ? '' : appInfoJson());
 
   // Favorites.
   } else if (e.code == 'KeyF') {
@@ -305,13 +362,13 @@ function handleKeyDown(event) {
 //
 
 function setUrl() {
-  var msg = 'Enter URL';
+  var msg, reply, vid;
+  msg = 'Enter YouTube URL';
   while (true) {
     try {
-      var reply = getReply(msg);
+      reply = getReply(msg);
       if (! reply) break;
-      var url = new URL(reply);
-      var vid = url.searchParams.get('v');
+      vid = urlToVideoId(reply);
       if (vid) {
         vi.vid = vid;
         initializeVideo(null);
@@ -542,7 +599,7 @@ function appInfoJson() {
 function clearStorage() {
   // After confirmation clears localStorage of everything or just favorites.
   var msg, reply;
-  msg = 'Enter "favs" to clear favorites or "ALL" to clear all localStorage';
+  msg = 'Enter what to clear: favs | ALL | VIDEO_ID';
   reply = getReply(msg);
   if (reply == 'favs') {
     favs = {};
@@ -551,6 +608,8 @@ function clearStorage() {
   } else if (reply == 'ALL') {
     localStorage.clear();
     updateAllHtml();
+  } else if (! NON_VIDEO_KEYS.includes(reply)) {
+    localStorage.removeItem(reply);
   }
 }
 
@@ -593,7 +652,7 @@ function restoreAppInfo() {
 
   // Store video-specific information.
   for ([k, v] of Object.entries(d)) {
-    if (! [FAVS_KEY, VID_KEY].includes(k)) {
+    if (! NON_VIDEO_KEYS.includes(k)) {
       localStorage.setItem(k, JSON.stringify(v));
     }
   }
@@ -641,11 +700,13 @@ function getReply(msg) {
   return reply.trim();
 }
 
-function urlToVideoId(url_txt) {
-  // Takes a URL string. Returns the 'v' query parameter or null.
+function urlToVideoId(txt) {
+  // Takes a URL string. Returns the 'v' or 'vid' query parameter or null.
+  var url, p;
   try {
-    var url = new URL(url_txt);
-    return url.searchParams.get('v');
+    url = new URL(txt);
+    p = url.searchParams;
+    return p.get('v') || p.get('vid');
   }
   catch (err) {
     return null;
