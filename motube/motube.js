@@ -8,6 +8,15 @@ TODO:
 
   J : jump to specific time
 
+  updateStatus():
+
+    - Decompose into smaller functions, most of them called
+      only when a known changes occurs.
+
+    - The only code that needs to run every second:
+      - Location HML
+      - Looping logic.
+
 Keyboard shortcuts:
 
   Category    | Shortcut     | Operation
@@ -98,12 +107,20 @@ const HTML_MISSING = '_'
 // Program defaults.
 //
 
+// Computations needed to fit the iFrame in the current browser window.
+const WINDOW_WIDTH = (
+  window.innerWidth ||
+  document.documentElement.clientWidth ||
+  document.body.clientWidth
+);
+const IFRAME_SIZE_FACTOR = Math.floor(.98 * (WINDOW_WIDTH / 16));
+
 const DEFAULTS = {
   // Version number used to ignore persisted video info having older format.
   vi_version: 7,
   // iFrame size.
-  width: '1488',
-  height: '837',
+  width: IFRAME_SIZE_FACTOR * 16,
+  height: IFRAME_SIZE_FACTOR * 9,
   // Playback speed.
   speed: {
     def: 1.0,
