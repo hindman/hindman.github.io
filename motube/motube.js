@@ -2,6 +2,12 @@
 
 /*
 
+TODO:
+
+  Share URL
+
+  J : jump to specific time
+
 Keyboard shortcuts:
 
   Category    | Shortcut     | Operation
