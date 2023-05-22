@@ -6,17 +6,6 @@ TODO:
 
   Share URL
 
-  J : jump to specific time
-
-  updateStatus():
-
-    - Decompose into smaller functions, most of them called
-      only when a known changes occurs.
-
-    - The only code that needs to run every second:
-      - Location HML
-      - Looping logic.
-
 Keyboard shortcuts:
 
   Category    | Shortcut     | Operation
@@ -29,6 +18,7 @@ Keyboard shortcuts:
   .           | LEFT         | Rew 5 sec (SHIFT for 1 sec)
   .           | RIGHT        | FF 5 sec (SHIFT for 1 sec)
   .           | 0 or UP      | Go to video start (or loop start, if looping)
+  .           | J            | Enter a specific MM:SS and jump to it
   Speed       | .            | .
   .           | MINUS        | Slower by .05 (SHIFT for .20)
   .           | EQUAL        | Faster by .05 (SHIFT for .20)
@@ -190,30 +180,32 @@ function getStoredVideoInfo(vid) {
 }
 
 //
-// Initialize the global favs and vi variables, either with
-// defaults or with data from localStorage. We do this before
-// creating the YT.player.
+// Initialize the global shouldPersist, favs, and vi variables.
 //
-//  favs = {
-//    ABBREV: VIDEO_ID,
-//    ...
-//  }
+// Uses either the defaults or data from localStorage.
+// We do this before creating the YT.player.
 //
-//  vi = {
-//    vi_version: VIDEO_INFO_VERSION,
-//    vid:        VIDEO_ID,
-//    duration:   VIDEO_DURATION,
-//    loop:       true|false,
-//    start:      SECS,
-//    end:        SECS,
-//    speed:      PROPORTION,
-//    m1:         SECS,
-//    ...
-//    m6:         SECS,
-//  }
+//  - shouldPersist: if true, will persist localStorage during
+//                   updateStatus() monitoring.
+//
+//  - favs: object mapping each favorite ABBREV to its VIDEO_ID.
+//
+//  - vi: video information for the current video, having these keys:
+//
+//      vi_version: VIDEO_INFO_VERSION,
+//      vid:        VIDEO_ID,
+//      duration:   VIDEO_DURATION,
+//      loop:       true|false,
+//      start:      SECS,
+//      end:        SECS,
+//      speed:      PROPORTION,
+//      m1 ... m6:  SECS,
 //
 
+var shouldPersist = false;
+
 var favs = buildFavoritesInfo();
+
 var vi = buildInitialVideoInfo();
 updateVideoInfo(vi.vid);
 
@@ -253,15 +245,18 @@ function handleKeyDown(event) {
   if (e.code == 'Space') {
     doPlayPause();
   } else if (e.code == 'KeyU') {
+    // #HERE
     setUrl();
 
   // FF, Rew, go to start.
   } else if (e.code == 'ArrowLeft') {
-    doSeek(-1, e.shiftKey, false);
+    doSeek(-1, e.shiftKey, false, false);
   } else if (e.code == 'ArrowRight') {
-    doSeek(1, e.shiftKey, false);
+    doSeek(1, e.shiftKey, false, false);
   } else if (SEEK_START_CODES.includes(e.code)) {
-    doSeek(0, false, true);
+    doSeek(0, false, true, false);
+  } else if (e.code == 'KeyJ') {
+    doSeek(0, false, false, true);
 
   // Speed.
   } else if (e.code == 'Minus') {
@@ -273,7 +268,7 @@ function handleKeyDown(event) {
 
   // Loop: toggle, start, end.
   } else if (e.code == 'KeyL') {
-    vi.loop = ! vi.loop;
+    toggleLooping();
   } else if (BRACKET_CODES.includes(e.code)) {
     setLoopPoint(
       e.code == 'BracketLeft' ? 'start' : 'end',
@@ -287,10 +282,8 @@ function handleKeyDown(event) {
       e.shiftKey,
       e.ctrlKey
     );
-  } else if (e.code == 'KeyM' && e.shiftKey && ctrlKey) {
-    for (k of MARK_KEYS) {
-      vi[k] = null;
-    }
+  } else if (e.code == 'KeyM' && e.shiftKey && e.ctrlKey) {
+    clearMarks();
   } else if (e.code == 'KeyI' && e.shiftKey) {
     doLog('APP-INFO', appInfoJson());
 
@@ -341,11 +334,13 @@ function initializeVideo(event) {
   // Loads a new video and goes to video/loop start.
   // Called when app loads first video or when users changes
   // to a new video, either via favorites or URL.
-  var vid = vi.vid;
+  var vid, dur;
+  vid = vi.vid;
   if (vid) {
     updateVideoInfo(vid);
     player.loadVideoById(vid);
     player.seekTo(vi.start);
+    updateAllHtml();
   }
 }
 
@@ -365,12 +360,22 @@ function doPlayPause() {
 // Seek.
 //
 
-function doSeek(direction, small, toStart) {
+function doSeek(direction, small, toStart, toJump) {
   // FF or Rew either 1 or 5 seconds.
   // Or just jump to the video/loop start.
-  var secs, curr, loc;
+  var secs, curr, loc, msg, reply;
   if (toStart) {
     loc = vi.loop ? vi.start : 0;
+  } else if (toJump) {
+    msg = 'Enter M:SS location';
+    while (true) {
+      reply = getReply(msg);
+      if (! reply) return;
+      secs = fromMinSec(reply);
+      if (secs) break;
+      msg = 'Invalid reply. Try again';
+    }
+    loc = bounded(secs, 0, vi.duration);
   } else {
     secs = direction * (small ? 1 : 5);
     curr = player.getCurrentTime();
@@ -397,11 +402,17 @@ function adjustSpeed(direction, big, reset) {
   }
   vi.speed = speed;
   player.setPlaybackRate(speed);
+  updateSpeedHtml();
 }
 
 //
 // Set or adjust loop start/end points.
 //
+
+function toggleLooping() {
+  vi.loop = ! vi.loop;
+  updateLoopHtml();
+}
 
 function setLoopPoint(k, nudge) {
   // Sets or nudges the loop start or end.
@@ -427,7 +438,10 @@ function setLoopPoint(k, nudge) {
 
   // Set the new loop point only if it would preverse START < END.
   ok = (k == 'start' && lp < vi.end) || (k == 'end' && vi.start < lp);
-  if (ok) vi[k] = lp;
+  if (ok) {
+    vi[k] = lp;
+    updateLoopHtml();
+  }
 }
 
 //
@@ -437,11 +451,20 @@ function setLoopPoint(k, nudge) {
 function handleMark(m, shouldSet, shouldDelete) {
   if (shouldDelete) {
     vi[m] = null;
+    updateMarksHtml();
   } else if (shouldSet) {
     vi[m] = player.getCurrentTime();
+    updateMarksHtml();
   } else if (vi[m] !== null) {
     player.seekTo(vi[m]);
   }
+}
+
+function clearMarks() {
+  for (k of MARK_KEYS) {
+    vi[k] = null;
+  }
+  updateMarksHtml();
 }
 
 //
@@ -498,6 +521,7 @@ function handleFavorite() {
   // Persist if changes were made.
   if (save) {
     localStorage.setItem(FAVS_KEY, JSON.stringify(favs));
+    updateFavsHtml();
   }
 }
 
@@ -507,7 +531,7 @@ function handleFavorite() {
 
 function appInfoJson() {
   // Returns localStorage as prety-printed JSON.
-  var d = {};
+  var d = {vi: vi};
   for (const [k, v] of Object.entries(localStorage)) {
     try {
       d[k] = JSON.parse(v);
@@ -527,8 +551,10 @@ function clearStorage() {
   if (reply == 'favs') {
     favs = {};
     localStorage.setItem(FAVS_KEY, JSON.stringify(favs));
+    updateAllHtml();
   } else if (reply == 'ALL') {
     localStorage.clear();
+    updateAllHtml();
   }
 }
 
@@ -575,6 +601,9 @@ function restoreAppInfo() {
       localStorage.setItem(k, JSON.stringify(v));
     }
   }
+
+  // HTML.
+  updateAllHtml();
 }
 
 //
@@ -596,6 +625,18 @@ function toMinSec(n) {
   var secs = n - mins * 60;
   secs = secs.toString().padStart(2, '0');
   return `${mins}:${secs}`;
+}
+
+function fromMinSec(txt) {
+  // Takes a MM:SS string. Returns N of seconds.
+  var m, s;
+  try {
+    [m, s] = txt.split(':');
+    return 60 * parseInt(m) + parseInt(s);
+  }
+  catch (err) {
+    return null;
+  }
 }
 
 function getReply(msg) {
@@ -624,54 +665,30 @@ function doLog(label, txt) {
 }
 
 //
-// Start the updateStatus() monitoring function, which runs every second.
+// Functions to update most of the dynamic parts of the HTML.
 //
 
-function updateStatus() {
-  // Declarations.
-  var div;
-  var loc;
-  var remaining;
-  var txt;
-  var dur;
-  var curr;
-  var k;
+function updateAllHtml() {
+  updateSpeedHtml();
+  updateLoopHtml();
+  updateMarksHtml();
+  updateFavsHtml();
+}
 
-  // Info: duration and end.
-  if (player) {
-    dur = player.getDuration();
-    if (dur) {
-      vi.duration = dur;
-      if (vi.end === null) {
-        vi.end = dur;
-      }
-    }
-  }
-
-  // Looping.
-  if (player && vi.loop) {
-    curr = player.getCurrentTime();
-    if (vi.end - curr <= 0 || curr < vi.start) {
-      player.seekTo(vi.start);
-    }
-  }
-
-  // Location HTML.
-  if (player) {
-    loc = player.getCurrentTime();
-    if (loc) {
-      div = document.getElementById('locationId');
-      div.innerHTML = toMinSec(loc);
-    }
-  }
-
+function updateSpeedHtml() {
   // Speed HTML.
+  var div;
+  shouldPersist = true;
   div = document.getElementById('speedId');
   if (div && vi.speed) {
     div.innerHTML = vi.speed.toFixed(2);
   }
+}
 
+function updateLoopHtml() {
   // Loop HTML.
+  var div, txt;
+  shouldPersist = true;
   div = document.getElementById('loopId');
   if (div && vi.end && vi.start != null) {
     txt = toMinSec(vi.start) + ' - ' + toMinSec(vi.end);
@@ -680,24 +697,68 @@ function updateStatus() {
     }
     div.innerHTML = txt;
   }
+}
 
+function updateMarksHtml() {
   // Marks HTML.
+  var div, txt;
+  shouldPersist = true;
   div = document.getElementById('marksId');
   if (div) {
     txt = MARK_KEYS.map(k => toMinSec(vi[k])).join(HTML_ITEM_SEP);
     div.innerHTML = txt;
   }
+}
 
+function updateFavsHtml() {
   // Favorites HTML.
+  var div, txt;
+  shouldPersist = true;
   div = document.getElementById('favoritesId');
   if (div) {
     txt = Object.keys(favs).join(HTML_ITEM_SEP) || HTML_MISSING
     div.innerHTML = txt;
   }
+}
+
+//
+// Start the updateStatus() monitoring function, which runs every second.
+//
+
+function updateStatus() {
+  var div, loc, dur, curr;
+
+  if (player) {
+
+    // Set vi attributes: duration and end.
+    if (vi.duration === null) {
+      dur = player.getDuration();
+      if (dur) {
+        vi.duration = dur;
+        if (vi.end === null) vi.end = dur;
+      }
+    }
+
+    // Looping.
+    if (vi.loop) {
+      curr = player.getCurrentTime();
+      if (vi.end - curr <= 0 || curr < vi.start) player.seekTo(vi.start);
+    }
+
+    // Location HTML.
+    loc = player.getCurrentTime();
+    if (loc) {
+      div = document.getElementById('locationId');
+      div.innerHTML = toMinSec(loc);
+    }
+  }
 
   // Save video settings.
-  localStorage.setItem(VID_KEY, vi.vid);
-  localStorage.setItem(vi.vid, JSON.stringify(vi));
+  if (shouldPersist) {
+    localStorage.setItem(VID_KEY, vi.vid);
+    localStorage.setItem(vi.vid, JSON.stringify(vi));
+    shouldPersist = false;
+  }
 
   // Recur.
   setTimeout(updateStatus, 1000);
