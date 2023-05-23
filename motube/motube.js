@@ -14,6 +14,17 @@ TODO:
     become your settings, eventually overwriting whatever preferences you had
     for the video before.
 
+  Abililty to save loops. [maybe?]
+
+  Ability to save anything: loops, speeds, marks, favorites. [probably not]
+
+  Simpler interface using multi-key shortcuts [probably not]
+
+    Loop: L, L1, etc
+    Speed: S, S1, etc
+    Marks: M, M1, etc
+    Favorites: F, F1, etc
+
 Keyboard shortcuts:
 
   Category    | Shortcut     | Operation
