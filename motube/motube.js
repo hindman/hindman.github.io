@@ -4,6 +4,13 @@
 
 TODO:
 
+  Ability to nudge marks:
+
+    jump   1
+    set    SHIFT-1
+    nudge  CTRL-1        # Then prompt for SEC.
+    delete CTRL-SHIFT-1
+
   Abililty to save loops. [maybe, but not now]
 
   Ability to save anything: loops, speeds, marks, favorites. [probably not]
@@ -240,10 +247,6 @@ var initial_url = buildIntialParams();
 
 // Video information for the current video. See DEFAULTS.
 var vi = buildVideoInfo();
-
-// console.log('favs', favs);
-// console.log('initial_url', initial_url);
-// console.log('vi', vi);
 
 // YouTube player.
 var player;
@@ -587,7 +590,6 @@ function shareUrl() {
   // Copy non-null vi info into the URL's search params.
   p = u.searchParams;
   for ([k, v] of Object.entries(vi)) {
-    // console.log('vi-entry', k, v);
     if (v !== null) {
       v = typeof v == 'number' ? v.toFixed(2) : v.toString();
       p.set(k, v);
