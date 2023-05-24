@@ -4,6 +4,14 @@
 
 TODO:
 
+  Sharing URL:
+
+    URL sharing not being picked up on other browsers or when localStorage is cleared
+
+    Initial call works to set vi: updateVideoInfo(null, true)
+
+    But as soon as video is ready, it all gets overwritten: updateVideoInfo(vid, false)
+
   Abililty to save loops. [maybe?]
 
   Ability to save anything: loops, speeds, marks, favorites. [probably not]
