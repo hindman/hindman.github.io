@@ -4,7 +4,12 @@
 
 TODO:
 
-  Sharing URL:
+  Bug: vi_version ends up as null in some localStorage
+
+  Bug: null as key in localStorage
+    - Might be fixed after clear-ALL.
+
+  Bug: sharing URL:
 
     URL sharing not being picked up on other browsers or when localStorage is cleared
 
@@ -354,6 +359,21 @@ function handleKeyDown(event) {
 // Start a new video.
 //
 
+function initializeVideo(event) {
+  // Loads a new video and goes to video/loop start.
+  // Called when app loads first video or when users changes
+  // to a new video, either via favorites or URL.
+  var vid, dur;
+  vid = vi.vid;
+  if (vid) {
+    updateVideoInfo(vid, false);
+    player.loadVideoById(vid);
+    player.seekTo(vi.start);
+    player.setPlaybackRate(vi.speed);
+    updateAllHtml();
+  }
+}
+
 function setUrl() {
   var msg, reply, vid;
   msg = 'Enter YouTube URL';
@@ -373,20 +393,6 @@ function setUrl() {
     catch (err) {
       msg = 'Invalid URL. Try again';
     }
-  }
-}
-
-function initializeVideo(event) {
-  // Loads a new video and goes to video/loop start.
-  // Called when app loads first video or when users changes
-  // to a new video, either via favorites or URL.
-  var vid, dur;
-  vid = vi.vid;
-  if (vid) {
-    updateVideoInfo(vid, false);
-    player.loadVideoById(vid);
-    player.seekTo(vi.start);
-    updateAllHtml();
   }
 }
 
