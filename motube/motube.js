@@ -4,16 +4,6 @@
 
 TODO:
 
-  Share URL
-
-    buildInitialVideoInfo() has most of this working. Currently it returns early.
-
-    If someone gives you a MoTube URL for video X -- but you already have your
-    preferred settings for that video -- do you want to accept the URL's
-    settings? If yes, a downstream consequence is that the URL's settings will
-    become your settings, eventually overwriting whatever preferences you had
-    for the video before.
-
   Abililty to save loops. [maybe?]
 
   Ability to save anything: loops, speeds, marks, favorites. [probably not]
@@ -33,6 +23,7 @@ Keyboard shortcuts:
   .           | SPACE        | Play/pause
   .           | U            | Enter URL for YouTube video and switch to it
   .           | F            | Set or switch to a favorite video
+  .           | SHIFT-U      | Create MoTube URL for sharing with others
   Navigation  | .            | .
   .           | LEFT         | Rew 5 sec (SHIFT for 1 sec)
   .           | RIGHT        | FF 5 sec (SHIFT for 1 sec)
@@ -97,7 +88,10 @@ const DIGIT_CODES = [
 
 // Attributes of vi.
 const MARK_KEYS = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6'];
-const VI_KEYS = ['vid', 'loop', 'start', 'end', 'speed', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6'];
+const VI_KEYS = [
+  'vi_version', 'vid', 'loop', 'start', 'end', 'speed',
+  'm1', 'm2', 'm3', 'm4', 'm5', 'm6'
+];
 
 // Attributes of localStorage.
 const FAVS_KEY = 'FAVORITES';
@@ -132,6 +126,21 @@ const DEFAULTS = {
     min: 0.25,
     max: 2.0,
     delta: 0.05
+  },
+  vi: {
+    vi_version: null,  // Version number of persisted video info.
+    vid: null,         // Current video ID.
+    duration: null,    // Duration of current video (seconds).
+    loop: false,       // Whether to loop.
+    start: 0,          // Loop start (seconds).
+    end: null,         // Loop end (seconds).
+    speed: 1.0,        // Playback speed (proportion).
+    m1: null,          // Marks (seconds).
+    m2: null,          //
+    m3: null,          //
+    m4: null,          //
+    m5: null,          //
+    m6: null           //
   }
 };
 
@@ -146,81 +155,59 @@ function buildFavoritesInfo() {
   return s ? JSON.parse(s) : {};
 }
 
-function buildInitialVideoInfo() {
-  // Gets the video ID from the app's URL or localStorage.
-  // Returns an object holding that ID and the current vi_version.
+function updateVideoInfo(vid, use_url) {
+  // Takes a video ID (or null) and a boolean indicating
+  // whether to check for params in the current URL (the latter
+  // is used only when app starts up).
+  //
+  // Updates the global vi either to the stored video info or to default values.
+  // Called during app start and subsequently whenever the video changes.
+  //
+  var params, vid, ks, u, d, k;
 
-  // Partial progress toward getting URL params.
-  var p, u, k, names, useUrl, d;
+  // On initial call, we try to get information from the current URL.
+  CHECK_URL: if (use_url) {
+    // Get search params.
+    // Determine if they are sufficient to populate vi.
+    params = new URL(window.location.href).searchParams;
+    vid = params.get('vid');
+    ks = Array.from(params.keys());
+    use_url = vid && ks.length > 1;
+    if (! use_url) {
+      u = null;
+      break CHECK_URL;
+    }
 
-  // Get search params.
-  // Determine if it has sufficient params to warrant using it.
-  p = new URL(window.location.href).searchParams;
-  names = Array.from(p.keys());
-  useUrl = names.includes('vid') && names.length > 1;
-
-  // Put all relevant params into an object.
-  u = {};
-  for (k of VI_KEYS) {
-    u[k] = p.get(k);
-  }
-
-  // Convert its values to expected types.
-  u.loop = !! u.loop;
-  u.start = Number(u.start);
-  u.end = Number(u.end) || null;
-  u.speed = Number(u.speed) || DEFAULTS.speed.def;
-  for (k of MARK_KEYS) {
-    u[k] = Number(u[k]) || null;
-  }
-
-  // Initialize object that will become vi.
-  d = {
-    vi_version: DEFAULTS.vi_version,
-    vid: u.vid || localStorage.getItem(VID_KEY)
-  };
-
-  return d;
-
-  // Copy info from u into that object, if we are using the URL.
-  if (useUrl) {
+    // Put relevant params into an object.
+    u = {};
     for (k of VI_KEYS) {
-      d[k] = u[k];
+      u[k] = params.get(k);
     }
-    d.usedUrl = true;
+
+    // Convert its values to expected types.
+    u.vi_version = DEFAULTS.vi_version;
+    u.vid = vid;
+    u.duration = null;
+    u.loop = !! u.loop;
+    u.start = Number(u.start);
+    u.end = Number(u.end) || null;
+    u.speed = Number(u.speed) || DEFAULTS.vi.speed;
+    for (k of MARK_KEYS) {
+      u[k] = Number(u[k]) || null;
+    }
+
   }
 
-  // Done.
-  return d;
-}
+  // Decide which source of information to use to populate vi:
+  // URL info, stored info, or defaults.
+  vid = vid || localStorage.getItem(VID_KEY);
+  d = u || getStoredVideoInfo(vid) || DEFAULTS.vi;
 
-function updateVideoInfo(vid) {
-  // Takes a video ID. Updates the global vi either to
-  // the stored video info or to default values.
-  // Called after vi is defined and subsequently whenever the video changes.
-  var d, k;
-
-  // console.log('VI_LEN', Object.keys(vi).length);
-
-  vi.duration = null;
-  d = getStoredVideoInfo(vid);
-  if (d) {
-    vi.loop = d.loop;
-    vi.start = d.start;
-    vi.end = d.end;
-    vi.speed = d.speed;
-    for (k of MARK_KEYS) {
-      vi[k] = d[k];
-    }
-  } else {
-    vi.loop = false;
-    vi.start = 0;
-    vi.end = null;
-    vi.speed = DEFAULTS.speed.def;
-    for (k of MARK_KEYS) {
-      vi[k] = null;
-    }
+  // Copy the info into vi.
+  for (k of VI_KEYS) {
+    vi[k] = d[k];
   }
+
 }
 
 function getStoredVideoInfo(vid) {
@@ -237,34 +224,18 @@ function getStoredVideoInfo(vid) {
 }
 
 //
-// Initialize the global shouldPersist, favs, and vi variables.
-//
-// Uses either the defaults or data from localStorage.
-// We do this before creating the YT.player.
-//
-//  - shouldPersist: if true, will persist localStorage during
-//                   updateStatus() monitoring.
-//
-//  - favs: object mapping each favorite ABBREV to its VIDEO_ID.
-//
-//  - vi: video information for the current video, having these keys:
-//
-//      vi_version: VIDEO_INFO_VERSION,
-//      vid:        VIDEO_ID,
-//      duration:   VIDEO_DURATION,
-//      loop:       true|false,
-//      start:      SECS,
-//      end:        SECS,
-//      speed:      PROPORTION,
-//      m1 ... m6:  SECS,
+// Initialize globals before creating YT.player:
 //
 
+// If true, will persist localStorage during updateStatus() monitoring.
 var shouldPersist = false;
 
+// Maps each favorite ABBREV to its VIDEO_ID.
 var favs = buildFavoritesInfo();
 
-var vi = buildInitialVideoInfo();
-updateVideoInfo(vi.vid);
+// Video information for the current video. See DEFAULTS.
+var vi = {};
+updateVideoInfo(null, true);
 
 //
 // Set up Youtube player.
@@ -309,6 +280,8 @@ function handleKeyDown(event) {
   // Play/pause or change video URL.
   if (e.code == 'Space') {
     doPlayPause();
+  } else if (e.code == 'KeyU' && e.shiftKey) {
+    shareUrl();
   } else if (e.code == 'KeyU') {
     setUrl();
 
@@ -401,7 +374,7 @@ function initializeVideo(event) {
   var vid, dur;
   vid = vi.vid;
   if (vid) {
-    updateVideoInfo(vid);
+    updateVideoInfo(vid, false);
     player.loadVideoById(vid);
     player.seekTo(vi.start);
     updateAllHtml();
@@ -455,7 +428,7 @@ function doSeek(direction, small, toStart, toJump) {
 function adjustSpeed(direction, big, reset) {
   var speed, delta;
   if (reset) {
-    speed = DEFAULTS.speed.def;
+    speed = DEFAULTS.vi.speed;
   } else {
     delta = (big ? 4 : 1) * DEFAULTS.speed.delta * direction;
     speed = bounded(
@@ -587,6 +560,36 @@ function handleFavorite() {
     localStorage.setItem(FAVS_KEY, JSON.stringify(favs));
     updateFavsHtml();
   }
+}
+
+//
+// Sharing a MoTube URL.
+//
+
+function shareUrl() {
+  var curr, u, p, k, v, msg;
+
+  // Initialize a URL based on the current URL.
+  curr = new URL(window.location.href);
+  u = new URL(curr.origin + curr.pathname)
+
+  // Copy non-null vi info into the URL's search params.
+  p = u.searchParams;
+  for (k of VI_KEYS) {
+    v = vi[k];
+    if (v !== null) {
+      v = typeof v == 'number' ? v.toFixed(2) : v.toString();
+      p.set(k, v);
+    }
+  }
+
+  // Adjust a couple of params.
+  p.delete('vi_version');
+  if (! vi.loop) p.delete('loop');
+
+  // Provide URL to user.
+  msg = 'Copy this MoTube URL and share with your friends';
+  prompt(msg, u.toString());
 }
 
 //
