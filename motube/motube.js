@@ -174,6 +174,7 @@ function updateVideoInfo(vid, use_url) {
   var params, vid, ks, u, d, k;
 
   // On initial call, we try to get information from the current URL.
+  u = null;
   CHECK_URL: if (use_url) {
     // Get search params.
     // Determine if they are sufficient to populate vi.
@@ -606,7 +607,7 @@ function shareUrl() {
 
 function appInfoJson() {
   // Returns localStorage as prety-printed JSON.
-  var d = {vi: vi};
+  var d = {};
   for (const [k, v] of Object.entries(localStorage)) {
     try {
       d[k] = JSON.parse(v);
@@ -615,6 +616,7 @@ function appInfoJson() {
       d[k] = v;
     }
   }
+  d.vi = vi;
   return JSON.stringify(d, null, 2);
 }
 
@@ -810,7 +812,7 @@ function updateStatus() {
   if (player) {
 
     // Set vi attributes: duration and end.
-    if (vi.duration === null) {
+    if (! vi.duration) {
       dur = player.getDuration();
       if (dur) {
         vi.duration = dur;
@@ -834,9 +836,11 @@ function updateStatus() {
 
   // Save video settings.
   if (shouldPersist) {
-    localStorage.setItem(VID_KEY, vi.vid);
-    localStorage.setItem(vi.vid, JSON.stringify(vi));
-    shouldPersist = false;
+    if (vi.vid) {
+      localStorage.setItem(VID_KEY, vi.vid);
+      localStorage.setItem(vi.vid, JSON.stringify(vi));
+      shouldPersist = false;
+    }
   }
 
   // Recur.
