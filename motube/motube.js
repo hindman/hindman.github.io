@@ -4,12 +4,7 @@
 
 TODO:
 
-  Ability to nudge marks:
-
-    jump   1
-    set    SHIFT-1
-    nudge  CTRL-1        # Then prompt for SEC.
-    delete CTRL-SHIFT-1
+  Rebrand: MoTube looks like a scamming app.
 
   Abililty to save loops. [maybe, but not now]
 
@@ -21,42 +16,6 @@ TODO:
     Speed: S, S1, etc
     Marks: M, M1, etc
     Favorites: F, F1, etc
-
-Keyboard shortcuts:
-
-  Category    | Shortcut     | Operation
-  ---------------------------------------------------------------------
-  Play video  | .            | .
-  .           | SPACE        | Play/pause
-  .           | U            | Enter URL for YouTube video and switch to it
-  .           | F            | Set or switch to a favorite video
-  .           | SHIFT-U      | Create MoTube URL for sharing with others
-  Navigation  | .            | .
-  .           | LEFT         | Rew 5 sec (SHIFT for 1 sec)
-  .           | RIGHT        | FF 5 sec (SHIFT for 1 sec)
-  .           | 0 or UP      | Go to video start (or loop start, if looping)
-  .           | J            | Enter a specific MM:SS and jump to it
-  Speed       | .            | .
-  .           | MINUS        | Slower by .05 (SHIFT for .20)
-  .           | EQUAL        | Faster by .05 (SHIFT for .20)
-  .           | BACKSPACE    | Reset speed to 1.0
-  Looping     | .            | .
-  .           | L            | Toggle looping on/off
-  .           | [            | Set loop start to current time
-  .           | ]            | Set loop end to current time
-  .           | SHIFT-[      | Modify loop start by N seconds (prompted)
-  .           | SHIFT-]      | Modify loop end by N seconds (prompted)
-  Marks       | .            | .
-  .           | 1            | Go to mark 1
-  .           | SHIFT-1      | Set mark 1 to current time
-  .           | CTRL-1       | Unset mark 1
-  .           | ...          | Etc for marks 2 through 6
-  .           | CTRL-SHIFT-M | Clear all marks
-  Application | .            | .
-  .           | SHIFT-I      | Display application information
-  .           | SHIFT-S      | Save application information as JSON file
-  .           | CTRL-SHIFT-S | Restore application information from JSON text
-  .           | CTRL-SHIFT-C | Clear application information: all; favorites; or for one video (prompted).
 
 Reference:
 
@@ -83,7 +42,7 @@ Reference:
 // Constants.
 //
 
-const APP_NAME = 'motube';
+const APP_NAME = 'MoTube';
 
 // Keyboard code.
 const BRACKET_CODES = ['BracketLeft', 'BracketRight'];
@@ -104,6 +63,52 @@ const NON_VIDEO_KEYS = [FAVS_KEY, VID_KEY];
 // HTML.
 const HTML_ITEM_SEP = ' | ';
 const HTML_MISSING = '_'
+
+// Help text.
+
+const HELP_TEXT = `
+Keyboard shortcuts
+------------------
+
+Category    | Shortcut     | Operation
+---------------------------------------------------------------------
+Play video  | .            | .
+.           | SPACE        | Play/pause
+.           | U            | Enter URL for YouTube video and switch to it
+.           | F            | Set or switch to a favorite video
+.           | SHIFT-U      | Create ${APP_NAME} URL for sharing
+Navigation  | .            | .
+.           | LEFT         | Rew 5 sec (SHIFT for 1 sec)
+.           | RIGHT        | FF 5 sec (SHIFT for 1 sec)
+.           | 0 or UP      | Go to video start (or loop start, if looping)
+.           | J            | Enter a specific MM:SS and jump to it
+Speed       | .            | .
+.           | MINUS        | Slower by .05 (SHIFT for .20)
+.           | EQUAL        | Faster by .05 (SHIFT for .20)
+.           | BACKSPACE    | Reset speed to 1.0
+Looping     | .            | .
+.           | L            | Toggle looping on/off
+.           | [            | Set loop start to current time
+.           | SHIFT-[      | Modify loop start by N seconds (prompted)
+.           | CTRL-SHIFT-[ | Reset loop start
+.           | ]            | Etc for loop end...
+.           | SHIFT-]      | ...
+.           | CTRL-SHIFT-] | ...
+Marks       | .            | .
+.           | 1            | Go to mark 1
+.           | SHIFT-1      | Set mark 1 to current time
+.           | CTRL-1       | Modify mark 1 by N seconds (prompted)
+.           | CTRL-SHIFT-1 | Delete mark 1
+.           | ...          | Etc for marks 2 through 6
+Application | .            | .
+.           | I or H       | Display help text
+.           | SHIFT-I      | Display application information
+.           | CTRL-SHIFT-I | Erase displayed information
+.           | SHIFT-S      | Save app info as JSON file
+.           | CTRL-SHIFT-S | Restore app info from JSON text
+.           | CTRL-SHIFT-C | Clear app info: favorites; marks; info for one
+.           | "            | video; info for all videos; or everything.
+`.trim();
 
 //
 // Program defaults.
@@ -319,22 +324,23 @@ function handleKeyDown(event) {
   } else if (e.code == 'KeyL') {
     toggleLooping();
   } else if (BRACKET_CODES.includes(e.code)) {
-    setLoopPoint(
-      e.code == 'BracketLeft' ? 'start' : 'end',
-      e.shiftKey
-    );
+    setLoopPoint(e.code == 'BracketLeft', e.shiftKey, e.ctrlKey);
 
   // Marks.
   } else if (DIGIT_CODES.includes(e.code)) {
     handleMark(
       'm' + e.code.slice(-1),
       e.shiftKey,
-      e.ctrlKey
+      e.ctrlKey,
+      e.shiftKey && e.ctrlKey
     );
-  } else if (e.code == 'KeyM' && e.shiftKey && e.ctrlKey) {
-    clearMarks();
+
+  // Information.
   } else if (e.code == 'KeyI' && e.shiftKey) {
-    doLog('APP-INFO', e.ctrlKey ? '' : appInfoJson());
+    displayInfo('APP-INFO', appInfoJson(), e.ctrlKey);
+
+  } else if (e.code == 'KeyI' || e.code == 'KeyH') {
+    displayInfo(null, HELP_TEXT, false);
 
   // Favorites.
   } else if (e.code == 'KeyF') {
@@ -464,30 +470,24 @@ function toggleLooping() {
   updateLoopHtml();
 }
 
-function setLoopPoint(k, nudge) {
-  // Sets or nudges the loop start or end.
-  // A nudge moves the loop point by positive or negative N seconds.
-  var msg, reply, delta, lp, ok;
-
+function setLoopPoint(start, nudge, reset) {
+  // Sets, resets, or nudges the loop start or end.
+  var k, msg, reply, delta, lp, ok;
   // Compute the new loop point.
+  k =  start ? 'start' : 'end'
   if (nudge) {
-    NUDGE_REPLY: while (true) {
-      msg = 'Enter amount to adjust loop ' + k
-      while (true) {
-        reply = getReply(msg);
-        if (! reply) return;
-        delta = parseFloat(reply);
-        if (! isNaN(delta)) break NUDGE_REPLY;
-        msg = 'Invalid reply. Try again';
-      }
-    }
+    msg = 'Enter amount to adjust loop ' + k
+    delta = getReplyFloat(msg);
+    if (! delta) return;
     lp = bounded(vi[k] + delta, 0, vi.duration);
+  } else if (reset) {
+    lp = start ? 0 : vi.duration;
   } else {
     lp = player.getCurrentTime();
   }
 
   // Set the new loop point only if it would preverse START < END.
-  ok = (k == 'start' && lp < vi.end) || (k == 'end' && vi.start < lp);
+  ok = (start && lp < vi.end) || (! start && vi.start < lp);
   if (ok) {
     vi[k] = lp;
     updateLoopHtml();
@@ -498,24 +498,23 @@ function setLoopPoint(k, nudge) {
 // Set or delete marks.
 //
 
-function handleMark(m, shouldSet, shouldDelete) {
-  if (shouldDelete) {
-    vi[m] = null;
-    updateMarksHtml();
-  } else if (shouldSet) {
+function handleMark(m, shouldSet, shouldNudge, shouldDelete) {
+  var msg, delta;
+  if (shouldSet) {
     vi[m] = player.getCurrentTime();
+    updateMarksHtml();
+  } else if (shouldNudge) {
+    msg = 'Enter amount to adjust mark ' + m.slice(-1);
+    delta = getReplyFloat(msg);
+    if (! delta) return;
+    vi[m] = bounded(vi[m] + delta, 0, vi.duration);
+    updateMarksHtml();
+  } else if (shouldDelete) {
+    vi[m] = null;
     updateMarksHtml();
   } else if (vi[m] !== null) {
     player.seekTo(vi[m]);
   }
-}
-
-function clearMarks() {
-  var k;
-  for (k of MARK_KEYS) {
-    vi[k] = null;
-  }
-  updateMarksHtml();
 }
 
 //
@@ -601,7 +600,7 @@ function shareUrl() {
   if (! vi.loop) p.delete('loop');
 
   // Provide URL to user.
-  msg = 'Copy this MoTube URL and share with your friends';
+  msg = `Copy this ${APP_NAME} URL and share with your friends`;
   prompt(msg, u.toString());
 }
 
@@ -627,20 +626,29 @@ function appInfoJson() {
 function clearStorage() {
   // After confirmation clears localStorage of everything or just favorites.
   var msg, reply, k;
-  msg = 'Enter what to clear: favs | ALL | VIDS | VIDEO_ID';
+  msg = 'Enter what to clear: favs | marks | VIDEO_ID | `VIDS` | `ALL`';
   reply = getReply(msg);
   if (reply == 'favs') {
+    // Favorites.
     favs = {};
     localStorage.setItem(FAVS_KEY, JSON.stringify(favs));
-  } else if (reply == 'ALL') {
-    localStorage.clear();
+  } else if (reply == 'marks') {
+    // Marks.
+    for (k of MARK_KEYS) {
+      vi[k] = null;
+    }
   } else if (reply == 'VIDS') {
+    // All video info.
     for (k of Object.keys(localStorage)) {
       if (! NON_VIDEO_KEYS.includes(k)) {
         localStorage.removeItem(k);
       }
     }
+  } else if (reply == 'ALL') {
+    // Everything.
+    localStorage.clear();
   } else if (! NON_VIDEO_KEYS.includes(reply)) {
+    // Info for one video.
     localStorage.removeItem(reply);
   }
   updateAllHtml();
@@ -651,7 +659,7 @@ function saveAppInfo() {
   const file = new Blob([appInfoJson()], {type: 'text/plain'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(file);
-  a.download = APP_NAME + '.json';
+  a.download = APP_NAME.toLowerCase() + '.json';
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -733,6 +741,23 @@ function getReply(msg) {
   return reply.trim();
 }
 
+function getReplyFloat(msg) {
+  // Takes a prompt message. Prompts until reply is
+  // empty or a valid float. Return N or null.
+  var prefix, reply, n;
+  prefix = '';
+  while (true) {
+    reply = getReply(prefix + msg);
+    if (! reply) return null;
+    n = parseFloat(reply);
+    if (isNaN(n)) {
+      prefix = 'Invalid, try again. ';
+    } else {
+      return n;
+    }
+  }
+}
+
 function urlToVideoId(txt) {
   // Takes a URL string. Returns the 'v' or 'vid' query parameter or null.
   var url, p;
@@ -746,11 +771,19 @@ function urlToVideoId(txt) {
   }
 }
 
-function doLog(label, txt) {
-  // Takes a label and some text. Displays both at bottom of HTML.
-  const now = new Date().getTime();
-  const secs = now.toString().slice(-3);
-  const h = secs + ' => ' + label + ' => ' + txt;
+function displayInfo(label, txt, doClear) {
+  // Takes a label (or null) and some text.
+  // Displays label with text or just text at bottom of HTML.
+  var h, now, secs;
+  if (doClear) {
+    h = '';
+  } else if (label) {
+    now = new Date().getTime();
+    secs = now.toString().slice(-3);
+    h = secs + ' => ' + label + ' => ' + txt;
+  } else {
+    h = txt;
+  }
   document.getElementById('logId').textContent = h;
 }
 
