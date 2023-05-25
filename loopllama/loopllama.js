@@ -4,8 +4,6 @@
 
 TODO:
 
-  Rebrand: MoTube looks like a scamming app.
-
   Abililty to save loops. [maybe, but not now]
 
   Ability to save anything: loops, speeds, marks, favorites. [probably not]
@@ -42,7 +40,7 @@ Reference:
 // Constants.
 //
 
-const APP_NAME = 'MoTube';
+const APP_NAME = 'LoopLlama';
 
 // Keyboard code.
 const BRACKET_CODES = ['BracketLeft', 'BracketRight'];
@@ -194,7 +192,7 @@ function buildIntialParams() {
 
 function buildVideoInfo() {
   // Returns the initial vi data using the defaults and
-  // the video ID either from the MoTube URL or from localStorage.
+  // the video ID either from the LoopLlama URL or from localStorage.
   var d, k, v;
   d = {};
   for ([k, v] of Object.entries(DEFAULTS.vi)) {
@@ -210,10 +208,10 @@ function buildVideoInfo() {
 
 function updateVideoInfo(vid) {
   // Takes a video ID (or null).
-  // Updates the global vi using (a) initial MoTube URL params,
+  // Updates the global vi using (a) initial LoopLlama URL params,
   // (b) stored video-info, or (c) defaults.
   // Called during app start and then whenever the video changes.
-  // The MoTube URL params should be considered only on the first call.
+  // The LoopLlama URL params should be considered only on the first call.
   var d, k;
   d = initial_url || getStoredVideoInfo(vid) || DEFAULTS.vi;
   for (k of Object.keys(DEFAULTS.vi)) {
@@ -247,7 +245,7 @@ var shouldPersist = false;
 // Maps each favorite ABBREV to its VIDEO_ID.
 var favs = buildInitialFavs();
 
-// Object holding the MoTube URL search params.
+// Object holding the LoopLlama URL search params.
 var initial_url = buildIntialParams();
 
 // Video information for the current video. See DEFAULTS.
@@ -291,7 +289,7 @@ function handleKeyDown(event) {
     location: event.location
   };
 
-  // None of the MoTube shortcuts use metaKey (CMD on MacOS).
+  // None of the LoopLlama shortcuts use metaKey (CMD on MacOS).
   if (e.metaKey) return;
 
   // Play/pause or change video URL.
@@ -576,7 +574,7 @@ function handleFavorite() {
 }
 
 //
-// Sharing a MoTube URL.
+// Sharing a LoopLlama URL.
 //
 
 function shareUrl() {
