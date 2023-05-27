@@ -68,44 +68,39 @@ const HELP_TEXT = `
 Keyboard shortcuts
 ------------------
 
-Category    | Shortcut     | Operation
+Category    | Shortcut  | Operation
 ---------------------------------------------------------------------
-Play video  | .            | .
-.           | SPACE        | Play/pause
-.           | U            | Enter URL for YouTube video and switch to it
-.           | F            | Set or switch to a favorite video
-.           | SHIFT-U      | Create ${APP_NAME} URL for sharing
-Navigation  | .            | .
-.           | LEFT         | Rew 5 sec (SHIFT for 1 sec)
-.           | RIGHT        | FF 5 sec (SHIFT for 1 sec)
-.           | 0 or UP      | Go to video start (or loop start, if looping)
-.           | J            | Enter a specific MM:SS and jump to it
-Speed       | .            | .
-.           | MINUS        | Slower by .05 (SHIFT for .20)
-.           | EQUAL        | Faster by .05 (SHIFT for .20)
-.           | BACKSPACE    | Reset speed to 1.0
-Looping     | .            | .
-.           | L            | Toggle looping on/off
-.           | [            | Set loop start to current time
-.           | SHIFT-[      | Modify loop start by N seconds (prompted)
-.           | CTRL-SHIFT-[ | Reset loop start
-.           | ]            | Etc for loop end...
-.           | SHIFT-]      | ...
-.           | CTRL-SHIFT-] | ...
-Marks       | .            | .
-.           | 1            | Go to mark 1
-.           | SHIFT-1      | Set mark 1 to current time
-.           | CTRL-1       | Modify mark 1 by N seconds (prompted)
-.           | CTRL-SHIFT-1 | Delete mark 1
-.           | ...          | Etc for marks 2 through 6
-Application | .            | .
-.           | I or H       | Display help text
-.           | SHIFT-I      | Display application information
-.           | CTRL-SHIFT-I | Erase displayed information
-.           | SHIFT-S      | Save app info as JSON file
-.           | CTRL-SHIFT-S | Restore app info from JSON text
-.           | CTRL-SHIFT-C | Clear app info: favorites; marks; info for one
-.           | "            | video; info for all videos; or everything.
+Play video  | .         | .
+.           | SPACE     | Play/pause
+.           | U         | Enter URL for YouTube video and switch to it
+.           | F         | Set or switch to a favorite video
+.           | SHIFT-U   | Create ${APP_NAME} URL for sharing
+Navigation  | .         | .
+.           | LEFT      | Rew 5 sec (SHIFT for 1 sec)
+.           | RIGHT     | FF 5 sec (SHIFT for 1 sec)
+.           | 0 or UP   | Go to video start (or loop start, if looping)
+.           | J         | Enter a specific MM:SS and jump to it
+Speed       | .         | .
+.           | MINUS     | Slower by .05 (SHIFT for .20)
+.           | EQUAL     | Faster by .05 (SHIFT for .20)
+.           | BACKSPACE | Reset speed to 1.0
+Looping     | .         | .
+.           | L         | Toggle looping on/off
+.           | [         | Set loop start to current time
+.           | SHIFT-[   | Set, nudge, or reset loop start (prompted)
+.           | [         | Set loop end to current time
+.           | SHIFT-[   | Set, nudge, or reset loop end (prompted)
+Marks       | .         | .
+.           | 1         | Go to mark 1
+.           | SHIFT-1   | Set, nudge, or reset mark 1
+.           | ...       | Etc for marks 2 through 6
+Application | .         | .
+.           | H         | Display/hide help text
+.           | I         | Display/hide application info
+.           | S         | Save app info as JSON file
+.           | SHIFT-S   | Restore app info from JSON text
+.           | SHIFT-C   | Clear app info: favorites; marks; info for one
+.           | "         | video; info for all videos; or everything.
 `.trim();
 
 //
@@ -118,7 +113,7 @@ const WINDOW_WIDTH = (
   document.documentElement.clientWidth ||
   document.body.clientWidth
 );
-const IFRAME_SIZE_FACTOR = Math.floor(.98 * (WINDOW_WIDTH / 16));
+const IFRAME_SIZE_FACTOR = Math.floor(.75 * (WINDOW_WIDTH / 16));
 
 const DEFAULTS = {
   // iFrame size.
@@ -289,8 +284,8 @@ function handleKeyDown(event) {
     location: event.location
   };
 
-  // None of the LoopLlama shortcuts use metaKey (CMD on MacOS).
-  if (e.metaKey) return;
+  // The only modifier used by LoopLlama is SHIFT.
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
 
   // Play/pause or change video URL.
   if (e.code == 'Space') {
@@ -322,36 +317,30 @@ function handleKeyDown(event) {
   } else if (e.code == 'KeyL') {
     toggleLooping();
   } else if (BRACKET_CODES.includes(e.code)) {
-    setLoopPoint(e.code == 'BracketLeft', e.shiftKey, e.ctrlKey);
+    setLoopPoint(e.code == 'BracketLeft', e.shiftKey);
 
   // Marks.
   } else if (DIGIT_CODES.includes(e.code)) {
-    handleMark(
-      'm' + e.code.slice(-1),
-      e.shiftKey,
-      e.ctrlKey,
-      e.shiftKey && e.ctrlKey
-    );
+    handleMark('m' + e.code.slice(-1), e.shiftKey);
 
-  // Information.
-  } else if (e.code == 'KeyI' && e.shiftKey) {
-    displayInfo('APP-INFO', appInfoJson(), e.ctrlKey);
-
-  } else if (e.code == 'KeyI' || e.code == 'KeyH') {
-    displayInfo(null, HELP_TEXT, false);
+  // Help text and app info.
+  } else if (e.code == 'KeyH') {
+    displayInfo(null, HELP_TEXT);
+  } else if (e.code == 'KeyI') {
+    displayInfo('APP-INFO', appInfoJson());
 
   // Favorites.
   } else if (e.code == 'KeyF') {
     handleFavorite();
 
   // Retore, save, or clear localStorage.
-  } else if (e.code == 'KeyS' && e.shiftKey && e.ctrlKey) {
+  } else if (e.code == 'KeyS' && e.shiftKey) {
     restoreAppInfo();
 
-  } else if (e.code == 'KeyS' && e.shiftKey) {
+  } else if (e.code == 'KeyS') {
     saveAppInfo();
 
-  } else if (e.code == 'KeyC' && e.shiftKey && e.ctrlKey) {
+  } else if (e.code == 'KeyC' && e.shiftKey) {
     clearStorage();
 
   }
@@ -468,24 +457,34 @@ function toggleLooping() {
   updateLoopHtml();
 }
 
-function setLoopPoint(start, nudge, reset) {
-  // Sets, resets, or nudges the loop start or end.
-  var k, msg, reply, delta, lp, ok;
-  // Compute the new loop point.
-  k =  start ? 'start' : 'end'
-  if (nudge) {
-    msg = 'Enter amount to adjust loop ' + k
-    delta = getReplyFloat(msg);
-    if (! delta) return;
-    lp = bounded(vi[k] + delta, 0, vi.duration);
-  } else if (reset) {
-    lp = start ? 0 : vi.duration;
-  } else {
-    lp = player.getCurrentTime();
+function setLoopPoint(isStart, manage) {
+  // Sets, nudges, or resets the loop start or end.
+  var k, curr, msg, d, lp, ok;
+
+  // Setup: current time and the vi key we are using.
+  k =  isStart ? 'start' : 'end'
+  curr = player.getCurrentTime();
+
+  // Compute the new loop point (lp). By default, it's the current time.
+  lp = curr;
+  if (manage) {
+    // Bail if empty reply.
+    msg = `Loop ${k}: M:SS to set | SS to nudge | . to reset`
+    d = getReplySetNudge(msg, toMinSec(curr, 0));
+    if (! d) return;
+
+    // Otherwise, set lp based on the kind of reply we got.
+    if (d.set !== null) {
+      lp = bounded(d.set, 0, vi.duration);
+    } else if (d.nudge !== null) {
+      lp = bounded(vi[k] + d.nudge, 0, vi.duration);
+    } else {
+      lp = isStart ? 0 : vi.duration;
+    }
   }
 
   // Set the new loop point only if it would preverse START < END.
-  ok = (start && lp < vi.end) || (! start && vi.start < lp);
+  ok = (isStart && lp < vi.end) || (! isStart && vi.start < lp);
   if (ok) {
     vi[k] = lp;
     updateLoopHtml();
@@ -496,21 +495,24 @@ function setLoopPoint(start, nudge, reset) {
 // Set or delete marks.
 //
 
-function handleMark(m, shouldSet, shouldNudge, shouldDelete) {
-  var msg, delta;
-  if (shouldSet) {
-    vi[m] = player.getCurrentTime();
+function handleMark(m, manage) {
+  var curr, msg, d;
+  curr = player.getCurrentTime();
+  if (manage) {
+    // Bail if empty reply.
+    msg = `Mark ${m}: M:SS to set | SS to nudge | . to reset`
+    d = getReplySetNudge(msg, toMinSec(curr, 0));
+    if (! d) return;
+    // Otherwise, set the mark based on the kind of reply we got.
+    if (d.set !== null) {
+      vi[m] = bounded(d.set, 0, vi.duration);
+    } else if (d.nudge !== null) {
+      vi[m] = bounded(vi[m] + d.nudge, 0, vi.duration);
+    } else {
+      vi[m] = null;
+    }
     updateMarksHtml();
-  } else if (shouldNudge) {
-    msg = 'Enter amount to adjust mark ' + m.slice(-1);
-    delta = getReplyFloat(msg);
-    if (! delta) return;
-    vi[m] = bounded(vi[m] + delta, 0, vi.duration);
-    updateMarksHtml();
-  } else if (shouldDelete) {
-    vi[m] = null;
-    updateMarksHtml();
-  } else if (vi[m] !== null) {
+  } else {
     player.seekTo(vi[m]);
   }
 }
@@ -709,15 +711,14 @@ function bounded(n, lower, upper) {
   return Math.min(upper, Math.max(lower, n));
 }
 
-function toMinSec(n) {
+function toMinSec(n, digits = 0) {
   // Takes a number of seconds. Returns a 'M:SS' string.
   if (n == null) {
     return HTML_MISSING;
   }
-  n = Math.round(n);
   var mins = Math.floor(n / 60);
   var secs = n - mins * 60;
-  secs = secs.toString().padStart(2, '0');
+  secs = secs.toFixed(digits).padStart(2, '0');
   return `${mins}:${secs}`;
 }
 
@@ -726,33 +727,59 @@ function fromMinSec(txt) {
   var m, s;
   try {
     [m, s] = txt.split(':');
-    return 60 * parseInt(m) + parseInt(s);
+    return 60 * parseInt(m) + parseFloat(s);
   }
   catch (err) {
     return null;
   }
 }
 
-function getReply(msg) {
+function getReply(msg, defReply = '') {
   // Prompts user. Returns reply string or ''.
-  var reply = prompt(msg) || '';
+  var reply = prompt(msg, defReply) || '';
   return reply.trim();
 }
 
-function getReplyFloat(msg) {
-  // Takes a prompt message. Prompts until reply is
-  // empty or a valid float. Return N or null.
-  var prefix, reply, n;
+function getReplySetNudge(msg, defReply) {
+  // Takes a prompt message for a situation supporting these replies:
+  //   M:SS   Set
+  //   SS     Nudge
+  //   .      Reset
+  //
+  //   Where M is an int and SS is int or float.
+  //
+  // Prompts until reply is empty or value.
+  // Returns null or an object (d) indicating the choice made.
+  var prefix, rgx, d, reply, m;
+
+  // Setup the validation regex and the reply object.
   prefix = '';
+  rgx = /^(?:(\d+:\d+(?:\.\d+)?)|(-?\d+(?:\.\d+)?)|(\.))$/;
+  d = {set: null, nudge: null, reset: false}
+
+  // Prompt loop.
   while (true) {
-    reply = getReply(prefix + msg);
+    // Return null if empty reply.
+    reply = getReply(prefix + msg, defReply);
     if (! reply) return null;
-    n = parseFloat(reply);
-    if (isNaN(n)) {
-      prefix = 'Invalid, try again. ';
-    } else {
-      return n;
+
+    // Try again if invalid reply.
+    m = reply.match(rgx);
+    if (! m) {
+      prefix = "Invalid, try again.\n\n";
+      continue;
     }
+
+    // Use reply to set the appropriate attribute in the return object.
+    reply = m[0];
+    if (reply.includes(':')) {
+      d.set = fromMinSec(reply);
+    } else if (reply == '.') {
+      d.reset = true;
+    } else {
+      d.nudge = parseFloat(reply);
+    }
+    return d;
   }
 }
 
@@ -769,11 +796,13 @@ function urlToVideoId(txt) {
   }
 }
 
-function displayInfo(label, txt, doClear) {
+function displayInfo(label, txt) {
   // Takes a label (or null) and some text.
   // Displays label with text or just text at bottom of HTML.
-  var h, now, secs;
-  if (doClear) {
+  // If the HTML already had content, it is cleared.
+  var div, h, now, secs;
+  div = document.getElementById('logId');
+  if (div.textContent.length) {
     h = '';
   } else if (label) {
     now = new Date().getTime();
@@ -782,7 +811,7 @@ function displayInfo(label, txt, doClear) {
   } else {
     h = txt;
   }
-  document.getElementById('logId').textContent = h;
+  div.textContent = h;
 }
 
 //
