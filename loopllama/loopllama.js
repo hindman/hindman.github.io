@@ -4,16 +4,7 @@
 
 TODO:
 
-  Abililty to save loops. [maybe, but not now]
-
-  Ability to save anything: loops, speeds, marks, favorites. [probably not]
-
-  Simpler interface using multi-key shortcuts [probably not]
-
-    Loop: L, L1, etc
-    Speed: S, S1, etc
-    Marks: M, M1, etc
-    Favorites: F, F1, etc
+  Interface using multi-key shortcuts [probably not]
 
 Reference:
 
@@ -46,12 +37,15 @@ const APP_NAME = 'LoopLlama';
 const BRACKET_CODES = ['BracketLeft', 'BracketRight'];
 const SEEK_START_CODES = ['Digit0', 'Numpad0', 'ArrowUp'];
 const DIGIT_CODES = [
-  'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6',
-  'Numpad1', 'Numpad2', 'Numpad3', 'Numpad4', 'Numpad5', 'Numpad6'
+  'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5',
+  'Digit6', 'Digit7', 'Digit8', 'Digit9',
+  'Numpad1', 'Numpad2', 'Numpad3', 'Numpad4', 'Numpad5',
+  'Numpad6', 'Numpad7', 'Numpad8', 'Numpad9'
 ];
 
 // Attributes of vi.
-const MARK_KEYS = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6'];
+const MARK_KEYS = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'];
+const LOOP_KEYS = ['L1', 'L2', 'L3', 'L4', 'L5'];
 
 // Attributes of localStorage.
 const FAVS_KEY = 'FAVORITES';
@@ -61,6 +55,9 @@ const NON_VIDEO_KEYS = [FAVS_KEY, VID_KEY];
 // HTML.
 const HTML_ITEM_SEP = ' | ';
 const HTML_MISSING = '_'
+
+// Other.
+const NON_VALUES = [null, undefined, NaN];
 
 // Help text.
 
@@ -90,10 +87,11 @@ Looping     | .         | .
 .           | SHIFT-[   | Set, nudge, or reset loop start (prompted)
 .           | [         | Set loop end to current time
 .           | SHIFT-[   | Set, nudge, or reset loop end (prompted)
+.           | SHIFT-L   | Saved loops: load, save, or reset (prompted)
 Marks       | .         | .
 .           | 1         | Go to mark 1
 .           | SHIFT-1   | Set, nudge, or reset mark 1
-.           | ...       | Etc for marks 2 through 6
+.           | ...       | Etc for marks 2 through 9
 Application | .         | .
 .           | H         | Display/hide help text
 .           | I         | Display/hide application info
@@ -128,7 +126,7 @@ const DEFAULTS = {
   },
   // Video-specific info.
   vi: {
-    version: 8,      // Version number of persisted video info (use to expire outdated info).
+    version: 9,      // Version number of persisted video info (use to expire outdated info).
     vid: null,       // Current video ID.
     duration: null,  // Duration of current video (seconds).
     loop: false,     // Whether to loop.
@@ -140,7 +138,15 @@ const DEFAULTS = {
     m3: null,        //
     m4: null,        //
     m5: null,        //
-    m6: null         //
+    m6: null,        //
+    m7: null,        //
+    m8: null,        //
+    m9: null,        //
+    L1: null,        // Saved loops: {start: N, end: N} when set.
+    L2: null,        //
+    L3: null,        //
+    L4: null,        //
+    L5: null         //
   }
 };
 
@@ -182,7 +188,22 @@ function buildIntialParams() {
   for (k of MARK_KEYS) {
     u[k] = Number(u[k]) || DEFAULTS.vi[k];
   }
+  for (k of LOOP_KEYS) {
+    u[k] = parseSavedLoopParam(u[k]) || DEFAULTS.vi[k];
+  }
   return u;
+}
+
+function parseSavedLoopParam(s) {
+  // Expects a saved-loop URL param: eg '12.3-33.6'.
+  // Returns null or an object holding loop start/end points.
+  var xs, ns;
+  if (! s) return null;
+  xs = s.split('-');
+  if (xs.length != 2) return null;
+  ns = xs.map(x => parseFloat(x));
+  if (xs.includes(NaN)) return null;
+  return {start: ns[0], end: ns[1]};
 }
 
 function buildVideoInfo() {
@@ -313,7 +334,9 @@ function handleKeyDown(event) {
   } else if (e.code == 'Backspace') {
     adjustSpeed(0, false, true);
 
-  // Loop: toggle, start, end.
+  // Loop: handle-saved, toggle, or set start/end.
+  } else if (e.code == 'KeyL' && e.shiftKey) {
+    handleSavedLoop();
   } else if (e.code == 'KeyL') {
     toggleLooping();
   } else if (BRACKET_CODES.includes(e.code)) {
@@ -366,11 +389,12 @@ function initializeVideo(event) {
 }
 
 function setUrl() {
-  var msg, reply, vid;
+  var prefix, msg, reply, vid;
+  prefix = '';
   msg = 'Enter YouTube URL';
   while (true) {
     try {
-      reply = getReply(msg);
+      reply = getReply(prefix + msg);
       if (! reply) break;
       vid = urlToVideoId(reply);
       if (vid) {
@@ -378,11 +402,11 @@ function setUrl() {
         initializeVideo(null);
         break;
       } else {
-        msg = 'Failed to load YouTube video. Try again';
+        prefix = 'Failed to load YouTube video.\n\n';
       }
     }
     catch (err) {
-      msg = 'Invalid URL. Try again';
+      prefix = 'Invalid URL.\n\n';
     }
   }
 }
@@ -406,17 +430,18 @@ function doPlayPause() {
 function doSeek(direction, small, toStart, toJump) {
   // FF or Rew either 1 or 5 seconds.
   // Or just jump to the video/loop start.
-  var secs, curr, loc, msg, reply;
+  var secs, curr, loc, prefix, msg, reply;
   if (toStart) {
     loc = vi.loop ? vi.start : 0;
   } else if (toJump) {
+    prefix = '';
     msg = 'Enter M:SS location';
     while (true) {
-      reply = getReply(msg);
+      reply = getReply(prefix + msg);
       if (! reply) return;
       secs = fromMinSec(reply);
       if (secs) break;
-      msg = 'Invalid reply. Try again';
+      prefix = 'Invalid reply.\n\n';
     }
     loc = bounded(secs, 0, vi.duration);
   } else {
@@ -449,12 +474,18 @@ function adjustSpeed(direction, big, reset) {
 }
 
 //
-// Set or adjust loop start/end points.
+// Manage loops.
 //
 
 function toggleLooping() {
-  vi.loop = ! vi.loop;
-  updateLoopHtml();
+  // Turn looping off or on (the latter if valid).
+  if (vi.loop) {
+    vi.loop = false;
+    updateLoopHtml();
+  } else if (vi.start < vi.end) {
+    vi.loop = true;
+    updateLoopHtml();
+  }
 }
 
 function setLoopPoint(isStart, manage) {
@@ -469,7 +500,12 @@ function setLoopPoint(isStart, manage) {
   lp = curr;
   if (manage) {
     // Bail if empty reply.
-    msg = `Loop ${k}: M:SS to set | SS to nudge | . to reset`
+    msg = [
+      `Loop ${k}:`,
+      '- Set: M:SS',
+      '- Nudge: SS or -SS',
+      '- Reset: .'
+    ].join('\n');
     d = getReplySetNudge(msg, toMinSec(curr, 0));
     if (! d) return;
 
@@ -483,11 +519,51 @@ function setLoopPoint(isStart, manage) {
     }
   }
 
-  // Set the new loop point only if it would preverse START < END.
-  ok = (isStart && lp < vi.end) || (! isStart && vi.start < lp);
-  if (ok) {
-    vi[k] = lp;
-    updateLoopHtml();
+  // Set the new loop point.
+  // We do not enforce START < END here.
+  vi[k] = lp;
+  updateLoopHtml();
+}
+
+function handleSavedLoop() {
+  // Manages saved loops:
+  //
+  //   N   Load save loop N.
+  //   sN  Save current loop to loop N.
+  //   -N  Reset loop N.
+  //
+  var msg, reply, m, k;
+
+  // Prompt user and return on empty reply.
+  msg = [
+    'Saved loops:',
+    '- Load a saved loop: N',
+    '- Save current loop: sN',
+    '- Delete a saved loop: -N'
+  ].join('\n');
+  m = getReplyRgx(msg, /^[s\-]?[1-5]$/);
+  if (! m) return;
+
+  // Save, reset, or load.
+  reply = m[0];
+  k = 'L' + reply.slice(-1);
+  if (reply.includes('-')) {
+    // Reset.
+    vi[k] = null;
+    updateSavedLoopsHtml();
+  } else if (reply.includes('s')) {
+    // Save.
+    if (loopIsDefined(vi)) {
+      vi[k] = {start: vi.start, end: vi.end};
+      updateSavedLoopsHtml();
+    }
+  } else {
+    // Load.
+    if (loopIsDefined(vi[k])) {
+      vi.start = vi[k].start;
+      vi.end = vi[k].end;
+      updateLoopHtml();
+    }
   }
 }
 
@@ -500,7 +576,12 @@ function handleMark(m, manage) {
   curr = player.getCurrentTime();
   if (manage) {
     // Bail if empty reply.
-    msg = `Mark ${m}: M:SS to set | SS to nudge | . to reset`
+    msg = [
+      `Mark ${m}:`,
+      '- Set: M:SS',
+      '- Nudge: SS or -SS',
+      '- Reset: .'
+    ].join('\n');
     d = getReplySetNudge(msg, toMinSec(curr, 0));
     if (! d) return;
     // Otherwise, set the mark based on the kind of reply we got.
@@ -508,7 +589,7 @@ function handleMark(m, manage) {
       vi[m] = bounded(d.set, 0, vi.duration);
     } else if (d.nudge !== null) {
       vi[m] = bounded(vi[m] + d.nudge, 0, vi.duration);
-    } else {
+    } else if (d.reset) {
       vi[m] = null;
     }
     updateMarksHtml();
@@ -527,11 +608,18 @@ function handleFavorite() {
   //   KEY URL      # Define a favorite.
   //   KEY .        # Same, using current URL.
   //   KEY -        # Delete a favorite.
-  var msg = 'Enter favorite: KEY | KEY URL | KEY . | KEY -';
-  var reply, xs, vid, k, v;
-  var save = false;
+  var prefix, msg, save, reply, xs, vid, k, v;
+  prefix = '';
+  msg = [
+    'Favorites:',
+    '- Open: KEY',
+    '- Define: KEY URL',
+    '- Define using current video: KEY .',
+    '- Delete: KEY -',
+  ].join('\n');
+  save = false;
   while (true) {
-    reply = getReply(msg);
+    reply = getReply(prefix + msg);
     if (reply == '') return;
     xs = reply.split(' ');
     if (xs.length == 1) {
@@ -544,7 +632,7 @@ function handleFavorite() {
         initializeVideo(null);
         break;
       } else {
-        msg = 'KEY does not exist. Try again';
+        prefix = 'KEY does not exist.\n\n';
       }
     } else if (xs.length == 2 && xs[1] == '-') {
       // Delete a favorite.
@@ -562,10 +650,10 @@ function handleFavorite() {
         save = true;
         break;
       } else {
-        msg = 'Invalid URL. Try again';
+        prefix = 'Invalid URL.\n\n';
       }
     } else {
-      msg = 'Invalid reply. Try again';
+      prefix = 'Invalid reply.\n\n';
     }
   }
   // Persist if changes were made.
@@ -589,7 +677,10 @@ function shareUrl() {
   // Copy non-null vi info into the URL's search params.
   p = u.searchParams;
   for ([k, v] of Object.entries(vi)) {
-    if (v !== null) {
+    if (LOOP_KEYS.includes(k) && loopIsDefined(v)) {
+      v = v.start.toFixed(2) + '-' + v.end.toFixed(2);
+      p.set(k, v);
+    } else if (v !== null) {
       v = typeof v == 'number' ? v.toFixed(2) : v.toString();
       p.set(k, v);
     }
@@ -625,9 +716,18 @@ function appInfoJson() {
 
 function clearStorage() {
   // After confirmation clears localStorage of everything or just favorites.
-  var msg, reply, k;
-  msg = 'Enter what to clear: favs | marks | VIDEO_ID | `VIDS` | `ALL`';
-  reply = getReply(msg);
+  var prefix, msg, reply, k;
+  prefix = '';
+  msg = [
+    'Enter what to clear:',
+    '- Favorites: favs',
+    '- Marks: marks',
+    '- Saved loops: loops',
+    '- Settings for a video: VIDEO_ID',
+    '- Settings for all videos: VIDS',
+    '- All: ALL',
+  ].join('\n');
+  reply = getReply(prefix + msg);
   if (reply == 'favs') {
     // Favorites.
     favs = {};
@@ -635,6 +735,11 @@ function clearStorage() {
   } else if (reply == 'marks') {
     // Marks.
     for (k of MARK_KEYS) {
+      vi[k] = null;
+    }
+  } else if (reply == 'loops') {
+    // Loops.
+    for (k of LOOP_KEYS) {
       vi[k] = null;
     }
   } else if (reply == 'VIDS') {
@@ -667,19 +772,20 @@ function saveAppInfo() {
 
 function restoreAppInfo() {
   // Prompt user for JSON text. Uses it to restore localStorage.
-  var msg, reply, d, k, v;
+  var prefix, msg, reply, d, k, v;
 
   // Get JSON from user.
+  prefix = '';
   msg = 'Enter application information as JSON';
   while (true) {
-    reply = getReply(msg);
+    reply = getReply(msg + prefix);
     if (! reply) return;
     try {
       d = JSON.parse(reply);
       break;
     }
     catch (err) {
-      msg = 'Invalid JSON. Try again';
+      prefix = 'Invalid JSON.\n\n';
     }
   }
 
@@ -734,10 +840,47 @@ function fromMinSec(txt) {
   }
 }
 
+function toLoopMmSS(d) {
+  // Takes an object holding start/end points.
+  // Returns a 'M:SS - M:SS' string.
+  return (
+    loopIsDefined(d) ?
+    toMinSec(d.start) + ' - ' + toMinSec(d.end) :
+    HTML_MISSING
+  );
+}
+
+function loopIsDefined(d) {
+  // Takes an object holding start/end points.
+  // Returns true if the attributes hold numbers.
+  return (
+    d &&
+    typeof d.start == 'number' &&
+    typeof d.end == 'number'
+  );
+}
+
 function getReply(msg, defReply = '') {
   // Prompts user. Returns reply string or ''.
   var reply = prompt(msg, defReply) || '';
   return reply.trim();
+}
+
+function getReplyRgx(msg, rgx, defReply = '') {
+  // Prompts user. Returns match object if reply
+  // string matches regex, or null on empty reply.
+  var prefix, reply, m;
+  prefix = '';
+  while (true) {
+    // Return null if empty reply.
+    reply = getReply(prefix + msg, defReply);
+    if (! reply) return null;
+
+    // Return if valid.
+    m = reply.match(rgx);
+    if (m) return m;
+    prefix = 'Invalid reply.\n\n';
+  }
 }
 
 function getReplySetNudge(msg, defReply) {
@@ -746,13 +889,15 @@ function getReplySetNudge(msg, defReply) {
   //   SS     Nudge
   //   .      Reset
   //
-  //   Where M is an int and SS is int or float.
+  //   Where M is an int
+  //         SS is int or float
   //
   // Prompts until reply is empty or value.
   // Returns null or an object (d) indicating the choice made.
   var prefix, rgx, d, reply, m;
 
   // Setup the validation regex and the reply object.
+  // The two regexes are the same except the last alternative.
   prefix = '';
   rgx = /^(?:(\d+:\d+(?:\.\d+)?)|(-?\d+(?:\.\d+)?)|(\.))$/;
   d = {set: null, nudge: null, reset: false}
@@ -766,7 +911,7 @@ function getReplySetNudge(msg, defReply) {
     // Try again if invalid reply.
     m = reply.match(rgx);
     if (! m) {
-      prefix = "Invalid, try again.\n\n";
+      prefix = 'Invalid reply.\n\n';
       continue;
     }
 
@@ -822,6 +967,7 @@ function updateAllHtml() {
   updateSpeedHtml();
   updateLoopHtml();
   updateMarksHtml();
+  updateSavedLoopsHtml();
   updateFavsHtml();
 }
 
@@ -837,15 +983,15 @@ function updateSpeedHtml() {
 
 function updateLoopHtml() {
   // Loop HTML.
-  var div, txt;
+  var div, suffix;
   shouldPersist = true;
   div = document.getElementById('loopId');
   if (div && vi.end && vi.start != null) {
-    txt = toMinSec(vi.start) + ' - ' + toMinSec(vi.end);
-    if (! vi.loop) {
-      txt += ' [off]';
-    }
-    div.innerHTML = txt;
+    suffix = (
+      vi.start >= vi.end ? ' [invalid]' :
+      ! vi.loop ? ' [off]' : ''
+    );
+    div.innerHTML = toLoopMmSS(vi) + suffix;
   }
 }
 
@@ -856,6 +1002,17 @@ function updateMarksHtml() {
   div = document.getElementById('marksId');
   if (div) {
     txt = MARK_KEYS.map(k => toMinSec(vi[k])).join(HTML_ITEM_SEP);
+    div.innerHTML = txt;
+  }
+}
+
+function updateSavedLoopsHtml() {
+  // Saved loops HTML.
+  var div, txt;
+  shouldPersist = true;
+  div = document.getElementById('loopsId');
+  if (div) {
+    txt = LOOP_KEYS.map(k => toLoopMmSS(vi[k])).join(HTML_ITEM_SEP);
     div.innerHTML = txt;
   }
 }
@@ -893,9 +1050,13 @@ function updateStatus() {
     }
 
     // Looping.
-    if (vi.loop) {
-      curr = player.getCurrentTime();
-      if (vi.end - curr <= 0 || curr < vi.start) player.seekTo(vi.start);
+    if (vi.loop && loopIsDefined(vi)) {
+      if (vi.start < vi.end) {
+        curr = player.getCurrentTime();
+        if (vi.end - curr <= 0 || curr < vi.start) player.seekTo(vi.start);
+      } else {
+        vi.loop = false;
+      }
     }
 
     // Location HTML.
