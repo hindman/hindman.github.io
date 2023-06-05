@@ -85,8 +85,8 @@ Looping     | .         | .
 .           | L         | Toggle looping on/off
 .           | [         | Set loop start to current time
 .           | SHIFT-[   | Set, nudge, or reset loop start (prompted)
-.           | [         | Set loop end to current time
-.           | SHIFT-[   | Set, nudge, or reset loop end (prompted)
+.           | ]         | Set loop end to current time
+.           | SHIFT-]   | Set, nudge, or reset loop end (prompted)
 .           | SHIFT-L   | Saved loops: load, save, or reset (prompted)
 Marks       | .         | .
 .           | 1         | Go to mark 1
