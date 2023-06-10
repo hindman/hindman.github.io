@@ -33,7 +33,7 @@ Reference:
 
 const APP_NAME = 'LoopLlama';
 
-// Keyboard code.
+// Keyboard codes.
 const BRACKET_CODES = ['BracketLeft', 'BracketRight'];
 const SEEK_START_CODES = ['Digit0', 'Numpad0', 'ArrowUp'];
 const DIGIT_CODES = [
@@ -73,8 +73,9 @@ Play video  | .         | .
 .           | F         | Set or switch to a favorite video
 .           | SHIFT-U   | Create ${APP_NAME} URL for sharing
 Navigation  | .         | .
-.           | LEFT      | Rew 5 sec (SHIFT for 1 sec)
 .           | RIGHT     | FF 5 sec (SHIFT for 1 sec)
+.           | LEFT      | Rew 5 sec (SHIFT for 1 sec)
+.           | DOWN      | Toggle behavior of SHIFT as it relates to FF/Rew.
 .           | 0 or UP   | Go to video start (or loop start, if looping)
 .           | J         | Enter a specific MM:SS and jump to it
 Speed       | .         | .
@@ -123,6 +124,11 @@ const DEFAULTS = {
     min: 0.25,
     max: 2.0,
     delta: 0.05
+  },
+  // Amounts for small and regular seeks (FF or Rew).
+  seeks: {
+    small: 1,
+    regular: 5,
   },
   // Video-specific info.
   vi: {
@@ -258,6 +264,9 @@ function getStoredVideoInfo(vid) {
 // If true, will persist localStorage during updateStatus() monitoring.
 var shouldPersist = false;
 
+// If true, the behavior of SHIFT as it relates to FF/Rew has been flipped.
+var seekFlipped = false;
+
 // Maps each favorite ABBREV to its VIDEO_ID.
 var favs = buildInitialFavs();
 
@@ -325,6 +334,8 @@ function handleKeyDown(event) {
     doSeek(0, false, true, false);
   } else if (e.code == 'KeyJ') {
     doSeek(0, false, false, true);
+  } else if (e.code == 'ArrowDown') {
+    flipSeekAmount();
 
   // Speed.
   } else if (e.code == 'Minus') {
@@ -427,10 +438,10 @@ function doPlayPause() {
 // Seek.
 //
 
-function doSeek(direction, small, toStart, toJump) {
+function doSeek(direction, shifted, toStart, toJump) {
   // FF or Rew either 1 or 5 seconds.
   // Or just jump to the video/loop start.
-  var secs, curr, loc, prefix, msg, reply;
+  var loc, secs, seeks, i, curr, prefix, msg, reply;
   if (toStart) {
     loc = vi.loop ? vi.start : 0;
   } else if (toJump) {
@@ -445,11 +456,17 @@ function doSeek(direction, small, toStart, toJump) {
     }
     loc = bounded(secs, 0, vi.duration);
   } else {
-    secs = direction * (small ? 1 : 5);
+    seeks = [DEFAULTS.seeks.regular, DEFAULTS.seeks.small];
+    i = (0 + shifted + seekFlipped) % 2;
+    secs = direction * seeks[i];
     curr = player.getCurrentTime();
     loc = bounded(curr + secs, 0, vi.duration);
   }
   player.seekTo(loc);
+}
+
+function flipSeekAmount() {
+  seekFlipped = ! seekFlipped;
 }
 
 //
@@ -1063,7 +1080,7 @@ function updateStatus() {
     loc = player.getCurrentTime();
     if (loc) {
       div = document.getElementById('locationId');
-      div.innerHTML = toMinSec(loc);
+      div.innerHTML = toMinSec(loc) + (seekFlipped ? ' [small-seeks]' : '');
     }
   }
 
