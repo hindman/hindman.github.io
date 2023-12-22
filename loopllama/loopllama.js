@@ -558,7 +558,7 @@ function handleSavedLoop() {
     '- Save current loop: sN',
     '- Delete a saved loop: -N'
   ].join('\n');
-  m = getReplyRgx(msg, /^[s\-]?[1-5]$/);
+  m = getReplyRgx(msg, /^[s\-]?[1-9]$/);
   if (! m) return;
 
   // Save, reset, or load.
