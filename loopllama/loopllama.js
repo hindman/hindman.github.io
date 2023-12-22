@@ -45,7 +45,7 @@ const DIGIT_CODES = [
 
 // Attributes of vi.
 const MARK_KEYS = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9'];
-const LOOP_KEYS = ['L1', 'L2', 'L3', 'L4', 'L5'];
+const LOOP_KEYS = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8', 'L9'];
 
 // Attributes of localStorage.
 const FAVS_KEY = 'FAVORITES';
