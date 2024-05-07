@@ -6,6 +6,9 @@ TODO:
 
   Interface using multi-key shortcuts [probably not]
 
+  Go-back: remember previous location so you can go back [eg,
+  after inadvertent key press].
+
 Reference:
 
   - YouTube docs:
@@ -153,6 +156,10 @@ const DEFAULTS = {
     L3: null,        //
     L4: null,        //
     L5: null         //
+    L6: null         //
+    L7: null         //
+    L8: null         //
+    L9: null         //
   }
 };
 
