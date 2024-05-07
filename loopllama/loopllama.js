@@ -155,10 +155,10 @@ const DEFAULTS = {
     L2: null,        //
     L3: null,        //
     L4: null,        //
-    L5: null         //
-    L6: null         //
-    L7: null         //
-    L8: null         //
+    L5: null,        //
+    L6: null,        //
+    L7: null,        //
+    L8: null,        //
     L9: null         //
   }
 };
