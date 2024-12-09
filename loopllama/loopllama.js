@@ -115,7 +115,7 @@ const WINDOW_WIDTH = (
   document.documentElement.clientWidth ||
   document.body.clientWidth
 );
-const IFRAME_SIZE_FACTOR = Math.floor(.75 * (WINDOW_WIDTH / 16));
+const IFRAME_SIZE_FACTOR = Math.floor(.95 * (WINDOW_WIDTH / 16));
 
 const DEFAULTS = {
   // iFrame size.
