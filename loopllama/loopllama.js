@@ -17,7 +17,7 @@ Reference:
 
   - Some videos to use when working on the code.
 
-    Catfish:   https://www.youtube.com/watch?v=zP4lYpsfL8c
+    Catfish:   https://www.youtube.com/watch?v=zP4lYpsfL8c  [blocked; see below]
     Muddy:     https://www.youtube.com/watch?v=bnsw4sySaxw
     Hudson:    https://www.youtube.com/watch?v=HxTU8xylgMw
     Jack Ruch: https://www.youtube.com/watch?v=WUm3X_BBQw0
@@ -698,13 +698,13 @@ function shareUrl() {
   curr = new URL(window.location.href);
   u = new URL(curr.origin + curr.pathname)
 
-  // Copy non-null vi info into the URL's search params.
+  // Copy non-null/non-undefined vi info into the URL's search params.
   p = u.searchParams;
   for ([k, v] of Object.entries(vi)) {
     if (LOOP_KEYS.includes(k) && loopIsDefined(v)) {
       v = v.start.toFixed(2) + '-' + v.end.toFixed(2);
       p.set(k, v);
-    } else if (v !== null) {
+    } else if (v != null) {
       v = typeof v == 'number' ? v.toFixed(2) : v.toString();
       p.set(k, v);
     }
@@ -953,12 +953,16 @@ function getReplySetNudge(msg, defReply) {
 }
 
 function urlToVideoId(txt) {
-  // Takes a URL string. Returns the 'v' or 'vid' query parameter or null.
+  // Takes a URL string and tries to get video ID via:
+  //   'v' query parameter;     # https://www.youtube.com/watch?v=F6va6tg62qg
+  //   'vid' query parameter;
+  //   URL path.                # https://youtu.be/F6va6tg62qg
+  // Returns video ID or null.
   var url, p;
   try {
     url = new URL(txt);
     p = url.searchParams;
-    return p.get('v') || p.get('vid');
+    return p.get('v') || p.get('vid') || url.pathname.substring(1) || null
   }
   catch (err) {
     return null;
