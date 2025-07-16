@@ -5,12 +5,13 @@
 #
 # Usage:
 #
+#   # Run from root of loopllama directory.
 #   ./scripts/loopllama serve|kill|open|cmd|help
 #
 ####
 
 from http.server import SimpleHTTPRequestHandler
-from os import chdir, getpid
+from os import getpid
 from socketserver import TCPServer
 from subprocess import run
 from sys import argv
@@ -19,7 +20,6 @@ from short_con import cons
 APP = 'loopllama'
 PORT = 8765
 URL = f'http://localhost:{PORT}/{APP}.html'
-DIR = f'/Users/mhindman/proj/hindman.github.io/{APP}'
 ACTIONS = cons('serve kill open cmd')
 USAGE = f'Usage: {APP} ' + '|'.join(ACTIONS.keys())
 UTF = 'utf-8'
@@ -29,7 +29,6 @@ def main(args):
     action = args[0] if args else None
 
     if action == ACTIONS.serve:
-        chdir(DIR)
         try:
             with TCPServer(('', PORT), SimpleHTTPRequestHandler) as httpd:
                 print(f'Serving at {URL}')
