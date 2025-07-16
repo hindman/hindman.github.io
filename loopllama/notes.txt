@@ -1,0 +1,59 @@
+
+==============================================================================
+LoopLlama   [small-image]                                  Help|About|Settings
+==============================================================================
+
+  ---------------------------------------------------
+  |                                                 |
+  |                                                 |
+  |                                                 |
+  |                                                 |
+  |                                                 |
+  |                     YOUTUBE                     |
+  |                                                 |
+  |                                                 |
+  |                                                 |
+  |                                                 |
+  |                                                 |
+  |                                                 |
+  |                                                 |
+  ---------------------------------------------------
+
+   _________________________________________________
+   m______m______m___*_______m_______m______m_______          # Timline
+
+
+    UI elements:
+
+        url        | text
+        time       | time [current]
+        loop       | toggle
+        start      | time [loop start]
+        end        | time [loop end]
+        speed      | pct
+        play/pause | button
+        share      | button
+
+    Timeline info:
+
+        Marks
+        Current location
+        Current loop endpoints, if any
+
+    Modal: marks and loops
+
+        Editing interface to manage 
+
+    Modal: favorites
+
+        Editing interface to manage 
+
+    Modal: settings
+
+        navigation increments
+        layout: full width or compact
+
+    Modal: navigation history
+
+    Modal: help
+
