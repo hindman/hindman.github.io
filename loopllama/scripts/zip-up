@@ -1,0 +1,14 @@
+#! /usr/bin/env bash
+
+set -o nounset
+set -o errexit
+
+repo='hindman.github.io'
+zip_file="$repo.zip"
+
+rm -f $HOME/down/$zip_file
+
+cd "$HOME/proj"
+zip -x "$repo/.git/**" -r $repo.zip $repo/
+mv $zip_file $HOME/down/
+
