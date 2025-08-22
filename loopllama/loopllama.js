@@ -387,7 +387,6 @@ function handleKeyDown(event) {
 
   } else if (e.code == 'KeyD' && e.shiftKey) {
     updateStatus(true);
-    displayInfo('UPDATED_DURATION', vi.duration);
 
   }
 }
@@ -1075,7 +1074,7 @@ function updateStatus(resetDuration = false) {
       dur = player.getDuration();
       if (dur) {
         vi.duration = dur;
-        if (vi.end == null) {
+        if (resetDuration || vi.end == null) {
           vi.end = dur;
           updateLoopHtml();
         }
