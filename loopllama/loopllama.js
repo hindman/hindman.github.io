@@ -387,6 +387,7 @@ function handleKeyDown(event) {
 
   } else if (e.code == 'KeyD' && e.shiftKey) {
     updateStatus(true);
+    displayInfo('UPDATED_DURATION', vi.duration);
 
   }
 }
