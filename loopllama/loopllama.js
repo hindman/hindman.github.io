@@ -102,7 +102,8 @@ Application | .         | .
 .           | S         | Save app info as JSON file
 .           | SHIFT-S   | Restore app info from JSON text
 .           | SHIFT-C   | Clear app info: favorites; marks; info for one
-.           | "         | video; info for all videos; or everything.
+.           | "         | video; info for all videos; or everything
+.           | SHIFT-D   | Update video duration
 `.trim();
 
 //
@@ -383,6 +384,9 @@ function handleKeyDown(event) {
 
   } else if (e.code == 'KeyC' && e.shiftKey) {
     clearStorage();
+
+  } else if (e.code == 'KeyD' && e.shiftKey) {
+    updateStatus(true);
 
   }
 }
@@ -1060,13 +1064,13 @@ function updateFavsHtml() {
 // Start the updateStatus() monitoring function, which runs every second.
 //
 
-function updateStatus() {
+function updateStatus(resetDuration = false) {
   var div, loc, dur, curr;
 
   if (player) {
 
     // Set vi attributes: duration and end.
-    if (! vi.duration) {
+    if (resetDuration || ! vi.duration) {
       dur = player.getDuration();
       if (dur) {
         vi.duration = dur;
