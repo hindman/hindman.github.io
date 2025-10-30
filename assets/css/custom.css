@@ -1,0 +1,15 @@
+/* Hide the taxonomy footer (tags/categories) under posts. */
+.page__taxonomy { display: none !important; }
+
+/* Colors for footer background & text. */
+.page__footer {
+  background: #8cb7cc !important;
+  color: #000 !important;
+}
+
+/* Current page chip */
+nav.pagination a.disabled.current {
+  background: #8cb7cc !important;  /* your footer color */
+  color: #393e46 !important;           /* or #000 / #fff */
+}
+
