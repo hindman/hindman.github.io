@@ -46,6 +46,7 @@ exclude:
   - vendor/gems/
   - vendor/ruby/
   # Add others here.
+  - _notes/
   - tmp/
 
 # Plugins (previously gems:)
