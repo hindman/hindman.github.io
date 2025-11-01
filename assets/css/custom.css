@@ -15,3 +15,49 @@
 /*   color: #393e46 !important;           /1* or #000 / #fff *1/ */
 /* } */
 
+/* .sidebar, */
+/* .sidebar:hover { opacity: 1 !important; } */
+
+/* .author__avatar img { */
+/*   border-radius: 0 !important; */
+/*   padding: 0 !important; */
+/*   border: 0 !important; */
+/*   box-shadow: none !important; */
+/* } */
+
+/* .author__avatar { */
+/*   border-bottom: 1px solid rgba(255, 255, 255, 0.25); */
+/*   padding-bottom: 0.75em; */
+/*   margin-bottom: 0.75em; */
+/*   width: 40%; */
+/* } */
+
+/* Remove sidebar hover-fade */
+.sidebar,
+.sidebar:hover {
+  opacity: 1 !important;
+}
+
+/* Author image: remove oval frame and allow full width */
+.sidebar .author__avatar {
+  width: 80% !important;
+  max-width: none !important;
+  margin: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  padding-bottom: 0.75em;
+  margin-bottom: 0.75em;
+}
+
+/* ensure the image itself fills the container */
+.sidebar .author__avatar img,
+.sidebar .author__avatar a img {
+  display: block;
+  width: 100% !important;
+  height: auto !important;
+  max-width: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
