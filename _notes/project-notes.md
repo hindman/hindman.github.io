@@ -6,9 +6,22 @@ LoopLlama v1
     - add to navbar
     - maybe add notice [see CG]
 
+_config:
+
+    description
+    twitter_username
+    github_username
+    timezone
+
 RH rudiments #1: alternating bass
 
 RH rudiments #2: Giuliani
+
+Don't start too big:
+    - musically viable tempo
+    - Start by practicing smaller parts
+    - add-a-beat practing strategy
+    https://chatgpt.com/c/69056e95-7910-8326-bee6-dae0c53cc18b
 
 ## dev notes
 
@@ -33,4 +46,15 @@ Serving the website locally:
     bundle exec jekyll serve
 
     open http://127.0.0.1:4000/
+
+TOC icons:
+
+    leaf
+    tree
+    seedling
+    sprout
+    feather-alt
+    sun
+    water
+    droplet
 

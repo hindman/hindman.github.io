@@ -2,14 +2,16 @@
 .page__taxonomy { display: none !important; }
 
 /* Colors for footer background & text. */
-.page__footer {
-  background: #8cb7cc !important;
-  color: #000 !important;
-}
+
+/* .page__footer { */
+/*   background: #8cb7cc !important; */
+/*   color: #000 !important; */
+/* } */
 
 /* Current page chip */
-nav.pagination a.disabled.current {
-  background: #8cb7cc !important;  /* your footer color */
-  color: #393e46 !important;           /* or #000 / #fff */
-}
+
+/* nav.pagination a.disabled.current { */
+/*   background: #8cb7cc !important;  /1* your footer color *1/ */
+/*   color: #393e46 !important;           /1* or #000 / #fff *1/ */
+/* } */
 
