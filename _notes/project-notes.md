@@ -1,6 +1,8 @@
 
 ## Posts
 
+Project notes [see CG].
+
 LoopLlama v1
     - page, not post
     - add to navbar
