@@ -59,9 +59,7 @@ plugins:
 # Author profile.
 author:
   name   : ''
-  # avatar : '/assets/images/jazz-band.jpg'
-  avatar : '/assets/images/abstract.jpeg'
-  # avatar : '/assets/images/old-guitarist-brown.webp'
+  avatar : '/assets/images/juan-gris-guitar-color.jpg'
   bio    : ''
 
 # Footer.
