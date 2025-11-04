@@ -1,19 +1,22 @@
 
 ## Posts
 
+Reading column margins/width.
+
+about.md
+    - Obfuscate email.
+
+Two repo setup:
+    - https://chatgpt.com/g/g-p-69012377fdf08191894a49cb05e01da6-ghp-writing/c/6909abee-d9ac-8327-89b9-544602e510be
+
 Project notes [see CG].
+
+Practicing right-hand rudiments: muting
 
 LoopLlama v1
     - page, not post
     - add to navbar
     - maybe add notice [see CG]
-
-_config:
-
-    description
-    twitter_username
-    github_username
-    timezone
 
 RH rudiments #1: alternating bass
 

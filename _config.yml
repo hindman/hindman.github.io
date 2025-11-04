@@ -10,12 +10,7 @@
 
 # Site settings.
 title: The Fifth Fret
-email:
-description: >-
-  A small blog with occasional writing about learning guitar,
-  studying history, and making sense of politics.
-twitter_username: username
-github_username: username
+description: Essays on guitar, history, and politics.
 minimal_mistakes_skin: dark
 search: true
 
@@ -27,7 +22,8 @@ remote_theme: mmistakes/minimal-mistakes
 permalink: /:categories/:title/
 paginate: 5
 paginate_path: /page:num/
-timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+timezone: US/Pacific
+
 
 include:
   - _pages
