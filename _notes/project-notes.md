@@ -1,10 +1,17 @@
 
-## Posts
+## TODO
 
-Reading column margins/width.
+Posts:
+    - Practicing right-hand rudiments: muting
+    - RH rudiments #1: alternating bass
 
-about.md
-    - Obfuscate email.
+Two-repo setup [TWOREPO].
+
+Posts:
+    - RH rudiments #2: Giuliani
+    - Add-a-beat. https://chatgpt.com/c/69056e95-7910-8326-bee6-dae0c53cc18b
+
+## TODO notes
 
 Two repo setup:
 
@@ -93,26 +100,11 @@ Two repo setup:
 
         - Confirm GHP settings for hindman.github.io.
 
-Project notes [see CG].
-
-Practicing right-hand rudiments: muting
-
-LoopLlama v1
-    - page, not post
-    - add to navbar
-    - maybe add notice [see CG]
-
-RH rudiments #1: alternating bass
-
-RH rudiments #2: Giuliani
-
-Don't start too big:
-    - musically viable tempo
-    - Start by practicing smaller parts
-    - add-a-beat practing strategy
-    https://chatgpt.com/c/69056e95-7910-8326-bee6-dae0c53cc18b
-
 ## dev notes
+
+Resources:
+
+    - https://github.com/mmistakes/minimal-mistakes
 
 Initial Ruby setup:
 

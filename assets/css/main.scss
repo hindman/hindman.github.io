@@ -1,0 +1,17 @@
+---
+# Keep: main.scss requires YAML front matter.
+---
+
+/* Increase reading column width. Set before imports. */
+$max-width: 1440px;
+$content-width: 860px;
+$right-sidebar-width: 300px;
+$right-sidebar-width-narrow: 260px;
+$right-sidebar-width-wide: 360px;
+
+/* Import the dark skin. */
+@import "minimal-mistakes/skins/dark";
+
+/* Import the theme. */
+@import "minimal-mistakes";
+
