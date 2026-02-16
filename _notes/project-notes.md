@@ -8,8 +8,13 @@ Posts:
 Two-repo setup [TWOREPO].
 
 Posts:
+    - Blues turnarounds: a systematic approach
     - RH rudiments #2: Giuliani
     - Add-a-beat. https://chatgpt.com/c/69056e95-7910-8326-bee6-dae0c53cc18b
+    - Triads: lots to say.
+    - 76 reasons why the filibuster is a bad idea
+    - MTG and Linda Litzke: https://chatgpt.com/c/691bca59-15ac-832b-b9de-8d1f38ddd596
+    - Skepticism of the science of music practice: https://chatgpt.com/c/692dd380-d5d0-832c-ad74-a768b049c47b
 
 ## TODO notes
 
