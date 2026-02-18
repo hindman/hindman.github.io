@@ -1,7 +1,151 @@
 
 # Fingerstyle Rhythmic Rudiments: Raw Notes
 
-## Notes on the intro so far
+## Other topics to cover
+
+How to eat an elephant:
+    - Nobody chooses a musical hobby to work drill rudiments: we come for the
+      songs.
+    - I approach skill building like this in very small steps.
+    - At the start of each practice session I tend to work for about 5 minutes
+      on whatever my current technique project happens to be.
+    - I probably spent a few months on these rudiments the first time I worked
+      through them systematically.
+    - At the time I was probably in the beginner-to-intermediate skill range
+      for fingerstyle guitar, so someone in the beginning stage would need to
+      spend more time per rudiment than I did.
+    - In any case, some of the rudiments are easy and can be checked off you
+      list after a session or two.
+    - Others might takes several days of practice.
+    - I don't recommend that you grind on any single exercise for a long time.
+      Work on one for a little while. If you are not fluent yet, that's fine.
+      Come back the next day and you will probably be a bit better at it. Your
+      brain and hands do work over night. Be patient and give them the time to
+      perform their magic.
+    - Small bits of steady, focused work can accomplish a lot more than you
+      might think at first.
+
+What if I'm not crazy enough to eat a whole elephant?
+    - I worked through these exercises a second time when preparing to write
+      this post.
+    - During that second pass, I collected a list the rudiments that were my
+      favorites or that seemed most promising musically.
+    - If you're looking for a less dauting program, I offer two pathways
+      below. One is a bare minimum: "Five picking patterns you MUST know" in
+      the jargon of our time.
+    - The other my subjective listing of the "greatest hits", which whittles
+      the job down to about a quarter of its size.
+    - Let's start with the bare minimum.
+
+The family of Travis picking patterns
+    - The rhythmic structures of some of these rudiments are found in some of
+      the most famous fingerstyle patterns.
+    - For example, if we focus on "Travis picking", we can start with Ex3.13,
+      which aligns with the picking pattern many people would call the
+      quintessential Travis pattern.
+    - We can substract one melody note to get Ex2.3, which could be described
+      as a minimal variant of Travis picking. This exercise is useful to
+      understand because it helps you understand the defining characteristics
+      of Travis picking are the melody notes on beat 1 and then the syncopated
+      melody note on beat 2&. That's the heart of it.
+    - We can go the other direction and add another note to the classic Travis
+      pattern. That gives use Ex4.30, which has the rhythmic shape of as the
+      well known picking pattern used in songs like Dust in the Wind. This
+      pattern also clues you into what we are doing as we augment classic
+      Travis: we are adding another syncopated note.
+    - Take one more step in that direction and we can add the final syncopated
+      melody note (1&), producing Ex5.15 which at various points in my notes I
+      have either called the London pattern or the Busy Travis pattern.
+      Lately, I lean toward the latter name.
+    - Footnote on Thorpe: his London is my Dust-in-wind. The song "Streets of
+      London" seems to mostly use my London, but does use my Dust-in-wind for
+      some bars.
+    - As a final variation to connect these Travis-related patterns to each
+      other, we can drop the melody note on beat 1, given us the rhythmic
+      shape of Ex4.50. That rhythm aligns with the outside-inside and
+      inside-outside picking patterns I learned in my introduction to
+      fingerstyle guitar: Mark Hason's "The Art of Solo Fingerpicking".
+    - All 5 of these patterns are essential. If you learn nothing else, learn
+      them. See table below.
+
+    Exercise | Melodic rhythm | Picking pattern
+    -------------------------------------------
+    Ex2.3    | 1 2&           | minimal travis
+    Ex3.13   | 1 2& 3&        | classic travis
+    Ex4.30   | 1 2& 3& 4&     | dust in wind
+    Ex5.15   | 1 1& 2& 3& 4&  | london
+    Ex4.50   | 1& 2& 3& 4&    | outside-inside; inside-outside
+
+The greatest hits:
+    - This listing is subjective.
+    - As I worked through the rudiments the second time I kept a list of the
+      exercises that seemed the most musically promising.
+    - As you'll discover, some of the exercises are musically quite dull: for
+      example, play a melody note on every downbeat, robot style.
+    - Others are so busy (as N gets large) that you feel a bit like you are
+      doing hand exercises more than playing music.
+    - I doggedly practiced them all and think they have helped me in building
+      skill. But a fair number of the exercises felt more like chores or doing
+      push ups.
+    - The list below is most not that. They are the rudiments that were fun to
+      play, the have known connections to famous picking patterns (the Travis
+      examples discussed already), or stuck me as having real musical
+      potential.
+    - I should emphasize that a rudiment's absense from this list of greatest
+      hits should not be interpreted as a negative verdict on its musical
+      potential.
+    - Remember that these exercises use a static melody. When you combine a
+      static melody with a robotically predictable rhythm, you create boredom.
+      But some truly great picking patterns (eg Ex5.15 or London and Ex4.50 or
+      Outside-inside) sound quite dull in the context of static-melody
+      rudiments but absolutely beautiful when the melody is more active.
+
+    GP file | Greatest hist exercises
+    -------------------------------------------------------
+    Ex1     | 1 2 4
+    Ex2     | 1 3 5 8 9 13 16 17 19 20 21 22 27
+    Ex3     | 2 4 6 12 13 14 15 27 31 33 35 36 45 49 50
+    Ex4     | 6 8 9 13 14 24 30 31 37 44 46 48 49 50 67 69
+    Ex5     | 9 15 18 24 32 34 41 45 54
+    Ex6     | 4 5 8 11 13 14 17 19 24 26
+
+Find the music in the rudiments:
+    - Whether you tackle all 256 rudiments or just a selected list, try to
+      make each one as musical as you can.
+    - Treat the dynamics, the melody articulation, sustain, and palm muting as
+      dials that you can turn to get as much music as you can out of each
+      exercise.
+    - Some of the rhythms work fine when played with a flowing, sustaining
+      style.
+    - Others might sound too busy that way, but aggressive muting or staccato
+      at various points can revive them musically.
+    - Sometimes a rudiment might be uninspiring when plucked in typical
+      fingerstyle fashion, but becomes interesting if the melody notes are
+      played in more of a strumming fashion with the fingers.
+    - Especially at moments before chord changes, a bit of strategic muting or
+      staccato can turn something that sounds clumsy into purposeful musical
+      decisions.
+    - In that regard, melody notes on beats 4 and especially 4& can be tricky,
+      a point that lends to explanatory power to the absence of 4& in the
+      Classic Travis picking pattern: the masters were practical and knew what
+      they were doing!
+
+When to say when:
+    - When have you finished a rudiment?
+    - My general approach was to select a target BPM and stop working on a
+      rudiment when I felt like I could play it controlled and accurate
+      manner.
+    - For rudiments that were more appealing musically I probably raised the
+      bar a bit. For rudiments that felt like mere physical exercises, I
+      tended not to push much beyond the target.
+    - What BPM should you select? It depends on your goals. I've never been
+      very attracted to super-fast musical styles, so raw speed was not a key
+      goal for me.
+    - Thus the 120 BPM in these .gp files is generally the tempo where I
+      stopped sharpening the pencil.
+    - For me the primary goal was to achieve basic hand coordination. If I
+      need raw speed I tend to deal with it in a case-by-case way whenever a
+      specific song part demands it.
 
 ## Git branches
 
@@ -163,20 +307,6 @@ exercises are designed to expose and correct.
 
 This is concrete and practical. It names a specific failure mode and
 positions the exercises as the solution.
-
----
-
-4. The rudiments frame
-
-Drummers have rudiments. Percussionists spend years drilling a small
-set of atomic stroke patterns until they're completely automatic, and
-then every complex rhythm they encounter is just a combination of
-things they've already internalized. Guitarists have nothing
-equivalent -- at least not in the fingerstyle tradition. The
-exercises here are an attempt to fill that gap.
-
-Clean and compact. Works well as a short opening paragraph before
-getting into the details.
 
 ---
 

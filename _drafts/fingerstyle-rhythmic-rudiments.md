@@ -19,7 +19,7 @@ Of course, the right hand isn't ignored entirely. Teachers address technique —
 how to hold the pick, where to anchor the hand, how classical players shape
 their nails and control the angle of attack. Intermediate students working on
 speed spend real time on right-hand mechanics: alternate picking, economy
-picking, building evenness at tempo. But this attention tends to cluster at
+picking, general shredding. But this attention tends to cluster at
 the extremes: foundational setup on one end, advanced facility on the other.
 
 Fingerstyle guitar, our genre, does devote some early energy to the right-hand
@@ -34,18 +34,18 @@ This post tries to fill that gap with 256 exercises, a number every software
 engineer loves. That volume might seem excessive — some form of completist
 insanity. All I can tell you is that some of the most obvious gains I've made
 as a fingerstyle player have followed periods of deliberate right-hand work,
-most notably the very exercises presented here. I'll say more about how I
-worked on this material and what it did for me later.
+most notably the very exercises presented here. Later I'll say more about how
+I worked on this material and what it did for me.
 
 Collectively, the exercises pose this challenge: can you play any rhythmic
 combination of melody 8th notes while keeping a typical alternating bass
 going. Drummers build these kinds of coordination skills by practicing
-rudiments, the foundational sticking patterns and rhythmic patterns they need
-to play a variety of musical styles. This collection of fingerstyle rudiments
-has a similar goal. If you can play all of them, you will have the core skills
-to quickly learn any fingerstyle pattern or melody within an alternating or
-steady-bass context on an 8th-note grid. That's a deep and broad musical
-terrain.
+"rudiments", the foundational sticking patterns and rhythmic patterns they
+need to play a variety of musical styles. This collection of fingerstyle
+rudiments has a similar goal. If you can play all of them, you will have the
+core skills to quickly learn almost any fingerstyle pattern or melody within
+an alternating or steady-bass context on an 8th-note grid.[^1] That's a deep
+and broad musical terrain.
 
 ## The exercises
 
@@ -61,16 +61,19 @@ assign a little bit of work to the left hand, but not much.
 
 The exercises are organized by how many times the fingers play per measure.
 Call that value N. There's a GuitarPro file for every value from N from 0
-through 8. When N equals 0 we have no melody at all: just alternating bass.
-Don't worry: it gets more interesting! When N equals 1, the fingers play
-melody notes exactly once per bar, and there are eight possible positions for
-that single note to occur: it could happen on any of the on-beats (1, 2, 3, or
-4) or the off-beats (1&, 2&, 3&, or 4&). Thus, the file
-rhythmic-rudiments-ex1.gp contains eight exercises (Ex1.1 through Ex1.8).
+through 8.
+
+For example, when N equals 1, the fingers play melody notes exactly once per
+bar, and there are eight possible positions for that single note to occur: it
+could happen on any of the on-beats (1, 2, 3, or 4) or the off-beats (1&, 2&,
+3&, or 4&). Thus, the file rhythmic-rudiments-ex1.gp contains eight exercises,
+Ex1.1 through Ex1.8.
 
 When N equals 2, the fingers play melody notes twice per bar. As you might
 recall from math class, the possible combos grow rapidly, giving us Ex2.1
-through Ex2.28 when N equals 2. Here's the tally sheet:
+through Ex2.28. The number of combinations peaks when N equals 4 and then
+declines in a mirror-like fashion. At the extremes (N=0 and N=8) there is only
+one possible way to arrange the melody notes. Here's the fully tally sheet:
 
     N     | Exercises
     -----------------
@@ -85,4 +88,9 @@ through Ex2.28 when N equals 2. Here's the tally sheet:
     8     | 1
     -----------------
     Total | 256
+
+[^1]: I say almost because some musical material involves different
+    combinations of right hand fingering that can feel challenging or
+    counterintuitive. But examples like this are not particularly common once
+    you've achieved the ability to play the rudiments presented here.
 
