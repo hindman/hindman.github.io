@@ -1,3 +1,4 @@
+
 # Fingerstyle Rhythmic Rudiments: Raw Notes
 
 ## Research: what experts have said about right-hand rudiments
@@ -73,3 +74,71 @@ Classical pedagogy does better but still tends toward
 repertoire-driven teaching. These exercises address a genuine gap:
 systematic, exhaustive right-hand rhythmic drilling in a fingerstyle
 context.
+
+## Git branches
+
+master:
+
+    ./
+        favicon.ico
+        Gemfile.lock
+        google58358ed2c1865cff.html
+        index.html
+        loopllama/
+            favicon.ico
+            loopllama.html
+            loopllama.js
+            notes.txt
+            scripts/
+                loopllama*
+        notes/
+            loopllama-v2-plan.md
+            old-chat-planning/
+                loopllama-chat-text.md
+                loopllama-chat.json
+        README.md
+
+v1.5:
+
+    ./
+        _config.yml
+        _data/
+            navigation.yml
+        _drafts/
+        _includes/
+            head/
+                custom.html
+        _notes/
+            project-notes.md
+        _pages/
+            404.md
+            about.md
+            category-archive.md
+            debug.md
+            loopllama-v1.md
+            tag-archive.md
+            year-archive.md
+        _posts/
+            2025-10-30-post-demo.md
+        assets/
+            css/
+                custom.css
+                main.scss
+            images/
+                juan-gris-guitar-color.jpg
+        favicon.ico
+        Gemfile
+        Gemfile.lock
+        google58358ed2c1865cff.html
+        index.html
+        loopllama/
+            index.html
+            v1/
+                favicon.ico
+                index.html
+                loopllama.js
+                notes.txt
+                scripts/
+                    loopllama*
+        README.md
+
