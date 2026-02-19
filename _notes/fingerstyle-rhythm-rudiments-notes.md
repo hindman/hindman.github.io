@@ -1,152 +1,6 @@
 
 # Fingerstyle Rhythmic Rudiments: Raw Notes
 
-## Other topics to cover
-
-How to eat an elephant:
-    - Nobody chooses a musical hobby to work drill rudiments: we come for the
-      songs.
-    - I approach skill building like this in very small steps.
-    - At the start of each practice session I tend to work for about 5 minutes
-      on whatever my current technique project happens to be.
-    - I probably spent a few months on these rudiments the first time I worked
-      through them systematically.
-    - At the time I was probably in the beginner-to-intermediate skill range
-      for fingerstyle guitar, so someone in the beginning stage would need to
-      spend more time per rudiment than I did.
-    - In any case, some of the rudiments are easy and can be checked off you
-      list after a session or two.
-    - Others might takes several days of practice.
-    - I don't recommend that you grind on any single exercise for a long time.
-      Work on one for a little while. If you are not fluent yet, that's fine.
-      Come back the next day and you will probably be a bit better at it. Your
-      brain and hands do work over night. Be patient and give them the time to
-      perform their magic.
-    - Small bits of steady, focused work can accomplish a lot more than you
-      might think at first.
-
-What if I'm not crazy enough to eat a whole elephant?
-    - I worked through these exercises a second time when preparing to write
-      this post.
-    - During that second pass, I collected a list the rudiments that were my
-      favorites or that seemed most promising musically.
-    - If you're looking for a less dauting program, I offer two pathways
-      below. One is a bare minimum: "Five picking patterns you MUST know" in
-      the jargon of our time.
-    - The other my subjective listing of the "greatest hits", which whittles
-      the job down to about a quarter of its size.
-    - Let's start with the bare minimum.
-
-The family of Travis picking patterns
-    - The rhythmic structures of some of these rudiments are found in some of
-      the most famous fingerstyle patterns.
-    - For example, if we focus on "Travis picking", we can start with Ex3.13,
-      which aligns with the picking pattern many people would call the
-      quintessential Travis pattern.
-    - We can substract one melody note to get Ex2.3, which could be described
-      as a minimal variant of Travis picking. This exercise is useful to
-      understand because it helps you understand the defining characteristics
-      of Travis picking are the melody notes on beat 1 and then the syncopated
-      melody note on beat 2&. That's the heart of it.
-    - We can go the other direction and add another note to the classic Travis
-      pattern. That gives use Ex4.30, which has the rhythmic shape of as the
-      well known picking pattern used in songs like Dust in the Wind. This
-      pattern also clues you into what we are doing as we augment classic
-      Travis: we are adding another syncopated note.
-    - Take one more step in that direction and we can add the final syncopated
-      melody note (1&), producing Ex5.15 which at various points in my notes I
-      have either called the London pattern or the Busy Travis pattern.
-      Lately, I lean toward the latter name.
-    - Footnote on Thorpe: his London is my Dust-in-wind. The song "Streets of
-      London" seems to mostly use my London, but does use my Dust-in-wind for
-      some bars.
-    - As a final variation to connect these Travis-related patterns to each
-      other, we can drop the melody note on beat 1, given us the rhythmic
-      shape of Ex4.50. That rhythm aligns with the outside-inside and
-      inside-outside picking patterns I learned in my introduction to
-      fingerstyle guitar: Mark Hason's "The Art of Solo Fingerpicking".
-    - All 5 of these patterns are essential. If you learn nothing else, learn
-      them. See table below.
-
-    Exercise | Melodic rhythm | Picking pattern
-    -------------------------------------------
-    Ex2.3    | 1 2&           | minimal travis
-    Ex3.13   | 1 2& 3&        | classic travis
-    Ex4.30   | 1 2& 3& 4&     | dust in wind
-    Ex5.15   | 1 1& 2& 3& 4&  | london
-    Ex4.50   | 1& 2& 3& 4&    | outside-inside; inside-outside
-
-The greatest hits:
-    - This listing is subjective.
-    - As I worked through the rudiments the second time I kept a list of the
-      exercises that seemed the most musically promising.
-    - As you'll discover, some of the exercises are musically quite dull: for
-      example, play a melody note on every downbeat, robot style.
-    - Others are so busy (as N gets large) that you feel a bit like you are
-      doing hand exercises more than playing music.
-    - I doggedly practiced them all and think they have helped me in building
-      skill. But a fair number of the exercises felt more like chores or doing
-      push ups.
-    - The list below is most not that. They are the rudiments that were fun to
-      play, the have known connections to famous picking patterns (the Travis
-      examples discussed already), or stuck me as having real musical
-      potential.
-    - I should emphasize that a rudiment's absense from this list of greatest
-      hits should not be interpreted as a negative verdict on its musical
-      potential.
-    - Remember that these exercises use a static melody. When you combine a
-      static melody with a robotically predictable rhythm, you create boredom.
-      But some truly great picking patterns (eg Ex5.15 or London and Ex4.50 or
-      Outside-inside) sound quite dull in the context of static-melody
-      rudiments but absolutely beautiful when the melody is more active.
-
-    GP file | Greatest hist exercises
-    -------------------------------------------------------
-    Ex1     | 1 2 4
-    Ex2     | 1 3 5 8 9 13 16 17 19 20 21 22 27
-    Ex3     | 2 4 6 12 13 14 15 27 31 33 35 36 45 49 50
-    Ex4     | 6 8 9 13 14 24 30 31 37 44 46 48 49 50 67 69
-    Ex5     | 9 15 18 24 32 34 41 45 54
-    Ex6     | 4 5 8 11 13 14 17 19 24 26
-
-Find the music in the rudiments:
-    - Whether you tackle all 256 rudiments or just a selected list, try to
-      make each one as musical as you can.
-    - Treat the dynamics, the melody articulation, sustain, and palm muting as
-      dials that you can turn to get as much music as you can out of each
-      exercise.
-    - Some of the rhythms work fine when played with a flowing, sustaining
-      style.
-    - Others might sound too busy that way, but aggressive muting or staccato
-      at various points can revive them musically.
-    - Sometimes a rudiment might be uninspiring when plucked in typical
-      fingerstyle fashion, but becomes interesting if the melody notes are
-      played in more of a strumming fashion with the fingers.
-    - Especially at moments before chord changes, a bit of strategic muting or
-      staccato can turn something that sounds clumsy into purposeful musical
-      decisions.
-    - In that regard, melody notes on beats 4 and especially 4& can be tricky,
-      a point that lends to explanatory power to the absence of 4& in the
-      Classic Travis picking pattern: the masters were practical and knew what
-      they were doing!
-
-When to say when:
-    - When have you finished a rudiment?
-    - My general approach was to select a target BPM and stop working on a
-      rudiment when I felt like I could play it controlled and accurate
-      manner.
-    - For rudiments that were more appealing musically I probably raised the
-      bar a bit. For rudiments that felt like mere physical exercises, I
-      tended not to push much beyond the target.
-    - What BPM should you select? It depends on your goals. I've never been
-      very attracted to super-fast musical styles, so raw speed was not a key
-      goal for me.
-    - Thus the 120 BPM in these .gp files is generally the tempo where I
-      stopped sharpening the pencil.
-    - For me the primary goal was to achieve basic hand coordination. If I
-      need raw speed I tend to deal with it in a case-by-case way whenever a
-      specific song part demands it.
-
 ## Git branches
 
 master:
@@ -336,4 +190,275 @@ doing. Bass and melody are two independent voices. Some teachers use
 "contrapuntal" loosely in this context. Classical pedagogy talks about
 bringing out the melody voice while subordinating the bass, which presupposes
 they're genuinely independent.
+
+## network anaysis
+
+Edit python program to emit just section titles.
+
+Analyse the titles to create a graph.
+
+Travis pick examples in a kind of lineal graph: parent-child, where
+a child has all of the parent's beats.
+
+Also possible are siblings: where they have the same N but 1 beat is
+shifted 1 step.
+
+Beats on which melody notes are played, space delimited.
+
+    Ex0.1
+    Ex1.1  1
+    Ex1.2  1&
+    Ex1.3  2
+    Ex1.4  2&
+    Ex1.5  3
+    Ex1.6  3&
+    Ex1.7  4
+    Ex1.8  4&
+    Ex2.1  1  1&
+    Ex2.2  1  2
+    Ex2.3  1  2&
+    Ex2.4  1  3
+    Ex2.5  1  3&
+    Ex2.6  1  4
+    Ex2.7  1  4&
+    Ex2.8  1& 2
+    Ex2.9  1& 2&
+    Ex2.10 1& 3
+    Ex2.11 1& 3&
+    Ex2.12 1& 4
+    Ex2.13 1& 4&
+    Ex2.14 2  2&
+    Ex2.15 2  3
+    Ex2.16 2  3&
+    Ex2.17 2  4
+    Ex2.18 2  4&
+    Ex2.19 2& 3
+    Ex2.20 2& 3&
+    Ex2.21 2& 4
+    Ex2.22 2& 4&
+    Ex2.23 3  3&
+    Ex2.24 3  4
+    Ex2.25 3  4&
+    Ex2.26 3& 4
+    Ex2.27 3& 4&
+    Ex2.28 4  4&
+    Ex3.1  1  1& 2
+    Ex3.2  1  1& 2&
+    Ex3.3  1  1& 3
+    Ex3.4  1  1& 3&
+    Ex3.5  1  1& 4
+    Ex3.6  1  1& 4&
+    Ex3.7  1  2  2&
+    Ex3.8  1  2  3
+    Ex3.9  1  2  3&
+    Ex3.10 1  2  4
+    Ex3.11 1  2  4&
+    Ex3.12 1  2& 3
+    Ex3.13 1  2& 3&
+    Ex3.14 1  2& 4
+    Ex3.15 1  2& 4&
+    Ex3.16 1  3  3&
+    Ex3.17 1  3  4
+    Ex3.18 1  3  4&
+    Ex3.19 1  3& 4
+    Ex3.20 1  3& 4&
+    Ex3.21 1  4  4&
+    Ex3.22 1& 2  2&
+    Ex3.23 1& 2  3
+    Ex3.24 1& 2  3&
+    Ex3.25 1& 2  4
+    Ex3.26 1& 2  4&
+    Ex3.27 1& 2& 3
+    Ex3.28 1& 2& 3&
+    Ex3.29 1& 2& 4
+    Ex3.30 1& 2& 4&
+    Ex3.31 1& 3  3&
+    Ex3.32 1& 3  4
+    Ex3.33 1& 3  4&
+    Ex3.34 1& 3& 4
+    Ex3.35 1& 3& 4&
+    Ex3.36 1& 4  4&
+    Ex3.37 2  2& 3
+    Ex3.38 2  2& 3&
+    Ex3.39 2  2& 4
+    Ex3.40 2  2& 4&
+    Ex3.41 2  3  3&
+    Ex3.42 2  3  4
+    Ex3.43 2  3  4&
+    Ex3.44 2  3& 4
+    Ex3.45 2  3& 4&
+    Ex3.46 2  4  4&
+    Ex3.47 2& 3  3&
+    Ex3.48 2& 3  4
+    Ex3.49 2& 3  4&
+    Ex3.50 2& 3& 4
+    Ex3.51 2& 3& 4&
+    Ex3.52 2& 4  4&
+    Ex3.53 3  3& 4
+    Ex3.54 3  3& 4&
+    Ex3.55 3  4  4&
+    Ex3.56 3& 4  4&
+    Ex4.1  1  1& 2  2&
+    Ex4.2  1  1& 2  3
+    Ex4.3  1  1& 2  3&
+    Ex4.4  1  1& 2  4
+    Ex4.5  1  1& 2  4&
+    Ex4.6  1  1& 2& 3
+    Ex4.7  1  1& 2& 3&
+    Ex4.8  1  1& 2& 4
+    Ex4.9  1  1& 2& 4&
+    Ex4.10 1  1& 3  3&
+    Ex4.11 1  1& 3  4
+    Ex4.12 1  1& 3  4&
+    Ex4.13 1  1& 3& 4
+    Ex4.14 1  1& 3& 4&
+    Ex4.15 1  1& 4  4&
+    Ex4.16 1  2  2& 3
+    Ex4.17 1  2  2& 3&
+    Ex4.18 1  2  2& 4
+    Ex4.19 1  2  2& 4&
+    Ex4.20 1  2  3  3&
+    Ex4.21 1  2  3  4
+    Ex4.22 1  2  3  4&
+    Ex4.23 1  2  3& 4
+    Ex4.24 1  2  3& 4&
+    Ex4.25 1  2  4  4&
+    Ex4.26 1  2& 3  3&
+    Ex4.27 1  2& 3  4
+    Ex4.28 1  2& 3  4&
+    Ex4.29 1  2& 3& 4
+    Ex4.30 1  2& 3& 4&
+    Ex4.31 1  2& 4  4&
+    Ex4.32 1  3  3& 4
+    Ex4.33 1  3  3& 4&
+    Ex4.34 1  3  4  4&
+    Ex4.35 1  3& 4  4&
+    Ex4.36 1& 2  2& 3
+    Ex4.37 1& 2  2& 3&
+    Ex4.38 1& 2  2& 4
+    Ex4.39 1& 2  2& 4&
+    Ex4.40 1& 2  3  3&
+    Ex4.41 1& 2  3  4
+    Ex4.42 1& 2  3  4&
+    Ex4.43 1& 2  3& 4
+    Ex4.44 1& 2  3& 4&
+    Ex4.45 1& 2  4  4&
+    Ex4.46 1& 2& 3  3&
+    Ex4.47 1& 2& 3  4
+    Ex4.48 1& 2& 3  4&
+    Ex4.49 1& 2& 3& 4
+    Ex4.50 1& 2& 3& 4&
+    Ex4.51 1& 2& 4  4&
+    Ex4.52 1& 3  3& 4
+    Ex4.53 1& 3  3& 4&
+    Ex4.54 1& 3  4  4&
+    Ex4.55 1& 3& 4  4&
+    Ex4.56 2  2& 3  3&
+    Ex4.57 2  2& 3  4
+    Ex4.58 2  2& 3  4&
+    Ex4.59 2  2& 3& 4
+    Ex4.60 2  2& 3& 4&
+    Ex4.61 2  2& 4  4&
+    Ex4.62 2  3  3& 4
+    Ex4.63 2  3  3& 4&
+    Ex4.64 2  3  4  4&
+    Ex4.65 2  3& 4  4&
+    Ex4.66 2& 3  3& 4
+    Ex4.67 2& 3  3& 4&
+    Ex4.68 2& 3  4  4&
+    Ex4.69 2& 3& 4  4&
+    Ex4.70 3  3& 4  4&
+    Ex5.1  1  1& 2  2& 3
+    Ex5.2  1  1& 2  2& 3&
+    Ex5.3  1  1& 2  2& 4
+    Ex5.4  1  1& 2  2& 4&
+    Ex5.5  1  1& 2  3  3&
+    Ex5.6  1  1& 2  3  4
+    Ex5.7  1  1& 2  3  4&
+    Ex5.8  1  1& 2  3& 4
+    Ex5.9  1  1& 2  3& 4&
+    Ex5.10 1  1& 2  4  4&
+    Ex5.11 1  1& 2& 3  3&
+    Ex5.12 1  1& 2& 3  4
+    Ex5.13 1  1& 2& 3  4&
+    Ex5.14 1  1& 2& 3& 4
+    Ex5.15 1  1& 2& 3& 4&
+    Ex5.16 1  1& 2& 4  4&
+    Ex5.17 1  1& 3  3& 4
+    Ex5.18 1  1& 3  3& 4&
+    Ex5.19 1  1& 3  4  4&
+    Ex5.20 1  1& 3& 4  4&
+    Ex5.21 1  2  2& 3  3&
+    Ex5.22 1  2  2& 3  4
+    Ex5.23 1  2  2& 3  4&
+    Ex5.24 1  2  2& 3& 4
+    Ex5.25 1  2  2& 3& 4&
+    Ex5.26 1  2  2& 4  4&
+    Ex5.27 1  2  3  3& 4
+    Ex5.28 1  2  3  3& 4&
+    Ex5.29 1  2  3  4  4&
+    Ex5.30 1  2  3& 4  4&
+    Ex5.31 1  2& 3  3& 4
+    Ex5.32 1  2& 3  3& 4&
+    Ex5.33 1  2& 3  4  4&
+    Ex5.34 1  2& 3& 4  4&
+    Ex5.35 1  3  3& 4  4&
+    Ex5.36 1& 2  2& 3  3&
+    Ex5.37 1& 2  2& 3  4
+    Ex5.38 1& 2  2& 3  4&
+    Ex5.39 1& 2  2& 3& 4
+    Ex5.40 1& 2  2& 3& 4&
+    Ex5.41 1& 2  2& 4  4&
+    Ex5.42 1& 2  3  3& 4
+    Ex5.43 1& 2  3  3& 4&
+    Ex5.44 1& 2  3  4  4&
+    Ex5.45 1& 2  3& 4  4&
+    Ex5.46 1& 2& 3  3& 4
+    Ex5.47 1& 2& 3  3& 4&
+    Ex5.48 1& 2& 3  4  4&
+    Ex5.49 1& 2& 3& 4  4&
+    Ex5.50 1& 3  3& 4  4&
+    Ex5.51 2  2& 3  3& 4
+    Ex5.52 2  2& 3  3& 4&
+    Ex5.53 2  2& 3  4  4&
+    Ex5.54 2  2& 3& 4  4&
+    Ex5.55 2  3  3& 4  4&
+    Ex5.56 2& 3  3& 4  4&
+    Ex6.1  1  1& 2  2& 3  3&
+    Ex6.2  1  1& 2  2& 3  4
+    Ex6.3  1  1& 2  2& 3  4&
+    Ex6.4  1  1& 2  2& 3& 4
+    Ex6.5  1  1& 2  2& 3& 4&
+    Ex6.6  1  1& 2  2& 4  4&
+    Ex6.7  1  1& 2  3  3& 4
+    Ex6.8  1  1& 2  3  3& 4&
+    Ex6.9  1  1& 2  3  4  4&
+    Ex6.10 1  1& 2  3& 4  4&
+    Ex6.11 1  1& 2& 3  3& 4
+    Ex6.12 1  1& 2& 3  3& 4&
+    Ex6.13 1  1& 2& 3  4  4&
+    Ex6.14 1  1& 2& 3& 4  4&
+    Ex6.15 1  1& 3  3& 4  4&
+    Ex6.16 1  2  2& 3  3& 4
+    Ex6.17 1  2  2& 3  3& 4&
+    Ex6.18 1  2  2& 3  4  4&
+    Ex6.19 1  2  2& 3& 4  4&
+    Ex6.20 1  2  3  3& 4  4&
+    Ex6.21 1  2& 3  3& 4  4&
+    Ex6.22 1& 2  2& 3  3& 4
+    Ex6.23 1& 2  2& 3  3& 4&
+    Ex6.24 1& 2  2& 3  4  4&
+    Ex6.25 1& 2  2& 3& 4  4&
+    Ex6.26 1& 2  3  3& 4  4&
+    Ex6.27 1& 2& 3  3& 4  4&
+    Ex6.28 2  2& 3  3& 4  4&
+    Ex7.1  1  1& 2  2& 3  3& 4
+    Ex7.2  1  1& 2  2& 3  3& 4&
+    Ex7.3  1  1& 2  2& 3  4  4&
+    Ex7.4  1  1& 2  2& 3& 4  4&
+    Ex7.5  1  1& 2  3  3& 4  4&
+    Ex7.6  1  1& 2& 3  3& 4  4&
+    Ex7.7  1  2  2& 3  3& 4  4&
+    Ex7.8  1& 2  2& 3  3& 4  4&
+    Ex8.1  1  1& 2  2& 3  3& 4 4&
 
