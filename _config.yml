@@ -50,6 +50,7 @@ plugins:
   - jemoji
   - jekyll-include-cache
   - jekyll-remote-theme
+  - jekyll-redirect-from
 
 # Author profile.
 author:
