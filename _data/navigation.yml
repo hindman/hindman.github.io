@@ -1,0 +1,11 @@
+main:
+
+  - title: 'Posts'
+    url: /posts/
+
+  - title: "LoopLlama"
+    url: /loopllama/v1/
+
+  - title: 'About'
+    url: /about/
+

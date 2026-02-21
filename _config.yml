@@ -1,0 +1,117 @@
+# This config file is meant for settings that affect your whole blog,
+# values which you are expected to set up once and rarely edit after
+# that. If you find yourself editing this file very often, consider
+# using Jekyll's data files feature for the data you need to update
+# frequently.
+#
+# For technical reasons, this file is *NOT* reloaded automatically
+# when you use 'bundle exec jekyll serve'. If you change this file,
+# please restart the server process.
+
+# Site settings.
+title: The Fifth Fret
+description: Essays on guitar, history, and politics.
+search: true
+
+# Build settings.
+markdown: kramdown
+remote_theme: mmistakes/minimal-mistakes
+
+# Outputting.
+permalink: /:categories/:title/
+paginate: 5
+paginate_path: /page:num/
+timezone: US/Pacific
+
+
+include:
+  - _pages
+
+# Exclude from processing.
+exclude:
+  # Defaults.
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  # Others.
+  - _notes/
+  - tmp/
+
+# Plugins.
+plugins:
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jekyll-gist
+  - jekyll-feed
+  - jemoji
+  - jekyll-include-cache
+  - jekyll-remote-theme
+  - jekyll-redirect-from
+
+# Author profile.
+author:
+  name   : ''
+  avatar : '/assets/images/juan-gris-guitar-color.jpg'
+  bio    : ''
+
+# Footer.
+footer:
+  links:
+    - label: 'GitHub'
+      icon: 'fab fa-fw fa-github'
+      url: 'https://github.com/hindman'
+    - label: 'YouTube'
+      icon: 'fab fa-fw fa-youtube'
+      url: 'https://www.youtube.com/@montyhindman'
+
+# Post and Page settings.
+defaults:
+
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      # --
+      toc: true
+      toc_label: 'Contents'
+      toc_icon: 'guitar'
+      toc_sticky: true
+      # --
+      read_time: false
+      comments: false
+      share: false
+      related: false
+
+  - scope:
+      path: "_pages"
+      type: pages
+    values:
+      layout: single
+      author_profile: true
+      # --
+      toc: true
+      toc_label: 'Contents'
+      toc_icon: 'guitar'
+      toc_sticky: true
+      # --
+      read_time: false
+      comments: false
+      share: false
+      related: false
+
+# Taxonomies.
+
+category_archive:
+  type: liquid
+  path: /categories/
+
+tag_archive:
+  type: liquid
+  path: /tags/
+
