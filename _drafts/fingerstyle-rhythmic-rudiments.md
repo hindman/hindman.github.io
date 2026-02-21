@@ -8,12 +8,11 @@ tags:
 
 ## Second-hand knowledge
 
-Guitar instruction is organized around the left hand. Chord charts, scale
-diagrams, fretboard maps — the bulk of what gets taught is about where the
-left hand goes. That makes intuitive sense. Watch someone play and the left
-hand looks like where the action is: fingers moving across the neck, chord
-shapes forming, notes changing. The right hand appears to be doing little more
-than triggering what the left hand prepared.
+Guitar instruction is organized around the left hand: chord charts, scale
+diagrams, fretboard maps. Intuitive enough. Watch someone play and the left
+hand commands the attention: fingers moving across the neck, chord shapes
+forming, notes changing. The right hand appears to be doing little more than
+triggering what the left hand prepared — a button pusher.
 
 Of course, the right hand is not ignored entirely. Teachers address technique:
 how to hold the pick, where to anchor the hand, how classical players shape
@@ -135,7 +134,7 @@ described below.
 
 Some of these rudiments correspond to picking patterns that are well-known in
 the fingerstyle world. Start with Ex3.13, which most players would recognize
-as the quintessential Travis picking pattern.[^2]
+as the rhythmic structure of the quintessential Travis picking pattern.[^2]
 
 Strip away one melody note and you get Ex2.3, a minimal Travis variant that
 sounds great and reveals something important by isolating the defining
