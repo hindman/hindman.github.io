@@ -7,7 +7,7 @@
   opacity: 1 !important;
 }
 
-/* Author image: remove oval frame and allow full width */
+/* Author image: remove oval frame and allow full width. */
 .sidebar .author__avatar {
   width: 80% !important;
   max-width: none !important;
@@ -17,7 +17,12 @@
   margin-bottom: 0.75em;
 }
 
-/* ensure the image itself fills the container */
+/* Don't show the Follow button (was occuring when window is narrow). */
+.author__urls-wrapper button {
+  display: none;
+}
+
+/* Ensure that the image fills the container. */
 .sidebar .author__avatar img,
 .sidebar .author__avatar a img {
   display: block;
