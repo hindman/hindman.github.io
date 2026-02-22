@@ -57,3 +57,44 @@ LoopLlama   [small-image]                                  Help|About|Settings
 
     Modal: help
 
+--------
+v1 key bindings
+--------
+
+Category    | Shortcut  | Operation
+---------------------------------------------------------------------
+Play video  | .         | .
+.           | SPACE     | Play/pause
+.           | U         | Enter URL for YouTube video and switch to it
+.           | F         | Set or switch to a favorite video
+.           | SHIFT-U   | Create ${APP_NAME} URL for sharing
+Navigation  | .         | .
+.           | RIGHT     | FF 5 sec (SHIFT for 1 sec)
+.           | LEFT      | Rew 5 sec (SHIFT for 1 sec)
+.           | DOWN      | Toggle behavior of SHIFT as it relates to FF/Rew.
+.           | 0 or UP   | Go to video start (or loop start, if looping)
+.           | J         | Enter a specific MM:SS and jump to it
+Speed       | .         | .
+.           | MINUS     | Slower by .05 (SHIFT for .20)
+.           | EQUAL     | Faster by .05 (SHIFT for .20)
+.           | BACKSPACE | Reset speed to 1.0
+Looping     | .         | .
+.           | L         | Toggle looping on/off
+.           | [         | Set loop start to current time
+.           | SHIFT-[   | Set, nudge, or reset loop start (prompted)
+.           | ]         | Set loop end to current time
+.           | SHIFT-]   | Set, nudge, or reset loop end (prompted)
+.           | SHIFT-L   | Saved loops: load, save, or reset (prompted)
+Marks       | .         | .
+.           | 1         | Go to mark 1
+.           | SHIFT-1   | Set, nudge, or reset mark 1
+.           | ...       | Etc for marks 2 through 9
+Application | .         | .
+.           | H         | Display/hide help text
+.           | I         | Display/hide application info
+.           | S         | Save app info as JSON file
+.           | SHIFT-S   | Restore app info from JSON text
+.           | SHIFT-C   | Clear app info: favorites; marks; info for one
+.           | "         | video; info for all videos; or everything
+.           | SHIFT-D   | Update video duration
+
