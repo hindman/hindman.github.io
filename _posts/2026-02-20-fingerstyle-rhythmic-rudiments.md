@@ -53,7 +53,7 @@ quarter notes, cycling through the root and fifth of whatever chord is
 underneath. That is the backbone.
 
 Also constant is the harmony and structure. Every rudiment consists of eight
-bars: two each of Am, Dm, E7, and Am again. The chord voicings are
+bars: two each of Am, Dm7, E7, and Am again. The chord voicings are
 deliberately easy — open chords you already know — and the melody notes are
 simple, just two or three notes played on the upper strings. The left hand has
 work to do, but not much. Fingerstyle players ranging from beginners through
