@@ -264,41 +264,169 @@ v2/
 
 ---
 
+## Sections Model
+
+### Divider-based structure
+
+A section is defined by a divider: a time point with an optional label.
+Sections are the regions between consecutive dividers. The user plants
+dividers at meaningful musical boundaries; the regions between them are
+the sections.
+
+Labels are optional. The user can plant all dividers quickly by ear
+(purely positional work) and name them later or never. All section
+operations -- loop current section, jump to next/previous -- work on
+position alone without requiring labels.
+
+### Non-exhaustive coverage
+
+Sections do not need to cover the whole video. Regions before the first
+divider and after the last are simply uncharted. There is no requirement
+to start at t=0.
+
+### Marking the end of relevant material
+
+To cap the last musically relevant region, the user plants an anonymous
+(unlabeled) divider at that point. This creates a real section to the
+right of that divider; all section operations apply to it equally. No
+special-casing for unnamed sections.
+
+### Current section
+
+The current section is the region bracketed by the two dividers nearest
+the playhead (one to the left, one to the right). It is undefined when
+the playhead is before the first divider or after the last.
+
+### Looping a section
+
+Activating loop-current-section loads the section's start and end into
+the scratch loop (following the same scratch loop model as named loops).
+If the current section has no right divider (it is the last and
+open-ended), the video's effective end serves as the fallback right
+boundary.
+
+### Operations
+
+- Set: plant a new divider at the current playhead position.
+- Edit: edit the divider to the left of the current playhead (adjust its
+  time, set or change its label).
+- Loop: load the current section into the scratch loop.
+- Delete: remove the divider to the left of the current playhead.
+- Jump next/previous: move the playhead to the next or previous divider.
+
+### Schema note
+
+Section = id + time (required) + label (optional). End time is derived
+(next divider's time, or video effective end for the last section). May
+be stored as a convenience cache but is not a primary attribute.
+
+---
+
+## Looping Model
+
+### The scratch loop
+
+The active loop is always the scratch loop -- a single unnamed Loop entity
+that is the working surface for all looping activity. The scratch loop's
+endpoints are what the player actually uses when looping is enabled.
+
+Setting endpoints manually (quick-set keys for start and end) always
+writes directly to the scratch loop. Loading a saved Loop or Section
+copies its endpoints into the scratch loop; the saved entity is untouched.
+All endpoint editing applies to the scratch loop only. It makes no sense
+to edit a saved loop's endpoints in the abstract -- the loop must be
+active (in the scratch loop) so the user can hear the effect of changes
+in real time. The workflow is always: load into scratch, edit, then
+optionally save back.
+
+### Operations and their targets
+
+Scratch-loop operations:
+- Edit endpoints: interactive mode where the user nudges start/end and
+  hears the result immediately. Start point is the one most often fussed
+  with; end point less so.
+- Save-back: if the scratch loop was loaded from a named entity, a direct
+  binding pushes the current endpoints back to that source. No UI needed;
+  happens immediately.
+
+Saved-loop operations (act on named Loop entities):
+- Load: picker -- select a saved loop, copy its endpoints into the scratch
+  loop. The picker is load-only; it is not combined with delete.
+- Delete: picker -- select a saved loop, delete it.
+- Save: modal -- save the scratch loop's current endpoints as a new named
+  loop. Requires user input (name, optional digit).
+- Rename / edit attributes: modal.
+
+### Fast access via digit
+
+A saved loop can be assigned an optional digit (1-9). This enables a
+two-key binding to load it directly into the scratch loop without opening
+the picker. The digit is optional metadata; the name is the primary
+identifier.
+
+### Dirty indicator
+
+If the scratch loop was loaded from a named entity and its endpoints have
+since been modified, the UI shows a dirty indicator (e.g., on the
+timeline marker) to remind the user that the scratch loop and its source
+have diverged.
+
+---
+
 ## Data schema
 
 Video:
+
 - id: YouTube video ID; the authoritative key used internally
+
 - url: stored as supplied by the user; kept for display and JSON
   readability, not reconstructed from id. v2 should parse more YouTube
   URL flavors than v1 (watch?v=, youtu.be/, embed, etc.).
+
 - duration: from YouTube API
+
 - start: user-adjustable effective start of the video; defaults to 0.
   Useful for skipping filler intros. Distinct from the active loop start.
+
 - end: user-adjustable effective end of the video; defaults to duration.
   Useful for skipping filler outros.
+
 - name: short user label for the video (replaces the Favorites concept)
-- title: longer user-editable title; auto-population from YouTube
-  metadata requires the YouTube Data API (separate from the IFrame API,
-  needs an API key) -- may default to blank until user sets it manually.
-- looping: null (not looping), or the ID of the active Section or Loop
-  entity. When the user sets loop endpoints manually via [ and ], this
-  creates or overwrites a scratch loop -- a single unnamed Loop entity
-  that persists in the loops list until named or discarded. Analogous to
-  Vim's unnamed register / default buffer.
-- Scratch loop policy: activating a named Loop or Section copies its
-  endpoints into the scratch loop; the named entity is untouched. All
-  endpoint edits apply to the scratch loop only. A dedicated "save back"
-  binding pushes the scratch loop's current endpoints to the source
-  entity. If the scratch loop was loaded from a named entity and has
-  since been modified, the UI shows a dirty indicator (e.g., on the
-  timeline marker) to prompt the user to commit or discard.
+
+- title:
+    - longer user-editable title
+    - empty until set my user
+    - auto-population from YouTube metadata requires the YouTube Data API
+
+- looping:
+    - ID of the active Section or Loop entity (null if not looping).
+    - Scratch loop policy:
+        - When the user sets loop endpoints manually, a scratch loop is
+          created -- a single unnamed Loop that persists in the loops list
+          until named or discarded.
+        - Activating a named Loop or Section copies its endpoints into the
+          scratch loop; the named entity is untouched.
+        - All endpoint edits apply to the scratch loop only.
+        - A dedicated "save back" binding pushes the scratch loop's current
+          endpoints to the source entity.
+        - If the scratch loop was loaded from a named entity and has since
+          been modified, the UI shows a dirty indicator (e.g., on the timeline
+          marker) to prompt the user to commit or discard.
+
 - speed: playback speed; defaults to 1.0
+
 - sections: array of Section entities
+
 - loops: array of Loop entities (includes the scratch loop if present)
+
 - marks: array of Mark entities
-- jumps: persisted list of non-small navigational jumps, used for
-  go-back navigation. Persisted across sessions (analogous to Vim's
-  persistent undo). Stored on the video object.
+
+- jumps:
+    - Persisted list of non-small navigational jumps, used for go-back
+      navigation.
+    - Persisted across sessions.
+    - Stored on the video object.
+
 - version: version number of current metadata scheme
 
 Section
