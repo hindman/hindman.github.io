@@ -262,3 +262,65 @@ v2/
 - Command palette (VS Code-style): mentioned, not committed.
 - Cross-device sync: punted to a future version.
 
+---
+
+## Data schema
+
+Video:
+- id: YouTube video ID; the authoritative key used internally
+- url: stored as supplied by the user; kept for display and JSON
+  readability, not reconstructed from id. v2 should parse more YouTube
+  URL flavors than v1 (watch?v=, youtu.be/, embed, etc.).
+- duration: from YouTube API
+- start: user-adjustable effective start of the video; defaults to 0.
+  Useful for skipping filler intros. Distinct from the active loop start.
+- end: user-adjustable effective end of the video; defaults to duration.
+  Useful for skipping filler outros.
+- name: short user label for the video (replaces the Favorites concept)
+- title: longer user-editable title; auto-population from YouTube
+  metadata requires the YouTube Data API (separate from the IFrame API,
+  needs an API key) -- may default to blank until user sets it manually.
+- looping: null (not looping), or the ID of the active Section or Loop
+  entity. When the user sets loop endpoints manually via [ and ], this
+  creates or overwrites a scratch loop -- a single unnamed Loop entity
+  that persists in the loops list until named or discarded. Analogous to
+  Vim's unnamed register / default buffer.
+- Scratch loop policy: activating a named Loop or Section copies its
+  endpoints into the scratch loop; the named entity is untouched. All
+  endpoint edits apply to the scratch loop only. A dedicated "save back"
+  binding pushes the scratch loop's current endpoints to the source
+  entity. If the scratch loop was loaded from a named entity and has
+  since been modified, the UI shows a dirty indicator (e.g., on the
+  timeline marker) to prompt the user to commit or discard.
+- speed: playback speed; defaults to 1.0
+- sections: array of Section entities
+- loops: array of Loop entities (includes the scratch loop if present)
+- marks: array of Mark entities
+- jumps: persisted list of non-small navigational jumps, used for
+  go-back navigation. Persisted across sessions (analogous to Vim's
+  persistent undo). Stored on the video object.
+- version: version number of current metadata scheme
+
+Section
+- id: generated unique identifier
+- name: user label (e.g., "Intro", "Verse", "Solo")
+- start: start time (seconds)
+- end: end time (seconds)
+- digit: optional digit 1-9 for keyboard access
+
+Loop
+- id: generated unique identifier
+- name: user label (e.g., "outro-lick"); empty for the scratch loop
+- start: start time (seconds)
+- end: end time (seconds)
+- digit: optional digit 1-9 for keyboard access
+- source: ID of the Section or Loop this was loaded from, or null if
+  manually created. Present on the scratch loop only; enables the
+  save-back operation and the dirty indicator.
+
+Mark
+- id: generated unique identifier
+- name: user label
+- time: time point (seconds)
+- digit: optional digit 1-9 for keyboard access
+
