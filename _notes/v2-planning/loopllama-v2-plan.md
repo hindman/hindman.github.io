@@ -53,11 +53,17 @@ future feature: allow a pair of marks to define a loop (TBD).
 ### 3. Data Model for Marks and Loops
 
 In v1, marks and loops were identified by a fixed number (m1-m9, L1-L9),
-with no labels. In v2, the primary identifier is a user-defined name or
-label. Numbers become optional metadata: the user can assign a
-single-digit shortcut number to any mark or loop, enabling fast keyboard
-access (e.g., `L7` to activate loop 7). Numbers are not required; they
-simply enable the fastest keyboard path.
+with no labels. In v2, the primary identifier is a user-defined name.
+Names are optional: if the user does not name an entity, the UI assigns
+a computed display label based on rank order within its type (e.g., "#2"
+for the second loop by start time). This label is not stored -- it is
+derived on the fly from current sort order. Users who find the instability
+of auto-numbers (caused by insertions or deletions) annoying have a clear
+remedy: name the entity.
+
+The digit shortcut system from v1 (assigning a number to an entity for
+fast keyboard access) is dropped. All entity access goes through the
+picker or prefix-key bindings.
 
 ### 4. UI and Keyboard Philosophy
 
@@ -65,8 +71,7 @@ The app serves two kinds of users:
 
 - Keyboard-first users (holding an instrument): need fast, memorable key
   bindings for all core operations. Vim-style single-key and multi-key
-  bindings (e.g., `L7`, `m3`) are supported. The fewer hand movements
-  required, the better.
+  bindings are supported. The fewer hand movements required, the better.
 - Mouse-oriented users: need standard web controls (buttons, text inputs,
   pickers) for all operations. No feature should be keyboard-only.
 
@@ -76,17 +81,38 @@ For keyboard-triggered navigation of named entities, a picker UI is
 supported: the user invokes a picker, types a few characters of the name,
 the list narrows, and they press Enter.
 
-Multi-key sequences (e.g., `L7` to activate saved loop 7, `LL` to toggle
-looping) are supported via a pending-key buffer: on the first key, wait
-briefly (~500ms) for a second key before dispatching. The design rule is
-that any key used as a multi-key prefix must not also have a standalone
-binding -- this avoids the ambiguity that would otherwise force a delay on
-single-key actions. In practice this means following the same sensible
-principles used in Vim keybinding design.
+Multi-key sequences (e.g., `ll` to toggle looping, `lo` to open the
+loops picker) are supported via a pending-key buffer: on the first key,
+wait briefly (~500ms) for a second key before dispatching. The design
+rule is that any key used as a multi-key prefix must not also have a
+standalone binding -- this avoids the ambiguity that would otherwise force
+a delay on single-key actions. In practice this means following the same
+sensible principles used in Vim keybinding design.
 
 When a modal or editor is open, keyboard events must be captured by the
 modal, not the global keyboard controller. This requires explicit focus
 management in the component architecture.
+
+### Which-key overlay
+
+When the user presses a prefix key (`m`, `s`, `l`, etc.) and the
+pending-key buffer is waiting for a second key, the app displays a small
+overlay listing the available continuations for that prefix. The overlay
+disappears when the second key is pressed or on Escape. This is the
+which-key pattern (named after the Neovim plugin).
+
+Implementation: the keyboard controller is already in a pending-key state
+at this point; displaying the overlay is a reactive state change that
+triggers a Lit component to render. The binding definitions double as the
+data source for the overlay text.
+
+Design notes:
+- Show the overlay after a short delay (~300-400ms) rather than
+  instantly, so fast typists who know the binding never see it.
+- Use a fixed bar at the bottom of the app rather than a popup -- keeps
+  placement predictable.
+- One overlay per prefix key; the two-level binding scheme maps cleanly
+  to this without needing nested overlays.
 
 ### 5. Visual Timeline
 
@@ -255,6 +281,30 @@ v2/
 
 ---
 
+## Undo
+
+Metadata undo is supported. Before any destructive or modifying operation
+(delete mark/loop/section, set endpoints, rename, edit attributes), the
+current video state is pushed onto an undo stack. Undo restores the
+previous state. Redo is a second stack.
+
+Implementation: snapshot approach. The video metadata object is small
+enough that storing ~20 snapshots costs nothing. No need for a command
+pattern or per-action undo logic -- just snapshot and restore.
+
+Scope: metadata changes only. Playback state (current time, speed, loop
+on/off) is not undoable.
+
+Persistence: undo stack is session-only. No need to persist across
+sessions.
+
+Confirmation dialogs for destructive operations are not needed; undo
+covers the same safety concern without interrupting flow.
+
+Binding: `u` for undo.
+
+---
+
 ## Open Items
 
 - Drag-to-edit on the timeline: aspirational, not committed.
@@ -354,15 +404,8 @@ Saved-loop operations (act on named Loop entities):
   loop. The picker is load-only; it is not combined with delete.
 - Delete: picker -- select a saved loop, delete it.
 - Save: modal -- save the scratch loop's current endpoints as a new named
-  loop. Requires user input (name, optional digit).
+  loop. Requires user input (name).
 - Rename / edit attributes: modal.
-
-### Fast access via digit
-
-A saved loop can be assigned an optional digit (1-9). This enables a
-two-key binding to load it directly into the scratch loop without opening
-the picker. The digit is optional metadata; the name is the primary
-identifier.
 
 ### Dirty indicator
 
@@ -431,24 +474,29 @@ Video:
 
 Section
 - id: generated unique identifier
-- name: user label (e.g., "Intro", "Verse", "Solo")
-- start: start time (seconds)
-- end: end time (seconds)
-- digit: optional digit 1-9 for keyboard access
+- name: user label (e.g., "Intro", "Verse", "Solo"); optional. If absent,
+  the UI displays a computed rank-order label (e.g., "#1") derived from
+  position in timeline order. Not stored.
+- time: the divider point (seconds); start of this section
+- end: end time (seconds); derived from the next divider's time, or the
+  video's effective end for the last section. May be cached for
+  convenience.
 
 Loop
 - id: generated unique identifier
-- name: user label (e.g., "outro-lick"); empty for the scratch loop
+- name: user label (e.g., "outro-lick"); optional. If absent, the UI
+  displays a computed rank-order label (e.g., "#2"). Not stored. The
+  scratch loop is displayed distinctly (e.g., "scratch"), not numbered.
 - start: start time (seconds)
 - end: end time (seconds)
-- digit: optional digit 1-9 for keyboard access
 - source: ID of the Section or Loop this was loaded from, or null if
   manually created. Present on the scratch loop only; enables the
   save-back operation and the dirty indicator.
 
 Mark
 - id: generated unique identifier
-- name: user label
+- name: user label; optional. If absent, the UI displays a computed
+  rank-order label (e.g., "#1") derived from position in timeline order.
+  Not stored.
 - time: time point (seconds)
-- digit: optional digit 1-9 for keyboard access
 
