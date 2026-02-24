@@ -305,6 +305,31 @@ Binding: `u` for undo.
 
 ---
 
+## Time Input Formats
+
+Time values appear in jump inputs, loop endpoint fields, mark/section
+time fields, and the jumps-picker. All contexts support the same formats.
+
+Separators: colon `:` is standard; forward slash `/` is an easy-to-type
+alternative (no Shift required). Both are always treated as separators,
+never as decimal points.
+
+    5:13  or  5/13       5 minutes 13 seconds
+    1:13:44  or  1/13/44  1 hour 13 minutes 44 seconds
+    73:44  or  73/44      condensed form: 73 minutes 44 seconds
+
+Bare integer: always raw seconds. `245` = 4 minutes 5 seconds.
+
+Decimal: period `.` is reserved exclusively for sub-second precision.
+One decimal digit is sufficient (human perception limit). `33.5` = 33.5
+seconds. `5:13.5` or `5/13.5` = 5 minutes 13.5 seconds.
+
+Comma `,` was considered as an alternative separator but rejected: in
+European locales comma is the decimal separator, which would create
+ambiguity for some users.
+
+---
+
 ## Open Items
 
 - Drag-to-edit on the timeline: aspirational, not committed.
