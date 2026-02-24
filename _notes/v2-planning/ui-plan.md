@@ -1,46 +1,4 @@
 
-**Missing: go-back / seek-stack binding.** The planning doc specifies a
-seek-stack go-back feature (earlier we mentioned binding it to something like
-`b`). It doesn't appear anywhere in the key bindings. This was flagged as
-important for instrument-in-hand use -- accidentally jumping somewhere and
-needing to return quickly. Needs a binding.
-
-**Missing: video effective start/end editing.** The data schema has per-video
-`start` and `end` (for skipping filler intros/outros), but there's no UI path
-to edit them. The edit-video-modal is the natural home for these.
-
-**Missing: settings.** The seek delta choices are set via Up/Down during
-navigation, but are they persistent across sessions? And is there a general
-settings UI (the old schematic had one for navigation increments and layout)?
-No settings modal or binding appears in the current plan.
-
-**Jumps-picker: numbered entity ambiguity.** If the user types `2` in the
-picker, does it mean "jump to 2 seconds" or "filter to unnamed entity #2"? The
-parser needs a rule. Probably: bare integer with no other characters = time
-jump; a query containing digits mixed with letters = filter. Worth making this
-explicit in the picker spec.
-
-**Edit-video-modal**: when the user arrives there from the URL-input (by
-pressing Edit after typing a URL), the modal should pre-populate with that
-URL. Implicit but worth stating.
-
-**Video-picker**: what's displayed and filtered on per item? Presumably
-name/label and title both. Worth specifying since it affects how useful the
-fuzzy filter is.
-
-**Clear-data-modal**: checkboxes for which subsets? The spec doesn't enumerate
-them. At minimum: all data, current video only, sections/loops/marks only,
-jumplist. Worth sketching out.
-
-**Edit-scratch-loop-modal**: `<Space>` plays/pauses "at the relevant spot" --
-worth clarifying that this means seek-to-focused-endpoint then play, so the
-user hears the loop boundary in context.
-
-**`dd` (display app data)**: this is a v1 debugging feature. Fine to keep, but
-worth confirming it's intended for v2 users and not just a development tool
-you'll eventually remove.
-
-
 # LoopLlama v2 — UI
 
 ---
@@ -118,24 +76,24 @@ Data:
 URL-input:
     - A basic text box input.
     - But with two sumbit buttons: Open and Edit.
-    - The latter takes the user to the edit-video-modal.
+    - The latter takes the user to the edit-video-modal with the URL
+      pre-populated.
 
 Video-picker:
-    - Typical picker interface.
-    - Lists all known videos.
+    - Typical picker interface listing the known videos.
+    - Displays name, title, maybe duration, maybe YouTube ID.
+    - Filters on "NAME TITLE".
 
 Edit-video-modal:
-    - URL
-    - key / label
-    - title
-    - Delete-video button
+    - Basic modal to edit URL, name, title, start, end.
+    - Also a delete-video button.
 
 Jumps-picker:
     - Picker items include: sections, loops, marks, and jumplist times.
     - Supports a command-line grammar.
     - Supports some immediate-select behavior (Enter press not needed).
 
-        <N>     | Jump to a specific time
+        T       | Jump to a specific time
         QUERY   | Regular picker behavior
         X QUERY | Pre-filter picker items to just type X
         X,      | Jump to previous entity of type X [immediately]
@@ -148,6 +106,9 @@ Jumps-picker:
             m   | Marks
             j   | Jumplist
 
+        Where T is any valid time. If T parses as a time, it's a time,
+        not a QUERY.
+
 Loops-picker:
     - Typical picker.
 
@@ -157,6 +118,8 @@ Save-loop-modal:
 
 Edit-scratch-loop-modal:
     - Modal to edit start/end.
+    - For play/pause if focus in on start, play starts at the loop beginning;
+      if on end, starts 5 sec before end.
     - Key bindings:
 
         <Tab>          | Toggle focus between start or end
@@ -192,6 +155,7 @@ Help-modal:
         a | Application
 
 Clear-data-modal:
+    - TBD
     - Modal with checkboxes to select subsets of the data to clear.
 
 Time inputs:
@@ -213,7 +177,7 @@ Seek deltas:
 
 ---
 
-## Schematic mockup of page layout and UI controls
+## Mockup of page layout and UI controls
 
 TBD. This section is not up-to-date with the rest of the planning.
 

@@ -2,9 +2,11 @@
 ## TODO
 
 LoopLlama v2:
-    - UI and key bindings:
-        - Write a more specific plan and mockup.
-        - Also consider command palette.
+    - Mockup of page layout and UI controls
+    - Clear-data-modal
+    - Merge/edit:
+        - ui-plan.md
+        - loopllama-v2-plan.md
 
 Posts:
     x RH rudiments #1: alternating bass

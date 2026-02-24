@@ -483,6 +483,8 @@ Video:
 
 - speed: playback speed; defaults to 1.0
 
+- seek_delta: controls <Left>/<Right> seeks; defaults to 5 sec.
+
 - sections: array of Section entities
 
 - loops: array of Loop entities (includes the scratch loop if present)
