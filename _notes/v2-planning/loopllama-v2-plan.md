@@ -448,10 +448,12 @@ Video:
 - id: YouTube video ID; the authoritative key used internally
 
 - url: stored as supplied by the user; kept for display and JSON
-  readability, not reconstructed from id. v2 should parse more YouTube
-  URL flavors than v1 (watch?v=, youtu.be/, embed, etc.).
+  readability, not reconstructed from id.
 
 - duration: from YouTube API
+
+- time: current time. Useful so that when you return to the video
+  later, the app remembers where you were.
 
 - start: user-adjustable effective start of the video; defaults to 0.
   Useful for skipping filler intros. Distinct from the active loop start.
@@ -500,30 +502,40 @@ Video:
 - version: version number of current metadata scheme
 
 Section
+
 - id: generated unique identifier
-- name: user label (e.g., "Intro", "Verse", "Solo"); optional. If absent,
-  the UI displays a computed rank-order label (e.g., "#1") derived from
-  position in timeline order. Not stored.
+
+- name: user label (e.g., "Intro", "Verse", "Solo"); optional. If absent, the
+  UI displays a computed rank-order label (e.g., "#1") derived from position
+  in timeline order. Not stored.
+
 - time: the divider point (seconds); start of this section
+
 - end: end time (seconds); derived from the next divider's time, or the
-  video's effective end for the last section. May be cached for
-  convenience.
+  video's effective end for the last section. May be cached for convenience.
 
 Loop
+
 - id: generated unique identifier
-- name: user label (e.g., "outro-lick"); optional. If absent, the UI
-  displays a computed rank-order label (e.g., "#2"). Not stored. The
-  scratch loop is displayed distinctly (e.g., "scratch"), not numbered.
+
+- name: user label (e.g., "outro-lick"); optional. If absent, the UI displays
+  a computed rank-order label (e.g., "#2"). Not stored. The scratch loop is
+  displayed distinctly (e.g., "scratch"), not numbered.
+
 - start: start time (seconds)
+
 - end: end time (seconds)
-- source: ID of the Section or Loop this was loaded from, or null if
-  manually created. Present on the scratch loop only; enables the
-  save-back operation and the dirty indicator.
+
+- source: ID of the Section or Loop this was loaded from, or null if manually
+  created. Present on the scratch loop only; enables the save-back operation
+  and the dirty indicator.
 
 Mark
+
 - id: generated unique identifier
-- name: user label; optional. If absent, the UI displays a computed
-  rank-order label (e.g., "#1") derived from position in timeline order.
-  Not stored.
+
+- name: user label; optional. If absent, the UI displays a computed rank-order
+  label (e.g., "#1") derived from position in timeline order. Not stored.
+
 - time: time point (seconds)
 

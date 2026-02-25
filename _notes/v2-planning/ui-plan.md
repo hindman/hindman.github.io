@@ -7,8 +7,8 @@
 
 Videos:
 
-    vu | Switch to video via a URL [url-input]
-    o  | Open: short synonym for `vu`.
+    vu | Switch to YouTube video via a URL [url-input]
+    y  | YouTube: short synonym for `vu`.
     vv | Switch to video [video-picker]
     ve | Edit video attributes [edit-video-modal]
 
@@ -78,6 +78,10 @@ URL-input:
     - But with two sumbit buttons: Open and Edit.
     - The latter takes the user to the edit-video-modal with the URL
       pre-populated.
+    - Should handle common YouTube URL flavors (eg, watch?v=, youtu.be/,
+      embed, etc.), accept just a video ID (zP4lYpsfL8c), respect the `t`
+      query parameter ( ?t=354), and not be tripped up by other YouTube query
+      parameters.
 
 Video-picker:
     - Typical picker interface listing the known videos.
@@ -179,30 +183,45 @@ Seek deltas:
 
 ## Mockup of page layout and UI controls
 
-TBD. This section is not up-to-date with the rest of the planning.
+### ASCII mockup of the main page areas
 
     ==============================================================================
-    LoopLlama   [small-image]                                  Help|About|Settings
+    LoopLlama [small-image]                       The Fifth Fret | Help | Settings
     ==============================================================================
 
+      ---------------------------------------------------      -----------------
+      |                                                 |      |               |
+      |                                                 |      |               |
+      |                                                 |      |               |
+      |                                                 |      |               |
+      |                                                 |      |               |
+      |                   YouTube area                  |      |   Message     |
+      |                                                 |      |   area        |
+      |                                                 |      |               |
+      |                                                 |      |               |
+      |                                                 |      |               |
+      |                                                 |      |               |
+      |                                                 |      |               |
+      |                                                 |      |               |
+      ---------------------------------------------------      -----------------
+
       ---------------------------------------------------
-      |                                                 |
-      |                                                 |
-      |                                                 |
-      |                                                 |
-      |                                                 |
-      |                     YOUTUBE                     |
-      |                                                 |
-      |                                                 |
-      |                                                 |
-      |                                                 |
-      |                                                 |
-      |                                                 |
-      |                                                 |
+      |                 Timeline area                   |
       ---------------------------------------------------
 
-       _________________________________________________
-       m______m______m___*_______m_______m______m_______          # Timline
+      ---------------------------------------------------------------------------
+      |                                                                         |
+      |                                                                         |
+      |                                                                         |
+      |                      Controls and info area                             |
+      |                                                                         |
+      |                                                                         |
+      |                                                                         |
+      |                                                                         |
+      ---------------------------------------------------------------------------
+
+
+
 
 
         UI elements:
@@ -222,20 +241,39 @@ TBD. This section is not up-to-date with the rest of the planning.
             Current location
             Current loop endpoints, if any
 
-        Modal: marks and loops
+Video:
+- id
+- url
+- duration
+- time
+- start
+- end
+- name
+- title
+- looping
+- speed
+- seek_delta
+- sections
+- loops
+- marks
+- jumps
+- version
 
-            Editing interface to manage
+Section
+- id
+- name
+- time
+- end
 
-        Modal: favorites
+Loop
+- id
+- name
+- start
+- end
+- source
 
-            Editing interface to manage
-
-        Modal: settings
-
-            navigation increments
-            layout: full width or compact
-
-        Modal: navigation history
-
-        Modal: help
+Mark
+- id
+- name
+- time
 

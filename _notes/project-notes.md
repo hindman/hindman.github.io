@@ -19,6 +19,35 @@ Posts:
     - MTG and Linda Litzke: https://chatgpt.com/c/691bca59-15ac-832b-b9de-8d1f38ddd596
     - Skepticism of the science of music practice: https://chatgpt.com/c/692dd380-d5d0-832c-ad74-a768b049c47b
 
+Tommy Emmanuel vs Music Practice Inc
+
+    https://www.youtube.com/watch?v=PLIZZ9lIlwg
+
+    When I first heard this interview last year I really appreciated the emphasis
+    on no free lunches: learning a song requires diligent effort; you have to
+    grind it out, small bit by small bit. Get your ass to the woodshed and don't
+    come out for a good long while.
+
+    But what strikes me today is how Emmanuel's advice cuts sharply against the
+    conventional wisdom on optimal practice strategy (Molly Gebrian, Noa Kageyama,
+    Charles Szczepanek, and other teachers in the vein). I have learned a lot from
+    their thinking (my post's title should be read as friendly teasing, not
+    mockery), but I also know enough about quantitative research to see the weak
+    foundation upon which many of their empirical claims rest. Academic quibbles
+    aside, Tommy Emmanuel rejects one of their core pieces of advice – namely,
+    interleaved rather than blocked practice (and related concepts).
+
+    Emmanuel says screw all of that: when you learn a new song, it must consume
+    you; your focus must be dogged, exclusive. Which approach is optimal? I have
+    no idea. And I have serious doubts that Gebrian-style research on this subject
+    proves very much. But Emmanuel's statement implies an essential aspect of
+    mastery: if you want to learn something difficult, it must obsess you — a kind
+    of mental illness channelled in productive directions.
+
+    Where do I stand on all of this? Nowhere firm, but my working theory is that
+    both sides of this debate can teach you important things. The right balance
+    probably varies according to your personality and abilities.
+
 ## dev notes
 
 Resources:
