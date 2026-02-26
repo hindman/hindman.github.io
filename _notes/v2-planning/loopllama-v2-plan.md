@@ -1,8 +1,5 @@
-# LoopLlama v2 — Design Plan Summary
 
-Summary of design discussions from:
-- ChatGPT "JavaScript Project Workflow" conversation (July-August 2025)
-- Claude Code session (February 2026)
+# LoopLlama v2 Plan
 
 ---
 
@@ -38,7 +35,7 @@ displayed on the visual timeline.
 Sections are musical structural elements: Intro, Verse, A section, B
 section, Outro, Vamp, Solo, etc. They correspond to the actual structure
 of the musical piece. Sections have a start and end point and can be
-activated as the current loop. The typical first step when setting up a
+activated as the scratch-loop. The typical first step when setting up a
 new song is to mark the start of each section.
 
 Loops are named, loopable time ranges that do not have to correspond to
@@ -47,8 +44,7 @@ create a loop called "outro-lick" to isolate a specific phrase for
 practice. Loops have a name/label as their primary identifier.
 
 Marks are named time points for quick navigation. They are the most
-generic entity: any moment the user wants to return to quickly. Possible
-future feature: allow a pair of marks to define a loop (TBD).
+generic entity: any moment the user wants to return to quickly.
 
 ### 3. Data Model for Marks and Loops
 
@@ -333,9 +329,8 @@ ambiguity for some users.
 ## Open Items
 
 - Drag-to-edit on the timeline: aspirational, not committed.
-- Marks-to-loop feature: allow defining a loop from two marks (TBD).
-- Command palette (VS Code-style): mentioned, not committed.
-- Cross-device sync: punted to a future version.
+- Server-side persistence for cross-device sync, user login, and other needs:
+  punted to a future version, maybe never.
 
 ---
 
@@ -375,7 +370,7 @@ the playhead is before the first divider or after the last.
 ### Looping a section
 
 Activating loop-current-section loads the section's start and end into
-the scratch loop (following the same scratch loop model as named loops).
+the scratch-loop (following the same scratch-loop model as named loops).
 If the current section has no right divider (it is the last and
 open-ended), the video's effective end serves as the fallback right
 boundary.
@@ -385,7 +380,7 @@ boundary.
 - Set: plant a new divider at the current playhead position.
 - Edit: edit the divider to the left of the current playhead (adjust its
   time, set or change its label).
-- Loop: load the current section into the scratch loop.
+- Loop: load the current section into the scratch-loop.
 - Delete: remove the divider to the left of the current playhead.
 - Jump next/previous: move the playhead to the next or previous divider.
 
@@ -399,18 +394,18 @@ be stored as a convenience cache but is not a primary attribute.
 
 ## Looping Model
 
-### The scratch loop
+### The scratch-loop
 
-The active loop is always the scratch loop -- a single unnamed Loop entity
-that is the working surface for all looping activity. The scratch loop's
+The active loop is always the scratch-loop -- a single unnamed Loop entity
+that is the working surface for all looping activity. The scratch-loop's
 endpoints are what the player actually uses when looping is enabled.
 
 Setting endpoints manually (quick-set keys for start and end) always
-writes directly to the scratch loop. Loading a saved Loop or Section
-copies its endpoints into the scratch loop; the saved entity is untouched.
-All endpoint editing applies to the scratch loop only. It makes no sense
+writes directly to the scratch-loop. Loading a saved Loop or Section
+copies its endpoints into the scratch-loop; the saved entity is untouched.
+All endpoint editing applies to the scratch-loop only. It makes no sense
 to edit a saved loop's endpoints in the abstract -- the loop must be
-active (in the scratch loop) so the user can hear the effect of changes
+active (in the scratch-loop) so the user can hear the effect of changes
 in real time. The workflow is always: load into scratch, edit, then
 optionally save back.
 
@@ -420,23 +415,23 @@ Scratch-loop operations:
 - Edit endpoints: interactive mode where the user nudges start/end and
   hears the result immediately. Start point is the one most often fussed
   with; end point less so.
-- Save-back: if the scratch loop was loaded from a named entity, a direct
+- Save-back: if the scratch-loop was loaded from a named entity, a direct
   binding pushes the current endpoints back to that source. No UI needed;
   happens immediately.
 
 Saved-loop operations (act on named Loop entities):
-- Load: picker -- select a saved loop, copy its endpoints into the scratch
-  loop. The picker is load-only; it is not combined with delete.
+- Load: picker -- select a saved loop, copy its endpoints into the
+  scratch-loop. The picker is load-only; it is not combined with delete.
 - Delete: picker -- select a saved loop, delete it.
-- Save: modal -- save the scratch loop's current endpoints as a new named
+- Save: modal -- save the scratch-loop's current endpoints as a new named
   loop. Requires user input (name).
 - Rename / edit attributes: modal.
 
 ### Dirty indicator
 
-If the scratch loop was loaded from a named entity and its endpoints have
+If the scratch-loop was loaded from a named entity and its endpoints have
 since been modified, the UI shows a dirty indicator (e.g., on the
-timeline marker) to remind the user that the scratch loop and its source
+timeline marker) to remind the user that the scratch-loop and its source
 have diverged.
 
 ---
@@ -470,16 +465,16 @@ Video:
 
 - looping:
     - ID of the active Section or Loop entity (null if not looping).
-    - Scratch loop policy:
-        - When the user sets loop endpoints manually, a scratch loop is
+    - Scratch-loop policy:
+        - When the user sets loop endpoints manually, a scratch-loop is
           created -- a single unnamed Loop that persists in the loops list
           until named or discarded.
         - Activating a named Loop or Section copies its endpoints into the
-          scratch loop; the named entity is untouched.
-        - All endpoint edits apply to the scratch loop only.
-        - A dedicated "save back" binding pushes the scratch loop's current
+          scratch-loop; the named entity is untouched.
+        - All endpoint edits apply to the scratch-loop only.
+        - A dedicated "save back" binding pushes the scratch-loop's current
           endpoints to the source entity.
-        - If the scratch loop was loaded from a named entity and has since
+        - If the scratch-loop was loaded from a named entity and has since
           been modified, the UI shows a dirty indicator (e.g., on the timeline
           marker) to prompt the user to commit or discard.
 
@@ -489,7 +484,7 @@ Video:
 
 - sections: array of Section entities
 
-- loops: array of Loop entities (includes the scratch loop if present)
+- loops: array of Loop entities (includes the scratch-loop if present)
 
 - marks: array of Mark entities
 
@@ -519,7 +514,7 @@ Loop
 - id: generated unique identifier
 
 - name: user label (e.g., "outro-lick"); optional. If absent, the UI displays
-  a computed rank-order label (e.g., "#2"). Not stored. The scratch loop is
+  a computed rank-order label (e.g., "#2"). Not stored. The scratch-loop is
   displayed distinctly (e.g., "scratch"), not numbered.
 
 - start: start time (seconds)
@@ -527,7 +522,7 @@ Loop
 - end: end time (seconds)
 
 - source: ID of the Section or Loop this was loaded from, or null if manually
-  created. Present on the scratch loop only; enables the save-back operation
+  created. Present on the scratch-loop only; enables the save-back operation
   and the dirty indicator.
 
 Mark
@@ -538,4 +533,359 @@ Mark
   label (e.g., "#1") derived from position in timeline order. Not stored.
 
 - time: time point (seconds)
+
+---
+
+## Key bindings
+
+Videos:
+
+    vu | Switch to YouTube video via a URL [url-input-mode]
+    y  | YouTube: short synonym for `vu`.
+    vv | Switch to video [video-picker]
+    ve | Edit video attributes [edit-video-modal]
+
+Playing:
+
+    <Space>  | Play/pause current video
+    -        | Speed: slower by .05
+    =        | Speed: faster by .05
+    <Bspace> | Reset speed to 1.0
+
+Navigation:
+
+    <Right> | Seek forward
+    <Left>  | Seek backward
+    <Down>  | Seek delta: reduce
+    <Up>    | Seek delta: increase
+    <Enter> | Jump: to start (of loop or video)
+    j       | Jump [jumps-picker]
+
+Looping:
+
+    ll   | Toggle looping on/off
+    [    | Set scratch-loop start to current time
+    ]    | Set scratch-loop end to current time
+    lo   | Open: opens/loads a saved-loop into scratch-loop [loops-picker]
+    ld   | Delete: a saved-loop [loops-picker]
+    ls   | Save-new: a new loop [save-loop-modal]
+    lb   | Save-back: save scratch-loop endpoints back to source entity
+    le   | Edit: scratch-loop [edit-scratch-loop-mode]
+
+Sections:
+
+    ss | Set: sets a new section divider at current time
+    se | Edit: edit current section [edit-section-mode]
+    sl | Loop: makes current section the scratch-loop source
+    sd | Delete: the current section [delete section-divider to the left]
+    .  | Jump: next section
+    ,  | Jump: previous section
+
+Marks:
+
+    mm   | Set mark at current times
+    me   | Edit: nearest mark (to the left) [edit-mark-mode]
+    md   | Delete: nearest mark (to the left)
+
+Undo and help:
+
+    u | Undo: most recent edit
+    U | Redo: reverses an Undo
+    h | Help-modal
+
+Data:
+
+    de | Export: app data as JSON
+    di | Import: app data from JSON
+    dv | Share: video data as JSON
+    dl | Share: scratch-loop [via URL]
+    dc | Clear: app data [clear-data-modal]
+    dd | Display: app data as JSON [bottom of web page]
+
+---
+
+## Modals, pickers, and other UI elements
+
+Video-info-modal:
+    - Informational model.
+    - User-oriented display of all data about the current video.
+
+URL-input-mode:
+    - Puts focus on the URL text box with the full URL selected, so the user
+      can easily paste to replace the old URL.
+    - Pressing Esc or Enter returns focus to the main app.
+    - Text box should:
+        - Handle common YouTube URL flavors (eg, watch?v=, youtu.be/, etc).
+        - Accept just a video ID (eg, zP4lYpsfL8c).
+        - Respect the `t` query parameter (eg, ?t=354).
+        - Not be tripped up by other YouTube query parameters.
+
+Video-picker:
+    - Typical picker interface listing the known videos.
+    - Displays name, title, maybe duration, maybe YouTube ID.
+    - Filters on "NAME TITLE".
+
+Edit-video-modal:
+    - Basic modal to edit URL, name, title, start, end.
+    - Also a delete-video button.
+
+Jumps-picker:
+    - Picker items include: sections, loops, marks, and jumplist times.
+    - Supports a command-line grammar.
+    - Supports some immediate-select behavior (Enter press not needed).
+
+        T       | Jump to a specific time
+        QUERY   | Regular picker behavior
+        X QUERY | Pre-filter picker items to just type X
+        X,      | Jump to previous entity of type X [immediately]
+        X.      | Jump to next entity of type X [immediately]
+
+        Where X can take these values:
+
+            l   | Loops
+            s   | Sections
+            m   | Marks
+            j   | Jumplist
+
+        Where T is any valid time. If T parses as a time, it's a time,
+        not a QUERY.
+
+Loops-picker:
+    - Typical picker.
+
+Save-loop-modal:
+    - Modal to edit name, start, end.
+    - With picker to set source, which populates start/end.
+    - Defaults to scratch-loop attributes.
+
+Edit-scratch-loop-mode:
+    - Mode to edit start/end.
+    - Needs visual indicators to communicate that the mode has changed, to
+      focus attention on the scratch-loop, and to provide a cheatsheet for the
+      mode's key bindings.
+    - For play/pause if focus in on start, play starts at the loop beginning;
+      if on end, starts 5 sec before end.
+
+    <Tab>          | Toggle focus between start or end
+    <Left> <right> | Move start/end
+    <Up> <down>    | Change the move delta
+    <Space>        | Play/pause the video at the relevant spot
+    <Backspace>    | Reset to start or end of video
+    <Enter>        | Submit
+
+Edit-section-mode:
+    - Barely a mode because section name and start are already on the page and
+      don't requires special key bindings to support edits.
+    - Selects the section name so the user can edit it.
+    - The tab-order should be arranged so that <Tab> takes the user to the
+      Section time if edits are desired.
+    - In the future, might become a true modal if there end up being more
+      Section attributes.
+
+Edit-mark-mode:
+    - Barely a mode since current mark's name/time are on the page.
+    - Could become a true modal in future.
+
+Help-modal:
+    - Displays the main help text explaining the basics:
+        - What LoopLlama is.
+        - Getting started.
+        - Basic concepts.
+        - Etc.
+    - To see key bindings the user can press one of these to list the relevant
+      bindings (either all or for a specific topic).
+    - The main help modal should communicate a cheat sheet for the bindings.
+
+        k | All
+        v | Videos
+        p | Playing
+        n | Navigatation
+        l | Loops
+        s | Sections
+        m | Marks
+        a | Application
+
+Clear-data-modal:
+    - TBD
+    - Modal with checkboxes to select subsets of the data to clear.
+
+Time inputs:
+    - When users input time values, v2 should support various input styles.
+
+    mm:ss and hh:mm:ss | 5:13, 32:45, 1:13:28
+    condensed forms    | 73:44 == 1:13:44
+    raw seconds        | 245 == 4:05
+    decimal seconds    | 99.7 or 34:43.2
+    forward slash      | mm/ss and hh/mm/ss
+
+Modal, mode, and picker exit keys:
+    <Esc>   | Exit and take no action
+    <Enter> | Submit or exit [varies by context]
+
+Seek deltas:
+    - Default: 5 sec.
+    - Choices via <Up> and <Down>: 0.1, 1, 5, 10, 30, 60, 300, 1800.
+
+---
+
+## Mockup of page layout and UI controls
+
+### ASCII mockup of the main page areas
+
+This section uses ASCII-art to mockup the page header and the general layout
+of the page. At least for non-small browser windows on a regular computer
+screen, the goal would be a layout where everything is visible on one screen
+without forcing the user to scroll or page up/down.
+
+    ==============================================================================
+    LoopLlama [image]                     The Fifth Fret | Code | Help | Settings
+    ==============================================================================
+
+      ---------------------------------------------------      -----------------
+      |                                                 |      |               |
+      |                                                 |      |               |
+      |                                                 |      |               |
+      |                                                 |      |               |
+      |                                                 |      |               |
+      |                   YouTube area                  |      |   Message     |
+      |                                                 |      |   area        |
+      |                                                 |      |               |
+      |                                                 |      |               |
+      |                                                 |      |               |
+      |                                                 |      |               |
+      |                                                 |      |               |
+      |                                                 |      |               |
+      ---------------------------------------------------      -----------------
+
+      ---------------------------------------------------
+      |                 Timeline area                   |
+      ---------------------------------------------------
+
+      ---------------------------------------------------------------------------
+      |                                                                         |
+      |                                                                         |
+      |                                                                         |
+      |                      Controls and info area                             |
+      |                                                                         |
+      |                                                                         |
+      |                                                                         |
+      |                                                                         |
+      ---------------------------------------------------------------------------
+
+### Timeline
+
+Real estate will be tight in this area, so most visual indicators will
+come in the form of small marks/symbols indicating various start times (for
+sections and marks) and ranges (for the scratch-loop).
+
+The names of the underlying entities (Section, Loop, Mark) will be visible
+on mouse hover and, if feasible, editable via click.
+
+Whether the time points in the timeline are editable via dragging is an open
+question. In my v1 experience, I don't think editing via dragging would have
+been very effective. Typically one wants to set time points while
+viewing/listening to the video. Dragging, by contrast, is sort of a blind
+operation.
+
+Elements shown in the timeline:
+
+    video        | current time
+    sections     | starts
+    scratch-loop | range
+    marks        | time
+
+### Controls area
+
+Currently, many elements below are listed as generic "button". The result
+would be a page with a proliferation of buttons. Here are some options and
+factors that could help:
+
+- Some of the buttons (eg, seek forward/reverse) are small.
+- Combine some element pairs into specialized controls (eg up/down).
+- Combine some buttons into multi-step interfaces (eg, "Save" loop button
+  might then offer choice between "new" or "modify source").
+
+Video:
+
+    url    | text box
+    name   | text box
+    title  | text box
+    edit   | button
+    delete | button
+
+Play / Navigation:
+
+    play/pause           | button
+    time                 | text box
+    ---------------------------------
+    seek: back           | button
+    seek: forward        | button
+    seek_delta           | text box
+    seek_delta: increase | button
+    seek_delta: decrease | button
+    ---------------------------------
+    jump                 | button
+    jump-back            | button
+    jump-to-start        | button
+    ---------------------------------
+    speed                | text box
+    speed: increase      | button
+    speed: decrease      | button
+    speed: reset to 100  | button
+
+Section:
+
+    name     | text box
+    start    | text box
+    edit     | button
+    loop     | button
+    new      | button
+    delete   | button
+    next     | button
+    previous | button
+
+Mark:
+
+    name   | text box
+    time   | text box
+    delete | button
+
+Loop:
+
+    looping: on/off | toggle
+    start           | text box
+    start: set here | button
+    end             | text box
+    end: set here   | button
+    source          | informational
+    open            | button
+    save-new        | button
+    save-back       | button
+    delete          | button
+
+App:
+
+    undo | button
+    redo | button
+    help | button
+
+Data:
+
+    export       | button
+    import       | button
+    clear        | button
+    display      | button
+    share: video | button
+    share: loop  | button
+
+### Message area.
+
+This is an open space, tentatively reserved as an area for warning/error
+messages and perhaps context-based cheat-sheet information.
+
+Alternatively, or in addition, it could become extra real estate if we are
+struggling to fit all of the controls on one typical computer screen.
+
+If the browser window is made small (or on smaller devices) this area would
+need to be pushed farther down the page.
 

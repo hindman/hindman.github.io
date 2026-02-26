@@ -2,11 +2,10 @@
 ## TODO
 
 LoopLlama v2:
-    - Mockup of page layout and UI controls
+    x Mockup of page layout and UI controls
+    x Merge into the v2-plan file.
+    - loopllama-v2-plan.md: edit
     - Clear-data-modal
-    - Merge/edit:
-        - ui-plan.md
-        - loopllama-v2-plan.md
 
 Posts:
     x RH rudiments #1: alternating bass
@@ -21,7 +20,7 @@ Posts:
 
 Tommy Emmanuel vs Music Practice Inc
 
-    https://www.youtube.com/watch?v=PLIZZ9lIlwg
+    https://youtu.be/PLIZZ9lIlwg?t=587
 
     When I first heard this interview last year I really appreciated the emphasis
     on no free lunches: learning a song requires diligent effort; you have to
