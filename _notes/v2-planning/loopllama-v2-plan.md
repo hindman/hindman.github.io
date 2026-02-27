@@ -1,49 +1,4 @@
 
-<!---
-
-## What LoopLlama Is
-## v2 Goals
-### 1. Visual Design Overhaul
-### 2. Three First-Class Entities: Sections, Loops, and Marks
-### 3. Data Model for Marks and Loops
-### 4. UI and Keyboard Philosophy
-### Which-key overlay
-### 5. Visual Timeline
-### 6. Idiomatic, Maintainable JavaScript
-### 7. Responsive Layout
-### 8. Persistence
-### 9. Sharing
-### 10. Navigation Safety
-## Technology Decisions
-## Known v1 Bugs to Fix in v2
-## Directory Structure
-## Implementation Stages
-## Undo
-## Time Input Formats
-## Open Items
-## Sections Model
-### Divider-based structure
-### Non-exhaustive coverage
-### Marking the end of relevant material
-### Current section
-### Looping a section
-### Operations
-### Schema note
-## Looping Model
-### The scratch-loop
-### Operations and their targets
-### Dirty indicator
-## Data schema
-## Key bindings
-## Modals, pickers, and other UI elements
-## Mockup of page layout and UI controls
-### ASCII mockup of the main page areas
-### Timeline
-### Controls area
-### Message area.
-
--->
-
 # LoopLlama v2 Plan
 
 ---
@@ -66,7 +21,7 @@ sections, set marks, adjust speed, navigate quickly.
 ### 1. Visual Design Overhaul
 
 - Make the app look good while retaining keyboard-first control.
-- All settings and state (current time, loop endpoints, favorites, speed)
+- All settings and state (current time, loop endpoints, named videos, speed)
   should be displayed in a polished UI and also editable via standard web
   controls (text boxes, toggles, checkboxes) for mouse-oriented users.
 - No more reliance on browser `prompt()` dialogs for any operation.
@@ -205,12 +160,13 @@ where to draw the line. No other sharing variants are planned for v2.
 ### 10. Navigation Safety
 
 - Seek stack / jump-back: When the user accidentally jumps elsewhere in a long
-  video, a jump-back function returns to the prior position. Implemented as a
-  small ring buffer (~10 entries).
+  video, a jump-back function returns to the prior position. The jump list is
+  persisted per video (stored in video.jumps); see Data Schema.
 - Selective push: Only push on user-initiated seeks (not loop re-entry). Use a
   threshold (e.g., >5 seconds) to avoid clutter.
-- Session persistence: Periodically save current playback position per video
-  to localStorage so the user can resume where they left off.
+- Session persistence: Current playback position is saved per video to
+  localStorage (stored in video.time) so the user can resume where they left
+  off.
 
 ---
 
@@ -231,6 +187,16 @@ supported by all modern browsers, enables clean code splitting.
 
 Storage: localStorage for v2. Simple, sufficient for current scale.
 Cross-device sync punted to a future version.
+
+App-wide state: one top-level component (`<llama-app>`) holds all app
+state as Lit reactive properties. Child components receive data as
+properties ("props down") and signal changes by firing custom DOM events
+("events up"). The top-level component catches those events, updates its
+state via plain functions in `state.js`, and Lit re-renders whatever
+depends on the changed data. No state-management library needed.
+LoopLlama's component tree is shallow enough (timeline, video controls,
+and entity panels are all direct children of `<llama-app>`) that prop
+drilling is not a concern.
 
 CSS strategy: Shoelace for UI primitives (modals, buttons, text inputs,
 toggles, etc.), hand-rolled CSS with CSS custom properties for
@@ -275,9 +241,7 @@ v2/
 │       ├── llama-sections.js   # Sections editor modal
 │       ├── llama-loops.js      # Loops editor modal
 │       ├── llama-marks.js      # Marks editor modal
-│       ├── llama-favorites.js  # Favorites editor modal
 │       ├── llama-settings.js   # Settings modal
-│       ├── llama-history.js    # Navigation history modal
 │       └── llama-help.js       # Keyboard reference modal
 ├── styles/
 │   └── app.css
@@ -288,36 +252,74 @@ v2/
 
 ## Implementation Stages
 
-1. Project scaffolding: create `loopllama/v2/`, initialize Vite + Lit,
-   verify a basic component renders. Finalize CSS strategy.
+1. HTML/CSS prototype: build a static HTML file (no JavaScript) using
+   Shoelace components and hand-rolled CSS to validate the page layout
+   and controls grouping before writing any application code. This is
+   the right time to resolve visual design questions (button
+   proliferation, control organization, section sizing). The prototype
+   can live outside the v2/ directory and be discarded or kept as
+   reference.
 
-2. State and storage modules: port `vi`, `favs`, `DEFAULTS`, and
-   localStorage logic. Update data model for named marks and loops with
-   optional numeric shortcuts.
+2. Project scaffolding: create `loopllama/v2/`, initialize Vite + Lit,
+   verify that a basic Lit component renders and hot reload works.
 
-3. YouTube API integration: port videoController logic. Fix the duration
-   detection bug via `onStateChange`.
+3. State and storage module: implement the data schema (Video, Section,
+   Loop, Mark) as defined in the Data Schema section. Implement
+   localStorage load/save and JSON export/import stubs. No UI yet --
+   just the model and its persistence layer, verifiable via the browser
+   console.
 
-4. Basic working UI -- no timeline, no modals: video iframe + live
-   display of current time, loop, speed, marks. Keyboard controller
-   ported and working. At this point v2 matches v1 behavior in a clean
-   new codebase.
+4. YouTube API integration: port the video controller logic from v1. Fix
+   the duration detection bug via `onStateChange`. Verify that a video
+   loads, plays, pauses, seeks, and reports current time correctly.
 
-5. Timeline component: the centerpiece visual feature. Sections, loops,
-   marks, and playhead all displayed. Click-to-jump. Drag-to-edit is
-   aspirational.
+5. Keyboard controller: implement the multi-key pending-key buffer and
+   key dispatch system. Add which-key overlay support (display available
+   continuations after ~300ms delay when a prefix key is held). Add
+   focus management so that modals and modes capture key events while
+   the global controller is inactive.
 
-6. Modal UX: sections, loops, marks, favorites, settings, navigation
-   history, help. The keyboard-triggered modal/picker pattern must be
-   consistent across all of these.
+6. Minimal working app: wire together stages 3-5 into a functional app
+   -- video iframe, basic controls area (time, speed, seek), URL
+   loading, and core key bindings (play/pause, speed, seek,
+   jump-to-start). No entities yet. End state: app handles basic
+   playback at least as well as v1.
 
-7. Persistence polish: file picker for import, JSON export, session
-   resume.
+7. Three entities -- data and controls: implement the full data model
+   for Sections, Marks, and scratch-loop/Loops. Add the controls area
+   display (name/time boxes for each entity type). Add all keyboard
+   bindings for entity operations. Add inline editing modes
+   (edit-scratch-loop-mode, edit-section-mode, edit-mark-mode). End
+   state: all entity operations work via keyboard; entities visible in
+   controls area.
 
-8. Navigation safety: seek stack / go-back.
+8. Timeline component: horizontal timeline displaying sections,
+   scratch-loop range, marks, and playhead. Click-to-jump. Drag-to-edit
+   is aspirational and can be deferred.
 
-9. Deploy: update `loopllama/index.html` to route to v2 (or replace
-   the root redirect).
+9. Pickers and modals: build the full modal/picker UX: url-input-mode,
+   video-picker, jumps-picker, loops-picker, save-loop-modal,
+   edit-video-modal. All must be keyboard-triggerable and follow
+   consistent exit-key conventions (Esc/Enter).
+
+10. Undo: snapshot-based undo/redo. Push a video state snapshot before
+    each destructive or modifying operation. Implement `u`/`U` bindings.
+    Session-only; no persistence needed.
+
+11. Persistence: export all data as JSON (full dump and per-video scope).
+    Import via file picker. URL loop sharing (encode video ID + start +
+    end as query params).
+
+12. Navigation safety: persist the jump list (video.jumps). Push
+    user-initiated seeks above the threshold. Implement go-back via
+    the jumps-picker's `j,` grammar.
+
+13. Ancillary modals: options-modal (seek delta, speed delta, section
+    padding), help-modal (key bindings reference), delete-data-modal
+    (checkboxes for selective data clearing).
+
+14. Deploy: update `loopllama/index.html` to route to v2. Verify on
+    GitHub Pages.
 
 ---
 
@@ -505,20 +507,9 @@ Video:
     - empty until set my user
     - auto-population from YouTube metadata requires the YouTube Data API
 
-- looping:
-    - ID of the active Section or Loop entity (null if not looping).
-    - Scratch-loop policy:
-        - When the user sets loop endpoints manually, a scratch-loop is
-          created -- a single unnamed Loop that persists in the loops list
-          until named or discarded.
-        - Activating a named Loop or Section copies its endpoints into the
-          scratch-loop; the named entity is untouched.
-        - All endpoint edits apply to the scratch-loop only.
-        - A dedicated "save back" binding pushes the scratch-loop's current
-          endpoints to the source entity.
-        - If the scratch-loop was loaded from a named entity and has since
-          been modified, the UI shows a dirty indicator (e.g., on the timeline
-          marker) to prompt the user to commit or discard.
+- looping: boolean; whether looping is currently enabled. The scratch-loop's
+  endpoints are always what the player uses when this is true. See the
+  Looping Model section for the full scratch-loop policy.
 
 - speed: playback speed; defaults to 1.0
 
@@ -567,6 +558,10 @@ Loop
   created. Present on the scratch-loop only; enables the save-back operation
   and the dirty indicator.
 
+- is_scratch: boolean; true on the one scratch-loop entity. Needed because
+  source can be null for a manually-created scratch-loop, making source alone
+  insufficient to identify which Loop in the array is the scratch-loop.
+
 Mark
 
 - id: generated unique identifier
@@ -609,7 +604,6 @@ Looping:
     [    | Set scratch-loop start to current time
     ]    | Set scratch-loop end to current time
     lo   | Open: opens/loads a saved-loop into scratch-loop [loops-picker]
-    ld   | Delete: a saved-loop [loops-picker]
     ls   | Save-new: a new loop [save-loop-modal]
     lb   | Save-back: save scratch-loop endpoints back to source Loop
     le   | Edit: scratch-loop [edit-scratch-loop-mode]
@@ -625,7 +619,7 @@ Sections:
 
 Marks:
 
-    mm   | Set mark at current times
+    mm   | Set mark at current time
     me   | Edit: nearest mark (to the left) [edit-mark-mode]
     md   | Delete: nearest mark (to the left)
 
@@ -638,11 +632,11 @@ Undo and help:
 
 Data:
 
+    dd | Delete: delete-data-modal
     de | Export: app data as JSON
     di | Import: app data from JSON
     dv | Share: video data as JSON
     dl | Share: scratch-loop [via URL]
-    dd | Delete: delete-data-modal
     dI | Inspect: app data as JSON [bottom of web page]
 
 ---
@@ -762,8 +756,19 @@ Options-modal:
             - end
 
 Delete-data-modal:
-    - TBD
     - Modal with checkboxes to select subsets of the data to clear.
+        - current entities:
+            - video
+            - section
+            - loop
+            - mark
+        - individual entities:
+            - videos
+            - sections
+            - loops
+            - marks
+        - maybe uber-checkboxes for "all" variants of the entities
+        - all data
 
 Modal, mode, and picker exit keys:
     <Esc>   | Exit and take no action
@@ -819,6 +824,17 @@ without forcing the user to scroll or page up/down.
       |                                                                         |
       ---------------------------------------------------------------------------
 
+### Message area.
+
+This is an open space, tentatively reserved as an area for warning/error
+messages and perhaps context-based cheat-sheet information.
+
+Alternatively, or in addition, it could become extra real estate if we are
+struggling to fit all of the controls on one typical computer screen.
+
+If the browser window is made small (or on smaller devices) this area would
+need to be pushed farther down the page.
+
 ### Timeline
 
 Real estate will be tight in this area, so most visual indicators will
@@ -848,9 +864,13 @@ would be a page with a proliferation of buttons. Here are some options and
 factors that could help:
 
 - Some of the buttons (eg, seek forward/reverse) are small.
-- Combine some element pairs into specialized controls (eg up/down).
+- Combine some element pairs into specialized controls
+    - up/down, increase/decrease, next/previous
+    - closely related elements: loop start and set start to current time
 - Combine some buttons into multi-step interfaces (eg, "Save" loop button
   might then offer choice between "new" or "modify source").
+- Action dropdowns.
+- Buttons styled to look like text and thus visually compact.
 
 Video:
 
@@ -858,7 +878,6 @@ Video:
     name   | text box
     title  | text box
     edit   | button
-    delete | button
 
 Play / Navigation:
 
@@ -877,15 +896,14 @@ Section:
     edit     | button
     loop     | button
     new      | button
-    delete   | button
     next     | button
     previous | button
 
 Mark:
 
-    name   | text box
-    time   | text box
-    delete | button
+    name | text box
+    time | text box
+    new  | button
 
 Loop:
 
@@ -896,8 +914,8 @@ Loop:
     end: set here   | button
     source          | informational
     open            | button
-    save            | button => choose new/back [if source is loop]
-    delete          | button
+    save-new        | button
+    save-back       | button
 
 App:
 
@@ -907,20 +925,9 @@ App:
 
 Data:
 
+    delete  | button
     export  | button
     import  | button
-    delete  | button
     display | button
     share   | button => choose video/loop
-
-### Message area.
-
-This is an open space, tentatively reserved as an area for warning/error
-messages and perhaps context-based cheat-sheet information.
-
-Alternatively, or in addition, it could become extra real estate if we are
-struggling to fit all of the controls on one typical computer screen.
-
-If the browser window is made small (or on smaller devices) this area would
-need to be pushed farther down the page.
 
