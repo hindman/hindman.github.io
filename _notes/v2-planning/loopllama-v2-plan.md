@@ -1,4 +1,49 @@
 
+<!---
+
+## What LoopLlama Is
+## v2 Goals
+### 1. Visual Design Overhaul
+### 2. Three First-Class Entities: Sections, Loops, and Marks
+### 3. Data Model for Marks and Loops
+### 4. UI and Keyboard Philosophy
+### Which-key overlay
+### 5. Visual Timeline
+### 6. Idiomatic, Maintainable JavaScript
+### 7. Responsive Layout
+### 8. Persistence
+### 9. Sharing
+### 10. Navigation Safety
+## Technology Decisions
+## Known v1 Bugs to Fix in v2
+## Directory Structure
+## Implementation Stages
+## Undo
+## Time Input Formats
+## Open Items
+## Sections Model
+### Divider-based structure
+### Non-exhaustive coverage
+### Marking the end of relevant material
+### Current section
+### Looping a section
+### Operations
+### Schema note
+## Looping Model
+### The scratch-loop
+### Operations and their targets
+### Dirty indicator
+## Data schema
+## Key bindings
+## Modals, pickers, and other UI elements
+## Mockup of page layout and UI controls
+### ASCII mockup of the main page areas
+### Timeline
+### Controls area
+### Message area.
+
+-->
+
 # LoopLlama v2 Plan
 
 ---
@@ -6,8 +51,8 @@
 ## What LoopLlama Is
 
 A browser-based YouTube video controller for music practice. Core use case:
-hold a guitar and control video playback via single-key Vim-style bindings --
-loop sections, set marks, adjust speed, navigate quickly.
+hold a guitar and control video playback via Vim-style bindings -- loop
+sections, set marks, adjust speed, navigate quickly.
 
 - v1 tech: Single vanilla JS file (loopllama.js) + YouTube IFrame API
 - Hosting: GitHub Pages (hindman.github.io/loopllama/)
@@ -27,35 +72,36 @@ loop sections, set marks, adjust speed, navigate quickly.
 - No more reliance on browser `prompt()` dialogs for any operation.
   Replace with proper modals and inline editing controls.
 
-### 2. Three First-Class Entities: Sections, Loops, and Marks
+### 2. Timeline entities: Sections, Loops, and Marks
 
 These are distinct concepts sharing some overlapping traits. All three are
 displayed on the visual timeline.
 
-Sections are musical structural elements: Intro, Verse, A section, B
-section, Outro, Vamp, Solo, etc. They correspond to the actual structure
-of the musical piece. Sections have a start and end point and can be
-activated as the scratch-loop. The typical first step when setting up a
-new song is to mark the start of each section.
+Sections are musical structural elements: Intro, Verse, A section, B section,
+Outro, Vamp, Solo, etc. They correspond to the actual structure of the musical
+piece. Sections have a start time (and an end time derived from the the next
+Section start). Sections cannot overlap. They can be activated as the
+scratch-loop (when that occurs the loop's start/end points will include some
+extra time or padding, eg 2 sec). The typical first step when setting up a new
+song is to mark the start of each section.
 
 Loops are named, loopable time ranges that do not have to correspond to
-musical structure. They are more generic than sections: a user might
-create a loop called "outro-lick" to isolate a specific phrase for
-practice. Loops have a name/label as their primary identifier.
+musical structure. They are more generic than sections: a user might create a
+loop called "outro-lick" to isolate a specific phrase for practice. Loops have
+a name/label as their primary identifier.
 
-Marks are named time points for quick navigation. They are the most
-generic entity: any moment the user wants to return to quickly.
+Marks are named time points for quick navigation. They are the most generic
+entity: any moment the user wants to return to quickly.
 
 ### 3. Data Model for Marks and Loops
 
-In v1, marks and loops were identified by a fixed number (m1-m9, L1-L9),
-with no labels. In v2, the primary identifier is a user-defined name.
-Names are optional: if the user does not name an entity, the UI assigns
-a computed display label based on rank order within its type (e.g., "#2"
-for the second loop by start time). This label is not stored -- it is
-derived on the fly from current sort order. Users who find the instability
-of auto-numbers (caused by insertions or deletions) annoying have a clear
-remedy: name the entity.
+In v1, marks and loops were identified by a fixed number (m1-m9, L1-L9), with
+no labels. In v2, the primary identifier is a user-defined name. Names are
+optional: if the user does not name an entity, the UI assigns a computed
+display label based on rank order within its type (e.g., "#2" for the second
+loop by start time). This label is not stored -- it is derived on the fly from
+current sort order. Users who find the instability of auto-numbers (caused by
+insertions or deletions) annoying have a clear remedy: name the entity.
 
 The digit shortcut system from v1 (assigning a number to an entity for
 fast keyboard access) is dropped. All entity access goes through the
@@ -89,13 +135,11 @@ When a modal or editor is open, keyboard events must be captured by the
 modal, not the global keyboard controller. This requires explicit focus
 management in the component architecture.
 
-### Which-key overlay
-
-When the user presses a prefix key (`m`, `s`, `l`, etc.) and the
-pending-key buffer is waiting for a second key, the app displays a small
+When the user presses a prefix key (`m`, `s`, `l`, etc.) and the pending-key
+buffer is waiting for a second key, the app displays a small which-key-style
 overlay listing the available continuations for that prefix. The overlay
-disappears when the second key is pressed or on Escape. This is the
-which-key pattern (named after the Neovim plugin).
+disappears when the second key is pressed or on Escape. This is the which-key
+pattern (named after the Neovim plugin).
 
 Implementation: the keyboard controller is already in a pending-key state
 at this point; displaying the overlay is a reactive state change that
@@ -160,13 +204,13 @@ where to draw the line. No other sharing variants are planned for v2.
 
 ### 10. Navigation Safety
 
-- Seek stack / go-back: When the user accidentally jumps elsewhere in a
-  long video, a "go back" function (bound to a key like `b`) returns to
-  the prior position. Implemented as a small ring buffer (~10 entries).
-- Selective push: Only push on user-initiated seeks (not loop re-entry).
-  Use a threshold (e.g., >5 seconds) to avoid clutter.
-- Session persistence: Periodically save current playback position per
-  video to localStorage so the user can resume where they left off.
+- Seek stack / jump-back: When the user accidentally jumps elsewhere in a long
+  video, a jump-back function returns to the prior position. Implemented as a
+  small ring buffer (~10 entries).
+- Selective push: Only push on user-initiated seeks (not loop re-entry). Use a
+  threshold (e.g., >5 seconds) to avoid clutter.
+- Session persistence: Periodically save current playback position per video
+  to localStorage so the user can resume where they left off.
 
 ---
 
@@ -297,8 +341,6 @@ sessions.
 Confirmation dialogs for destructive operations are not needed; undo
 covers the same safety concern without interrupting flow.
 
-Binding: `u` for undo.
-
 ---
 
 ## Time Input Formats
@@ -306,31 +348,18 @@ Binding: `u` for undo.
 Time values appear in jump inputs, loop endpoint fields, mark/section
 time fields, and the jumps-picker. All contexts support the same formats.
 
-Separators: colon `:` is standard; forward slash `/` is an easy-to-type
-alternative (no Shift required). Both are always treated as separators,
-never as decimal points.
+The app should support various input styles:
 
-    5:13  or  5/13       5 minutes 13 seconds
-    1:13:44  or  1/13/44  1 hour 13 minutes 44 seconds
-    73:44  or  73/44      condensed form: 73 minutes 44 seconds
+    mm:ss and hh:mm:ss | 5:13 or 32:45 or 1:13:28
+    condensed forms    | 73:44 == 1:13:44
+    raw seconds        | 245 == 4:05
+    decimal seconds    | 99.7 or 34:43.2
+    forward slash      | mm/ss and hh/mm/ss
 
-Bare integer: always raw seconds. `245` = 4 minutes 5 seconds.
-
-Decimal: period `.` is reserved exclusively for sub-second precision.
-One decimal digit is sufficient (human perception limit). `33.5` = 33.5
-seconds. `5:13.5` or `5/13.5` = 5 minutes 13.5 seconds.
-
-Comma `,` was considered as an alternative separator but rejected: in
-European locales comma is the decimal separator, which would create
-ambiguity for some users.
-
----
-
-## Open Items
-
-- Drag-to-edit on the timeline: aspirational, not committed.
-- Server-side persistence for cross-device sync, user login, and other needs:
-  punted to a future version, maybe never.
+The purpose of the forward slash as a synonym for colon is typing ease (no
+need to press Shift). Periods and commas were considered but rejected because
+they conflict with the need for decimal seconds or with European locales where
+comma is a decimal separator.
 
 ---
 
@@ -409,13 +438,26 @@ active (in the scratch-loop) so the user can hear the effect of changes
 in real time. The workflow is always: load into scratch, edit, then
 optionally save back.
 
+Note that save-back applies only when the scratch-loop's source was a Loop,
+not a Section. The reason is that section-start markers are fairly precise:
+the point where, for example, the Outro really starts. But when you loop that
+section, you want the scratch-loop to start a bit before the exact section
+start and continue a bit after the next section end (those padding amounts
+might be customizable; TBD). So a save-back when the scratch-loop source is a
+Section is a bit awkward due to the padding issue. But it's even more awkward
+because Sections don't have their own end (at least not strictly); rather, the
+end is derived from the next section start. So a save-back operation in this
+context could alter a Section that isn't the source for the scratch-loop.
+Rather than trying to explain all of that to users, the policy will be that
+save-back applies only to source loops, not source sections.
+
 ### Operations and their targets
 
 Scratch-loop operations:
 - Edit endpoints: interactive mode where the user nudges start/end and
   hears the result immediately. Start point is the one most often fussed
   with; end point less so.
-- Save-back: if the scratch-loop was loaded from a named entity, a direct
+- Save-back: if the scratch-loop was loaded from a saved loop, a direct
   binding pushes the current endpoints back to that source. No UI needed;
   happens immediately.
 
@@ -429,7 +471,7 @@ Saved-loop operations (act on named Loop entities):
 
 ### Dirty indicator
 
-If the scratch-loop was loaded from a named entity and its endpoints have
+If the scratch-loop was loaded from a saved loop and its endpoints have
 since been modified, the UI shows a dirty indicator (e.g., on the
 timeline marker) to remind the user that the scratch-loop and its source
 have diverged.
@@ -569,7 +611,7 @@ Looping:
     lo   | Open: opens/loads a saved-loop into scratch-loop [loops-picker]
     ld   | Delete: a saved-loop [loops-picker]
     ls   | Save-new: a new loop [save-loop-modal]
-    lb   | Save-back: save scratch-loop endpoints back to source entity
+    lb   | Save-back: save scratch-loop endpoints back to source Loop
     le   | Edit: scratch-loop [edit-scratch-loop-mode]
 
 Sections:
@@ -592,6 +634,7 @@ Undo and help:
     u | Undo: most recent edit
     U | Redo: reverses an Undo
     h | Help-modal
+    o | Options-modal
 
 Data:
 
@@ -599,8 +642,8 @@ Data:
     di | Import: app data from JSON
     dv | Share: video data as JSON
     dl | Share: scratch-loop [via URL]
-    dc | Clear: app data [clear-data-modal]
-    dd | Display: app data as JSON [bottom of web page]
+    dd | Delete: delete-data-modal
+    dI | Inspect: app data as JSON [bottom of web page]
 
 ---
 
@@ -630,11 +673,17 @@ Edit-video-modal:
     - Also a delete-video button.
 
 Jumps-picker:
-    - Picker items include: sections, loops, marks, and jumplist times.
+    - Picker items include:
+        - video start
+        - back (most recent jumplist entry)
+        - sections
+        - loops
+        - marks
+        - jumplist entries
     - Supports a command-line grammar.
     - Supports some immediate-select behavior (Enter press not needed).
 
-        T       | Jump to a specific time
+        TIME    | Jump to a specific time
         QUERY   | Regular picker behavior
         X QUERY | Pre-filter picker items to just type X
         X,      | Jump to previous entity of type X [immediately]
@@ -646,9 +695,6 @@ Jumps-picker:
             s   | Sections
             m   | Marks
             j   | Jumplist
-
-        Where T is any valid time. If T parses as a time, it's a time,
-        not a QUERY.
 
 Loops-picker:
     - Typical picker.
@@ -705,18 +751,19 @@ Help-modal:
         m | Marks
         a | Application
 
-Clear-data-modal:
+Options-modal:
+    - A modal where the user can customize app settings:
+        - seek delta:
+            - default
+            - list of choices
+        - speed delta
+        - section loop padding amounts
+            - start
+            - end
+
+Delete-data-modal:
     - TBD
     - Modal with checkboxes to select subsets of the data to clear.
-
-Time inputs:
-    - When users input time values, v2 should support various input styles.
-
-    mm:ss and hh:mm:ss | 5:13, 32:45, 1:13:28
-    condensed forms    | 73:44 == 1:13:44
-    raw seconds        | 245 == 4:05
-    decimal seconds    | 99.7 or 34:43.2
-    forward slash      | mm/ss and hh/mm/ss
 
 Modal, mode, and picker exit keys:
     <Esc>   | Exit and take no action
@@ -815,23 +862,13 @@ Video:
 
 Play / Navigation:
 
-    play/pause           | button
-    time                 | text box
-    ---------------------------------
-    seek: back           | button
-    seek: forward        | button
-    seek_delta           | text box
-    seek_delta: increase | button
-    seek_delta: decrease | button
-    ---------------------------------
-    jump                 | button
-    jump-back            | button
-    jump-to-start        | button
-    ---------------------------------
-    speed                | text box
-    speed: increase      | button
-    speed: decrease      | button
-    speed: reset to 100  | button
+    play/pause    | button
+    time          | text box
+    speed         | drop-down
+    seek: back    | button
+    seek: forward | button
+    seek_delta    | drop-down
+    jump          | button
 
 Section:
 
@@ -859,8 +896,7 @@ Loop:
     end: set here   | button
     source          | informational
     open            | button
-    save-new        | button
-    save-back       | button
+    save            | button => choose new/back [if source is loop]
     delete          | button
 
 App:
@@ -871,12 +907,11 @@ App:
 
 Data:
 
-    export       | button
-    import       | button
-    clear        | button
-    display      | button
-    share: video | button
-    share: loop  | button
+    export  | button
+    import  | button
+    delete  | button
+    display | button
+    share   | button => choose video/loop
 
 ### Message area.
 
