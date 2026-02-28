@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoopLlama v2 Prototype</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.19.1/cdn/themes/light.css">
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.19.1/cdn/shoelace-autoloader.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="app-logo">LoopLlama</div>
+    <nav class="app-nav">
+      <a href="#">The Fifth Fret</a>
+      <a href="#">Code</a>
+      <a href="#">Help</a>
+      <a href="#">Settings</a>
+    </nav>
+  </header>
+
+  <div class="app-body">
+
+    <div class="main-row">
+
+      <div class="left-col">
+        <div class="youtube-area">
+          <span class="youtube-label">YouTube</span>
+        </div>
+        <div class="timeline-area">
+          <div class="timeline-track">
+            <div class="tl-bg"></div>
+            <div class="tl-section" style="left:0%;    width:12%">Intro</div>
+            <div class="tl-section" style="left:12%;   width:28%">Verse</div>
+            <div class="tl-section" style="left:40%;   width:30%">Solo</div>
+            <div class="tl-section" style="left:70%;   width:22%">Outro</div>
+            <div class="tl-loop"    style="left:15%;   width:20%"></div>
+            <div class="tl-mark"    style="left:26%">m</div>
+            <div class="tl-mark"    style="left:44%">m</div>
+            <div class="tl-playhead" style="left:35%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-area">
+        <p class="video-name">La Grange</p>
+        <p class="video-title">ZZ Top &mdash; La Grange (live, 1994)</p>
+        <hr>
+        <p class="message-heading">which-key</p>
+        <p class="message-hint">l &rarr; [l] toggle &nbsp; [o] open &nbsp; [s] save &nbsp; [b] save-back &nbsp; [e] edit</p>
+        <hr>
+        <p class="message-heading">info</p>
+        <p class="message-hint">Loop saved: "outro-lick"</p>
+      </div>
+
+    </div>
+
+    <div class="controls-area">
+
+      <div class="cg">
+        <span class="cg-label">Video</span>
+        <sl-button size="small">Open</sl-button>
+        <sl-button size="small">Edit</sl-button>
+      </div>
+
+      <div class="cg">
+        <span class="cg-label">Play / Nav</span>
+        <sl-button size="small">&#9199;</sl-button>
+        <sl-input size="small" placeholder="0:00" style="width:4.5rem"></sl-input>
+        <select class="native-select">
+          <option>0.50×</option>
+          <option>0.75×</option>
+          <option selected>1.00×</option>
+          <option>1.25×</option>
+          <option>1.50×</option>
+        </select>
+        <sl-button size="small">&#9664;</sl-button>
+        <select class="native-select">
+          <option>1 s</option>
+          <option selected>5 s</option>
+          <option>10 s</option>
+          <option>30 s</option>
+        </select>
+        <sl-button size="small">&#9654;</sl-button>
+        <sl-button size="small">Jump</sl-button>
+      </div>
+
+      <div class="cg">
+        <span class="cg-label">Section</span>
+        <sl-button size="small">Loop</sl-button>
+        <sl-button size="small">New</sl-button>
+        <sl-button size="small">&#9664;</sl-button>
+        <sl-button size="small">&#9654;</sl-button>
+      </div>
+
+      <div class="cg">
+        <span class="cg-label">Mark</span>
+        <sl-button size="small">New</sl-button>
+      </div>
+
+      <div class="cg">
+        <span class="cg-label">Loop</span>
+        <sl-switch size="small">on</sl-switch>
+        <div class="endpoint">
+          <sl-input size="small" placeholder="start" style="width:4.5rem"></sl-input>
+          <sl-button size="small">Now</sl-button>
+        </div>
+        <div class="endpoint">
+          <sl-input size="small" placeholder="end" style="width:4.5rem"></sl-input>
+          <sl-button size="small">Now</sl-button>
+        </div>
+        <sl-button size="small">Open</sl-button>
+        <sl-button size="small">Save new</sl-button>
+        <sl-button size="small">Save back</sl-button>
+        <span class="info-field">src: Verse</span>
+      </div>
+
+      <div class="cg">
+        <span class="cg-label">App</span>
+        <sl-button size="small">Undo</sl-button>
+        <sl-button size="small">Redo</sl-button>
+        <sl-button size="small">Help</sl-button>
+        <sl-dropdown>
+          <sl-button slot="trigger" size="small" caret>Data</sl-button>
+          <sl-menu>
+            <sl-menu-item>Delete&hellip;</sl-menu-item>
+            <sl-divider></sl-divider>
+            <sl-menu-item>Export all</sl-menu-item>
+            <sl-menu-item>Export video</sl-menu-item>
+            <sl-menu-item>Import</sl-menu-item>
+            <sl-divider></sl-divider>
+            <sl-menu-item>Share loop URL</sl-menu-item>
+            <sl-divider></sl-divider>
+            <sl-menu-item>Inspect JSON</sl-menu-item>
+          </sl-menu>
+        </sl-dropdown>
+      </div>
+
+    </div>
+  </div>
+
+
+</body>
+</html>

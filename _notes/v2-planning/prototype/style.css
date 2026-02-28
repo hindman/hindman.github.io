@@ -1,0 +1,284 @@
+/* ---- reset / base ---- */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: sans-serif;
+  font-size: 14px;
+  background: #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ---- header ---- */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 1rem;
+  background: #1a1a2e;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.app-logo {
+  font-size: 1.1rem;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+}
+
+.app-nav a {
+  color: #ccc;
+  text-decoration: none;
+  margin-left: 1.2rem;
+  font-size: 0.85rem;
+}
+
+.app-nav a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* ---- app body ---- */
+
+.app-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ---- main row: left-col (YouTube + timeline) + message area ---- */
+
+.main-row {
+  display: flex;
+  gap: 0.5rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.left-col {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 0;
+}
+
+.youtube-area {
+  flex: 1;
+  background: #111;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.youtube-label {
+  color: #555;
+  font-size: 1.4rem;
+  font-style: italic;
+}
+
+.message-area {
+  flex: 1;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.6rem;
+  overflow-y: auto;
+  min-height: 0;
+  font-family: monospace;
+  font-size: 0.8rem;
+}
+
+.video-name {
+  margin: 0 0 0.15rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #222;
+  font-family: sans-serif;
+}
+
+.video-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  color: #555;
+  font-family: sans-serif;
+}
+
+.message-heading {
+  margin: 0 0 0.2rem;
+  font-weight: bold;
+  color: #888;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+}
+
+.message-hint {
+  margin: 0 0 0.5rem;
+  color: #336;
+}
+
+.message-area hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 0.5rem 0;
+}
+
+/* ---- timeline ---- */
+
+.timeline-area {
+  height: 2.8rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.timeline-track {
+  position: absolute;
+  inset: 0.35rem 0.5rem;
+}
+
+.tl-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
+  background: #ddd;
+  border-radius: 2px;
+}
+
+.tl-section {
+  position: absolute;
+  top: 0;
+  height: 55%;
+  background: rgba(100, 149, 237, 0.25);
+  border: 1px solid cornflowerblue;
+  border-radius: 2px;
+  font-size: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: #336;
+}
+
+.tl-loop {
+  position: absolute;
+  top: 0;
+  height: 55%;
+  background: rgba(60, 180, 60, 0.2);
+  border: 1px solid green;
+  border-radius: 2px;
+}
+
+.tl-mark {
+  position: absolute;
+  bottom: 0;
+  font-size: 0.6rem;
+  color: darkorange;
+  font-weight: bold;
+  transform: translateX(-50%);
+}
+
+.tl-playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: red;
+  border-radius: 1px;
+}
+
+/* ---- controls area ---- */
+
+.controls-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.8rem 0.7rem 0.6rem;
+  flex-shrink: 0;
+}
+
+/* control group: a labeled cluster of related controls */
+
+.cg {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.55rem 0.5rem 0.4rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fafafa;
+  position: relative;
+}
+
+.cg-label {
+  position: absolute;
+  top: -0.55rem;
+  left: 0.4rem;
+  font-size: 0.6rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #999;
+  background: #fafafa;
+  padding: 0 0.2rem;
+}
+
+/* connected input+button pair for loop endpoints */
+
+.endpoint {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  background: #eef2ff;
+  border-radius: 4px;
+  padding: 2px 3px;
+}
+
+/* informational (non-editable) field inside a group */
+
+.info-field {
+  font-size: 0.75rem;
+  color: #777;
+  font-style: italic;
+  padding: 0 0.2rem;
+}
+
+/* native <select> styled to match Shoelace small inputs approximately */
+
+.native-select {
+  height: 1.875rem;   /* matches sl-input size="small" */
+  font-size: 0.875rem;
+  border: 1px solid #d4d4d8;
+  border-radius: 4px;
+  padding: 0 0.4rem;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+}
+
