@@ -873,49 +873,8 @@ Elements shown in the timeline:
 
 ### Controls area
 
-Currently, many elements below are listed as generic "button". The result
-would be a page with a proliferation of buttons. Here are some options and
-factors that could help:
-
-- Some of the buttons (eg, seek forward/reverse) are small.
-- Combine some element pairs into specialized controls
-    - up/down, increase/decrease, next/previous
-    - closely related elements: loop start and set start to current time
-- Combine some buttons into multi-step interfaces (eg, "Save" loop button
-  might then offer choice between "new" or "modify source").
-- Action dropdowns.
-- Buttons styled to look like text and thus visually compact.
-
-Video:
-
-    url    | text box
-    name   | text box
-    title  | text box
-    edit   | button
-
-Play / Navigation:
-
-    play/pause    | button
-    time          | text box
-    speed         | drop-down
-    seek: back    | button
-    seek: forward | button
-    seek_delta    | drop-down
-    jump          | button
-
-Section:
-
-    name     | text box
-    start    | text box
-    edit     | button
-    loop     | button
-    new      | button
-    next     | button
-    previous | button
-
 Mark:
 
-    name | text box
     time | text box
     new  | button
 
@@ -944,4 +903,78 @@ Data:
     import  | button
     display | button
     share   | button => choose video/loop
+
+========================
+
+Relocate:
+
+    loop source: move to Message area
+
+Play:
+
+    play/pause    | button
+    time          | text box
+    speed         | dropdown
+    seek: back    | button
+    seek_delta    | dropdown
+    seek: forward | button
+
+Loop:
+
+    looping: on/off | toggle
+    start           | text box
+    start: Now      | button
+    end             | text box
+    end: Now        | button
+
+Dropdowns:
+
+    Select:
+        - Video: open
+        - Loop: open
+        - Section: to loop
+    Jump:
+        - Time
+        - Video start
+        - Section: previous
+        - Section: next
+        - Loop: start
+        ----------------------------
+        - Sections
+        - Loops
+        - Marks
+        ----------------------------
+        - Jump history
+        - Back
+        - Forward
+    Edit:
+        - Undo
+        - Redo
+        ----------------------------
+        - Video: current
+        - Section: current
+        - Mark: nearest
+    Save:
+        - Mark: set here
+        - Section: new
+        - Loop: new
+        - Loop: back to source loop
+    Delete:
+        - Video: current
+        - Section: current
+        - Loop: current
+        - Mark: nearest to left
+        ----------------------------
+        - Data: bulk
+    Data:
+        - Share: loop via URL
+        - Share: video
+        ----------------------------
+        - Export: video
+        - Export: all
+        - Import
+        - Inspect JSON
+    Help:
+        - General
+        - Key bindings
 
