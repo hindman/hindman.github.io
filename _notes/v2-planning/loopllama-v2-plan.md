@@ -379,18 +379,27 @@ Labels are optional. The user can plant all dividers quickly by ear
 operations -- loop current section, jump to next/previous -- work on
 position alone without requiring labels.
 
-### Non-exhaustive coverage
+### Non-exhaustive coverage and gap zones
 
 Sections do not need to cover the whole video. Regions before the first
-divider and after the last are simply uncharted. There is no requirement
-to start at t=0.
+divider and after the last are naturally uncharted (shown as gray on the
+timeline). There is no requirement to start at t=0.
 
-### Marking the end of relevant material
+Gap zones can also appear in the middle of the video. The motivating use
+case: a user learning specific parts of a song but skipping material they
+are not ready for (a difficult solo, an extended improvisation). They want
+Verse and Outro as real sections, with the solo in between shown as an
+unclaimed gray zone -- not a section, not numbered, not reachable via
+next/previous navigation.
 
-To cap the last musically relevant region, the user plants an anonymous
-(unlabeled) divider at that point. This creates a real section to the
-right of that divider; all section operations apply to it equally. No
-special-casing for unnamed sections.
+To support this, section `end` is an optional stored attribute. If absent,
+the section's end is inferred from the next divider's time (the fast
+workflow). If set explicitly, the section ends there and a gap zone exists
+between that point and the next divider's time. The UI enforces that a
+stored end cannot exceed the next section's start.
+
+This makes the spurious-anonymous-divider workaround unnecessary: the user
+does not need to plant a dummy divider just to end a section early.
 
 ### Current section
 
@@ -417,9 +426,11 @@ boundary.
 
 ### Schema note
 
-Section = id + time (required) + label (optional). End time is derived
-(next divider's time, or video effective end for the last section). May
-be stored as a convenience cache but is not a primary attribute.
+Section = id + time (required) + label (optional) + end (optional).
+End time is either stored explicitly (when the user has set it) or
+derived at runtime (next divider's time, or video effective end for the
+last section). A stored end creates a gap zone between it and the next
+divider.
 
 ---
 
@@ -539,8 +550,11 @@ Section
 
 - time: the divider point (seconds); start of this section
 
-- end: end time (seconds); derived from the next divider's time, or the
-  video's effective end for the last section. May be cached for convenience.
+- end: end time (seconds); optional. If stored, the section ends here and
+  a gap zone exists between this point and the next divider (shown as gray
+  on the timeline). If absent, end is derived at runtime from the next
+  divider's time (or the video's effective end for the last section).
+  Constraint: stored end must not exceed the next section's time.
 
 Loop
 
