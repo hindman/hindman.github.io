@@ -1,11 +1,11 @@
 
 ## TODO
 
-LoopLlama v2:
-    x Mockup of page layout and UI controls
-    x Merge into the v2-plan file.
-    - loopllama-v2-plan.md: edit
-    - Clear-data-modal
+V2 planning:
+    - Check for consistency and coherence:
+        - Key bindings.
+        - UI controls/menus.
+        - Modals/modes.
 
 Posts:
     x RH rudiments #1: alternating bass

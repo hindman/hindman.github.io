@@ -840,14 +840,12 @@ without forcing the user to scroll or page up/down.
 
 ### Message area.
 
-This is an open space, tentatively reserved as an area for warning/error
-messages and perhaps context-based cheat-sheet information.
-
-Alternatively, or in addition, it could become extra real estate if we are
-struggling to fit all of the controls on one typical computer screen.
-
-If the browser window is made small (or on smaller devices) this area would
-need to be pushed farther down the page.
+This area is used to show various kinds of information:
+    - Current video name and title.
+    - Loop source.
+    - Keyborad shortcut information, generally or contextual.
+    - Confirmation messages about actions taken.
+    - Warnings and error messages.
 
 ### Timeline
 
@@ -855,71 +853,50 @@ Real estate will be tight in this area, so most visual indicators will
 come in the form of small marks/symbols indicating various start times (for
 sections and marks) and ranges (for the scratch-loop).
 
-The names of the underlying entities (Section, Loop, Mark) will be visible
-on mouse hover and, if feasible, editable via click.
+The timeline will have two zones, thin rectangles stacked vertically on top of
+each other, each the full width of the YouTube video's frame/timeline.
+    - Video zone:
+        - Like the YouTube timeline.
+        - Shows the location of the playhead.
+        - User can click this zone to change the playhead location.
+    - Entity zone:
+        - Sections:
+            - Display section ranges.
+            - Section names are shown if they fit in the space.
+            - The current section's range is style differently.
+            - Non-section regions are styled differently.
+        - Scratch-loop:
+            - Displays the range.
+        - Marks:
+            - Displays locations.
+        - Mouse:
+            - Hover: shows entity name
+            - Click: to edit entity.
 
-Whether the time points in the timeline are editable via dragging is an open
-question. In my v1 experience, I don't think editing via dragging would have
-been very effective. Typically one wants to set time points while
-viewing/listening to the video. Dragging, by contrast, is sort of a blind
-operation.
-
-Elements shown in the timeline:
-
-    video        | current time
-    sections     | starts
-    scratch-loop | range
-    marks        | time
+Drag to edit. This is deferred, at least for now. Whether the time points in
+the timeline are editable via dragging is an open question. In my v1
+experience, I don't think editing via dragging would have been very effective.
+Typically one wants to set time points while viewing/listening to the video.
+Dragging, by contrast, is sort of a blind operation.
 
 ### Controls area
 
-Mark:
-
-    time | text box
-    new  | button
-
-Loop:
-
-    looping: on/off | toggle
-    start           | text box
-    start: set here | button
-    end             | text box
-    end: set here   | button
-    source          | informational
-    open            | button
-    save-new        | button
-    save-back       | button
-
-App:
-
-    undo | button
-    redo | button
-    help | button
-
-Data:
-
-    delete  | button
-    export  | button
-    import  | button
-    display | button
-    share   | button => choose video/loop
-
-========================
-
-Relocate:
-
-    loop source: move to Message area
-
-Play:
+Play controls:
 
     play/pause    | button
     time          | text box
-    speed         | dropdown
-    seek: back    | button
-    seek_delta    | dropdown
-    seek: forward | button
+    speed         | text box [clamp: 25 - 200, increments of 5]
 
-Loop:
+Navigation controls:
+
+    seek: back       | button
+    seek_delta       | dropdown
+    seek: forward    | button
+    previous: entity | button
+    entity: type     | dropdown: any, video, section, loop, mark [default: any]
+    next: entity     | button
+
+Loop controls:
 
     looping: on/off | toggle
     start           | text box
@@ -927,7 +904,7 @@ Loop:
     end             | text box
     end: Now        | button
 
-Dropdowns:
+Dropdowns for less frequent operations:
 
     Select:
         - Video: open
@@ -935,10 +912,6 @@ Dropdowns:
         - Section: to loop
     Jump:
         - Time
-        - Video start
-        - Section: previous
-        - Section: next
-        - Loop: start
         ----------------------------
         - Sections
         - Loops
@@ -966,7 +939,7 @@ Dropdowns:
         - Mark: nearest to left
         ----------------------------
         - Data: bulk
-    Data:
+    App data:
         - Share: loop via URL
         - Share: video
         ----------------------------
