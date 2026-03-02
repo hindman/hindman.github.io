@@ -87,10 +87,18 @@ few edge cases that need decisions before implementation.
 ## TODO
 
 V2 planning:
-    - Check for consistency and coherence:
-        - Key bindings.
-        - UI controls/menus.
+    - Check for consistency and coherence: x Key bindings. x UI
+      controls/menus.
         - Modals/modes.
+            - make edits based on CC reply above
+    - before advancing to implementation
+        - to facilitate our (ie, your) implementation work going
+          forward, should the plan be altered, reorganized, or
+          copied-and-condensed to a different file?
+        - what about unit and automated testing?
+
+V2 implementation:
+    - advance to #2
 
 Posts:
     x RH rudiments #1: alternating bass
