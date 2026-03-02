@@ -7,11 +7,9 @@ V2 implementation:
     x #1 HTML/CSS static prototype
     x #2 Project scaffolding
     x #3 State and storage module
-    - #4 YouTube API integration
-
-    4. YouTube API integration: port the video controller logic from v1. Fix
-       the duration detection bug via `onStateChange`. Verify that a video
-       loads, plays, pauses, seeks, and reports current time correctly.
+    . #4 YouTube API integration
+    - #5 Keyboard controller
+    - #6 Minimal working app
 
     5. Keyboard controller: implement the multi-key pending-key buffer and
        key dispatch system. Add which-key overlay support (display available
