@@ -39,6 +39,10 @@ class LlamaControls extends LitElement {
       cursor: pointer;
     }
 
+    .btn-play-pause {
+      min-width: 4.5rem;
+    }
+
     button:hover {
       border-color: var(--ll-accent, #7ec8e3);
       color: var(--ll-accent, #7ec8e3);
@@ -95,7 +99,7 @@ class LlamaControls extends LitElement {
     return html`
       <div class="controls">
         <button @click=${() => this._emit('ll-seek-back')}>← Back</button>
-        <button @click=${() => this._emit('ll-play-pause')}>
+        <button class="btn-play-pause" @click=${() => this._emit('ll-play-pause')}>
           ${this.isPlaying ? 'Pause' : 'Play'}
         </button>
         <button @click=${() => this._emit('ll-seek-forward')}>Fwd →</button>

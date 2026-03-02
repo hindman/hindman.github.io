@@ -1,7 +1,9 @@
 
-/rename loopllama-v2-stage-6d
+g c -am '6e. Core key bindings'
 
-We are now on imlemenation stage #6d:
+/rename loopllama-v2-stage-7a
+
+We are now on imlemenation stage #7a:
 
     # The plan.
 
@@ -9,10 +11,11 @@ We are now on imlemenation stage #6d:
 
     # The stage.
 
-    6d. Time polling: Add a setInterval in llama-app.js (or the controls
-        component) that polls currentTime from videoController and updates
-        the controls display. Goal: time readout stays live while video
-        plays.
+    6e. Core key bindings: Replace the console.log stubs with real
+        implementations for: play/pause (`Space`), speed up/down/reset
+        (`=`, `-`, `Backspace`), seek forward/back (`Right`, `Left`), and
+        jump-to-start (`Enter`). Goal: basic playback fully controllable
+        via keyboard.
 
 =============
 
@@ -20,11 +23,28 @@ We are now on imlemenation stage #6d:
 
 V2 implementation:
 
-    6e. Core key bindings: Replace the console.log stubs with real
-        implementations for: play/pause (`Space`), speed up/down/reset
-        (`=`, `-`, `Backspace`), seek forward/back (`Right`, `Left`), and
-        jump-to-start (`Enter`). Goal: basic playback fully controllable
-        via keyboard.
+    7a. Scratch-loop controls: Add scratch-loop display to controls area
+        (start/end text boxes, looping toggle, set-start-now /
+        set-end-now buttons). Wire `[`, `]`, `ll` key bindings.
+        Goal: scratch-loop works via both keyboard and mouse.
+
+    7b. Marks: Implement Mark entity CRUD in state.js. Show a marks list
+        in controls area (time, optional name). Wire `mm` (set) and `md`
+        (delete) bindings. Goal: marks can be set and deleted via keyboard.
+
+    7c. Sections: Implement Section entity CRUD in state.js. Show a
+        sections list in controls area. Wire `ss` (set), `sd` (delete),
+        `sl` (loop current section) bindings. Goal: sections work via
+        keyboard.
+
+    7d. Named loops: Implement Loop entity CRUD in state.js (save, load,
+        delete, save-back). Wire `lo`, `ls`, `ld`, `lb` bindings.
+        Goal: named loops can be saved and loaded via keyboard.
+
+    7e. Edit-scratch-loop-mode: Implement the mode where `Left`/`Right`
+        nudge loop start/end; `Tab` toggles focus between start and end.
+        Show mode indicator in message area. Goal: fine-tuning loop
+        endpoints works without leaving the keyboard.
 
 Posts:
     x RH rudiments #1: alternating bass

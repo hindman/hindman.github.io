@@ -3,6 +3,7 @@
 import { LitElement, html, css } from 'lit';
 import { createVideoController }    from '../videoController.js';
 import { createKeyboardController } from '../keyboardController.js';
+import { DEFAULT_OPTIONS }          from '../state.js';
 import './llama-whichkey.js';
 import './llama-controls.js';
 
@@ -152,24 +153,35 @@ class LlamaApp extends LitElement {
     this._vc           = null;
     this._kb           = null;
     this._pollId       = null;
+    this.seekDelta     = DEFAULT_OPTIONS.seek_delta_default;
+    this.speedDelta    = DEFAULT_OPTIONS.speed_delta;
   }
 
-  // Stub handlers for Stage 5. Real implementations added in Stage 6+.
+  // Clamp speed to [0.25, 2.0] and set it. Rounds to avoid float drift.
+  _speedChange(delta) {
+    const current = this._vc?.getPlaybackRate() ?? 1;
+    const next    = Math.round((current + delta) * 100) / 100;
+    const clamped = Math.max(0.25, Math.min(2.0, next));
+    this._vc?.setPlaybackRate(clamped);
+    this.speed = clamped;
+  }
+
+  // Handlers for Stage 5+. Core playback handlers implemented in Stage 6e.
   _makeHandlers() {
     const stub = (name) => () => console.log(`[kb] ${name}`);
     return {
-      playPause:     stub('playPause'),
-      speedDown:     stub('speedDown'),
-      speedUp:       stub('speedUp'),
-      speedReset:    stub('speedReset'),
-      seekForward:   stub('seekForward'),
-      seekBack:      stub('seekBack'),
+      playPause:     () => this._onPlayPause(),
+      speedDown:     () => this._speedChange(-this.speedDelta),
+      speedUp:       () => this._speedChange(this.speedDelta),
+      speedReset:    () => { this._vc?.setPlaybackRate(1.0); this.speed = 1.0; },
+      seekForward:   () => this._onSeekForward(),
+      seekBack:      () => this._onSeekBack(),
       seekDeltaDown: stub('seekDeltaDown'),
       seekDeltaUp:   stub('seekDeltaUp'),
       prevEntity:    stub('prevEntity'),
       entityType:    stub('entityType'),
       nextEntity:    stub('nextEntity'),
-      jumpToStart:   stub('jumpToStart'),
+      jumpToStart:   () => this._vc?.seekTo(0),
       setLoopStart:  stub('setLoopStart'),
       setLoopEnd:    stub('setLoopEnd'),
       undo:          stub('undo'),
@@ -239,6 +251,13 @@ class LlamaApp extends LitElement {
 
     window.addEventListener('blur',  () => { this.windowFocused = false; });
     window.addEventListener('focus', () => { this.windowFocused = true; });
+
+    // Restore and auto-load the last video (dev convenience; removed in Stage 9a).
+    const lastUrl = localStorage.getItem('ll_last_url');
+    if (lastUrl) {
+      this.renderRoot.querySelector('.url-input').value = lastUrl;
+      this._load();
+    }
 
     // Poll playback state every 500ms to keep the controls display live.
     this._pollId = setInterval(() => {
@@ -327,6 +346,7 @@ class LlamaApp extends LitElement {
     this._vc.loadVideo(parsed.id, parsed.startTime);
     this.duration  = null;
     this.statusMsg = `Loading: ${parsed.id}`;
+    localStorage.setItem('ll_last_url', raw);
   }
 
   _seek(delta) {
@@ -342,11 +362,11 @@ class LlamaApp extends LitElement {
   }
 
   _onSeekForward() {
-    this._seek(5);   // default seek delta; replaced by video.seek_delta in Stage 6e
+    this._seek(this.seekDelta);
   }
 
   _onSeekBack() {
-    this._seek(-5);  // default seek delta; replaced by video.seek_delta in Stage 6e
+    this._seek(-this.seekDelta);
   }
 
   render() {
