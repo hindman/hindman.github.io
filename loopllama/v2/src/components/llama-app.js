@@ -1,7 +1,4 @@
 // llama-app.js -- top-level component.
-//
-// NOTE: video controls area is still a minimal Stage 4 test harness.
-// Will be replaced with real UI in Stage 6.
 
 import { LitElement, html, css } from 'lit';
 import { createVideoController }    from '../videoController.js';
@@ -13,25 +10,104 @@ class LlamaApp extends LitElement {
     :host {
       display: block;
       font-family: sans-serif;
-      padding: 1rem;
       color: #e0e0e0;
     }
-    #player-container {
-      width: 640px;
-      height: 360px;
-      background: #000;
+
+    /* --- Header --- */
+    .app-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 1rem;
+      background: #2a2a2a;
+      border-bottom: 1px solid #444;
     }
-    .controls {
-      margin-top: 0.5rem;
+
+    .app-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .url-input {
+      flex: 1;
+      max-width: 500px;
+      padding: 0.3rem 0.5rem;
+      background: #333;
+      border: 1px solid #555;
+      color: #e0e0e0;
+      border-radius: 3px;
+      font-size: 0.9rem;
+    }
+
+    .url-input:focus {
+      outline: none;
+      border-color: #7ec8e3;
+    }
+
+    /* --- Body --- */
+    .app-body {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 0.5rem;
+    }
+
+    /* --- Main row: video + message --- */
+    .app-main {
       display: flex;
       gap: 0.5rem;
-      align-items: center;
-      flex-wrap: wrap;
     }
-    .status {
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
+
+    .video-area {
+      flex: 1;
+      min-width: 0;
+    }
+
+    #player-container {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+    }
+
+    .message-area {
+      width: 220px;
+      flex-shrink: 0;
+      background: #252525;
+      border: 1px solid #444;
+      border-radius: 3px;
+      padding: 0.5rem;
+      font-size: 0.85rem;
       color: #aaa;
+    }
+
+    .message-time {
+      margin-top: 0.5rem;
+      font-family: monospace;
+      font-size: 0.9rem;
+      color: #7ec8e3;
+    }
+
+    /* --- Placeholder areas --- */
+    .timeline-placeholder,
+    .controls-placeholder {
+      background: #252525;
+      border: 1px solid #444;
+      border-radius: 3px;
+      padding: 0 0.75rem;
+      font-size: 0.8rem;
+      color: #555;
+      display: flex;
+      align-items: center;
+    }
+
+    .timeline-placeholder {
+      height: 40px;
+    }
+
+    .controls-placeholder {
+      height: 80px;
     }
   `;
 
@@ -118,12 +194,14 @@ class LlamaApp extends LitElement {
 
     this._vc = createVideoController({
       onReady: () => {
-        this.statusMsg = 'Player ready. Enter a YouTube video ID and click Load.';
+        this.statusMsg = 'Player ready. Enter a YouTube URL or video ID above.';
       },
       onStateChange: (state) => {
-        const labels = { '-1': 'unstarted', 0: 'ended', 1: 'playing',
-                          2: 'paused', 3: 'buffering', 5: 'cued' };
-        console.log('Player state:', labels[state] ?? state);
+        const labels = {
+          '-1': 'Unstarted', 0: 'Ended', 1: 'Playing',
+          2: 'Paused', 3: 'Buffering', 5: 'Cued',
+        };
+        this.statusMsg = labels[state] ?? `State: ${state}`;
       },
     });
     await this._vc.initialize(container);
@@ -161,13 +239,71 @@ class LlamaApp extends LitElement {
     this._kb?.destroy();
   }
 
+  // Parse a YouTube URL or bare video ID.
+  // Returns { id, startTime } or null if the input is not recognizable.
+  _parseVideoInput(str) {
+    str = str.trim();
+    if (!str) return null;
+
+    // Check for bare video ID first (11 YouTube-valid chars). Must come
+    // before URL parsing: new URL('https://' + bareId) succeeds because
+    // the browser treats the ID as a valid hostname.
+    if (/^[A-Za-z0-9_-]{11}$/.test(str)) {
+      return { id: str, startTime: 0 };
+    }
+
+    let url;
+    try {
+      url = new URL(str.startsWith('http') ? str : 'https://' + str);
+    } catch (_) {
+      return null;
+    }
+
+    const params    = url.searchParams;
+    const startTime = this._parseTimeParam(params.get('t') ?? '');
+
+    // watch?v=ID  (standard watch URL)
+    let id = params.get('v') ?? null;
+
+    if (!id) {
+      // youtu.be/ID  |  youtube.com/shorts/ID  |  youtube.com/embed/ID
+      const parts = url.pathname.split('/').filter(Boolean);
+      id = parts[parts.length - 1] ?? null;
+    }
+
+    return id ? { id, startTime } : null;
+  }
+
+  // Parse a YouTube `t` parameter to seconds.
+  // Handles plain numbers ("354") and hms notation ("1h23m45s").
+  _parseTimeParam(t) {
+    if (!t) return 0;
+    const n = Number(t);
+    if (!isNaN(n)) return n;
+    let total = 0;
+    const h = t.match(/(\d+)h/);
+    const m = t.match(/(\d+)m/);
+    const s = t.match(/(\d+(?:\.\d+)?)s/);
+    if (h) total += parseInt(h[1]) * 3600;
+    if (m) total += parseInt(m[1]) * 60;
+    if (s) total += parseFloat(s[1]);
+    return total;
+  }
+
   _load() {
-    const input = this.renderRoot.querySelector('#vid-input');
-    const vid = input.value.trim();
-    if (!vid) return;
-    this._vc.loadVideo(vid);
+    const input = this.renderRoot.querySelector('.url-input');
+    const raw = input.value.trim();
+    if (!raw) return;
+
+    const parsed = this._parseVideoInput(raw);
+    if (!parsed) {
+      this.statusMsg = 'Could not parse a YouTube video ID from that input.';
+      return;
+    }
+
+    this._vc.loadVideo(parsed.id, parsed.startTime);
     this.duration  = null;
-    this.statusMsg = `Loading: ${vid}`;
+    this.statusMsg = `Loading: ${parsed.id}`;
   }
 
   _seek(delta) {
@@ -177,27 +313,40 @@ class LlamaApp extends LitElement {
   _fmt(secs) {
     if (secs == null) return '?';
     const m = Math.floor(secs / 60);
-    const s = (secs % 60).toFixed(1).padStart(4, '0');
+    const s = Math.floor(secs % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
   }
 
   render() {
     return html`
-      <div id="player-container"></div>
-      <div class="controls">
-        <input id="vid-input" type="text" placeholder="YouTube video ID" size="20" />
+      <header class="app-header">
+        <span class="app-title">LoopLlama</span>
+        <input
+          class="url-input"
+          type="text"
+          placeholder="YouTube URL or video ID"
+          @keydown=${(e) => e.key === 'Enter' && this._load()}
+        />
         <button @click=${this._load}>Load</button>
-        <button @click=${() => this._vc?.play()}>Play</button>
-        <button @click=${() => this._vc?.pause()}>Pause</button>
-        <button @click=${() => this._vc?.seekTo(0)}>|&#x25C0; Start</button>
-        <button @click=${() => this._seek(-5)}>&#x25C2;&#x25C2; -5s</button>
-        <button @click=${() => this._seek(5)}>+5s &#x25B8;&#x25B8;</button>
+      </header>
+
+      <div class="app-body">
+        <div class="app-main">
+          <div class="video-area">
+            <div id="player-container"></div>
+          </div>
+          <div class="message-area">
+            <div>${this.statusMsg}</div>
+            <div class="message-time">
+              ${this._fmt(this.currentTime)} / ${this._fmt(this.duration)}
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-placeholder">Timeline — Stage 8</div>
+        <div class="controls-placeholder">Controls — Stage 6c</div>
       </div>
-      <div class="status">
-        ${this.statusMsg}
-        &nbsp;|&nbsp;
-        ${this._fmt(this.currentTime)} / ${this._fmt(this.duration)}
-      </div>
+
       <llama-whichkey
         .prefix=${this.wkPrefix}
         .completions=${this.wkCompletions}

@@ -1,5 +1,7 @@
 
-We are now on imlemenation stage #6:
+/rename loopllama-v2-stage-6b
+
+We are now on imlemenation stage #6b:
 
     # The plan.
 
@@ -7,33 +9,44 @@ We are now on imlemenation stage #6:
 
     # The stage.
 
-    6. Minimal working app: wire together stages 3-5 into a functional app
-       -- video iframe, basic controls area (time, speed, seek), URL
-       loading, and core key bindings (play/pause, speed, seek,
-       jump-to-start). No entities yet. End state: app handles basic
-       playback at least as well as v1.
+    6b. Design foundation: populate `styles/app.css` with CSS custom
+        properties as design tokens (colors, spacing, typography). Apply
+        Shoelace theme overrides to align component defaults with the app's
+        design. Goal: a consistent visual baseline before components are
+        built.
+
+Do you have any questions for me about this stage, or should I react to
+your initial draft for 6b?
+
+Note that we need to get a correct header bar, as shown in the plan, with these links:
+
+    # The Fifth Fret link
+    https://hindman.github.io/
+
+    # Code link.
+    https://github.com/hindman/hindman.github.io/tree/master/loopllama
 
 =============
 
 ## TODO
 
 V2 implementation:
-    x #1 HTML/CSS static prototype
-    x #2 Project scaffolding
-    x #3 State and storage module
-    x #4 YouTube API integration
-    x #5 Keyboard controller
-    - #6 Minimal working app
 
-    6. Minimal working app: wire together stages 3-5 into a functional app
-       -- video iframe, basic controls area (time, speed, seek), URL
-       loading, and core key bindings (play/pause, speed, seek,
-       jump-to-start). No entities yet. End state: app handles basic
-       playback at least as well as v1.
+    6c. Controls component: Create llama-controls.js with time display
+        (current / duration), speed display, play/pause button, and
+        seek-forward/back buttons. Wire to videoController via custom
+        events in llama-app.js.
 
-    Q: At what point do we start dealing with aesthetic matters — design,
-    styling, colors, etc? I'm content to defer this, but these matters are not
-    mentioned in our roadmap.
+    6d. Time polling: Add a setInterval in llama-app.js (or the controls
+        component) that polls currentTime from videoController and updates
+        the controls display. Goal: time readout stays live while video
+        plays.
+
+    6e. Core key bindings: Replace the console.log stubs with real
+        implementations for: play/pause (`Space`), speed up/down/reset
+        (`=`, `-`, `Backspace`), seek forward/back (`Right`, `Left`), and
+        jump-to-start (`Enter`). Goal: basic playback fully controllable
+        via keyboard.
 
 Posts:
     x RH rudiments #1: alternating bass

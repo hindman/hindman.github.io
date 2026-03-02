@@ -289,27 +289,76 @@ v2/
 
 ### TODO
 
-6. Minimal working app: wire together stages 3-5 into a functional app
-   -- video iframe, basic controls area (time, speed, seek), URL
-   loading, and core key bindings (play/pause, speed, seek,
-   jump-to-start). No entities yet. End state: app handles basic
-   playback at least as well as v1.
+6a. App shell: Replace the Stage 4 test harness in llama-app.js with a
+    real layout structure (header, video area, controls placeholder,
+    message area placeholder). Add a URL/ID text input to load videos
+    and wire it to videoController. Goal: video loads and plays when
+    user enters a URL.
 
-7. Three entities -- data and controls: implement the full data model for
-   Sections, Marks, and scratch-loop/Loops. Add the controls area display
-   (name/time boxes for each entity type). Add all keyboard bindings for
-   entity operations. Add inline editing modes: edit-scratch-loop-mode. End
-   state: all entity operations work via keyboard; entities visible in
-   controls area.
+6b. Design foundation: populate `styles/app.css` with CSS custom
+    properties as design tokens (colors, spacing, typography). Apply
+    Shoelace theme overrides to align component defaults with the app's
+    design. Goal: a consistent visual baseline before components are
+    built.
 
-8. Timeline component: horizontal timeline displaying sections,
-   scratch-loop range, marks, and playhead. Click-to-jump. Drag-to-edit
-   is aspirational and can be deferred.
+6c. Controls component: Create llama-controls.js with time display
+    (current / duration), speed display, play/pause button, and
+    seek-forward/back buttons. Wire to videoController via custom
+    events in llama-app.js.
 
-9. Pickers and modals: build the full modal/picker UX: url-input-modal,
-   video-picker, loops-picker, save-loop-modal,
-   edit-video-modal. All must be keyboard-triggerable and follow
-   consistent exit-key conventions (Esc/Enter).
+6d. Time polling: Add a setInterval in llama-app.js (or the controls
+    component) that polls currentTime from videoController and updates
+    the controls display. Goal: time readout stays live while video
+    plays.
+
+6e. Core key bindings: Replace the console.log stubs with real
+    implementations for: play/pause (`Space`), speed up/down/reset
+    (`=`, `-`, `Backspace`), seek forward/back (`Right`, `Left`), and
+    jump-to-start (`Enter`). Goal: basic playback fully controllable
+    via keyboard.
+
+7a. Scratch-loop controls: Add scratch-loop display to controls area
+    (start/end text boxes, looping toggle, set-start-now /
+    set-end-now buttons). Wire `[`, `]`, `ll` key bindings.
+    Goal: scratch-loop works via both keyboard and mouse.
+
+7b. Marks: Implement Mark entity CRUD in state.js. Show a marks list
+    in controls area (time, optional name). Wire `mm` (set) and `md`
+    (delete) bindings. Goal: marks can be set and deleted via keyboard.
+
+7c. Sections: Implement Section entity CRUD in state.js. Show a
+    sections list in controls area. Wire `ss` (set), `sd` (delete),
+    `sl` (loop current section) bindings. Goal: sections work via
+    keyboard.
+
+7d. Named loops: Implement Loop entity CRUD in state.js (save, load,
+    delete, save-back). Wire `lo`, `ls`, `ld`, `lb` bindings.
+    Goal: named loops can be saved and loaded via keyboard.
+
+7e. Edit-scratch-loop-mode: Implement the mode where `Left`/`Right`
+    nudge loop start/end; `Tab` toggles focus between start and end.
+    Show mode indicator in message area. Goal: fine-tuning loop
+    endpoints works without leaving the keyboard.
+
+8.  Timeline component: horizontal timeline displaying sections,
+    scratch-loop range, marks, and playhead. Click-to-jump.
+    Drag-to-edit is aspirational and can be deferred.
+
+9a. Base modal pattern: create a reusable Shoelace modal scaffolding
+    and verify keyboard focus management (Esc/Enter exit, body scroll
+    lock). Build url-input-modal as the first concrete modal. Wire
+    `y`/`vu` binding.
+
+9b. Video picker and edit-video-modal: video-picker (list of known
+    videos, filter by name/title) and edit-video-modal (URL, name,
+    title, start, end, delete button). Wire `vv` and `ve` bindings.
+
+9c. Loop modals: save-loop-modal (name + start/end, defaults to
+    scratch-loop) and loops-picker (load a saved loop). Wire `ls` and
+    `lo` bindings.
+
+9d. Entity edit modals: edit-section-modal and edit-mark-modal. Wire
+    `se` and `me` bindings.
 
 10. Undo: snapshot-based undo/redo. Push a video state snapshot before
     each destructive or modifying operation. Implement `u`/`U` bindings.
@@ -320,11 +369,17 @@ v2/
     end as query params).
 
 12. Navigation safety: persist the jump list (video.jumps). Push
-    user-initiated seeks above the threshold.
+    user-initiated seeks above the threshold. Implement `jb`/`jf`
+    bindings.
 
-13. Ancillary modals: options-modal (seek delta, speed delta, section
-    padding), help-modal (key bindings reference), delete-data-modal
-    (checkboxes for selective data clearing).
+13a. Options-modal: seek delta, speed delta, and section padding
+     settings. Wire `o` binding.
+
+13b. Help-modal: key bindings reference organized by topic sub-keys
+     (`k`, `v`, `p`, `n`, `l`, `s`, `m`, `a`). Wire `hh`, `hk`, `?`.
+
+13c. Delete-data-modal: checkboxes for selective data clearing.
+     Wire `dd` binding.
 
 14. Deploy: update `loopllama/index.html` to route to v2. Verify on
     GitHub Pages.
@@ -809,7 +864,7 @@ screen, the goal would be a layout where everything is visible on one screen
 without forcing the user to scroll or page up/down.
 
     ==============================================================================
-    LoopLlama [image]                     The Fifth Fret | Code | Help | Settings
+    LoopLlama [image]                                        The Fifth Fret | Code
     ==============================================================================
 
       ---------------------------------------------------      -----------------
