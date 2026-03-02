@@ -46,6 +46,7 @@
       <div class="message-area">
         <p class="video-name">La Grange</p>
         <p class="video-title">ZZ Top &mdash; La Grange (live, 1994)</p>
+        <p class="message-hint">src: Verse</p>
         <hr>
         <p class="message-heading">which-key</p>
         <p class="message-hint">l &rarr; [l] toggle &nbsp; [o] open &nbsp; [s] save &nbsp; [b] save-back &nbsp; [e] edit</p>
@@ -59,22 +60,14 @@
     <div class="controls-area">
 
       <div class="cg">
-        <span class="cg-label">Video</span>
-        <sl-button size="small">Open</sl-button>
-        <sl-button size="small">Edit</sl-button>
+        <span class="cg-label">Play</span>
+        <sl-button size="small">&#9199;</sl-button>
+        <sl-input size="small" placeholder="0:00" style="width:4.5rem"></sl-input>
+        <sl-input size="small" placeholder="100%" style="width:3.5rem"></sl-input>
       </div>
 
       <div class="cg">
-        <span class="cg-label">Play / Nav</span>
-        <sl-button size="small">&#9199;</sl-button>
-        <sl-input size="small" placeholder="0:00" style="width:4.5rem"></sl-input>
-        <select class="native-select">
-          <option>0.50×</option>
-          <option>0.75×</option>
-          <option selected>1.00×</option>
-          <option>1.25×</option>
-          <option>1.50×</option>
-        </select>
+        <span class="cg-label">Navigate</span>
         <sl-button size="small">&#9664;</sl-button>
         <select class="native-select">
           <option>1 s</option>
@@ -83,20 +76,14 @@
           <option>30 s</option>
         </select>
         <sl-button size="small">&#9654;</sl-button>
-        <sl-button size="small">Jump</sl-button>
-      </div>
-
-      <div class="cg">
-        <span class="cg-label">Section</span>
-        <sl-button size="small">Loop</sl-button>
-        <sl-button size="small">New</sl-button>
-        <sl-button size="small">&#9664;</sl-button>
-        <sl-button size="small">&#9654;</sl-button>
-      </div>
-
-      <div class="cg">
-        <span class="cg-label">Mark</span>
-        <sl-button size="small">New</sl-button>
+        <sl-button size="small">Prev</sl-button>
+        <select class="native-select">
+          <option selected>Any</option>
+          <option>Section</option>
+          <option>Loop</option>
+          <option>Mark</option>
+        </select>
+        <sl-button size="small">Next</sl-button>
       </div>
 
       <div class="cg">
@@ -110,31 +97,96 @@
           <sl-input size="small" placeholder="end" style="width:4.5rem"></sl-input>
           <sl-button size="small">Now</sl-button>
         </div>
-        <sl-button size="small">Open</sl-button>
-        <sl-button size="small">Save new</sl-button>
-        <sl-button size="small">Save back</sl-button>
-        <span class="info-field">src: Verse</span>
       </div>
 
       <div class="cg">
-        <span class="cg-label">App</span>
-        <sl-button size="small">Undo</sl-button>
-        <sl-button size="small">Redo</sl-button>
-        <sl-button size="small">Help</sl-button>
+        <span class="cg-label">Menus</span>
+
         <sl-dropdown>
-          <sl-button slot="trigger" size="small" caret>Data</sl-button>
+          <sl-button slot="trigger" size="small" caret>Video</sl-button>
           <sl-menu>
-            <sl-menu-item>Delete&hellip;</sl-menu-item>
-            <sl-divider></sl-divider>
-            <sl-menu-item>Export all</sl-menu-item>
-            <sl-menu-item>Export video</sl-menu-item>
-            <sl-menu-item>Import</sl-menu-item>
-            <sl-divider></sl-divider>
-            <sl-menu-item>Share loop URL</sl-menu-item>
-            <sl-divider></sl-divider>
-            <sl-menu-item>Inspect JSON</sl-menu-item>
+            <sl-menu-item>Open</sl-menu-item>
+            <sl-menu-item>Edit</sl-menu-item>
+            <sl-menu-item>Delete</sl-menu-item>
           </sl-menu>
         </sl-dropdown>
+
+        <sl-dropdown>
+          <sl-button slot="trigger" size="small" caret>Section</sl-button>
+          <sl-menu>
+            <sl-menu-item>Set new here</sl-menu-item>
+            <sl-menu-item>Edit current</sl-menu-item>
+            <sl-menu-item>Delete current</sl-menu-item>
+            <sl-divider></sl-divider>
+            <sl-menu-item>Loop current</sl-menu-item>
+            <sl-menu-item>Select section to loop</sl-menu-item>
+          </sl-menu>
+        </sl-dropdown>
+
+        <sl-dropdown>
+          <sl-button slot="trigger" size="small" caret>Loop</sl-button>
+          <sl-menu>
+            <sl-menu-item>Edit</sl-menu-item>
+            <sl-menu-item>Open</sl-menu-item>
+            <sl-menu-item>Save new</sl-menu-item>
+            <sl-menu-item>Save back</sl-menu-item>
+            <sl-divider></sl-divider>
+            <sl-menu-item>Select section to loop</sl-menu-item>
+            <sl-divider></sl-divider>
+            <sl-menu-item>Delete source loop</sl-menu-item>
+          </sl-menu>
+        </sl-dropdown>
+
+        <sl-dropdown>
+          <sl-button slot="trigger" size="small" caret>Mark</sl-button>
+          <sl-menu>
+            <sl-menu-item>Set here</sl-menu-item>
+            <sl-menu-item>Edit nearest</sl-menu-item>
+            <sl-menu-item>Delete nearest</sl-menu-item>
+          </sl-menu>
+        </sl-dropdown>
+
+        <sl-dropdown>
+          <sl-button slot="trigger" size="small" caret>Jump</sl-button>
+          <sl-menu>
+            <sl-menu-item>Time&hellip;</sl-menu-item>
+            <sl-divider></sl-divider>
+            <sl-menu-item>Section</sl-menu-item>
+            <sl-menu-item>Loop</sl-menu-item>
+            <sl-menu-item>Mark</sl-menu-item>
+            <sl-divider></sl-divider>
+            <sl-menu-item>Jump history</sl-menu-item>
+            <sl-menu-item>Back</sl-menu-item>
+            <sl-menu-item>Forward</sl-menu-item>
+          </sl-menu>
+        </sl-dropdown>
+
+        <sl-dropdown>
+          <sl-button slot="trigger" size="small" caret>App</sl-button>
+          <sl-menu>
+            <sl-menu-item>Undo</sl-menu-item>
+            <sl-menu-item>Redo</sl-menu-item>
+            <sl-divider></sl-divider>
+            <sl-menu-item>Share loop URL</sl-menu-item>
+            <sl-menu-item>Share video as JSON</sl-menu-item>
+            <sl-divider></sl-divider>
+            <sl-menu-item>Options</sl-menu-item>
+            <sl-divider></sl-divider>
+            <sl-menu-item>Export</sl-menu-item>
+            <sl-menu-item>Import</sl-menu-item>
+            <sl-menu-item>Inspect JSON</sl-menu-item>
+            <sl-menu-item>Bulk data delete&hellip;</sl-menu-item>
+          </sl-menu>
+        </sl-dropdown>
+
+        <sl-dropdown>
+          <sl-button slot="trigger" size="small" caret>Help</sl-button>
+          <sl-menu>
+            <sl-menu-item>General</sl-menu-item>
+            <sl-menu-item>Key bindings</sl-menu-item>
+          </sl-menu>
+        </sl-dropdown>
+
       </div>
 
     </div>
