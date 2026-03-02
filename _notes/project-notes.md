@@ -32,19 +32,6 @@ to confusing to users, bad ideas, or any other problems.
 
 =============
 
-Good set of changes overall. The dropdown-first approach reads clearly in the
-controls spec, and the noun-based menu grouping is more intuitive than
-verb-based. Several issues worth resolving:
-
-**Stale modal descriptions (significant)**
-
-`Edit-section-mode` and `Edit-mark-mode` both say the relevant fields are
-"already on the page" — but with the new design they're not. Those modes
-need rethinking: since section name/start and mark name/time are no longer in
-the controls area, editing them has to be triggered from the timeline click.
-Probably means these become proper modals (or inline popovers), not modes. The
-descriptions should be updated to reflect that.
-
 **`ld | Delete: current loop-source` — ambiguous**
 
 What happens when the scratch-loop was loaded from a Section rather than a

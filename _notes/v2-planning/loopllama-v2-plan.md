@@ -285,11 +285,10 @@ v2/
    jump-to-start). No entities yet. End state: app handles basic
    playback at least as well as v1.
 
-7. Three entities -- data and controls: implement the full data model
-   for Sections, Marks, and scratch-loop/Loops. Add the controls area
-   display (name/time boxes for each entity type). Add all keyboard
-   bindings for entity operations. Add inline editing modes
-   (edit-scratch-loop-mode, edit-section-mode, edit-mark-mode). End
+7. Three entities -- data and controls: implement the full data model for
+   Sections, Marks, and scratch-loop/Loops. Add the controls area display
+   (name/time boxes for each entity type). Add all keyboard bindings for
+   entity operations. Add inline editing modes: edit-scratch-loop-mode. End
    state: all entity operations work via keyboard; entities visible in
    controls area.
 
@@ -450,9 +449,9 @@ active (in the scratch-loop) so the user can hear the effect of changes
 in real time. The workflow is always: load into scratch, edit, then
 optionally save back.
 
-Note that save-back applies only when the scratch-loop's source was a Loop,
-not a Section. The reason is that section-start markers are fairly precise:
-the point where, for example, the Outro really starts. But when you loop that
+The save-back and delete-source operations apply only when the scratch-loop's
+source was a Loop, not a Source. Section-start markers are fairly precise: the
+point where, for example, the Outro really starts. But when you loop that
 section, you want the scratch-loop to start a bit before the exact section
 start and continue a bit after the next section end (those padding amounts
 might be customizable; TBD). So a save-back when the scratch-loop source is a
@@ -461,7 +460,8 @@ because Sections don't have their own end (at least not strictly); rather, the
 end is derived from the next section start. So a save-back operation in this
 context could alter a Section that isn't the source for the scratch-loop.
 Rather than trying to explain all of that to users, the policy will be that
-save-back applies only to source loops, not source sections.
+save-back applies only to source loops, not source sections. And the
+delete-source operation will adopt a similar policy for parallelism.
 
 ### Operations and their targets
 
@@ -599,9 +599,9 @@ Videos:
 Playing:
 
     <Space>  | Play/pause current video
-    -        | Speed: slower by .05
-    =        | Speed: faster by .05
-    <Bspace> | Reset speed to 1.0
+    -        | Speed: slower by 5 pct poins
+    =        | Speed: faster by 5 pct poins
+    <Bspace> | Reset speed to 100%
 
 Navigation:
 
@@ -617,7 +617,7 @@ Navigation:
     js      | Jump: to section via picker
     jl      | Jump: to loop via picker
     jm      | Jump: to mark via picker
-    jh      | Jump: within jump-history via picker
+    jh      | Jump: within jump-history via jump-history-picker
     jb      | Jump: backward within jump-history
     jf      | Jump: forward within jump-history
 
@@ -630,19 +630,19 @@ Looping:
     ls   | Save-new: a new loop [save-loop-modal]
     lb   | Save-back: save scratch-loop endpoints back to source Loop
     le   | Edit: scratch-loop [edit-scratch-loop-mode]
-    ld   | Delete: current loop-source
+    ld   | Delete: current loop-source [applies only if source was a Loop]
 
 Sections:
 
     ss | Set: sets a new section divider at current time
-    se | Edit: edit current section [edit-section-mode]
+    se | Edit: edit current section [edit-section-modal]
     sl | Loop: makes current section the scratch-loop source
     sd | Delete: the current section [delete section-divider to the left]
 
 Marks:
 
     mm   | Set mark at current time
-    me   | Edit: nearest mark (to the left) [edit-mark-mode]
+    me   | Edit: nearest mark (to the left) [edit-mark-modal]
     md   | Delete: nearest mark (to the left)
 
 Undo and help:
@@ -684,19 +684,19 @@ Video-picker:
     - Displays name, title, maybe duration, maybe YouTube ID.
     - Filters on "NAME TITLE".
 
-Jump pickers:
-    - Standard entity pickers:
-        - sections-picker
-        - loops-picker
-        - marks-picker
-        - jump-history-picker
+Jump-time-modal:
+    - Simple modal to enter a time.
+
+Standard entity pickers:
+    - Used in contexts like jump and open.
+    - sections-picker
+    - loops-picker
+    - marks-picker
+    - jump-history-picker
 
 Edit-video-modal:
     - Basic modal to edit URL, name, title, start, end.
     - Also a delete-video button.
-
-Loops-picker:
-    - Typical picker.
 
 Save-loop-modal:
     - Modal to edit name, start, end.
@@ -718,18 +718,11 @@ Edit-scratch-loop-mode:
     <Backspace>    | Reset: start to video-start or end to video-end
     <Enter>        | Submit
 
-Edit-section-mode:
-    - Barely a mode because section name and start are already on the page and
-      don't requires special key bindings to support edits.
-    - Selects the section name so the user can edit it.
-    - The tab-order should be arranged so that <Tab> takes the user to the
-      Section time if edits are desired.
-    - In the future, might become a true modal if there end up being more
-      Section attributes.
+Edit-section-modal:
+    - Basic modal to edit section attributes.
 
-Edit-mark-mode:
-    - Barely a mode since current mark's name/time are on the page.
-    - Could become a true modal in future.
+Edit-mark-modal:
+    - Basic modal to edit mark attributes.
 
 Help-modal:
     - Displays the main help text explaining the basics:
@@ -834,7 +827,9 @@ without forcing the user to scroll or page up/down.
 This area is used to show various kinds of information:
     - Current video name and title.
     - Loop source.
-    - Keyborad shortcut information, generally or contextual.
+    - Contextual keyboard shortcut information:
+        - During key pending.
+        - During edit-scratch-loop-modal.
     - Confirmation messages about actions taken.
     - Warnings and error messages.
 
@@ -919,7 +914,7 @@ Dropdowns for less frequent operations:
         - Open
         - Save new
         - Save back to source loop
-        - Select section to loop
+        - Select section to loop [alt route to same operation in Section menu]
         - Delete current source loop
 
     Mark:
