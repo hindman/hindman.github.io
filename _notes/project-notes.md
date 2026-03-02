@@ -184,3 +184,28 @@ On github.com:
 
     - Confirm GHP settings for hindman.github.io.
 
+## How The Fifth Fret and LoopLlama v2 are served
+
+Jekyll (`bundle exec jekyll serve`) builds the whole site: it processes
+Markdown, Liquid templates, and the Minimal Mistakes theme into static HTML
+files, then serves them locally. LoopLlama v1 is just a static HTML+JS file
+sitting in `loopllama/v1/` — Jekyll serves it as-is, no processing needed.
+
+Vite (`npm run dev`) is a completely separate dev server, purpose-built for
+modern JS development. It serves only the `loopllama/v2/` subtree, handles ES
+module imports on the fly, and provides HMR. It has no knowledge of Jekyll or
+the rest of the site.
+
+So the two are independent. Two separate servers, two separate ports (Jekyll
+on 4000, Vite on 5173). During v2 development we only need Vite running.
+
+Where they eventually converge: the build step. When v2 is ready to ship, we
+will run `npm run build`. Vite compiles and bundles everything into a `dist/`
+folder — static HTML, JS, and CSS with hashed filenames, ready to deploy
+anywhere. We then commit those built files under `loopllama/v2/` and GitHub
+Pages serves them as plain static files — no Node, no Vite, no npm at
+runtime. Jekyll continues to handle the rest of the site exactly as before.
+
+So the dependency on Node/Vite is purely a development-time thing. The
+deployed artifact is just files.
+

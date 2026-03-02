@@ -4,5 +4,7 @@ _site/
 
 Gemfile.lock
 
+loopllama/v2/node_modules/
+
 /tmp/
 
