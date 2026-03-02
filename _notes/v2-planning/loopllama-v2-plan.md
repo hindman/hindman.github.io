@@ -297,8 +297,8 @@ v2/
    scratch-loop range, marks, and playhead. Click-to-jump. Drag-to-edit
    is aspirational and can be deferred.
 
-9. Pickers and modals: build the full modal/picker UX: url-input-mode,
-   video-picker, jumps-picker, loops-picker, save-loop-modal,
+9. Pickers and modals: build the full modal/picker UX: url-input-modal,
+   video-picker, loops-picker, save-loop-modal,
    edit-video-modal. All must be keyboard-triggerable and follow
    consistent exit-key conventions (Esc/Enter).
 
@@ -311,8 +311,7 @@ v2/
     end as query params).
 
 12. Navigation safety: persist the jump list (video.jumps). Push
-    user-initiated seeks above the threshold. Implement go-back via
-    the jumps-picker's `j,` grammar.
+    user-initiated seeks above the threshold.
 
 13. Ancillary modals: options-modal (seek delta, speed delta, section
     padding), help-modal (key bindings reference), delete-data-modal
@@ -348,7 +347,7 @@ covers the same safety concern without interrupting flow.
 ## Time Input Formats
 
 Time values appear in jump inputs, loop endpoint fields, mark/section
-time fields, and the jumps-picker. All contexts support the same formats.
+time fields, and jumping by time. All contexts support the same formats.
 
 The app should support various input styles:
 
@@ -591,10 +590,11 @@ Mark
 
 Videos:
 
-    vu | Switch to YouTube video via a URL [url-input-mode]
+    vu | Switch to YouTube video via a URL [url-input-modal]
     y  | YouTube: short synonym for `vu`.
     vv | Switch to video [video-picker]
     ve | Edit video attributes [edit-video-modal]
+    vd | Delete current video
 
 Playing:
 
@@ -609,8 +609,17 @@ Navigation:
     <Left>  | Seek backward
     <Down>  | Seek delta: reduce
     <Up>    | Seek delta: increase
-    <Enter> | Jump: to start (of loop or video)
-    j       | Jump [jumps-picker]
+    ,       | Previous entity
+    /       | Activate entity-type dropdown
+    .       | Next entity
+    <Enter> | Jump: to start (of loop if looping, else video)
+    jj      | Jump: by time
+    js      | Jump: to section via picker
+    jl      | Jump: to loop via picker
+    jm      | Jump: to mark via picker
+    jh      | Jump: within jump-history via picker
+    jb      | Jump: backward within jump-history
+    jf      | Jump: forward within jump-history
 
 Looping:
 
@@ -621,6 +630,7 @@ Looping:
     ls   | Save-new: a new loop [save-loop-modal]
     lb   | Save-back: save scratch-loop endpoints back to source Loop
     le   | Edit: scratch-loop [edit-scratch-loop-mode]
+    ld   | Delete: current loop-source
 
 Sections:
 
@@ -628,8 +638,6 @@ Sections:
     se | Edit: edit current section [edit-section-mode]
     sl | Loop: makes current section the scratch-loop source
     sd | Delete: the current section [delete section-divider to the left]
-    .  | Jump: next section
-    ,  | Jump: previous section
 
 Marks:
 
@@ -639,19 +647,21 @@ Marks:
 
 Undo and help:
 
-    u | Undo: most recent edit
-    U | Redo: reverses an Undo
-    h | Help-modal
-    o | Options-modal
+    u  | Undo: most recent edit
+    U  | Redo: reverses an Undo
+    hh | Help: general
+    hk | Help: key bindings
+    ?  | Synonym for `hk`
+    o  | Options-modal
 
 Data:
 
     dd | Delete: delete-data-modal
     de | Export: app data as JSON
     di | Import: app data from JSON
+    dI | Inspect: app data as JSON [bottom of web page]
     dv | Share: video data as JSON
     dl | Share: scratch-loop [via URL]
-    dI | Inspect: app data as JSON [bottom of web page]
 
 ---
 
@@ -661,11 +671,9 @@ Video-info-modal:
     - Informational model.
     - User-oriented display of all data about the current video.
 
-URL-input-mode:
-    - Puts focus on the URL text box with the full URL selected, so the user
-      can easily paste to replace the old URL.
-    - Pressing Esc or Enter returns focus to the main app.
-    - Text box should:
+URL-input-modal:
+    - Simple modal to enter YouTube URL.
+    - Should:
         - Handle common YouTube URL flavors (eg, watch?v=, youtu.be/, etc).
         - Accept just a video ID (eg, zP4lYpsfL8c).
         - Respect the `t` query parameter (eg, ?t=354).
@@ -676,33 +684,16 @@ Video-picker:
     - Displays name, title, maybe duration, maybe YouTube ID.
     - Filters on "NAME TITLE".
 
+Jump pickers:
+    - Standard entity pickers:
+        - sections-picker
+        - loops-picker
+        - marks-picker
+        - jump-history-picker
+
 Edit-video-modal:
     - Basic modal to edit URL, name, title, start, end.
     - Also a delete-video button.
-
-Jumps-picker:
-    - Picker items include:
-        - video start
-        - back (most recent jumplist entry)
-        - sections
-        - loops
-        - marks
-        - jumplist entries
-    - Supports a command-line grammar.
-    - Supports some immediate-select behavior (Enter press not needed).
-
-        TIME    | Jump to a specific time
-        QUERY   | Regular picker behavior
-        X QUERY | Pre-filter picker items to just type X
-        X,      | Jump to previous entity of type X [immediately]
-        X.      | Jump to next entity of type X [immediately]
-
-        Where X can take these values:
-
-            l   | Loops
-            s   | Sections
-            m   | Marks
-            j   | Jumplist
 
 Loops-picker:
     - Typical picker.
@@ -718,13 +709,13 @@ Edit-scratch-loop-mode:
       focus attention on the scratch-loop, and to provide a cheatsheet for the
       mode's key bindings.
     - For play/pause if focus in on start, play starts at the loop beginning;
-      if on end, starts 5 sec before end.
+      if on end, starts 3 sec before end.
 
     <Tab>          | Toggle focus between start or end
     <Left> <right> | Move start/end
     <Up> <down>    | Change the move delta
     <Space>        | Play/pause the video at the relevant spot
-    <Backspace>    | Reset to start or end of video
+    <Backspace>    | Reset: start to video-start or end to video-end
     <Enter>        | Submit
 
 Edit-section-mode:
@@ -881,6 +872,11 @@ Dragging, by contrast, is sort of a blind operation.
 
 ### Controls area
 
+Policy:
+    - Direct controls only for frequently used operations.
+    - Everything else is organized under menus.
+    - Users annoyed by 2 clicks rather than 1 can learn the key bindings.
+
 Play controls:
 
     play/pause    | button
@@ -906,47 +902,56 @@ Loop controls:
 
 Dropdowns for less frequent operations:
 
-    Select:
-        - Video: open
-        - Loop: open
-        - Section: to loop
+    Video:
+        - Open
+        - Edit current
+        - Delete current
+
+    Section:
+        - Set new here
+        - Edit current
+        - Delete current
+        - Loop current
+        - Select section to loop
+
+    Loop:
+        - Edit [edit-scratch-loop-modal]
+        - Open
+        - Save new
+        - Save back to source loop
+        - Select section to loop
+        - Delete current source loop
+
+    Mark:
+        - Set here
+        - Edit nearest
+        - Delete nearest
+
     Jump:
         - Time
         ----------------------------
-        - Sections
-        - Loops
-        - Marks
+        - Section
+        - Loop
+        - Mark
         ----------------------------
         - Jump history
         - Back
         - Forward
-    Edit:
+
+    App:
         - Undo
         - Redo
         ----------------------------
-        - Video: current
-        - Section: current
-        - Mark: nearest
-    Save:
-        - Mark: set here
-        - Section: new
-        - Loop: new
-        - Loop: back to source loop
-    Delete:
-        - Video: current
-        - Section: current
-        - Loop: current
-        - Mark: nearest to left
-        ----------------------------
-        - Data: bulk
-    App data:
         - Share: loop via URL
-        - Share: video
+        - Share: video as JSON
         ----------------------------
-        - Export: video
-        - Export: all
+        - Options
+        ----------------------------
+        - Export
         - Import
         - Inspect JSON
+        - Bulk data delete
+
     Help:
         - General
         - Key bindings

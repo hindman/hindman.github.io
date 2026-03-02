@@ -1,4 +1,89 @@
 
+I have edited loopllama-v2-plan.md, notably these sections:
+
+    ## Key bindings
+    ## Modals, pickers, and other UI elements
+    ## Mockup of page layout and UI controls
+
+The biggest changes were:
+
+(1) Substantially reduced the number of buttons and other controls on the main
+page, restricting to the frequently-used operations. Everything else is nested
+under dropdown menus.
+
+(2) Initially I organized the menus around verbs (Save/set, Edit, Delete,
+Jump) but decided that users might find the system more intuitive if the
+organization were mostly noun-based: Video, Section, Loop, Mark, Jump, App,
+Help.
+
+(3) Dropped the jumps-picker and its overly fancy command-line grammar.
+
+(4) Adjusted the keybindings accordingly.
+
+(5) Decided to move the loop-source up to the messages area with the other
+informational items like video name and title.
+
+(6) Decided to make the timeline have two zones, one for clicking to jump to a
+time in the video and one for clicking to edit entities in the timeline.
+
+Please read the document, focusing especially on those sections. Let me know
+if there are questions that need resolving, conflicts, things that will seem
+to confusing to users, bad ideas, or any other problems.
+
+=============
+
+Good set of changes overall. The dropdown-first approach reads clearly in the
+controls spec, and the noun-based menu grouping is more intuitive than
+verb-based. Several issues worth resolving:
+
+**Stale modal descriptions (significant)**
+
+`Edit-section-mode` and `Edit-mark-mode` both say the relevant fields are
+"already on the page" — but with the new design they're not. Those modes
+need rethinking: since section name/start and mark name/time are no longer in
+the controls area, editing them has to be triggered from the timeline click.
+Probably means these become proper modals (or inline popovers), not modes. The
+descriptions should be updated to reflect that.
+
+**`ld | Delete: current loop-source` — ambiguous**
+
+What happens when the scratch-loop was loaded from a Section rather than a
+named Loop? There's no "loop source" to delete. Should probably be `ld |
+Delete: source loop (only available when source is a Loop)` and the behavior
+when source is a Section is either a no-op or an error message.
+
+**`jj | Jump: by time` — no modal documented**
+
+The key binding exists but there's no entry in the Modals section describing
+what happens. Presumably a simple one-field time input modal. Worth adding a
+brief entry.
+
+**Speed: decimal vs. percentage inconsistency**
+
+Key bindings adjust speed by `.05` (decimal). The controls spec says `clamp:
+25 - 200, increments of 5` (percentage). They're the same increment (5% =
+0.05) but the display format is unresolved. Pick one and use it throughout —
+percentage (25–200%) is probably more user-friendly in the text box.
+
+**`jh | Jump: within jump-history via picker` — intentional?**
+
+You said the jumps-picker was dropped, but `jh` still references a picker. Is
+`jh` a retained picker specifically for jump history, or is this a leftover
+that should be removed now that `jb`/`jf` handle history navigation?
+
+**`Loops-picker` appears twice in Modals**
+
+Once under "Jump pickers" and once as its own entry. The standalone entry can
+be removed.
+
+**"Select section to loop" appears in both Section and Loop dropdowns**
+
+Is this intentional duplication, or should it live in only one place? Section
+dropdown seems like the natural home.
+
+Nothing here is a bad idea — these are mostly incomplete descriptions and a
+few edge cases that need decisions before implementation.
+
 ## TODO
 
 V2 planning:
