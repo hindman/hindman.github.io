@@ -1,7 +1,9 @@
 
-g c -am '6e. Core key bindings'
+## CURRENT SESSION
 
 /rename loopllama-v2-stage-7a
+
+    =============
 
 We are now on imlemenation stage #7a:
 
@@ -11,22 +13,20 @@ We are now on imlemenation stage #7a:
 
     # The stage.
 
-    6e. Core key bindings: Replace the console.log stubs with real
-        implementations for: play/pause (`Space`), speed up/down/reset
-        (`=`, `-`, `Backspace`), seek forward/back (`Right`, `Left`), and
-        jump-to-start (`Enter`). Goal: basic playback fully controllable
-        via keyboard.
-
-=============
-
-## TODO
-
-V2 implementation:
-
     7a. Scratch-loop controls: Add scratch-loop display to controls area
         (start/end text boxes, looping toggle, set-start-now /
         set-end-now buttons). Wire `[`, `]`, `ll` key bindings.
         Goal: scratch-loop works via both keyboard and mouse.
+
+    =============
+
+g c -am '7a. Scratch-loop controls'
+
+    =============
+
+## TODO
+
+V2 implementation:
 
     7b. Marks: Implement Mark entity CRUD in state.js. Show a marks list
         in controls area (time, optional name). Wire `mm` (set) and `md`
