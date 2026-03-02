@@ -43,7 +43,7 @@ song is to mark the start of each section.
 Loops are named, loopable time ranges that do not have to correspond to
 musical structure. They are more generic than sections: a user might create a
 loop called "outro-lick" to isolate a specific phrase for practice. Loops have
-a name/label as their primary identifier.
+a name as their primary identifier (intended to be a short label).
 
 Marks are named time points for quick navigation. They are the most generic
 entity: any moment the user wants to return to quickly.
@@ -51,10 +51,10 @@ entity: any moment the user wants to return to quickly.
 ### 3. Data Model for Marks and Loops
 
 In v1, marks and loops were identified by a fixed number (m1-m9, L1-L9), with
-no labels. In v2, the primary identifier is a user-defined name. Names are
+no names. In v2, the primary identifier is a user-defined name. Names are
 optional: if the user does not name an entity, the UI assigns a computed
-display label based on rank order within its type (e.g., "#2" for the second
-loop by start time). This label is not stored -- it is derived on the fly from
+display name based on rank order within its type (e.g., "#2" for the second
+loop by start time). This name is not stored -- it is derived on the fly from
 current sort order. Users who find the instability of auto-numbers (caused by
 insertions or deletions) annoying have a clear remedy: name the entity.
 
@@ -197,6 +197,12 @@ depends on the changed data. No state-management library needed.
 LoopLlama's component tree is shallow enough (timeline, video controls,
 and entity panels are all direct children of `<llama-app>`) that prop
 drilling is not a concern.
+
+Testing: Vitest (Vite-native, near-zero setup, Jest-compatible syntax).
+Unit tests only, added during Stage 3, covering pure logic: time input
+parser, state mutation functions, and timeline coordinate math. Component
+tests and end-to-end tests are not planned; the YouTube API and Lit
+components are tested manually during development.
 
 CSS strategy: Shoelace for UI primitives (modals, buttons, text inputs,
 toggles, etc.), hand-rolled CSS with CSS custom properties for
@@ -367,15 +373,15 @@ comma is a decimal separator.
 
 ### Divider-based structure
 
-A section is defined by a divider: a time point with an optional label.
+A section is defined by a divider: a time point with an optional name.
 Sections are the regions between consecutive dividers. The user plants
 dividers at meaningful musical boundaries; the regions between them are
 the sections.
 
-Labels are optional. The user can plant all dividers quickly by ear
+Names are optional. The user can plant all dividers quickly by ear
 (purely positional work) and name them later or never. All section
 operations -- loop current section, jump to next/previous -- work on
-position alone without requiring labels.
+position alone without requiring names.
 
 ### Non-exhaustive coverage and gap zones
 
@@ -417,14 +423,14 @@ boundary.
 
 - Set: plant a new divider at the current playhead position.
 - Edit: edit the divider to the left of the current playhead (adjust its
-  time, set or change its label).
+  start and sometimes end or set/edit its name).
 - Loop: load the current section into the scratch-loop.
 - Delete: remove the divider to the left of the current playhead.
 - Jump next/previous: move the playhead to the next or previous divider.
 
 ### Schema note
 
-Section = id + time (required) + label (optional) + end (optional).
+Section = id + time (required) + name (optional) + end (optional).
 End time is either stored explicitly (when the user has set it) or
 derived at runtime (next divider's time, or video effective end for the
 last section). A stored end creates a gap zone between it and the next
@@ -492,6 +498,14 @@ have diverged.
 
 ## Data schema
 
+Options:
+
+- seek_delta_default: N
+- seek_delta_choices: [N1, N2, ...]
+- speed_delta: N
+- section_loop_pad_start: N
+- section_loop_pad_end: N
+
 Video:
 
 - id: YouTube video ID; the authoritative key used internally
@@ -525,6 +539,8 @@ Video:
 
 - seek_delta: controls <Left>/<Right> seeks; defaults to 5 sec.
 
+- speed_delta: controls amount that -/= alter the speed.
+
 - sections: array of Section entities
 
 - loops: array of Loop entities (includes the scratch-loop if present)
@@ -536,6 +552,7 @@ Video:
       navigation.
     - Persisted across sessions.
     - Stored on the video object.
+    - Jump history max size: 20 entries.
 
 - version: version number of current metadata scheme
 
@@ -544,7 +561,7 @@ Section
 - id: generated unique identifier
 
 - name: user label (e.g., "Intro", "Verse", "Solo"); optional. If absent, the
-  UI displays a computed rank-order label (e.g., "#1") derived from position
+  UI displays a computed rank-order name (e.g., "#1") derived from position
   in timeline order. Not stored.
 
 - time: the divider point (seconds); start of this section
@@ -560,7 +577,7 @@ Loop
 - id: generated unique identifier
 
 - name: user label (e.g., "outro-lick"); optional. If absent, the UI displays
-  a computed rank-order label (e.g., "#2"). Not stored. The scratch-loop is
+  a computed rank-order name (e.g., "#2"). Not stored. The scratch-loop is
   displayed distinctly (e.g., "scratch"), not numbered.
 
 - start: start time (seconds)
@@ -580,7 +597,7 @@ Mark
 - id: generated unique identifier
 
 - name: user label; optional. If absent, the UI displays a computed rank-order
-  label (e.g., "#1") derived from position in timeline order. Not stored.
+  name (e.g., "#1") derived from position in timeline order. Not stored.
 
 - time: time point (seconds)
 
