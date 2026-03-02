@@ -2,8 +2,87 @@
   box-sizing: border-box;
 }
 
+/* === Design tokens === */
+
+:root {
+  /* Colors */
+  --ll-bg:             #1a1a1a;
+  --ll-surface:        #252525;
+  --ll-surface-raised: #2a2a2a;
+  --ll-border:         #444;
+  --ll-border-dim:     #333;
+  --ll-text:           #e0e0e0;
+  --ll-text-dim:       #aaa;
+  --ll-text-muted:     #666;
+  --ll-accent:         #7ec8e3;
+  --ll-accent-hover:   #5ab0d0;
+
+  /* Spacing */
+  --ll-gap-sm: 0.25rem;
+  --ll-gap:    0.5rem;
+  --ll-gap-lg: 0.75rem;
+  --ll-pad:    0.5rem;
+  --ll-pad-lg: 1rem;
+  --ll-radius: 3px;
+
+  /* Typography */
+  --ll-font-sans: system-ui, sans-serif;
+  --ll-font-mono: ui-monospace, 'Courier New', monospace;
+  --ll-text-sm:   0.85rem;
+  --ll-text-base: 1.05rem;
+  --ll-text-lg:   1.1rem;
+  --ll-text-xl:   1.4rem;
+}
+
+/* Base */
+
 body {
   margin: 0;
-  background: #1a1a1a;
-  color: #e0e0e0;
+  background: var(--ll-bg);
+  color: var(--ll-text);
+  font-family: var(--ll-font-sans);
+  font-size: var(--ll-text-base);
+}
+
+/* === Shoelace theme overrides ===
+   Imported after sl-theme-dark.css, so same-specificity rules here win. */
+
+.sl-theme-dark {
+  /* Typography */
+  --sl-font-sans: var(--ll-font-sans);
+  --sl-font-mono: var(--ll-font-mono);
+
+  /* Radius */
+  --sl-border-radius-small:  var(--ll-radius);
+  --sl-border-radius-medium: var(--ll-radius);
+  --sl-border-radius-large:  var(--ll-radius);
+
+  /* Panels / dialogs */
+  --sl-panel-background-color: var(--ll-surface);
+  --sl-panel-border-color:     var(--ll-border);
+
+  /* Inputs */
+  --sl-input-background-color:          var(--ll-surface-raised);
+  --sl-input-border-color:              var(--ll-border);
+  --sl-input-color:                     var(--ll-text);
+  --sl-input-placeholder-color:         var(--ll-text-muted);
+  --sl-input-focus-ring-color:          var(--ll-accent);
+  --sl-input-background-color-hover:    var(--ll-surface-raised);
+  --sl-input-background-color-focus:    var(--ll-surface-raised);
+
+  /* Overlay */
+  --sl-overlay-background-color: rgba(0, 0, 0, 0.75);
+
+  /* Primary color scale (cyan-blue, anchored to --ll-accent at 300) */
+  --sl-color-primary-50:  #eef8fc;
+  --sl-color-primary-100: #d0eef8;
+  --sl-color-primary-200: #a4dcf2;
+  --sl-color-primary-300: #7ec8e3;
+  --sl-color-primary-400: #56b0d0;
+  --sl-color-primary-500: #3597bb;
+  --sl-color-primary-600: #2a7d9e;
+  --sl-color-primary-700: #1f6380;
+  --sl-color-primary-800: #164963;
+  --sl-color-primary-900: #0d3046;
+  --sl-color-primary-950: #08202f;
 }

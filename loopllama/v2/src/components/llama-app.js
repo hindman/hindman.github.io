@@ -9,55 +9,86 @@ class LlamaApp extends LitElement {
   static styles = css`
     :host {
       display: block;
-      font-family: sans-serif;
-      color: #e0e0e0;
+      font-family: var(--ll-font-sans, sans-serif);
+      color: var(--ll-text, #e0e0e0);
     }
 
     /* --- Header --- */
     .app-header {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      padding: 0.5rem 1rem;
-      background: #2a2a2a;
-      border-bottom: 1px solid #444;
+      padding: var(--ll-pad, 0.5rem) var(--ll-pad-lg, 1rem);
+      background: var(--ll-surface-raised, #2a2a2a);
+      border-top: 3px solid var(--ll-accent, #7ec8e3);
+      border-bottom: 1px solid var(--ll-border, #444);
     }
 
     .app-title {
-      font-size: 1.1rem;
+      font-size: var(--ll-text-xl, 1.4rem);
       font-weight: bold;
-      color: #fff;
+      color: var(--ll-text, #e0e0e0);
       white-space: nowrap;
+    }
+
+    .header-nav {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: var(--ll-gap, 0.5rem);
+      font-size: var(--ll-text-base, 1.05rem);
+    }
+
+    .nav-link {
+      color: var(--ll-text-dim, #aaa);
+      text-decoration: none;
+    }
+
+    .nav-link:hover {
+      color: var(--ll-accent, #7ec8e3);
+    }
+
+    .nav-sep {
+      color: var(--ll-text-muted, #666);
+    }
+
+    /* --- URL bar (temporary until url-input-modal, Stage 9a) --- */
+    .url-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--ll-gap, 0.5rem);
+      padding: var(--ll-gap, 0.5rem) var(--ll-pad-lg, 1rem);
+      background: var(--ll-surface, #252525);
+      border-bottom: 1px solid var(--ll-border, #444);
     }
 
     .url-input {
       flex: 1;
       max-width: 500px;
       padding: 0.3rem 0.5rem;
-      background: #333;
-      border: 1px solid #555;
-      color: #e0e0e0;
-      border-radius: 3px;
-      font-size: 0.9rem;
+      background: var(--ll-surface-raised, #333);
+      border: 1px solid var(--ll-border, #444);
+      color: var(--ll-text, #e0e0e0);
+      border-radius: var(--ll-radius, 3px);
+      font-size: var(--ll-text-sm, 0.85rem);
     }
 
     .url-input:focus {
       outline: none;
-      border-color: #7ec8e3;
+      border-color: var(--ll-accent, #7ec8e3);
     }
 
     /* --- Body --- */
     .app-body {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
-      padding: 0.5rem;
+      gap: var(--ll-gap, 0.5rem);
+      padding: var(--ll-pad, 0.5rem);
     }
 
     /* --- Main row: video + message --- */
     .app-main {
       display: flex;
-      gap: 0.5rem;
+      gap: var(--ll-gap, 0.5rem);
     }
 
     .video-area {
@@ -74,30 +105,30 @@ class LlamaApp extends LitElement {
     .message-area {
       width: 220px;
       flex-shrink: 0;
-      background: #252525;
-      border: 1px solid #444;
-      border-radius: 3px;
-      padding: 0.5rem;
-      font-size: 0.85rem;
-      color: #aaa;
+      background: var(--ll-surface, #252525);
+      border: 1px solid var(--ll-border, #444);
+      border-radius: var(--ll-radius, 3px);
+      padding: var(--ll-pad, 0.5rem);
+      font-size: var(--ll-text-sm, 0.85rem);
+      color: var(--ll-text-dim, #aaa);
     }
 
     .message-time {
-      margin-top: 0.5rem;
-      font-family: monospace;
+      margin-top: var(--ll-pad, 0.5rem);
+      font-family: var(--ll-font-mono, monospace);
       font-size: 0.9rem;
-      color: #7ec8e3;
+      color: var(--ll-accent, #7ec8e3);
     }
 
     /* --- Placeholder areas --- */
     .timeline-placeholder,
     .controls-placeholder {
-      background: #252525;
-      border: 1px solid #444;
-      border-radius: 3px;
+      background: var(--ll-surface, #252525);
+      border: 1px solid var(--ll-border, #444);
+      border-radius: var(--ll-radius, 3px);
       padding: 0 0.75rem;
-      font-size: 0.8rem;
-      color: #555;
+      font-size: var(--ll-text-sm, 0.85rem);
+      color: var(--ll-text-muted, #555);
       display: flex;
       align-items: center;
     }
@@ -321,6 +352,14 @@ class LlamaApp extends LitElement {
     return html`
       <header class="app-header">
         <span class="app-title">LoopLlama</span>
+        <nav class="header-nav">
+          <a class="nav-link" href="https://hindman.github.io/" target="_blank" rel="noopener">The Fifth Fret</a>
+          <span class="nav-sep">|</span>
+          <a class="nav-link" href="https://github.com/hindman/hindman.github.io/tree/master/loopllama" target="_blank" rel="noopener">Code</a>
+        </nav>
+      </header>
+
+      <div class="url-bar">
         <input
           class="url-input"
           type="text"
@@ -328,7 +367,7 @@ class LlamaApp extends LitElement {
           @keydown=${(e) => e.key === 'Enter' && this._load()}
         />
         <button @click=${this._load}>Load</button>
-      </header>
+      </div>
 
       <div class="app-body">
         <div class="app-main">

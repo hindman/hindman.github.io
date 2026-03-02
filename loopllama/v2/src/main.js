@@ -1,3 +1,5 @@
+import '@shoelace-style/shoelace/dist/themes/dark.css';
+import '../styles/app.css';
 import './components/llama-app.js';
 import {
   createAppState, createVideo, createSection,

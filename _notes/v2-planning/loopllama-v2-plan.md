@@ -384,6 +384,10 @@ v2/
 14. Deploy: update `loopllama/index.html` to route to v2. Verify on
     GitHub Pages.
 
+15. Header art: add a llama mascot or logo image next to the LoopLlama
+    title in the header. Requires sourcing or creating an image asset.
+    Pure visual polish; defer until after deploy.
+
 ---
 
 ## Undo
