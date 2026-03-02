@@ -4,7 +4,26 @@
 ## TODO
 
 V2 implementation:
-    - advance to #2
+    x #1 HTML/CSS static prototype
+    x #2 Project scaffolding
+    x #3 State and storage module
+    - #4 YouTube API integration
+
+    4. YouTube API integration: port the video controller logic from v1. Fix
+       the duration detection bug via `onStateChange`. Verify that a video
+       loads, plays, pauses, seeks, and reports current time correctly.
+
+    5. Keyboard controller: implement the multi-key pending-key buffer and
+       key dispatch system. Add which-key overlay support (display available
+       continuations after ~300ms delay when a prefix key is held). Add
+       focus management so that modals and modes capture key events while
+       the global controller is inactive.
+
+    6. Minimal working app: wire together stages 3-5 into a functional app
+       -- video iframe, basic controls area (time, speed, seek), URL
+       loading, and core key bindings (play/pause, speed, seek,
+       jump-to-start). No entities yet. End state: app handles basic
+       playback at least as well as v1.
 
 Posts:
     x RH rudiments #1: alternating bass
@@ -208,4 +227,8 @@ runtime. Jekyll continues to handle the rest of the site exactly as before.
 
 So the dependency on Node/Vite is purely a development-time thing. The
 deployed artifact is just files.
+
+Edits requiring an `npm run dev` restart:
+    - vite.config.js
+    - package.json
 
