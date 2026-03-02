@@ -1,7 +1,7 @@
 
-/rename loopllama-v2-stage-6b
+/rename loopllama-v2-stage-6d
 
-We are now on imlemenation stage #6b:
+We are now on imlemenation stage #6d:
 
     # The plan.
 
@@ -9,38 +9,16 @@ We are now on imlemenation stage #6b:
 
     # The stage.
 
-    6b. Design foundation: populate `styles/app.css` with CSS custom
-        properties as design tokens (colors, spacing, typography). Apply
-        Shoelace theme overrides to align component defaults with the app's
-        design. Goal: a consistent visual baseline before components are
-        built.
-
-Do you have any questions for me about this stage, or should I react to
-your initial draft for 6b?
-
-Note that we need to get a correct header bar, as shown in the plan, with these links:
-
-    # The Fifth Fret link
-    https://hindman.github.io/
-
-    # Code link.
-    https://github.com/hindman/hindman.github.io/tree/master/loopllama
+    6d. Time polling: Add a setInterval in llama-app.js (or the controls
+        component) that polls currentTime from videoController and updates
+        the controls display. Goal: time readout stays live while video
+        plays.
 
 =============
 
 ## TODO
 
 V2 implementation:
-
-    6c. Controls component: Create llama-controls.js with time display
-        (current / duration), speed display, play/pause button, and
-        seek-forward/back buttons. Wire to videoController via custom
-        events in llama-app.js.
-
-    6d. Time polling: Add a setInterval in llama-app.js (or the controls
-        component) that polls currentTime from videoController and updates
-        the controls display. Goal: time readout stays live while video
-        plays.
 
     6e. Core key bindings: Replace the console.log stubs with real
         implementations for: play/pause (`Space`), speed up/down/reset

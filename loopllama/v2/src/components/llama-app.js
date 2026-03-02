@@ -4,6 +4,7 @@ import { LitElement, html, css } from 'lit';
 import { createVideoController }    from '../videoController.js';
 import { createKeyboardController } from '../keyboardController.js';
 import './llama-whichkey.js';
+import './llama-controls.js';
 
 class LlamaApp extends LitElement {
   static styles = css`
@@ -113,16 +114,9 @@ class LlamaApp extends LitElement {
       color: var(--ll-text-dim, #aaa);
     }
 
-    .message-time {
-      margin-top: var(--ll-pad, 0.5rem);
-      font-family: var(--ll-font-mono, monospace);
-      font-size: 0.9rem;
-      color: var(--ll-accent, #7ec8e3);
-    }
-
     /* --- Placeholder areas --- */
-    .timeline-placeholder,
-    .controls-placeholder {
+    .timeline-placeholder {
+      height: 40px;
       background: var(--ll-surface, #252525);
       border: 1px solid var(--ll-border, #444);
       border-radius: var(--ll-radius, 3px);
@@ -132,19 +126,13 @@ class LlamaApp extends LitElement {
       display: flex;
       align-items: center;
     }
-
-    .timeline-placeholder {
-      height: 40px;
-    }
-
-    .controls-placeholder {
-      height: 80px;
-    }
   `;
 
   static properties = {
     currentTime:   { type: Number },
     duration:      { type: Number },
+    speed:         { type: Number },
+    isPlaying:     { type: Boolean },
     statusMsg:     { type: String },
     wkPrefix:      { type: String },
     wkCompletions: { type: Object },
@@ -155,6 +143,8 @@ class LlamaApp extends LitElement {
     super();
     this.currentTime   = 0;
     this.duration      = null;
+    this.speed         = 1;
+    this.isPlaying     = false;
     this.statusMsg     = 'Initializing...';
     this.wkPrefix      = null;
     this.wkCompletions = null;
@@ -250,9 +240,11 @@ class LlamaApp extends LitElement {
     window.addEventListener('blur',  () => { this.windowFocused = false; });
     window.addEventListener('focus', () => { this.windowFocused = true; });
 
-    // Poll playback position every 500ms to update the display.
+    // Poll playback state every 500ms to keep the controls display live.
     this._pollId = setInterval(() => {
       this.currentTime = this._vc.getCurrentTime();
+      this.isPlaying   = this._vc.isPlaying();
+      this.speed       = this._vc.getPlaybackRate();
       const dur = this._vc.getDuration();
       if (dur !== null) this.duration = dur;
     }, 500);
@@ -341,11 +333,20 @@ class LlamaApp extends LitElement {
     this._vc?.seekTo((this._vc.getCurrentTime() ?? 0) + delta);
   }
 
-  _fmt(secs) {
-    if (secs == null) return '?';
-    const m = Math.floor(secs / 60);
-    const s = Math.floor(secs % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
+  _onPlayPause() {
+    if (this._vc?.isPlaying()) {
+      this._vc.pause();
+    } else {
+      this._vc?.play();
+    }
+  }
+
+  _onSeekForward() {
+    this._seek(5);   // default seek delta; replaced by video.seek_delta in Stage 6e
+  }
+
+  _onSeekBack() {
+    this._seek(-5);  // default seek delta; replaced by video.seek_delta in Stage 6e
   }
 
   render() {
@@ -376,14 +377,19 @@ class LlamaApp extends LitElement {
           </div>
           <div class="message-area">
             <div>${this.statusMsg}</div>
-            <div class="message-time">
-              ${this._fmt(this.currentTime)} / ${this._fmt(this.duration)}
-            </div>
           </div>
         </div>
 
         <div class="timeline-placeholder">Timeline — Stage 8</div>
-        <div class="controls-placeholder">Controls — Stage 6c</div>
+        <llama-controls
+          .currentTime=${this.currentTime}
+          .duration=${this.duration}
+          .speed=${this.speed}
+          .isPlaying=${this.isPlaying}
+          @ll-play-pause=${this._onPlayPause}
+          @ll-seek-forward=${this._onSeekForward}
+          @ll-seek-back=${this._onSeekBack}
+        ></llama-controls>
       </div>
 
       <llama-whichkey
