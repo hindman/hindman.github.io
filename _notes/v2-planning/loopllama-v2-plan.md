@@ -258,6 +258,8 @@ v2/
 
 ## Implementation Stages
 
+### DONE
+
 1. HTML/CSS prototype: build a static HTML file (no JavaScript) using
    Shoelace components and hand-rolled CSS to validate the page layout
    and controls grouping before writing any application code. This is
@@ -284,6 +286,8 @@ v2/
    continuations after ~300ms delay when a prefix key is held). Add
    focus management so that modals and modes capture key events while
    the global controller is inactive.
+
+### TODO
 
 6. Minimal working app: wire together stages 3-5 into a functional app
    -- video iframe, basic controls area (time, speed, seek), URL

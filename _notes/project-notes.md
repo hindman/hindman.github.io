@@ -1,4 +1,18 @@
 
+We are now on imlemenation stage #6:
+
+    # The plan.
+
+    _notes/v2-planning/loopllama-v2-plan.md
+
+    # The stage.
+
+    6. Minimal working app: wire together stages 3-5 into a functional app
+       -- video iframe, basic controls area (time, speed, seek), URL
+       loading, and core key bindings (play/pause, speed, seek,
+       jump-to-start). No entities yet. End state: app handles basic
+       playback at least as well as v1.
+
 =============
 
 ## TODO
@@ -7,21 +21,19 @@ V2 implementation:
     x #1 HTML/CSS static prototype
     x #2 Project scaffolding
     x #3 State and storage module
-    . #4 YouTube API integration
-    - #5 Keyboard controller
+    x #4 YouTube API integration
+    x #5 Keyboard controller
     - #6 Minimal working app
-
-    5. Keyboard controller: implement the multi-key pending-key buffer and
-       key dispatch system. Add which-key overlay support (display available
-       continuations after ~300ms delay when a prefix key is held). Add
-       focus management so that modals and modes capture key events while
-       the global controller is inactive.
 
     6. Minimal working app: wire together stages 3-5 into a functional app
        -- video iframe, basic controls area (time, speed, seek), URL
        loading, and core key bindings (play/pause, speed, seek,
        jump-to-start). No entities yet. End state: app handles basic
        playback at least as well as v1.
+
+    Q: At what point do we start dealing with aesthetic matters — design,
+    styling, colors, etc? I'm content to defer this, but these matters are not
+    mentioned in our roadmap.
 
 Posts:
     x RH rudiments #1: alternating bass

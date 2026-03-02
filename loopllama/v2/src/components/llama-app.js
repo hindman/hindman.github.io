@@ -1,10 +1,12 @@
 // llama-app.js -- top-level component.
 //
-// NOTE: currently a minimal test harness for Stage 4 (YouTube API
-// integration). Will be replaced with real UI in Stage 6.
+// NOTE: video controls area is still a minimal Stage 4 test harness.
+// Will be replaced with real UI in Stage 6.
 
 import { LitElement, html, css } from 'lit';
-import { createVideoController } from '../videoController.js';
+import { createVideoController }    from '../videoController.js';
+import { createKeyboardController } from '../keyboardController.js';
+import './llama-whichkey.js';
 
 class LlamaApp extends LitElement {
   static styles = css`
@@ -34,22 +36,86 @@ class LlamaApp extends LitElement {
   `;
 
   static properties = {
-    currentTime: { type: Number },
-    duration:    { type: Number },
-    statusMsg:   { type: String },
+    currentTime:   { type: Number },
+    duration:      { type: Number },
+    statusMsg:     { type: String },
+    wkPrefix:      { type: String },
+    wkCompletions: { type: Object },
+    windowFocused: { type: Boolean },
   };
 
   constructor() {
     super();
-    this.currentTime = 0;
-    this.duration    = null;
-    this.statusMsg   = 'Initializing...';
-    this._vc         = null;
-    this._pollId     = null;
+    this.currentTime   = 0;
+    this.duration      = null;
+    this.statusMsg     = 'Initializing...';
+    this.wkPrefix      = null;
+    this.wkCompletions = null;
+    this.windowFocused = true;
+    this._vc           = null;
+    this._kb           = null;
+    this._pollId       = null;
+  }
+
+  // Stub handlers for Stage 5. Real implementations added in Stage 6+.
+  _makeHandlers() {
+    const stub = (name) => () => console.log(`[kb] ${name}`);
+    return {
+      playPause:     stub('playPause'),
+      speedDown:     stub('speedDown'),
+      speedUp:       stub('speedUp'),
+      speedReset:    stub('speedReset'),
+      seekForward:   stub('seekForward'),
+      seekBack:      stub('seekBack'),
+      seekDeltaDown: stub('seekDeltaDown'),
+      seekDeltaUp:   stub('seekDeltaUp'),
+      prevEntity:    stub('prevEntity'),
+      entityType:    stub('entityType'),
+      nextEntity:    stub('nextEntity'),
+      jumpToStart:   stub('jumpToStart'),
+      setLoopStart:  stub('setLoopStart'),
+      setLoopEnd:    stub('setLoopEnd'),
+      undo:          stub('undo'),
+      redo:          stub('redo'),
+      helpKeys:      stub('helpKeys'),
+      options:       stub('options'),
+      videoUrl:      stub('videoUrl'),
+      videoPicker:   stub('videoPicker'),
+      editVideo:     stub('editVideo'),
+      deleteVideo:   stub('deleteVideo'),
+      jumpTime:      stub('jumpTime'),
+      jumpSection:   stub('jumpSection'),
+      jumpLoop:      stub('jumpLoop'),
+      jumpMark:      stub('jumpMark'),
+      jumpHistory:   stub('jumpHistory'),
+      jumpBack:      stub('jumpBack'),
+      jumpForward:   stub('jumpForward'),
+      toggleLoop:    stub('toggleLoop'),
+      openLoop:      stub('openLoop'),
+      saveLoop:      stub('saveLoop'),
+      saveBack:      stub('saveBack'),
+      editScratch:   stub('editScratch'),
+      deleteLoop:    stub('deleteLoop'),
+      setSection:    stub('setSection'),
+      editSection:   stub('editSection'),
+      loopSection:   stub('loopSection'),
+      deleteSection: stub('deleteSection'),
+      setMark:       stub('setMark'),
+      editMark:      stub('editMark'),
+      deleteMark:    stub('deleteMark'),
+      helpGeneral:   stub('helpGeneral'),
+      deleteData:    stub('deleteData'),
+      exportAll:     stub('exportAll'),
+      importData:    stub('importData'),
+      inspectData:   stub('inspectData'),
+      shareVideo:    stub('shareVideo'),
+      shareLoop:     stub('shareLoop'),
+    };
   }
 
   async firstUpdated() {
     const container = this.renderRoot.querySelector('#player-container');
+
     this._vc = createVideoController({
       onReady: () => {
         this.statusMsg = 'Player ready. Enter a YouTube video ID and click Load.';
@@ -62,8 +128,18 @@ class LlamaApp extends LitElement {
     });
     await this._vc.initialize(container);
 
-    // Expose for console testing in dev mode.
-    if (import.meta.env.DEV) window._ll.vc = this._vc;
+    this._kb = createKeyboardController(
+      this._makeHandlers(),
+      {
+        onPendingKey: (prefix, completions) => {
+          this.wkPrefix      = prefix;
+          this.wkCompletions = completions;
+        },
+      }
+    );
+
+    window.addEventListener('blur',  () => { this.windowFocused = false; });
+    window.addEventListener('focus', () => { this.windowFocused = true; });
 
     // Poll playback position every 500ms to update the display.
     this._pollId = setInterval(() => {
@@ -71,11 +147,18 @@ class LlamaApp extends LitElement {
       const dur = this._vc.getDuration();
       if (dur !== null) this.duration = dur;
     }, 500);
+
+    // Expose for console testing in dev mode.
+    if (import.meta.env.DEV) {
+      window._ll.vc = this._vc;
+      window._ll.kb = this._kb;
+    }
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     clearInterval(this._pollId);
+    this._kb?.destroy();
   }
 
   _load() {
@@ -115,6 +198,11 @@ class LlamaApp extends LitElement {
         &nbsp;|&nbsp;
         ${this._fmt(this.currentTime)} / ${this._fmt(this.duration)}
       </div>
+      <llama-whichkey
+        .prefix=${this.wkPrefix}
+        .completions=${this.wkCompletions}
+        .windowFocused=${this.windowFocused}
+      ></llama-whichkey>
     `;
   }
 }
