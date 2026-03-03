@@ -12,6 +12,7 @@ import {
 import './llama-whichkey.js';
 import './llama-controls.js';
 import './llama-timeline.js';
+import './llama-url-input-modal.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
@@ -59,32 +60,6 @@ class LlamaApp extends LitElement {
 
     .nav-sep {
       color: var(--ll-text-muted, #666);
-    }
-
-    /* --- URL bar (temporary until url-input-modal, Stage 9a) --- */
-    .url-bar {
-      display: flex;
-      align-items: center;
-      gap: var(--ll-gap, 0.5rem);
-      padding: var(--ll-gap, 0.5rem) var(--ll-pad-lg, 1rem);
-      background: var(--ll-surface, #252525);
-      border-bottom: 1px solid var(--ll-border, #444);
-    }
-
-    .url-input {
-      flex: 1;
-      max-width: 500px;
-      padding: 0.3rem 0.5rem;
-      background: var(--ll-surface-raised, #333);
-      border: 1px solid var(--ll-border, #444);
-      color: var(--ll-text, #e0e0e0);
-      border-radius: var(--ll-radius, 3px);
-      font-size: var(--ll-text-sm, 0.85rem);
-    }
-
-    .url-input:focus {
-      outline: none;
-      border-color: var(--ll-accent, #7ec8e3);
     }
 
     /* --- Body --- */
@@ -200,6 +175,7 @@ class LlamaApp extends LitElement {
     this._kb                 = null;
     this._pollId             = null;
     this._editScratchHandler = null;
+    this._urlInputModalEl    = null;
     this.seekDelta     = DEFAULT_OPTIONS.seek_delta_default;
     this.speedDelta    = DEFAULT_OPTIONS.speed_delta;
   }
@@ -235,7 +211,7 @@ class LlamaApp extends LitElement {
       redo:          stub('redo'),
       helpKeys:      stub('helpKeys'),
       options:       stub('options'),
-      videoUrl:      stub('videoUrl'),
+      videoUrl:      () => this._urlInputModalEl?.show(),
       videoPicker:   stub('videoPicker'),
       editVideo:     stub('editVideo'),
       deleteVideo:   stub('deleteVideo'),
@@ -372,15 +348,14 @@ class LlamaApp extends LitElement {
       }
     );
 
+    this._urlInputModalEl = this.renderRoot.querySelector('llama-url-input-modal');
+
     window.addEventListener('blur',  () => { this.windowFocused = false; });
     window.addEventListener('focus', () => { this.windowFocused = true; });
 
-    // Restore and auto-load the last video (dev convenience; removed in Stage 9a).
+    // Auto-load last video (dev convenience).
     const lastUrl = localStorage.getItem('ll_last_url');
-    if (lastUrl) {
-      this.renderRoot.querySelector('.url-input').value = lastUrl;
-      this._load();
-    }
+    if (lastUrl) this._loadUrl(lastUrl);
 
     // Poll playback state every 500ms to keep the controls display live.
     this._pollId = setInterval(() => {
@@ -580,9 +555,8 @@ class LlamaApp extends LitElement {
     return total;
   }
 
-  _load() {
-    const input = this.renderRoot.querySelector('.url-input');
-    const raw = input.value.trim();
+  _loadUrl(raw) {
+    raw = raw.trim();
     if (!raw) return;
 
     const parsed = this._parseVideoInput(raw);
@@ -595,6 +569,10 @@ class LlamaApp extends LitElement {
     this.duration  = null;
     this.statusMsg = `Loading: ${parsed.id}`;
     localStorage.setItem('ll_last_url', raw);
+  }
+
+  _onLoadUrl(e) {
+    this._loadUrl(e.detail.url);
   }
 
   _flashLoopViolation() {
@@ -726,16 +704,6 @@ class LlamaApp extends LitElement {
         </nav>
       </header>
 
-      <div class="url-bar">
-        <input
-          class="url-input"
-          type="text"
-          placeholder="YouTube URL or video ID"
-          @keydown=${(e) => e.key === 'Enter' && this._load()}
-        />
-        <button @click=${this._load}>Load</button>
-      </div>
-
       <div class="app-body">
         <div class="app-main">
           <div class="video-col">
@@ -789,6 +757,12 @@ class LlamaApp extends LitElement {
           @ll-delete-loop=${this._onDeleteLoop}
         ></llama-controls>
       </div>
+
+      <llama-url-input-modal
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+        @ll-load-url=${this._onLoadUrl}
+      ></llama-url-input-modal>
 
       <llama-whichkey
         .prefix=${this.wkPrefix}

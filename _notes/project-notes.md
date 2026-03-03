@@ -9,21 +9,36 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 V2 implementation:
     
-    9a. Base modal pattern: create a reusable Shoelace modal scaffolding
-        and verify keyboard focus management (Esc/Enter exit, body scroll
-        lock). Build url-input-modal as the first concrete modal. Wire
-        `y`/`vu` binding.
+    /rename loopllama-v2-stage-9b
 
     9b. Video picker and edit-video-modal: video-picker (list of known
         videos, filter by name/title) and edit-video-modal (URL, name,
         title, start, end, delete button). Wire `vv` and `ve` bindings.
 
+    g c -am '9b. Video picker and edit-video-modal'
+
+    ===============================
+
+    /rename loopllama-v2-stage-9c
+
     9c. Loop modals: save-loop-modal (name + start/end, defaults to
         scratch-loop) and loops-picker (load a saved loop). Wire `ls` and
         `lo` bindings.
 
+    g c -am '9c. Loop modals'
+
+    ===============================
+
+    /rename loopllama-v2-stage-9d
+
     9d. Entity edit modals: edit-section-modal and edit-mark-modal. Wire
         `se` and `me` bindings.
+
+    g c -am '9d. Entity edit modals'
+
+    ===============================
+
+    /rename loopllama-v2-stage-9e
 
     9e. Chapter support: Chapter entity CRUD in state.js (create, edit,
         delete). Chapter picker (select which chapter to make active) and
@@ -33,6 +48,20 @@ V2 implementation:
         entities to those whose chapterId matches. Wire chapter key
         bindings (TBD by user).
 
+    g c -am '9e. Chapter support'
+
+    ===============================
+
+    /rename loopllama-v2-stage-__
+
+    Blah blah blah.
+
+    g c -am '__'
+
+URLS:
+
+    https://www.youtube.com/watch?v=2iFn6ursFaE
+    https://www.youtube.com/watch?v=zP4lYpsfL8c
 
 DEFERRED:
     - Sub-group label positioning (above vs inline): revisit once all controls
