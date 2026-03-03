@@ -1,0 +1,194 @@
+// llama-edit-video-modal.js -- modal to edit current video metadata.
+//
+// Props:
+//   video: Video object | null  -- the current video to edit
+//
+// Events fired (composed, bubbling):
+//   ll-update-video  { id, name, title, url, start, end }
+//   ll-delete-video  { id }
+//
+// API:
+//   show() / hide()
+//
+// Time fields (start, end) accept the same formats as loop inputs:
+//   m:ss, h:mm:ss, raw seconds (e.g. "73", "1:13:44").
+
+import { LitElement, html, css } from 'lit';
+import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/input/input.js';
+import './llama-modal.js';
+
+class LlamaEditVideoModal extends LitElement {
+  static styles = css`
+    .field-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      margin-bottom: 0.7rem;
+    }
+    .field-label {
+      font-size: var(--ll-text-sm, 0.85rem);
+      color: var(--ll-text-dim, #aaa);
+    }
+    .video-id {
+      font-family: monospace;
+      color: var(--ll-text-muted, #666);
+      font-size: var(--ll-text-sm, 0.85rem);
+      padding: 0.2rem 0;
+    }
+    .delete-row {
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--ll-border, #444);
+    }
+  `;
+
+  static properties = {
+    video:  { type: Object },
+    _name:  { state: true },
+    _title: { state: true },
+    _url:   { state: true },
+    _start: { state: true },
+    _end:   { state: true },
+  };
+
+  constructor() {
+    super();
+    this.video  = null;
+    this._name  = '';
+    this._title = '';
+    this._url   = '';
+    this._start = '';
+    this._end   = '';
+  }
+
+  show() {
+    const v = this.video;
+    if (v) {
+      this._name  = v.name  || '';
+      this._title = v.title || '';
+      this._url   = v.url   || '';
+      this._start = v.start > 0     ? _fmtTime(v.start) : '';
+      this._end   = v.end != null   ? _fmtTime(v.end)   : '';
+    }
+    this.renderRoot.querySelector('llama-modal')?.show();
+  }
+
+  hide() {
+    this.renderRoot.querySelector('llama-modal')?.hide();
+  }
+
+  _onInitialFocus() {
+    this.renderRoot.querySelector('sl-input[data-field="name"]')?.focus();
+  }
+
+  _save() {
+    if (!this.video) return;
+    const start = _parseTime(this._start) ?? 0;
+    const end   = this._end.trim() ? (_parseTime(this._end) ?? null) : null;
+    this.dispatchEvent(new CustomEvent('ll-update-video', {
+      detail: {
+        id:    this.video.id,
+        name:  this._name.trim(),
+        title: this._title.trim(),
+        url:   this._url.trim(),
+        start,
+        end,
+      },
+      bubbles: true,
+      composed: true,
+    }));
+    this.hide();
+  }
+
+  _delete() {
+    if (!this.video) return;
+    this.dispatchEvent(new CustomEvent('ll-delete-video', {
+      detail: { id: this.video.id },
+      bubbles: true,
+      composed: true,
+    }));
+    this.hide();
+  }
+
+  _onKeyDown(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      this._save();
+    }
+  }
+
+  _renderField(label, field, value, placeholder, onInput) {
+    return html`
+      <div class="field-row">
+        <span class="field-label">${label}</span>
+        <sl-input
+          data-field=${field}
+          placeholder=${placeholder}
+          .value=${value}
+          @sl-input=${onInput}
+          @keydown=${this._onKeyDown}
+        ></sl-input>
+      </div>
+    `;
+  }
+
+  render() {
+    return html`
+      <llama-modal label="Edit Video" @ll-modal-initial-focus=${this._onInitialFocus}>
+        ${this._renderField('Name', 'name', this._name,
+            'Short label (e.g. "Autumn Leaves")',
+            e => { this._name = e.target.value; })}
+        ${this._renderField('Title', 'title', this._title,
+            'Full song or video title',
+            e => { this._title = e.target.value; })}
+        ${this._renderField('URL', 'url', this._url,
+            'YouTube URL or video ID',
+            e => { this._url = e.target.value; })}
+        ${this._renderField('Start', 'start', this._start,
+            '0 or m:ss — effective start offset',
+            e => { this._start = e.target.value; })}
+        ${this._renderField('End', 'end', this._end,
+            'm:ss or blank (use video duration)',
+            e => { this._end = e.target.value; })}
+        <div class="field-row">
+          <span class="field-label">Video ID (read-only)</span>
+          <div class="video-id">${this.video?.id ?? ''}</div>
+        </div>
+        <div class="delete-row">
+          <sl-button variant="danger" @click=${this._delete}>Delete Video</sl-button>
+        </div>
+        <div slot="footer">
+          <sl-button @click=${this.hide}>Cancel</sl-button>
+          <sl-button variant="primary" @click=${this._save}>Save</sl-button>
+        </div>
+      </llama-modal>
+    `;
+  }
+}
+
+// Format seconds as m:ss.
+function _fmtTime(secs) {
+  if (secs == null || isNaN(secs)) return '';
+  const s = Math.floor(secs);
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+}
+
+// Parse time string to seconds. Returns null on failure.
+// Supports: m:ss, h:mm:ss, m/ss, raw seconds.
+function _parseTime(str) {
+  str = (str || '').trim().replace(/\//g, ':');
+  if (!str) return null;
+  const parts = str.split(':');
+  if (parts.length === 2 || parts.length === 3) {
+    const nums = parts.map(p => parseFloat(p));
+    if (nums.some(isNaN)) return null;
+    return parts.length === 2
+      ? nums[0] * 60 + nums[1]
+      : nums[0] * 3600 + nums[1] * 60 + nums[2];
+  }
+  const n = parseFloat(str);
+  return !isNaN(n) && n >= 0 ? n : null;
+}
+
+customElements.define('llama-edit-video-modal', LlamaEditVideoModal);

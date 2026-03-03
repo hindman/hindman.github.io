@@ -5,14 +5,18 @@ import { createVideoController }    from '../videoController.js';
 import { createKeyboardController } from '../keyboardController.js';
 import {
   DEFAULT_OPTIONS,
+  createVideo, createAppState, createScratchLoop,
   addMark, deleteMarkById, nearestMarkLeft,
   addSection, deleteSectionById, nearestSectionLeft, getSectionBounds,
   addLoop, deleteLoopById,
 } from '../state.js';
+import { load, save } from '../storage.js';
 import './llama-whichkey.js';
 import './llama-controls.js';
 import './llama-timeline.js';
 import './llama-url-input-modal.js';
+import './llama-video-picker.js';
+import './llama-edit-video-modal.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
@@ -129,25 +133,27 @@ class LlamaApp extends LitElement {
   `;
 
   static properties = {
-    currentTime:   { type: Number },
-    duration:      { type: Number },
-    speed:         { type: Number },
-    isPlaying:     { type: Boolean },
-    looping:       { type: Boolean },
-    loopStart:     { type: Number },
-    loopEnd:       { type: Number },
-    sections:      { type: Array },
-    marks:         { type: Array },
-    namedLoops:    { type: Array },
-    loopSource:    { type: String },
-    statusMsg:     { type: String },
-    wkPrefix:           { type: String },
-    wkCompletions:      { type: Object },
-    windowFocused:      { type: Boolean },
+    currentTime:     { type: Number },
+    duration:        { type: Number },
+    speed:           { type: Number },
+    isPlaying:       { type: Boolean },
+    looping:         { type: Boolean },
+    loopStart:       { type: Number },
+    loopEnd:         { type: Number },
+    sections:        { type: Array },
+    marks:           { type: Array },
+    namedLoops:      { type: Array },
+    loopSource:      { type: String },
+    statusMsg:       { type: String },
+    wkPrefix:        { type: String },
+    wkCompletions:   { type: Object },
+    windowFocused:   { type: Boolean },
     editScratchActive:  { type: Boolean },
     editScratchFocus:   { type: String },
     editScratchDelta:   { type: Number },
     loopViolation:      { type: Boolean },
+    videos:             { type: Array },
+    currentVideoId:     { type: String },
   };
 
   constructor() {
@@ -171,13 +177,63 @@ class LlamaApp extends LitElement {
     this.editScratchFocus    = 'start';
     this.editScratchDelta    = EDIT_SCRATCH_DELTAS[2];
     this.loopViolation       = false;
+    this.videos              = [];
+    this.currentVideoId      = null;
     this._vc                 = null;
     this._kb                 = null;
     this._pollId             = null;
     this._editScratchHandler = null;
+    this._appState           = null;
     this._urlInputModalEl    = null;
+    this._videoPickerEl      = null;
+    this._editVideoModalEl   = null;
     this.seekDelta     = DEFAULT_OPTIONS.seek_delta_default;
     this.speedDelta    = DEFAULT_OPTIONS.speed_delta;
+  }
+
+  // Sync per-video state from a Video object into reactive props.
+  _syncFromVideo(video) {
+    this.sections   = [...(video.sections ?? [])];
+    this.marks      = [...(video.marks    ?? [])];
+    this.namedLoops = (video.loops ?? []).filter(l => !l.is_scratch);
+    const scratch   = (video.loops ?? []).find(l => l.is_scratch);
+    this.loopStart  = scratch?.start ?? 0;
+    this.loopEnd    = scratch?.end   ?? 0;
+    this.looping    = false;
+    this.loopSource = null;
+    this.speed      = video.speed ?? 1.0;
+    this._vc?.setPlaybackRate(this.speed);
+  }
+
+  // Persist current reactive state back to the current video and save to
+  // localStorage. Call after any mutation to sections, marks, or namedLoops.
+  _saveCurrentState() {
+    const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
+    if (!video) return;
+    video.sections = this.sections;
+    video.marks    = this.marks;
+    video.time     = this.currentTime;
+    // Update scratch loop endpoints.
+    let scratch = video.loops?.find(l => l.is_scratch);
+    if (!scratch) {
+      scratch = createScratchLoop();
+    }
+    scratch.start = this.loopStart;
+    scratch.end   = this.loopEnd;
+    video.loops = [scratch, ...this.namedLoops];
+    save(this._appState);
+  }
+
+  // Load a Video object: save current state, switch to new video, restore state.
+  _loadVideoObject(video, startTime = null) {
+    this._saveCurrentState();
+    this._appState.currentVideoId = video.id;
+    this.currentVideoId = video.id;
+    this._syncFromVideo(video);
+    this._vc.loadVideo(video.id, startTime ?? video.time ?? 0);
+    this.duration  = null;
+    this.statusMsg = `Loading: ${video.id}`;
+    save(this._appState);
   }
 
   // Clamp speed to [0.25, 2.0] and set it. Rounds to avoid float drift.
@@ -212,8 +268,8 @@ class LlamaApp extends LitElement {
       helpKeys:      stub('helpKeys'),
       options:       stub('options'),
       videoUrl:      () => this._urlInputModalEl?.show(),
-      videoPicker:   stub('videoPicker'),
-      editVideo:     stub('editVideo'),
+      videoPicker:   () => this._videoPickerEl?.show(),
+      editVideo:     () => this._editVideoModalEl?.show(),
       deleteVideo:   stub('deleteVideo'),
       jumpTime:      stub('jumpTime'),
       jumpSection:   stub('jumpSection'),
@@ -234,6 +290,7 @@ class LlamaApp extends LitElement {
         addLoop(this.namedLoops, this.loopStart, this.loopEnd);
         this.namedLoops = [...this.namedLoops];
         this.statusMsg  = 'Loop saved.';
+        this._saveCurrentState();
       },
       openLoop: () => {
         if (!this.namedLoops.length) {
@@ -262,6 +319,7 @@ class LlamaApp extends LitElement {
         this.namedLoops[idx].end   = this.loopEnd;
         this.namedLoops = [...this.namedLoops];
         this.statusMsg  = 'Saved back to source loop.';
+        this._saveCurrentState();
       },
       editScratch: () => this._enterEditScratch(),
       deleteLoop: () => {
@@ -273,10 +331,12 @@ class LlamaApp extends LitElement {
         this.namedLoops = [...this.namedLoops];
         this.loopSource = null;
         this.statusMsg  = 'Source loop deleted.';
+        this._saveCurrentState();
       },
       setSection: () => {
         addSection(this.sections, this._vc?.getCurrentTime() ?? 0);
         this.sections = [...this.sections];
+        this._saveCurrentState();
       },
       editSection:   stub('editSection'),
       loopSection: () => {
@@ -297,11 +357,13 @@ class LlamaApp extends LitElement {
         if (section) {
           deleteSectionById(this.sections, section.id);
           this.sections = [...this.sections];
+          this._saveCurrentState();
         }
       },
       setMark: () => {
         addMark(this.marks, this._vc?.getCurrentTime() ?? 0);
         this.marks = [...this.marks];
+        this._saveCurrentState();
       },
       editMark: stub('editMark'),
       deleteMark: () => {
@@ -309,6 +371,7 @@ class LlamaApp extends LitElement {
         if (mark) {
           deleteMarkById(this.marks, mark.id);
           this.marks = [...this.marks];
+          this._saveCurrentState();
         }
       },
       helpGeneral:   stub('helpGeneral'),
@@ -322,6 +385,11 @@ class LlamaApp extends LitElement {
   }
 
   async firstUpdated() {
+    // Load persistent state.
+    this._appState      = load() ?? createAppState();
+    this.videos         = this._appState.videos;
+    this.currentVideoId = this._appState.currentVideoId;
+
     const container = this.renderRoot.querySelector('#player-container');
 
     this._vc = createVideoController({
@@ -348,14 +416,22 @@ class LlamaApp extends LitElement {
       }
     );
 
-    this._urlInputModalEl = this.renderRoot.querySelector('llama-url-input-modal');
+    this._urlInputModalEl  = this.renderRoot.querySelector('llama-url-input-modal');
+    this._videoPickerEl    = this.renderRoot.querySelector('llama-video-picker');
+    this._editVideoModalEl = this.renderRoot.querySelector('llama-edit-video-modal');
 
     window.addEventListener('blur',  () => { this.windowFocused = false; });
     window.addEventListener('focus', () => { this.windowFocused = true; });
 
-    // Auto-load last video (dev convenience).
-    const lastUrl = localStorage.getItem('ll_last_url');
-    if (lastUrl) this._loadUrl(lastUrl);
+    // Auto-load the current video from persisted state.
+    if (this._appState.currentVideoId) {
+      const video = this._appState.videos.find(v => v.id === this._appState.currentVideoId);
+      if (video) {
+        this._syncFromVideo(video);
+        this._vc.loadVideo(video.id, video.time ?? 0);
+        this.statusMsg = `Loading: ${video.id}`;
+      }
+    }
 
     // Poll playback state every 500ms to keep the controls display live.
     this._pollId = setInterval(() => {
@@ -565,14 +641,64 @@ class LlamaApp extends LitElement {
       return;
     }
 
-    this._vc.loadVideo(parsed.id, parsed.startTime);
-    this.duration  = null;
-    this.statusMsg = `Loading: ${parsed.id}`;
-    localStorage.setItem('ll_last_url', raw);
+    // Find or create a video entry in the registry.
+    let video = this._appState.videos.find(v => v.id === parsed.id);
+    if (!video) {
+      video = createVideo(raw, parsed.id);
+      this._appState.videos.push(video);
+      this.videos = [...this._appState.videos];
+    }
+
+    this._loadVideoObject(video, parsed.startTime);
   }
 
   _onLoadUrl(e) {
     this._loadUrl(e.detail.url);
+  }
+
+  // Handle ll-pick-video from the video picker.
+  _onPickVideo(e) {
+    const video = this._appState?.videos.find(v => v.id === e.detail.videoId);
+    if (!video) return;
+    this._loadVideoObject(video);
+    this.videos = [...this._appState.videos];
+  }
+
+  // Handle ll-update-video from the edit-video-modal.
+  _onUpdateVideo(e) {
+    const { id, name, title, url, start, end } = e.detail;
+    const video = this._appState?.videos.find(v => v.id === id);
+    if (!video) return;
+    video.name  = name;
+    video.title = title;
+    video.url   = url;
+    video.start = start;
+    video.end   = end;
+    this.videos = [...this._appState.videos];
+    save(this._appState);
+  }
+
+  // Handle ll-delete-video from the edit-video-modal.
+  _onDeleteVideo(e) {
+    const { id } = e.detail;
+    const idx = this._appState?.videos.findIndex(v => v.id === id);
+    if (idx == null || idx === -1) return;
+    this._appState.videos.splice(idx, 1);
+    if (this.currentVideoId === id) {
+      this._appState.currentVideoId = null;
+      this.currentVideoId = null;
+      this.sections   = [];
+      this.marks      = [];
+      this.namedLoops = [];
+      this.loopStart  = 0;
+      this.loopEnd    = 0;
+      this.looping    = false;
+      this.loopSource = null;
+      this.duration   = null;
+      this.statusMsg  = 'Video deleted.';
+    }
+    this.videos = [...this._appState.videos];
+    save(this._appState);
   }
 
   _flashLoopViolation() {
@@ -646,26 +772,31 @@ class LlamaApp extends LitElement {
   _onSetSection() {
     addSection(this.sections, this._vc?.getCurrentTime() ?? 0);
     this.sections = [...this.sections];
+    this._saveCurrentState();
   }
 
   _onDeleteSection(e) {
     deleteSectionById(this.sections, e.detail.id);
     this.sections = [...this.sections];
+    this._saveCurrentState();
   }
 
   _onSetMark() {
     addMark(this.marks, this._vc?.getCurrentTime() ?? 0);
     this.marks = [...this.marks];
+    this._saveCurrentState();
   }
 
   _onDeleteMark(e) {
     deleteMarkById(this.marks, e.detail.id);
     this.marks = [...this.marks];
+    this._saveCurrentState();
   }
 
   _onSaveLoop(e) {
     addLoop(this.namedLoops, this.loopStart, this.loopEnd, e.detail.name);
     this.namedLoops = [...this.namedLoops];
+    this._saveCurrentState();
   }
 
   _onLoadLoop(e) {
@@ -691,9 +822,11 @@ class LlamaApp extends LitElement {
     deleteLoopById(this.namedLoops, e.detail.id);
     this.namedLoops = [...this.namedLoops];
     if (this.loopSource === e.detail.id) this.loopSource = null;
+    this._saveCurrentState();
   }
 
   render() {
+    const currentVideo = this._appState?.videos.find(v => v.id === this.currentVideoId) ?? null;
     return html`
       <header class="app-header">
         <span class="app-title">LoopLlama</span>
@@ -763,6 +896,22 @@ class LlamaApp extends LitElement {
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-load-url=${this._onLoadUrl}
       ></llama-url-input-modal>
+
+      <llama-video-picker
+        .videos=${this.videos}
+        .currentVideoId=${this.currentVideoId}
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+        @ll-pick-video=${this._onPickVideo}
+      ></llama-video-picker>
+
+      <llama-edit-video-modal
+        .video=${currentVideo}
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+        @ll-update-video=${this._onUpdateVideo}
+        @ll-delete-video=${this._onDeleteVideo}
+      ></llama-edit-video-modal>
 
       <llama-whichkey
         .prefix=${this.wkPrefix}

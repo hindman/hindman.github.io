@@ -5,6 +5,9 @@ _site/
 Gemfile.lock
 
 loopllama/v2/node_modules/
+loopllama/v2/dist/
 
 /tmp/
+
+.claude/
 
