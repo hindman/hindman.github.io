@@ -12,6 +12,8 @@ import {
 import './llama-whichkey.js';
 import './llama-controls.js';
 
+const EDIT_SCRATCH_DELTAS = [0.1, 0.5, 1, 2, 5];
+
 class LlamaApp extends LitElement {
   static styles = css`
     :host {
@@ -121,6 +123,30 @@ class LlamaApp extends LitElement {
       color: var(--ll-text-dim, #aaa);
     }
 
+    /* --- Edit-scratch-loop mode panel (shown in message area) --- */
+    .edit-mode-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .edit-mode-title {
+      font-weight: bold;
+      color: var(--ll-accent-warm, #e3a857);
+      margin-bottom: 0.1rem;
+    }
+
+    .edit-mode-focus {
+      color: var(--ll-accent-warm, #e3a857);
+      font-weight: bold;
+    }
+
+    .edit-mode-keys {
+      margin-top: 0.3rem;
+      line-height: 1.7;
+      color: var(--ll-text-muted, #666);
+    }
+
     /* --- Placeholder areas --- */
     .timeline-placeholder {
       height: 40px;
@@ -148,9 +174,12 @@ class LlamaApp extends LitElement {
     namedLoops:    { type: Array },
     loopSource:    { type: String },
     statusMsg:     { type: String },
-    wkPrefix:      { type: String },
-    wkCompletions: { type: Object },
-    windowFocused: { type: Boolean },
+    wkPrefix:           { type: String },
+    wkCompletions:      { type: Object },
+    windowFocused:      { type: Boolean },
+    editScratchActive:  { type: Boolean },
+    editScratchFocus:   { type: String },
+    editScratchDelta:   { type: Number },
   };
 
   constructor() {
@@ -167,12 +196,16 @@ class LlamaApp extends LitElement {
     this.namedLoops    = [];
     this.loopSource    = null;
     this.statusMsg     = 'Initializing...';
-    this.wkPrefix      = null;
-    this.wkCompletions = null;
-    this.windowFocused = true;
-    this._vc           = null;
-    this._kb           = null;
-    this._pollId       = null;
+    this.wkPrefix            = null;
+    this.wkCompletions       = null;
+    this.windowFocused       = true;
+    this.editScratchActive   = false;
+    this.editScratchFocus    = 'start';
+    this.editScratchDelta    = EDIT_SCRATCH_DELTAS[0];
+    this._vc                 = null;
+    this._kb                 = null;
+    this._pollId             = null;
+    this._editScratchHandler = null;
     this.seekDelta     = DEFAULT_OPTIONS.seek_delta_default;
     this.speedDelta    = DEFAULT_OPTIONS.speed_delta;
   }
@@ -253,7 +286,7 @@ class LlamaApp extends LitElement {
         this.namedLoops = [...this.namedLoops];
         this.statusMsg  = 'Saved back to source loop.';
       },
-      editScratch: stub('editScratch'),
+      editScratch: () => this._enterEditScratch(),
       deleteLoop: () => {
         if (!this.loopSource) {
           this.statusMsg = 'No source loop to delete.';
@@ -372,10 +405,111 @@ class LlamaApp extends LitElement {
     }
   }
 
+  _enterEditScratch() {
+    this._kb.disable();
+    this.editScratchActive   = true;
+    this.editScratchFocus    = 'start';
+    this.editScratchDelta    = EDIT_SCRATCH_DELTAS[0];
+    this._editScratchHandler = (e) => this._editScratchKeyDown(e);
+    document.addEventListener('keydown', this._editScratchHandler);
+  }
+
+  _exitEditScratch() {
+    document.removeEventListener('keydown', this._editScratchHandler);
+    this._editScratchHandler = null;
+    this.editScratchActive   = false;
+    this._kb.enable();
+  }
+
+  _editScratchKeyDown(event) {
+    const target = event.composedPath()[0];
+    const tag    = target?.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    if (target?.isContentEditable) return;
+
+    const key = event.key;
+
+    if (key === 'Tab') {
+      event.preventDefault();
+      this.editScratchFocus = this.editScratchFocus === 'start' ? 'end' : 'start';
+      return;
+    }
+
+    if (key === 'ArrowLeft' || key === 'ArrowRight') {
+      event.preventDefault();
+      const delta = (key === 'ArrowRight' ? 1 : -1) * this.editScratchDelta;
+      const maxT  = this.duration ?? Infinity;
+      if (this.editScratchFocus === 'start') {
+        this.loopStart = Math.max(0, Math.min(this.loopStart + delta, maxT));
+      } else {
+        this.loopEnd = Math.max(0, Math.min(this.loopEnd + delta, maxT));
+      }
+      return;
+    }
+
+    if (key === 'ArrowUp' || key === 'ArrowDown') {
+      event.preventDefault();
+      const idx = EDIT_SCRATCH_DELTAS.indexOf(this.editScratchDelta);
+      if (key === 'ArrowUp') {
+        this.editScratchDelta = EDIT_SCRATCH_DELTAS[Math.min(idx + 1, EDIT_SCRATCH_DELTAS.length - 1)];
+      } else {
+        this.editScratchDelta = EDIT_SCRATCH_DELTAS[Math.max(idx - 1, 0)];
+      }
+      return;
+    }
+
+    if (key === ' ') {
+      event.preventDefault();
+      const seekTo = this.editScratchFocus === 'start'
+        ? this.loopStart
+        : Math.max(0, this.loopEnd - 3);
+      this._vc?.seekTo(seekTo);
+      this._onPlayPause();
+      return;
+    }
+
+    if (key === 'Backspace') {
+      event.preventDefault();
+      if (this.editScratchFocus === 'start') {
+        this.loopStart = 0;
+      } else {
+        this.loopEnd = this.duration ?? 0;
+      }
+      return;
+    }
+
+    if (key === 'Enter' || key === 'Escape') {
+      event.preventDefault();
+      this._exitEditScratch();
+    }
+  }
+
+  _renderEditScratchPanel() {
+    const focusLabel = this.editScratchFocus === 'start' ? 'Start' : 'End';
+    return html`
+      <div class="edit-mode-panel">
+        <div class="edit-mode-title">Edit Loop</div>
+        <div>Focus: <span class="edit-mode-focus">${focusLabel}</span></div>
+        <div>Delta: ${this.editScratchDelta}s</div>
+        <div class="edit-mode-keys">
+          Tab: toggle focus<br>
+          ←/→: nudge<br>
+          ↑/↓: delta<br>
+          Space: play/pause<br>
+          Bsp: reset<br>
+          Enter/Esc: done
+        </div>
+      </div>
+    `;
+  }
+
   disconnectedCallback() {
     super.disconnectedCallback();
     clearInterval(this._pollId);
     this._kb?.destroy();
+    if (this._editScratchHandler) {
+      document.removeEventListener('keydown', this._editScratchHandler);
+    }
   }
 
   // Parse a YouTube URL or bare video ID.
@@ -539,7 +673,9 @@ class LlamaApp extends LitElement {
             <div id="player-container"></div>
           </div>
           <div class="message-area">
-            <div>${this.statusMsg}</div>
+            ${this.editScratchActive
+              ? this._renderEditScratchPanel()
+              : html`<div>${this.statusMsg}</div>`}
           </div>
         </div>
 
@@ -556,6 +692,8 @@ class LlamaApp extends LitElement {
           .marks=${this.marks}
           .namedLoops=${this.namedLoops}
           .loopSource=${this.loopSource}
+          .editScratchActive=${this.editScratchActive}
+          .editScratchFocus=${this.editScratchFocus}
           @ll-play-pause=${this._onPlayPause}
           @ll-seek-forward=${this._onSeekForward}
           @ll-seek-back=${this._onSeekBack}

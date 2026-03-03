@@ -9,16 +9,57 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 V2 implementation:
 
+    /rename loopllama-v2-stage-8a
+
+    8a. Timeline component: horizontal timeline displaying sections,
+        scratch-loop range, marks, and playhead. Click-to-jump.
+        Drag-to-edit is aspirational and can be deferred.
+
+    g c -am '8a. Timeline component'
+
     =============
 
-    /rename loopllama-v2-stage-7e
+    /rename loopllama-v2-stage-8b
 
-    7e. Edit-scratch-loop-mode: Implement the mode where `Left`/`Right`
-        nudge loop start/end; `Tab` toggles focus between start and end.
-        Show mode indicator in message area. Goal: fine-tuning loop
-        endpoints works without leaving the keyboard.
+    8b. Address UI/UX details
+        - Edit scratch-loop start or end; press Enter; focus should return to
+          app, not stay in text box.
+        - Loop "Start" label, start text box, Now button need to be connected
+          visually. SlowTube does this by leaving zero pad between the button
+          and the text box, but other techniques might work too. This is an
+          example of a more general need: a visual convention to organize
+          controls thematically. Smaller groupings, each labelled could be
+          another technique.
+        - Loop button should be a toggle switch labelled "Loop".
+        - Back/Fwd buttons: symbols would be better: some sort of left/right
+          triangles or arrows
+        - Play/pause: need visual attention (SlowTube uses a different color
+          for example): its the core button the on page.
+        - Enter scratch-loop start/end where start >= end. The Loop
+          toggle/button should not say "ON".
+        - Edit-scratch-loop-mode:
+            - We need to increase the visual sense that we are in a distinct
+              mode and also visually connect the loop controls to the
+              informational items about the mode. Possible ideas:
+                - A mode indicator on the loop row itself (e.g., colored
+                  border or background on the controls row)
+                - Maybe dimming or visually suppressing the rest of the
+                  controls area to draw attention to the loop row
+                - Ensuring the amber highlight on the focused input is
+                  prominent enough given whatever the row's final visual
+                  treatment is
+            - If the user sets the delta to 0.1 sec, can we also show those
+              values in the start/end boxes. Otherwise, the user gets no visual
+              feedback as they adjust the value. If it's too awkward to be
+              changing the display precision of the start/end, are there other
+              ways to convey the info the user needs?
+            - Change the delta choices: 0.1, 1, 5, 10, 30.
+            - Need to support direct time entry: number keys, colon, and
+              foward slash. Then Enter shifts back to regular
+              edit-scratch-loop-mode. Then Enter/Esc exit the mode. Is that
+              workable?
 
-    g c -am '7e. Edit-scratch-loop-mode'
+    g c -am '8b. Address UI/UX details'
 
 Posts:
     x RH rudiments #1: alternating bass

@@ -125,6 +125,11 @@ class LlamaControls extends LitElement {
       border-color: var(--ll-accent, #7ec8e3);
     }
 
+    .time-input.loop-edit-focus {
+      border-color: var(--ll-accent-warm, #e3a857);
+      box-shadow: 0 0 0 1px var(--ll-accent-warm, #e3a857);
+    }
+
     .marks-list {
       display: flex;
       flex-wrap: wrap;
@@ -199,8 +204,10 @@ class LlamaControls extends LitElement {
     loopEnd:     { type: Number },
     sections:    { type: Array },
     marks:       { type: Array },
-    namedLoops:  { type: Array },
-    loopSource:  { type: String },
+    namedLoops:         { type: Array },
+    loopSource:         { type: String },
+    editScratchActive:  { type: Boolean },
+    editScratchFocus:   { type: String },
   };
 
   constructor() {
@@ -214,9 +221,11 @@ class LlamaControls extends LitElement {
     this.loopEnd     = 0;
     this.sections    = [];
     this.marks       = [];
-    this.namedLoops  = [];
-    this.loopSource  = null;
-    this._startRef    = createRef();
+    this.namedLoops        = [];
+    this.loopSource        = null;
+    this.editScratchActive = false;
+    this.editScratchFocus  = 'start';
+    this._startRef          = createRef();
     this._endRef      = createRef();
     this._loopNameRef = createRef();
   }
@@ -318,7 +327,7 @@ class LlamaControls extends LitElement {
           <span class="label">Start:</span>
           <input
             ${ref(this._startRef)}
-            class="time-input"
+            class="time-input ${this.editScratchActive && this.editScratchFocus === 'start' ? 'loop-edit-focus' : ''}"
             type="text"
             @keydown=${(e) => e.key === 'Enter' && this._submitStart()}
             @blur=${() => this._submitStart()}
@@ -328,7 +337,7 @@ class LlamaControls extends LitElement {
           <span class="label">End:</span>
           <input
             ${ref(this._endRef)}
-            class="time-input"
+            class="time-input ${this.editScratchActive && this.editScratchFocus === 'end' ? 'loop-edit-focus' : ''}"
             type="text"
             @keydown=${(e) => e.key === 'Enter' && this._submitEnd()}
             @blur=${() => this._submitEnd()}
