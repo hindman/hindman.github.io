@@ -46,6 +46,7 @@ export function createVideo(url, youtubeId) {
     speed:       1.0,
     seek_delta:  DEFAULT_OPTIONS.seek_delta_default,
     speed_delta: DEFAULT_OPTIONS.speed_delta,
+    chapters:    [],
     sections:    [],
     loops:       [createScratchLoop()],  // always one scratch loop
     marks:       [],
@@ -54,18 +55,24 @@ export function createVideo(url, youtubeId) {
   };
 }
 
+// Create a Chapter.
+// name is required; start/end are times in seconds.
+export function createChapter(name, start, end) {
+  return { id: createId(), name, start, end };
+}
+
 // Create a Section divider.
 // time: the divider point in seconds (required).
 // name: optional user label (e.g., "Verse", "Solo").
 // end is not included here; it is either derived at runtime or set later
 // via direct property assignment when the user explicitly limits the section.
 export function createSection(time, name = '') {
-  return { id: createId(), time, name };
+  return { id: createId(), chapterId: null, time, name };
 }
 
 // Create a named Loop.
 export function createLoop(start, end, name = '') {
-  return { id: createId(), name, start, end, source: null, is_scratch: false };
+  return { id: createId(), chapterId: null, name, start, end, source: null, is_scratch: false };
 }
 
 // Create the scratch loop. One exists per video at all times.
@@ -77,5 +84,5 @@ export function createScratchLoop() {
 
 // Create a Mark.
 export function createMark(time, name = '') {
-  return { id: createId(), time, name };
+  return { id: createId(), chapterId: null, time, name };
 }

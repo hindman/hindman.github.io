@@ -67,6 +67,13 @@ export const BINDINGS = {
     'd': { handler: 'deleteLoop',    desc: 'Delete source loop' },
   }},
 
+  'c': { completions: {
+    'c': { handler: 'setChapter',    desc: 'Set new chapter here' },
+    'o': { handler: 'openChapter',   desc: 'Open chapter' },
+    'e': { handler: 'editChapter',   desc: 'Edit current chapter' },
+    'd': { handler: 'deleteChapter', desc: 'Delete current chapter' },
+  }},
+
   's': { completions: {
     's': { handler: 'setSection',    desc: 'Set section divider here' },
     'e': { handler: 'editSection',   desc: 'Edit current section' },
