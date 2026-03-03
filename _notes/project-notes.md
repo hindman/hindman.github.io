@@ -15,15 +15,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 V2 implementation:
 
-    7c. Sections: Implement Section entity CRUD in state.js. Show a
-        sections list in controls area. Wire `ss` (set), `sd` (delete),
-        `sl` (loop current section) bindings. Goal: sections work via
-        keyboard.
-
-    g c -am '7c. Sections'
-
-    =============
-
     /rename loopllama-v2-stage-7d
 
     7d. Named loops: Implement Loop entity CRUD in state.js (save, load,
