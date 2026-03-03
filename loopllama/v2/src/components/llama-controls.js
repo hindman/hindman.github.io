@@ -8,6 +8,7 @@
 //   looping:     Boolean  -- true when looping is active
 //   loopStart:   Number   -- scratch-loop start (seconds)
 //   loopEnd:     Number   -- scratch-loop end (seconds)
+//   marks:       Array    -- array of Mark objects { id, time, name }
 //
 // Fires (bubbles + composed):
 //   ll-play-pause           -- toggle play/pause
@@ -18,6 +19,8 @@
 //   ll-set-loop-end-now     -- set loop end to current time
 //   ll-loop-start-change    -- user edited start; detail.value = seconds
 //   ll-loop-end-change      -- user edited end; detail.value = seconds
+//   ll-set-mark             -- set a mark at current time
+//   ll-delete-mark          -- delete a mark; detail.id = mark id
 
 import { LitElement, html, css } from 'lit';
 import { createRef, ref } from 'lit/directives/ref.js';
@@ -115,6 +118,49 @@ class LlamaControls extends LitElement {
       outline: none;
       border-color: var(--ll-accent, #7ec8e3);
     }
+
+    .marks-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      flex: 1;
+    }
+
+    .mark-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      background: var(--ll-surface-raised, #2a2a2a);
+      border: 1px solid var(--ll-border, #444);
+      border-radius: var(--ll-radius, 3px);
+      padding: 0.1rem 0.35rem;
+      font-size: var(--ll-text-sm, 0.85rem);
+    }
+
+    .mark-chip .mark-label {
+      color: var(--ll-text-dim, #aaa);
+    }
+
+    .mark-chip .mark-time {
+      font-family: var(--ll-font-mono, monospace);
+      color: var(--ll-accent, #7ec8e3);
+    }
+
+    .mark-chip .btn-delete {
+      padding: 0 0.2rem;
+      background: transparent;
+      border: none;
+      color: var(--ll-text-muted, #666);
+      font-size: 0.8rem;
+      line-height: 1;
+      cursor: pointer;
+      margin-left: 0.1rem;
+    }
+
+    .mark-chip .btn-delete:hover {
+      color: var(--ll-text, #e0e0e0);
+      border-color: transparent;
+    }
   `;
 
   static properties = {
@@ -125,6 +171,7 @@ class LlamaControls extends LitElement {
     looping:     { type: Boolean },
     loopStart:   { type: Number },
     loopEnd:     { type: Number },
+    marks:       { type: Array },
   };
 
   constructor() {
@@ -136,6 +183,7 @@ class LlamaControls extends LitElement {
     this.looping     = false;
     this.loopStart   = 0;
     this.loopEnd     = 0;
+    this.marks       = [];
     this._startRef   = createRef();
     this._endRef     = createRef();
   }
@@ -247,6 +295,28 @@ class LlamaControls extends LitElement {
             @blur=${() => this._submitEnd()}
           />
           <button @click=${() => this._emit('ll-set-loop-end-now')}>Now</button>
+        </div>
+
+        <div class="controls-row">
+          <span class="label">Marks:</span>
+          <button @click=${() => this._emit('ll-set-mark')}>Set here</button>
+          ${this.marks.length === 0
+            ? html`<span class="sep">none</span>`
+            : html`
+              <div class="marks-list">
+                ${this.marks.map((m, i) => html`
+                  <span class="mark-chip">
+                    <span class="mark-label">${m.name || `#${i + 1}`}</span>
+                    <span class="mark-time">${this._fmt(m.time)}</span>
+                    <button
+                      class="btn-delete"
+                      title="Delete mark"
+                      @click=${() => this._emit('ll-delete-mark', { id: m.id })}
+                    >×</button>
+                  </span>
+                `)}
+              </div>
+            `}
         </div>
       </div>
     `;

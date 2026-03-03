@@ -86,3 +86,29 @@ export function createScratchLoop() {
 export function createMark(time, name = '') {
   return { id: createId(), chapterId: null, time, name };
 }
+
+// Add a mark at the given time to the marks array (sorted by time).
+// Returns the new mark.
+export function addMark(marks, time, name = '') {
+  const mark = createMark(time, name);
+  marks.push(mark);
+  marks.sort((a, b) => a.time - b.time);
+  return mark;
+}
+
+// Remove the mark with the given id from the marks array.
+export function deleteMarkById(marks, markId) {
+  const idx = marks.findIndex(m => m.id === markId);
+  if (idx !== -1) marks.splice(idx, 1);
+}
+
+// Find the mark with the largest time at or before the given time.
+// Returns the mark or null. Assumes marks are sorted by time.
+export function nearestMarkLeft(marks, time) {
+  let result = null;
+  for (const m of marks) {
+    if (m.time <= time) result = m;
+    else break;
+  }
+  return result;
+}

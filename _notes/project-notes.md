@@ -1,41 +1,29 @@
 
 ## CURRENT SESSION
 
-/rename loopllama-v2-stage-7a
+/rename loopllama-v2-stage-7c
 
     =============
 
-We are now on imlemenation stage #7a:
+# Current stage to implement.
 
-    # The plan.
+    7c. Sections: Implement Section entity CRUD in state.js. Show a
+        sections list in controls area. Wire `ss` (set), `sd` (delete),
+        `sl` (loop current section) bindings. Goal: sections work via
+        keyboard.
 
-    _notes/v2-planning/loopllama-v2-plan.md
-
-    # The stage.
-
-    7a. Scratch-loop controls: Add scratch-loop display to controls area
-        (start/end text boxes, looping toggle, set-start-now /
-        set-end-now buttons). Wire `[`, `]`, `ll` key bindings.
-        Goal: scratch-loop works via both keyboard and mouse.
+The plan: _notes/v2-planning/loopllama-v2-plan.md.
+Speak up if things are unclear or need adjustment.
 
     =============
 
-g c -am '7a. Scratch-loop controls'
+g c -am '7c. Marks'
 
     =============
 
 ## TODO
 
 V2 implementation:
-
-    7b. Marks: Implement Mark entity CRUD in state.js. Show a marks list
-        in controls area (time, optional name). Wire `mm` (set) and `md`
-        (delete) bindings. Goal: marks can be set and deleted via keyboard.
-
-    7c. Sections: Implement Section entity CRUD in state.js. Show a
-        sections list in controls area. Wire `ss` (set), `sd` (delete),
-        `sl` (loop current section) bindings. Goal: sections work via
-        keyboard.
 
     7d. Named loops: Implement Loop entity CRUD in state.js (save, load,
         delete, save-back). Wire `lo`, `ls`, `ld`, `lb` bindings.

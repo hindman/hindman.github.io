@@ -3,7 +3,7 @@
 import { LitElement, html, css } from 'lit';
 import { createVideoController }    from '../videoController.js';
 import { createKeyboardController } from '../keyboardController.js';
-import { DEFAULT_OPTIONS }          from '../state.js';
+import { DEFAULT_OPTIONS, addMark, deleteMarkById, nearestMarkLeft } from '../state.js';
 import './llama-whichkey.js';
 import './llama-controls.js';
 
@@ -137,6 +137,7 @@ class LlamaApp extends LitElement {
     looping:       { type: Boolean },
     loopStart:     { type: Number },
     loopEnd:       { type: Number },
+    marks:         { type: Array },
     statusMsg:     { type: String },
     wkPrefix:      { type: String },
     wkCompletions: { type: Object },
@@ -152,6 +153,7 @@ class LlamaApp extends LitElement {
     this.looping       = false;
     this.loopStart     = 0;
     this.loopEnd       = 0;
+    this.marks         = [];
     this.statusMsg     = 'Initializing...';
     this.wkPrefix      = null;
     this.wkCompletions = null;
@@ -215,9 +217,18 @@ class LlamaApp extends LitElement {
       editSection:   stub('editSection'),
       loopSection:   stub('loopSection'),
       deleteSection: stub('deleteSection'),
-      setMark:       stub('setMark'),
-      editMark:      stub('editMark'),
-      deleteMark:    stub('deleteMark'),
+      setMark: () => {
+        addMark(this.marks, this._vc?.getCurrentTime() ?? 0);
+        this.marks = [...this.marks];
+      },
+      editMark: stub('editMark'),
+      deleteMark: () => {
+        const mark = nearestMarkLeft(this.marks, this.currentTime);
+        if (mark) {
+          deleteMarkById(this.marks, mark.id);
+          this.marks = [...this.marks];
+        }
+      },
       helpGeneral:   stub('helpGeneral'),
       deleteData:    stub('deleteData'),
       exportAll:     stub('exportAll'),
@@ -389,6 +400,16 @@ class LlamaApp extends LitElement {
   _onLoopStartChange(e) { this.loopStart = e.detail.value; }
   _onLoopEndChange(e)   { this.loopEnd   = e.detail.value; }
 
+  _onSetMark() {
+    addMark(this.marks, this._vc?.getCurrentTime() ?? 0);
+    this.marks = [...this.marks];
+  }
+
+  _onDeleteMark(e) {
+    deleteMarkById(this.marks, e.detail.id);
+    this.marks = [...this.marks];
+  }
+
   render() {
     return html`
       <header class="app-header">
@@ -429,6 +450,7 @@ class LlamaApp extends LitElement {
           .looping=${this.looping}
           .loopStart=${this.loopStart}
           .loopEnd=${this.loopEnd}
+          .marks=${this.marks}
           @ll-play-pause=${this._onPlayPause}
           @ll-seek-forward=${this._onSeekForward}
           @ll-seek-back=${this._onSeekBack}
@@ -437,6 +459,8 @@ class LlamaApp extends LitElement {
           @ll-set-loop-end-now=${this._onSetLoopEndNow}
           @ll-loop-start-change=${this._onLoopStartChange}
           @ll-loop-end-change=${this._onLoopEndChange}
+          @ll-set-mark=${this._onSetMark}
+          @ll-delete-mark=${this._onDeleteMark}
         ></llama-controls>
       </div>
 
