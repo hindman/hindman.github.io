@@ -9,24 +9,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 V2 implementation:
     
-    /rename loopllama-v2-stage-8b-3
-
-    8b-3. Layout grouping and edit-scratch visual indicator:
-        - Tight grouping: treat "Start label + input + Now button" and "End
-          label + input + Now button" as visually cohesive units -- minimal
-          or zero gap between the elements in each group, clearly separated
-          from adjacent groups.
-        - Also try bordered sub-groups as an alternative technique for
-          thematic grouping across the full controls area. Assess whether
-          it helps overall organization.
-        - Edit-scratch mode indicator: when editScratchActive, add a colored
-          border or background to the loop row and visually suppress (dim)
-          the other control rows to draw focus to the loop controls.
-
-    g c -am '8b-3. Layout grouping and edit-scratch visual indicator'
-
-    =====================
-
     /rename loopllama-v2-stage-8b-4
 
     8b-4. Direct time entry in edit-scratch mode:
@@ -39,6 +21,12 @@ V2 implementation:
           edit-scratch-loop mode entirely.
 
     g c -am '8b-4. Direct time entry in edit-scratch mode'
+
+
+DEFERRED:
+    - sub-group label positioning (above vs inline) -- revisit once all
+      controls are on the page and the full layout is visible. Also: "Now" vs
+      "Set here" language inconsistency to resolve at same time.
 
 Posts:
     x RH rudiments #1: alternating bass

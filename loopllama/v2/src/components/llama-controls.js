@@ -221,6 +221,27 @@ class LlamaControls extends LitElement {
       outline: none;
       border-color: var(--ll-accent, #7ec8e3);
     }
+
+    /* Tight bordered group for each loop endpoint (label + input + Now). */
+    .loop-endpoint-group {
+      display: flex;
+      align-items: center;
+      gap: 0.2rem;
+      border: 1px solid var(--ll-border, #444);
+      border-radius: var(--ll-radius, 3px);
+      padding: 0.1rem 0.4rem;
+    }
+
+    /* Edit-scratch active: accent bar + warm tint on loop row. */
+    .controls-wrap.edit-scratch-active .loop-row {
+      background: rgba(227, 168, 87, 0.07);
+      box-shadow: inset 3px 0 0 var(--ll-accent-warm, #e3a857);
+    }
+
+    /* Edit-scratch active: dim all other rows. */
+    .controls-wrap.edit-scratch-active .controls-row:not(.loop-row) {
+      opacity: 0.35;
+    }
   `;
 
   static properties = {
@@ -352,7 +373,7 @@ class LlamaControls extends LitElement {
   render() {
     const speedPct = `${(this.speed * 100).toFixed(0)}%`;
     return html`
-      <div class="controls-wrap">
+      <div class="controls-wrap ${this.editScratchActive ? 'edit-scratch-active' : ''}">
         <div class="controls-row">
           <button @click=${() => this._emit('ll-seek-back')}>◀</button>
           <button class="btn-play-pause" @click=${() => this._emit('ll-play-pause')}>
@@ -367,31 +388,34 @@ class LlamaControls extends LitElement {
           <span class="speed-display">${speedPct}</span>
         </div>
 
-        <div class="controls-row">
+        <div class="controls-row loop-row">
           <button
             class="btn-loop-toggle ${this.looping ? 'active' : ''} ${this.loopViolation ? 'violation' : ''}"
             @click=${() => this._emit('ll-toggle-loop')}
           >Loop: ${this.looping ? 'ON' : 'OFF'}</button>
           <span class="sep">|</span>
-          <span class="label">Start:</span>
-          <input
-            ${ref(this._startRef)}
-            class="time-input ${this.editScratchActive && this.editScratchFocus === 'start' ? 'loop-edit-focus' : ''}"
-            type="text"
-            @keydown=${(e) => { if (e.key === 'Enter') { this._submitStart(); e.target.blur(); } }}
-            @blur=${() => this._submitStart()}
-          />
-          <button @click=${() => this._emit('ll-set-loop-start-now')}>Now</button>
-          <span class="sep">|</span>
-          <span class="label">End:</span>
-          <input
-            ${ref(this._endRef)}
-            class="time-input ${this.editScratchActive && this.editScratchFocus === 'end' ? 'loop-edit-focus' : ''}"
-            type="text"
-            @keydown=${(e) => { if (e.key === 'Enter') { this._submitEnd(); e.target.blur(); } }}
-            @blur=${() => this._submitEnd()}
-          />
-          <button @click=${() => this._emit('ll-set-loop-end-now')}>Now</button>
+          <div class="loop-endpoint-group">
+            <span class="label">Start:</span>
+            <input
+              ${ref(this._startRef)}
+              class="time-input ${this.editScratchActive && this.editScratchFocus === 'start' ? 'loop-edit-focus' : ''}"
+              type="text"
+              @keydown=${(e) => { if (e.key === 'Enter') { this._submitStart(); e.target.blur(); } }}
+              @blur=${() => this._submitStart()}
+            />
+            <button @click=${() => this._emit('ll-set-loop-start-now')}>Now</button>
+          </div>
+          <div class="loop-endpoint-group">
+            <span class="label">End:</span>
+            <input
+              ${ref(this._endRef)}
+              class="time-input ${this.editScratchActive && this.editScratchFocus === 'end' ? 'loop-edit-focus' : ''}"
+              type="text"
+              @keydown=${(e) => { if (e.key === 'Enter') { this._submitEnd(); e.target.blur(); } }}
+              @blur=${() => this._submitEnd()}
+            />
+            <button @click=${() => this._emit('ll-set-loop-end-now')}>Now</button>
+          </div>
         </div>
 
         <div class="controls-row">
