@@ -84,6 +84,15 @@ class LlamaControls extends LitElement {
       color: var(--ll-accent, #7ec8e3);
     }
 
+    @keyframes loop-violation-flash {
+      0%   { border-color: var(--ll-warn, #e35b5b); color: var(--ll-warn, #e35b5b); }
+      100% { border-color: var(--ll-border, #444);  color: var(--ll-text, #e0e0e0); }
+    }
+
+    .btn-loop-toggle.violation {
+      animation: loop-violation-flash 0.6s ease-out forwards;
+    }
+
     .sep {
       color: var(--ll-text-muted, #666);
     }
@@ -208,6 +217,7 @@ class LlamaControls extends LitElement {
     loopSource:         { type: String },
     editScratchActive:  { type: Boolean },
     editScratchFocus:   { type: String },
+    loopViolation:      { type: Boolean },
   };
 
   constructor() {
@@ -225,6 +235,7 @@ class LlamaControls extends LitElement {
     this.loopSource        = null;
     this.editScratchActive = false;
     this.editScratchFocus  = 'start';
+    this.loopViolation     = false;
     this._startRef          = createRef();
     this._endRef      = createRef();
     this._loopNameRef = createRef();
@@ -305,11 +316,11 @@ class LlamaControls extends LitElement {
     return html`
       <div class="controls-wrap">
         <div class="controls-row">
-          <button @click=${() => this._emit('ll-seek-back')}>← Back</button>
+          <button @click=${() => this._emit('ll-seek-back')}>◀</button>
           <button class="btn-play-pause" @click=${() => this._emit('ll-play-pause')}>
             ${this.isPlaying ? 'Pause' : 'Play'}
           </button>
-          <button @click=${() => this._emit('ll-seek-forward')}>Fwd →</button>
+          <button @click=${() => this._emit('ll-seek-forward')}>▶</button>
           <span class="sep">|</span>
           <span class="time-display">
             ${this._fmt(this.currentTime)} / ${this._fmt(this.duration)}
@@ -320,7 +331,7 @@ class LlamaControls extends LitElement {
 
         <div class="controls-row">
           <button
-            class="btn-loop-toggle ${this.looping ? 'active' : ''}"
+            class="btn-loop-toggle ${this.looping ? 'active' : ''} ${this.loopViolation ? 'violation' : ''}"
             @click=${() => this._emit('ll-toggle-loop')}
           >Loop: ${this.looping ? 'ON' : 'OFF'}</button>
           <span class="sep">|</span>
@@ -329,7 +340,7 @@ class LlamaControls extends LitElement {
             ${ref(this._startRef)}
             class="time-input ${this.editScratchActive && this.editScratchFocus === 'start' ? 'loop-edit-focus' : ''}"
             type="text"
-            @keydown=${(e) => e.key === 'Enter' && this._submitStart()}
+            @keydown=${(e) => { if (e.key === 'Enter') { this._submitStart(); e.target.blur(); } }}
             @blur=${() => this._submitStart()}
           />
           <button @click=${() => this._emit('ll-set-loop-start-now')}>Now</button>
@@ -339,7 +350,7 @@ class LlamaControls extends LitElement {
             ${ref(this._endRef)}
             class="time-input ${this.editScratchActive && this.editScratchFocus === 'end' ? 'loop-edit-focus' : ''}"
             type="text"
-            @keydown=${(e) => e.key === 'Enter' && this._submitEnd()}
+            @keydown=${(e) => { if (e.key === 'Enter') { this._submitEnd(); e.target.blur(); } }}
             @blur=${() => this._submitEnd()}
           />
           <button @click=${() => this._emit('ll-set-loop-end-now')}>Now</button>

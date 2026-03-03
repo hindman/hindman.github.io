@@ -9,10 +9,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 V2 implementation:
 
-    =====================
-
-    /rename loopllama-v2-stage-8b-1
-
     8b-1. Mechanical fixes:
         - Enter in start/end input: submit then blur, returning focus to the
           app (not leaving focus stuck in the text box).

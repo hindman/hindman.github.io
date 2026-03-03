@@ -13,7 +13,7 @@ import './llama-whichkey.js';
 import './llama-controls.js';
 import './llama-timeline.js';
 
-const EDIT_SCRATCH_DELTAS = [0.1, 0.5, 1, 2, 5];
+const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
 class LlamaApp extends LitElement {
   static styles = css`
@@ -172,6 +172,7 @@ class LlamaApp extends LitElement {
     editScratchActive:  { type: Boolean },
     editScratchFocus:   { type: String },
     editScratchDelta:   { type: Number },
+    loopViolation:      { type: Boolean },
   };
 
   constructor() {
@@ -194,6 +195,7 @@ class LlamaApp extends LitElement {
     this.editScratchActive   = false;
     this.editScratchFocus    = 'start';
     this.editScratchDelta    = EDIT_SCRATCH_DELTAS[0];
+    this.loopViolation       = false;
     this._vc                 = null;
     this._kb                 = null;
     this._pollId             = null;
@@ -572,8 +574,19 @@ class LlamaApp extends LitElement {
     localStorage.setItem('ll_last_url', raw);
   }
 
+  _flashLoopViolation() {
+    this.loopViolation = true;
+    setTimeout(() => { this.loopViolation = false; }, 600);
+  }
+
   _seek(delta) {
-    this._vc?.seekTo((this._vc.getCurrentTime() ?? 0) + delta);
+    const t = (this._vc?.getCurrentTime() ?? 0) + delta;
+    if (this.looping && this.loopStart < this.loopEnd
+        && (t < this.loopStart || t > this.loopEnd)) {
+      this._flashLoopViolation();
+      return;
+    }
+    this._vc?.seekTo(t);
   }
 
   _onPlayPause() {
@@ -633,7 +646,13 @@ class LlamaApp extends LitElement {
   }
 
   _onSeekTo(e) {
-    this._vc?.seekTo(e.detail.time);
+    const t = e.detail.time;
+    if (this.looping && this.loopStart < this.loopEnd
+        && (t < this.loopStart || t > this.loopEnd)) {
+      this._flashLoopViolation();
+      return;
+    }
+    this._vc?.seekTo(t);
   }
 
   _onDeleteLoop(e) {
@@ -697,6 +716,7 @@ class LlamaApp extends LitElement {
           .loopSource=${this.loopSource}
           .editScratchActive=${this.editScratchActive}
           .editScratchFocus=${this.editScratchFocus}
+          .loopViolation=${this.loopViolation}
           @ll-play-pause=${this._onPlayPause}
           @ll-seek-forward=${this._onSeekForward}
           @ll-seek-back=${this._onSeekBack}
