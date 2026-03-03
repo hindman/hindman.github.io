@@ -370,6 +370,19 @@ class LlamaControls extends LitElement {
     }
   }
 
+  // Public: called by llama-app during edit-scratch mode to focus an endpoint
+  // input for direct time entry. Selects all so the first typed character
+  // replaces the current value.
+  focusStartInput() {
+    this._startRef.value?.focus();
+    this._startRef.value?.select();
+  }
+
+  focusEndInput() {
+    this._endRef.value?.focus();
+    this._endRef.value?.select();
+  }
+
   render() {
     const speedPct = `${(this.speed * 100).toFixed(0)}%`;
     return html`

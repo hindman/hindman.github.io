@@ -430,6 +430,19 @@ class LlamaApp extends LitElement {
 
     const key = event.key;
 
+    // Digit, colon, or slash: focus the active endpoint input for direct
+    // time entry. Don't preventDefault -- let the browser type the character
+    // into the now-focused input.
+    if (/^[0-9:/]$/.test(key)) {
+      const controls = this.renderRoot.querySelector('llama-controls');
+      if (this.editScratchFocus === 'start') {
+        controls?.focusStartInput();
+      } else {
+        controls?.focusEndInput();
+      }
+      return;
+    }
+
     if (key === 'Tab') {
       event.preventDefault();
       this.editScratchFocus = this.editScratchFocus === 'start' ? 'end' : 'start';
@@ -500,6 +513,7 @@ class LlamaApp extends LitElement {
           ↑/↓: delta<br>
           Space: play/pause<br>
           Bsp: reset<br>
+          0-9/: type time<br>
           Enter/Esc: done
         </div>
       </div>

@@ -9,24 +9,35 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 V2 implementation:
     
-    /rename loopllama-v2-stage-8b-4
+    9a. Base modal pattern: create a reusable Shoelace modal scaffolding
+        and verify keyboard focus management (Esc/Enter exit, body scroll
+        lock). Build url-input-modal as the first concrete modal. Wire
+        `y`/`vu` binding.
 
-    8b-4. Direct time entry in edit-scratch mode:
-        - When in edit-scratch-loop mode, pressing a digit, colon, or forward
-          slash focuses the active text input (start or end), letting the
-          browser handle text entry normally.
-        - Enter in the focused input submits the value and blurs the input,
-          returning to keyboard nudge mode within edit-scratch-loop mode.
-        - A subsequent Enter or Esc (when no input is focused) exits
-          edit-scratch-loop mode entirely.
+    9b. Video picker and edit-video-modal: video-picker (list of known
+        videos, filter by name/title) and edit-video-modal (URL, name,
+        title, start, end, delete button). Wire `vv` and `ve` bindings.
 
-    g c -am '8b-4. Direct time entry in edit-scratch mode'
+    9c. Loop modals: save-loop-modal (name + start/end, defaults to
+        scratch-loop) and loops-picker (load a saved loop). Wire `ls` and
+        `lo` bindings.
+
+    9d. Entity edit modals: edit-section-modal and edit-mark-modal. Wire
+        `se` and `me` bindings.
+
+    9e. Chapter support: Chapter entity CRUD in state.js (create, edit,
+        delete). Chapter picker (select which chapter to make active) and
+        edit-chapter-modal (name, start, end). Next/prev chapter
+        navigation. Timeline scoping: when a chapter is active, constrain
+        the timeline view to chapter.start/end and filter the displayed
+        entities to those whose chapterId matches. Wire chapter key
+        bindings (TBD by user).
 
 
 DEFERRED:
-    - sub-group label positioning (above vs inline) -- revisit once all
-      controls are on the page and the full layout is visible. Also: "Now" vs
-      "Set here" language inconsistency to resolve at same time.
+    - Sub-group label positioning (above vs inline): revisit once all controls
+      are on the page and the full layout is visible.
+    - "Now" vs "Set here" language inconsistency.
 
 Posts:
     x RH rudiments #1: alternating bass

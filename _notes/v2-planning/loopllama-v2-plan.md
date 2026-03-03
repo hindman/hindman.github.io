@@ -287,8 +287,6 @@ v2/
    focus management so that modals and modes capture key events while
    the global controller is inactive.
 
-### TODO
-
 6a. App shell: Replace the Stage 4 test harness in llama-app.js with a
     real layout structure (header, video area, controls placeholder,
     message area placeholder). Add a URL/ID text input to load videos
@@ -388,6 +386,8 @@ v2/
       returning to keyboard nudge mode within edit-scratch-loop mode.
     - A subsequent Enter or Esc (when no input is focused) exits
       edit-scratch-loop mode entirely.
+
+### TODO
 
 9a. Base modal pattern: create a reusable Shoelace modal scaffolding
     and verify keyboard focus management (Esc/Enter exit, body scroll
