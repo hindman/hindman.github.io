@@ -344,7 +344,50 @@ v2/
     scratch-loop range, marks, and playhead. Click-to-jump.
     Drag-to-edit is aspirational and can be deferred.
 
-8b. Address UI/UX details.
+8b-1. Mechanical fixes:
+    - Enter in start/end input: submit then blur, returning focus to the
+      app (not leaving focus stuck in the text box).
+    - Back/Fwd buttons: replace "Back" / "Fwd" text with arrow symbols
+      (e.g., ◀ / ▶).
+    - Edit-scratch delta choices: change constant to [0.1, 1, 5, 10, 30].
+
+8b-2. Visual polish and state logic:
+    - Play/Pause: make it visually prominent (distinct color or size) as
+      the primary action button on the page.
+    - Loop button: improve toggle visual treatment (active vs. inactive
+      styling clearly distinguishable) without Shoelace. A full toggle
+      switch component is deferred until Shoelace is introduced.
+    - Invalid loop: looping must never be true when loopStart >= loopEnd.
+      Two enforcement points: (a) if the user tries to enable looping
+      via `ll` or the button when the range is invalid, block it and
+      show a warning -- state stays false; (b) if looping is currently
+      true and the user edits endpoints so the range becomes invalid,
+      auto-set looping to false. The button always reflects the actual
+      state; no visual deception needed.
+    - Sub-second display: when editScratchDelta is 0.1, format start/end
+      in the text boxes as m:ss.t (one decimal place) so nudges are
+      visible. Revert to m:ss when delta >= 1.
+
+8b-3. Layout grouping and edit-scratch visual indicator:
+    - Tight grouping: treat "Start label + input + Now button" and "End
+      label + input + Now button" as visually cohesive units -- minimal
+      or zero gap between the elements in each group, clearly separated
+      from adjacent groups.
+    - Also try bordered sub-groups as an alternative technique for
+      thematic grouping across the full controls area. Assess whether
+      it helps overall organization.
+    - Edit-scratch mode indicator: when editScratchActive, add a colored
+      border or background to the loop row and visually suppress (dim)
+      the other control rows to draw focus to the loop controls.
+
+8b-4. Direct time entry in edit-scratch mode:
+    - When in edit-scratch-loop mode, pressing a digit, colon, or forward
+      slash focuses the active text input (start or end), letting the
+      browser handle text entry normally.
+    - Enter in the focused input submits the value and blurs the input,
+      returning to keyboard nudge mode within edit-scratch-loop mode.
+    - A subsequent Enter or Esc (when no input is focused) exits
+      edit-scratch-loop mode entirely.
 
 9a. Base modal pattern: create a reusable Shoelace modal scaffolding
     and verify keyboard focus management (Esc/Enter exit, body scroll

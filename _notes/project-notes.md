@@ -5,55 +5,78 @@ Current stage to implement:
 
 The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclear or need adjustment.
 
-Before you launch into coding, let's assess this item. Is this stage
-sized reasonably or should we break it down farther to avoid LLM hanging
-issues response-size limits?
-
 ## TODO
 
 V2 implementation:
 
-    /rename loopllama-v2-stage-8b
+    =====================
 
-    8b. Address UI/UX details
-        - Edit scratch-loop start or end; press Enter; focus should return to
-          app, not stay in text box.
-        - Loop "Start" label, start text box, Now button need to be connected
-          visually. SlowTube does this by leaving zero pad between the button
-          and the text box, but other techniques might work too. This is an
-          example of a more general need: a visual convention to organize
-          controls thematically. Smaller groupings, each labelled could be
-          another technique.
-        - Loop button should be a toggle switch labelled "Loop".
-        - Back/Fwd buttons: symbols would be better: some sort of left/right
-          triangles or arrows
-        - Play/pause: need visual attention (SlowTube uses a different color
-          for example): its the core button the on page.
-        - Enter scratch-loop start/end where start >= end. The Loop
-          toggle/button should not say "ON".
-        - Edit-scratch-loop-mode:
-            - We need to increase the visual sense that we are in a distinct
-              mode and also visually connect the loop controls to the
-              informational items about the mode. Possible ideas:
-                - A mode indicator on the loop row itself (e.g., colored
-                  border or background on the controls row)
-                - Maybe dimming or visually suppressing the rest of the
-                  controls area to draw attention to the loop row
-                - Ensuring the amber highlight on the focused input is
-                  prominent enough given whatever the row's final visual
-                  treatment is
-            - If the user sets the delta to 0.1 sec, can we also show those
-              values in the start/end boxes. Otherwise, the user gets no visual
-              feedback as they adjust the value. If it's too awkward to be
-              changing the display precision of the start/end, are there other
-              ways to convey the info the user needs?
-            - Change the delta choices: 0.1, 1, 5, 10, 30.
-            - Need to support direct time entry: number keys, colon, and
-              foward slash. Then Enter shifts back to regular
-              edit-scratch-loop-mode. Then Enter/Esc exit the mode. Is that
-              workable?
+    /rename loopllama-v2-stage-8b-1
 
-    g c -am '8b. Address UI/UX details'
+    8b-1. Mechanical fixes:
+        - Enter in start/end input: submit then blur, returning focus to the
+          app (not leaving focus stuck in the text box).
+        - Back/Fwd buttons: replace "Back" / "Fwd" text with arrow symbols
+          (e.g., ◀ / ▶).
+        - Edit-scratch delta choices: change constant to [0.1, 1, 5, 10, 30].
+
+    g c -am '8b-1. Mechanical fixes'
+
+    =====================
+
+    /rename loopllama-v2-stage-8b-2
+
+    8b-2. Visual polish and state logic:
+        - Play/Pause: make it visually prominent (distinct color or size) as
+          the primary action button on the page.
+        - Loop button: improve toggle visual treatment (active vs. inactive
+          styling clearly distinguishable) without Shoelace. A full toggle
+          switch component is deferred until Shoelace is introduced.
+        - Invalid loop: looping must never be true when loopStart >= loopEnd.
+          Two enforcement points: (a) if the user tries to enable looping
+          via `ll` or the button when the range is invalid, block it and
+          show a warning -- state stays false; (b) if looping is currently
+          true and the user edits endpoints so the range becomes invalid,
+          auto-set looping to false. The button always reflects the actual
+          state; no visual deception needed.
+        - Sub-second display: when editScratchDelta is 0.1, format start/end
+          in the text boxes as m:ss.t (one decimal place) so nudges are
+          visible. Revert to m:ss when delta >= 1.
+
+    g c -am '8b-2. Visual polish and state logic'
+
+    =====================
+
+    /rename loopllama-v2-stage-8b-3
+
+    8b-3. Layout grouping and edit-scratch visual indicator:
+        - Tight grouping: treat "Start label + input + Now button" and "End
+          label + input + Now button" as visually cohesive units -- minimal
+          or zero gap between the elements in each group, clearly separated
+          from adjacent groups.
+        - Also try bordered sub-groups as an alternative technique for
+          thematic grouping across the full controls area. Assess whether
+          it helps overall organization.
+        - Edit-scratch mode indicator: when editScratchActive, add a colored
+          border or background to the loop row and visually suppress (dim)
+          the other control rows to draw focus to the loop controls.
+
+    g c -am '8b-3. Layout grouping and edit-scratch visual indicator'
+
+    =====================
+
+    /rename loopllama-v2-stage-8b-4
+
+    8b-4. Direct time entry in edit-scratch mode:
+        - When in edit-scratch-loop mode, pressing a digit, colon, or forward
+          slash focuses the active text input (start or end), letting the
+          browser handle text entry normally.
+        - Enter in the focused input submits the value and blurs the input,
+          returning to keyboard nudge mode within edit-scratch-loop mode.
+        - A subsequent Enter or Esc (when no input is focused) exits
+          edit-scratch-loop mode entirely.
+
+    g c -am '8b-4. Direct time entry in edit-scratch mode'
 
 Posts:
     x RH rudiments #1: alternating bass
