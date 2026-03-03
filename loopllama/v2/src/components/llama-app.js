@@ -11,6 +11,7 @@ import {
 } from '../state.js';
 import './llama-whichkey.js';
 import './llama-controls.js';
+import './llama-timeline.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 0.5, 1, 2, 5];
 
@@ -100,9 +101,12 @@ class LlamaApp extends LitElement {
       gap: var(--ll-gap, 0.5rem);
     }
 
-    .video-area {
+    .video-col {
       flex: 1;
       min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--ll-gap, 0.5rem);
     }
 
     #player-container {
@@ -147,18 +151,6 @@ class LlamaApp extends LitElement {
       color: var(--ll-text-muted, #666);
     }
 
-    /* --- Placeholder areas --- */
-    .timeline-placeholder {
-      height: 40px;
-      background: var(--ll-surface, #252525);
-      border: 1px solid var(--ll-border, #444);
-      border-radius: var(--ll-radius, 3px);
-      padding: 0 0.75rem;
-      font-size: var(--ll-text-sm, 0.85rem);
-      color: var(--ll-text-muted, #555);
-      display: flex;
-      align-items: center;
-    }
   `;
 
   static properties = {
@@ -640,6 +632,10 @@ class LlamaApp extends LitElement {
     this.statusMsg  = `Loop loaded: ${loop.name || 'unnamed'}`;
   }
 
+  _onSeekTo(e) {
+    this._vc?.seekTo(e.detail.time);
+  }
+
   _onDeleteLoop(e) {
     deleteLoopById(this.namedLoops, e.detail.id);
     this.namedLoops = [...this.namedLoops];
@@ -669,8 +665,17 @@ class LlamaApp extends LitElement {
 
       <div class="app-body">
         <div class="app-main">
-          <div class="video-area">
+          <div class="video-col">
             <div id="player-container"></div>
+            <llama-timeline
+              .currentTime=${this.currentTime}
+              .duration=${this.duration}
+              .sections=${this.sections}
+              .marks=${this.marks}
+              .loopStart=${this.loopStart}
+              .loopEnd=${this.loopEnd}
+              @ll-seek-to=${this._onSeekTo}
+            ></llama-timeline>
           </div>
           <div class="message-area">
             ${this.editScratchActive
@@ -678,8 +683,6 @@ class LlamaApp extends LitElement {
               : html`<div>${this.statusMsg}</div>`}
           </div>
         </div>
-
-        <div class="timeline-placeholder">Timeline — Stage 8</div>
         <llama-controls
           .currentTime=${this.currentTime}
           .duration=${this.duration}

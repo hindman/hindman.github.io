@@ -5,19 +5,13 @@ Current stage to implement:
 
 The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclear or need adjustment.
 
+Before you launch into coding, let's assess this item. Is this stage
+sized reasonably or should we break it down farther to avoid LLM hanging
+issues response-size limits?
+
 ## TODO
 
 V2 implementation:
-
-    /rename loopllama-v2-stage-8a
-
-    8a. Timeline component: horizontal timeline displaying sections,
-        scratch-loop range, marks, and playhead. Click-to-jump.
-        Drag-to-edit is aspirational and can be deferred.
-
-    g c -am '8a. Timeline component'
-
-    =============
 
     /rename loopllama-v2-stage-8b
 
