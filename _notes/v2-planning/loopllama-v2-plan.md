@@ -739,6 +739,13 @@ Looping:
     le   | Edit: scratch-loop [edit-scratch-loop-mode]
     ld   | Delete: current loop-source [applies only if source was a Loop]
 
+Chapters:
+
+    cc | Set new chapter here
+    co | Open chapter
+    ce | Edit current chapter
+    cd | Delete current chapter
+
 Sections:
 
     ss | Set: sets a new section divider at current time
@@ -796,6 +803,7 @@ Jump-time-modal:
 
 Standard entity pickers:
     - Used in contexts like jump and open.
+    - chapters-picker
     - sections-picker
     - loops-picker
     - marks-picker
@@ -1005,9 +1013,14 @@ Loop controls:
 Dropdowns for less frequent operations:
 
     Video:
-        - Open
+        - Open video
         - Edit current
         - Delete current
+        ----------------------------
+        - Open chapter
+        - Set new chapter here
+        - Edit current chapter
+        - Delete current chapter
 
     Section:
         - Set new here
