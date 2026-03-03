@@ -134,6 +134,9 @@ class LlamaApp extends LitElement {
     duration:      { type: Number },
     speed:         { type: Number },
     isPlaying:     { type: Boolean },
+    looping:       { type: Boolean },
+    loopStart:     { type: Number },
+    loopEnd:       { type: Number },
     statusMsg:     { type: String },
     wkPrefix:      { type: String },
     wkCompletions: { type: Object },
@@ -146,6 +149,9 @@ class LlamaApp extends LitElement {
     this.duration      = null;
     this.speed         = 1;
     this.isPlaying     = false;
+    this.looping       = false;
+    this.loopStart     = 0;
+    this.loopEnd       = 0;
     this.statusMsg     = 'Initializing...';
     this.wkPrefix      = null;
     this.wkCompletions = null;
@@ -181,9 +187,9 @@ class LlamaApp extends LitElement {
       prevEntity:    stub('prevEntity'),
       entityType:    stub('entityType'),
       nextEntity:    stub('nextEntity'),
-      jumpToStart:   () => this._vc?.seekTo(0),
-      setLoopStart:  stub('setLoopStart'),
-      setLoopEnd:    stub('setLoopEnd'),
+      jumpToStart:   () => this._vc?.seekTo(this.looping ? this.loopStart : 0),
+      setLoopStart:  () => { this.loopStart = this._vc?.getCurrentTime() ?? 0; },
+      setLoopEnd:    () => { this.loopEnd   = this._vc?.getCurrentTime() ?? 0; },
       undo:          stub('undo'),
       redo:          stub('redo'),
       helpKeys:      stub('helpKeys'),
@@ -199,7 +205,7 @@ class LlamaApp extends LitElement {
       jumpHistory:   stub('jumpHistory'),
       jumpBack:      stub('jumpBack'),
       jumpForward:   stub('jumpForward'),
-      toggleLoop:    stub('toggleLoop'),
+      toggleLoop:    () => { this.looping = !this.looping; },
       openLoop:      stub('openLoop'),
       saveLoop:      stub('saveLoop'),
       saveBack:      stub('saveBack'),
@@ -261,11 +267,19 @@ class LlamaApp extends LitElement {
 
     // Poll playback state every 500ms to keep the controls display live.
     this._pollId = setInterval(() => {
-      this.currentTime = this._vc.getCurrentTime();
+      const t = this._vc.getCurrentTime();
+      this.currentTime = t;
       this.isPlaying   = this._vc.isPlaying();
       this.speed       = this._vc.getPlaybackRate();
       const dur = this._vc.getDuration();
       if (dur !== null) this.duration = dur;
+
+      // Loop enforcement: when looping is on and playhead reaches the end
+      // point, seek back to the start point.
+      if (this.looping && this.loopStart < this.loopEnd
+          && t !== null && t >= this.loopEnd) {
+        this._vc.seekTo(this.loopStart);
+      }
     }, 500);
 
     // Expose for console testing in dev mode.
@@ -369,6 +383,12 @@ class LlamaApp extends LitElement {
     this._seek(-this.seekDelta);
   }
 
+  _onToggleLoop()       { this.looping   = !this.looping; }
+  _onSetLoopStartNow()  { this.loopStart = this.currentTime; }
+  _onSetLoopEndNow()    { this.loopEnd   = this.currentTime; }
+  _onLoopStartChange(e) { this.loopStart = e.detail.value; }
+  _onLoopEndChange(e)   { this.loopEnd   = e.detail.value; }
+
   render() {
     return html`
       <header class="app-header">
@@ -406,9 +426,17 @@ class LlamaApp extends LitElement {
           .duration=${this.duration}
           .speed=${this.speed}
           .isPlaying=${this.isPlaying}
+          .looping=${this.looping}
+          .loopStart=${this.loopStart}
+          .loopEnd=${this.loopEnd}
           @ll-play-pause=${this._onPlayPause}
           @ll-seek-forward=${this._onSeekForward}
           @ll-seek-back=${this._onSeekBack}
+          @ll-toggle-loop=${this._onToggleLoop}
+          @ll-set-loop-start-now=${this._onSetLoopStartNow}
+          @ll-set-loop-end-now=${this._onSetLoopEndNow}
+          @ll-loop-start-change=${this._onLoopStartChange}
+          @ll-loop-end-change=${this._onLoopEndChange}
         ></llama-controls>
       </div>
 

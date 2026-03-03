@@ -5,13 +5,22 @@
 //   duration:    Number   -- total video duration (seconds), or null
 //   speed:       Number   -- playback speed (e.g. 1.0 = 100%)
 //   isPlaying:   Boolean  -- true while the video is playing
+//   looping:     Boolean  -- true when looping is active
+//   loopStart:   Number   -- scratch-loop start (seconds)
+//   loopEnd:     Number   -- scratch-loop end (seconds)
 //
 // Fires (bubbles + composed):
-//   ll-play-pause    -- toggle play/pause
-//   ll-seek-forward  -- seek forward by current seek delta
-//   ll-seek-back     -- seek back by current seek delta
+//   ll-play-pause           -- toggle play/pause
+//   ll-seek-forward         -- seek forward by current seek delta
+//   ll-seek-back            -- seek back by current seek delta
+//   ll-toggle-loop          -- toggle looping on/off
+//   ll-set-loop-start-now   -- set loop start to current time
+//   ll-set-loop-end-now     -- set loop end to current time
+//   ll-loop-start-change    -- user edited start; detail.value = seconds
+//   ll-loop-end-change      -- user edited end; detail.value = seconds
 
 import { LitElement, html, css } from 'lit';
+import { createRef, ref } from 'lit/directives/ref.js';
 
 class LlamaControls extends LitElement {
   static styles = css`
@@ -19,14 +28,23 @@ class LlamaControls extends LitElement {
       display: block;
     }
 
-    .controls {
+    .controls-wrap {
+      display: flex;
+      flex-direction: column;
+      background: var(--ll-surface, #252525);
+      border: 1px solid var(--ll-border, #444);
+      border-radius: var(--ll-radius, 3px);
+    }
+
+    .controls-row {
       display: flex;
       align-items: center;
       gap: var(--ll-gap, 0.5rem);
       padding: var(--ll-pad, 0.5rem) var(--ll-pad-lg, 1rem);
-      background: var(--ll-surface, #252525);
-      border: 1px solid var(--ll-border, #444);
-      border-radius: var(--ll-radius, 3px);
+    }
+
+    .controls-row + .controls-row {
+      border-top: 1px solid var(--ll-border, #444);
     }
 
     button {
@@ -39,17 +57,31 @@ class LlamaControls extends LitElement {
       cursor: pointer;
     }
 
+    button:hover {
+      border-color: var(--ll-accent, #7ec8e3);
+      color: var(--ll-accent, #7ec8e3);
+    }
+
     .btn-play-pause {
       min-width: 4.5rem;
     }
 
-    button:hover {
+    .btn-loop-toggle {
+      min-width: 5.5rem;
+    }
+
+    .btn-loop-toggle.active {
       border-color: var(--ll-accent, #7ec8e3);
       color: var(--ll-accent, #7ec8e3);
     }
 
     .sep {
       color: var(--ll-text-muted, #666);
+    }
+
+    .label {
+      font-size: var(--ll-text-sm, 0.85rem);
+      color: var(--ll-text-dim, #aaa);
     }
 
     .time-display {
@@ -66,6 +98,23 @@ class LlamaControls extends LitElement {
       min-width: 5ch;
       text-align: right;
     }
+
+    .time-input {
+      font-family: var(--ll-font-mono, monospace);
+      font-size: var(--ll-text-sm, 0.85rem);
+      width: 6ch;
+      padding: 0.2rem 0.4rem;
+      background: var(--ll-surface-raised, #2a2a2a);
+      border: 1px solid var(--ll-border, #444);
+      border-radius: var(--ll-radius, 3px);
+      color: var(--ll-text, #e0e0e0);
+      text-align: right;
+    }
+
+    .time-input:focus {
+      outline: none;
+      border-color: var(--ll-accent, #7ec8e3);
+    }
   `;
 
   static properties = {
@@ -73,6 +122,9 @@ class LlamaControls extends LitElement {
     duration:    { type: Number },
     speed:       { type: Number },
     isPlaying:   { type: Boolean },
+    looping:     { type: Boolean },
+    loopStart:   { type: Number },
+    loopEnd:     { type: Number },
   };
 
   constructor() {
@@ -81,6 +133,11 @@ class LlamaControls extends LitElement {
     this.duration    = null;
     this.speed       = 1;
     this.isPlaying   = false;
+    this.looping     = false;
+    this.loopStart   = 0;
+    this.loopEnd     = 0;
+    this._startRef   = createRef();
+    this._endRef     = createRef();
   }
 
   _fmt(secs) {
@@ -90,25 +147,107 @@ class LlamaControls extends LitElement {
     return `${m}:${s}`;
   }
 
-  _emit(name) {
-    this.dispatchEvent(new CustomEvent(name, { bubbles: true, composed: true }));
+  // Parse a time string to seconds. Returns a Number or null if invalid.
+  // Supports: mm:ss, hh:mm:ss, mm/ss, hh/mm/ss, raw seconds (int or decimal).
+  _parseTime(str) {
+    str = str.trim().replace(/\//g, ':');
+    if (!str) return null;
+    const parts = str.split(':');
+    if (parts.length === 2 || parts.length === 3) {
+      const nums = parts.map(p => parseFloat(p));
+      if (nums.some(isNaN)) return null;
+      return parts.length === 2
+        ? nums[0] * 60 + nums[1]
+        : nums[0] * 3600 + nums[1] * 60 + nums[2];
+    }
+    const n = parseFloat(str);
+    return !isNaN(n) && n >= 0 ? n : null;
+  }
+
+  _emit(name, detail) {
+    this.dispatchEvent(new CustomEvent(name, { bubbles: true, composed: true, detail }));
+  }
+
+  firstUpdated() {
+    if (this._startRef.value) this._startRef.value.value = this._fmt(this.loopStart);
+    if (this._endRef.value)   this._endRef.value.value   = this._fmt(this.loopEnd);
+  }
+
+  // Sync inputs when loopStart/loopEnd change from outside (keyboard or Now
+  // button), but only when loopStart/loopEnd actually changed -- so a poll
+  // re-render (which only changes currentTime) never disturbs a user mid-edit.
+  updated(changedProps) {
+    if (changedProps.has('loopStart') && this._startRef.value) {
+      this._startRef.value.value = this._fmt(this.loopStart);
+    }
+    if (changedProps.has('loopEnd') && this._endRef.value) {
+      this._endRef.value.value = this._fmt(this.loopEnd);
+    }
+  }
+
+  _submitStart() {
+    const val = this._parseTime(this._startRef.value?.value ?? '');
+    if (val !== null) {
+      this._emit('ll-loop-start-change', { value: val });
+    } else if (this._startRef.value) {
+      // Revert invalid input to the current value.
+      this._startRef.value.value = this._fmt(this.loopStart);
+    }
+  }
+
+  _submitEnd() {
+    const val = this._parseTime(this._endRef.value?.value ?? '');
+    if (val !== null) {
+      this._emit('ll-loop-end-change', { value: val });
+    } else if (this._endRef.value) {
+      this._endRef.value.value = this._fmt(this.loopEnd);
+    }
   }
 
   render() {
     const speedPct = `${(this.speed * 100).toFixed(0)}%`;
     return html`
-      <div class="controls">
-        <button @click=${() => this._emit('ll-seek-back')}>← Back</button>
-        <button class="btn-play-pause" @click=${() => this._emit('ll-play-pause')}>
-          ${this.isPlaying ? 'Pause' : 'Play'}
-        </button>
-        <button @click=${() => this._emit('ll-seek-forward')}>Fwd →</button>
-        <span class="sep">|</span>
-        <span class="time-display">
-          ${this._fmt(this.currentTime)} / ${this._fmt(this.duration)}
-        </span>
-        <span class="sep">|</span>
-        <span class="speed-display">${speedPct}</span>
+      <div class="controls-wrap">
+        <div class="controls-row">
+          <button @click=${() => this._emit('ll-seek-back')}>← Back</button>
+          <button class="btn-play-pause" @click=${() => this._emit('ll-play-pause')}>
+            ${this.isPlaying ? 'Pause' : 'Play'}
+          </button>
+          <button @click=${() => this._emit('ll-seek-forward')}>Fwd →</button>
+          <span class="sep">|</span>
+          <span class="time-display">
+            ${this._fmt(this.currentTime)} / ${this._fmt(this.duration)}
+          </span>
+          <span class="sep">|</span>
+          <span class="speed-display">${speedPct}</span>
+        </div>
+
+        <div class="controls-row">
+          <button
+            class="btn-loop-toggle ${this.looping ? 'active' : ''}"
+            @click=${() => this._emit('ll-toggle-loop')}
+          >Loop: ${this.looping ? 'ON' : 'OFF'}</button>
+          <span class="sep">|</span>
+          <span class="label">Start:</span>
+          <input
+            ${ref(this._startRef)}
+            class="time-input"
+            type="text"
+            @keydown=${(e) => e.key === 'Enter' && this._submitStart()}
+            @blur=${() => this._submitStart()}
+          />
+          <button @click=${() => this._emit('ll-set-loop-start-now')}>Now</button>
+          <span class="sep">|</span>
+          <span class="label">End:</span>
+          <input
+            ${ref(this._endRef)}
+            class="time-input"
+            type="text"
+            @keydown=${(e) => e.key === 'Enter' && this._submitEnd()}
+            @blur=${() => this._submitEnd()}
+          />
+          <button @click=${() => this._emit('ll-set-loop-end-now')}>Now</button>
+        </div>
       </div>
     `;
   }

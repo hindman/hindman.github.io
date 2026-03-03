@@ -340,9 +340,20 @@ v2/
     Show mode indicator in message area. Goal: fine-tuning loop
     endpoints works without leaving the keyboard.
 
-8.  Timeline component: horizontal timeline displaying sections,
+8a. Timeline component: horizontal timeline displaying sections,
     scratch-loop range, marks, and playhead. Click-to-jump.
     Drag-to-edit is aspirational and can be deferred.
+
+8b. Address UI/UX details
+    - Edit scratch-loop start or end; press Enter; focus should return to app,
+      not stay in text box.
+    - Loop "Start" label, start text box, Now button need to be connected
+      visually. SlowTube does this by leaving zero pad between the button and
+      the text box, but other techniques might work too. This is an example of
+      a more general need: a visual convention to organize controls
+      thematically. Smaller groupings, each labelled could be another
+      technique.
+    - Loop button should be a toggle switch labelled "Loop".
 
 9a. Base modal pattern: create a reusable Shoelace modal scaffolding
     and verify keyboard focus management (Esc/Enter exit, body scroll
