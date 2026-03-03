@@ -26,6 +26,10 @@ g c -am '7a. Scratch-loop controls'
 
 ## TODO
 
+V2 plan:
+
+    - chapter: add key bindings and menu items
+
 V2 implementation:
 
     7b. Marks: Implement Mark entity CRUD in state.js. Show a marks list

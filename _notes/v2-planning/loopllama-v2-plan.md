@@ -360,6 +360,14 @@ v2/
 9d. Entity edit modals: edit-section-modal and edit-mark-modal. Wire
     `se` and `me` bindings.
 
+9e. Chapter support: Chapter entity CRUD in state.js (create, edit,
+    delete). Chapter picker (select which chapter to make active) and
+    edit-chapter-modal (name, start, end). Next/prev chapter
+    navigation. Timeline scoping: when a chapter is active, constrain
+    the timeline view to chapter.start/end and filter the displayed
+    entities to those whose chapterId matches. Wire chapter key
+    bindings (TBD by user).
+
 10. Undo: snapshot-based undo/redo. Push a video state snapshot before
     each destructive or modifying operation. Implement `u`/`U` bindings.
     Session-only; no persistence needed.
@@ -479,8 +487,8 @@ the playhead is before the first divider or after the last.
 Activating loop-current-section loads the section's start and end into
 the scratch-loop (following the same scratch-loop model as named loops).
 If the current section has no right divider (it is the last and
-open-ended), the video's effective end serves as the fallback right
-boundary.
+open-ended), the active chapter's end (if a chapter is active) or
+the video's duration serves as the fallback right boundary.
 
 ### Operations
 
@@ -581,12 +589,6 @@ Video:
 - time: current time. Useful so that when you return to the video
   later, the app remembers where you were.
 
-- start: user-adjustable effective start of the video; defaults to 0.
-  Useful for skipping filler intros. Distinct from the active loop start.
-
-- end: user-adjustable effective end of the video; defaults to duration.
-  Useful for skipping filler outros.
-
 - name: short user label for the video (replaces the Favorites concept)
 
 - title:
@@ -604,6 +606,8 @@ Video:
 
 - speed_delta: controls amount that -/= alter the speed.
 
+- chapters: array of Chapter entities
+
 - sections: array of Section entities
 
 - loops: array of Loop entities (includes the scratch-loop if present)
@@ -619,9 +623,28 @@ Video:
 
 - version: version number of current metadata scheme
 
+Chapter
+
+- id: generated unique identifier
+
+- name: user-defined label (e.g., "Windy and Warm"); required.
+
+- start: start time (seconds)
+
+- end: end time (seconds)
+
+When a chapter is active, the timeline is scoped to chapter.start /
+chapter.end. When no chapter is active, the timeline spans the full
+video duration. Chapters are optional: a video with no chapters
+behaves as if the whole video is in scope. The chapterId on
+Section/Loop/Mark is nullable; null means the entity is not
+associated with any chapter.
+
 Section
 
 - id: generated unique identifier
+
+- chapterId: ID of the Chapter this section belongs to; nullable.
 
 - name: user label (e.g., "Intro", "Verse", "Solo"); optional. If absent, the
   UI displays a computed rank-order name (e.g., "#1") derived from position
@@ -638,6 +661,8 @@ Section
 Loop
 
 - id: generated unique identifier
+
+- chapterId: ID of the Chapter this loop belongs to; nullable.
 
 - name: user label (e.g., "outro-lick"); optional. If absent, the UI displays
   a computed rank-order name (e.g., "#2"). Not stored. The scratch-loop is
@@ -658,6 +683,8 @@ Loop
 Mark
 
 - id: generated unique identifier
+
+- chapterId: ID of the Chapter this mark belongs to; nullable.
 
 - name: user label; optional. If absent, the UI displays a computed rank-order
   name (e.g., "#1") derived from position in timeline order. Not stored.
@@ -775,7 +802,7 @@ Standard entity pickers:
     - jump-history-picker
 
 Edit-video-modal:
-    - Basic modal to edit URL, name, title, start, end.
+    - Basic modal to edit URL, name, and title.
     - Also a delete-video button.
 
 Save-loop-modal:
