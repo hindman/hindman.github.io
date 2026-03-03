@@ -354,6 +354,10 @@ v2/
       thematically. Smaller groupings, each labelled could be another
       technique.
     - Loop button should be a toggle switch labelled "Loop".
+    - Back/Fwd buttons: symbols would be better: some sort of left/right
+      triangles or arrows
+    - Play/pause: need visual attention (SlowTube uses a different color for
+      example): its the core button the on page.
 
 9a. Base modal pattern: create a reusable Shoelace modal scaffolding
     and verify keyboard focus management (Esc/Enter exit, body scroll

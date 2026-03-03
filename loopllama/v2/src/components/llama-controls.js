@@ -8,6 +8,7 @@
 //   looping:     Boolean  -- true when looping is active
 //   loopStart:   Number   -- scratch-loop start (seconds)
 //   loopEnd:     Number   -- scratch-loop end (seconds)
+//   sections:    Array    -- array of Section objects { id, time, name }
 //   marks:       Array    -- array of Mark objects { id, time, name }
 //
 // Fires (bubbles + composed):
@@ -19,6 +20,8 @@
 //   ll-set-loop-end-now     -- set loop end to current time
 //   ll-loop-start-change    -- user edited start; detail.value = seconds
 //   ll-loop-end-change      -- user edited end; detail.value = seconds
+//   ll-set-section          -- set a section divider at current time
+//   ll-delete-section       -- delete a section; detail.id = section id
 //   ll-set-mark             -- set a mark at current time
 //   ll-delete-mark          -- delete a mark; detail.id = mark id
 
@@ -171,6 +174,7 @@ class LlamaControls extends LitElement {
     looping:     { type: Boolean },
     loopStart:   { type: Number },
     loopEnd:     { type: Number },
+    sections:    { type: Array },
     marks:       { type: Array },
   };
 
@@ -183,6 +187,7 @@ class LlamaControls extends LitElement {
     this.looping     = false;
     this.loopStart   = 0;
     this.loopEnd     = 0;
+    this.sections    = [];
     this.marks       = [];
     this._startRef   = createRef();
     this._endRef     = createRef();
@@ -295,6 +300,28 @@ class LlamaControls extends LitElement {
             @blur=${() => this._submitEnd()}
           />
           <button @click=${() => this._emit('ll-set-loop-end-now')}>Now</button>
+        </div>
+
+        <div class="controls-row">
+          <span class="label">Sections:</span>
+          <button @click=${() => this._emit('ll-set-section')}>Set here</button>
+          ${this.sections.length === 0
+            ? html`<span class="sep">none</span>`
+            : html`
+              <div class="marks-list">
+                ${this.sections.map((s, i) => html`
+                  <span class="mark-chip">
+                    <span class="mark-label">${s.name || `#${i + 1}`}</span>
+                    <span class="mark-time">${this._fmt(s.time)}</span>
+                    <button
+                      class="btn-delete"
+                      title="Delete section"
+                      @click=${() => this._emit('ll-delete-section', { id: s.id })}
+                    >×</button>
+                  </span>
+                `)}
+              </div>
+            `}
         </div>
 
         <div class="controls-row">

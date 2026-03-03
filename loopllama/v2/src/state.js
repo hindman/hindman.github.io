@@ -112,3 +112,56 @@ export function nearestMarkLeft(marks, time) {
   }
   return result;
 }
+
+// Add a section divider at the given time (sorted by time).
+// Returns the new section.
+export function addSection(sections, time, name = '') {
+  const section = createSection(time, name);
+  sections.push(section);
+  sections.sort((a, b) => a.time - b.time);
+  return section;
+}
+
+// Remove the section with the given id from the sections array.
+export function deleteSectionById(sections, sectionId) {
+  const idx = sections.findIndex(s => s.id === sectionId);
+  if (idx !== -1) sections.splice(idx, 1);
+}
+
+// Find the section divider with the largest time at or before the given time.
+// Returns the section or null. Assumes sections are sorted by time.
+export function nearestSectionLeft(sections, time) {
+  let result = null;
+  for (const s of sections) {
+    if (s.time <= time) result = s;
+    else break;
+  }
+  return result;
+}
+
+// Get the effective start/end bounds of the section containing the given time.
+// Returns { start, end } or null if the playhead is outside any section
+// (before the first divider, or in a gap zone created by an explicit section.end).
+// videoDuration: used as end fallback for the last open-ended section.
+export function getSectionBounds(sections, time, videoDuration) {
+  if (!sections.length) return null;
+
+  let left  = null;
+  let right = null;
+  for (const s of sections) {
+    if (s.time <= time) left = s;
+    else { right = s; break; }
+  }
+
+  if (!left) return null;   // before first divider
+
+  // Compute end: stored explicit end overrides derived end.
+  const derivedEnd  = right ? right.time : (videoDuration ?? null);
+  const sectionEnd  = (left.end != null) ? left.end : derivedEnd;
+
+  // If time is in a gap zone (past the section's explicit end, before the
+  // next divider), there is no current section.
+  if (left.end != null && time > left.end) return null;
+
+  return { start: left.time, end: sectionEnd };
+}

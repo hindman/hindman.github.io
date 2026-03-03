@@ -5,19 +5,9 @@
 
     =============
 
-# Current stage to implement.
+Current stage to implement:
 
-    7c. Sections: Implement Section entity CRUD in state.js. Show a
-        sections list in controls area. Wire `ss` (set), `sd` (delete),
-        `sl` (loop current section) bindings. Goal: sections work via
-        keyboard.
-
-The plan: _notes/v2-planning/loopllama-v2-plan.md.
-Speak up if things are unclear or need adjustment.
-
-    =============
-
-g c -am '7c. Marks'
+The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclear or need adjustment.
 
     =============
 
@@ -25,14 +15,33 @@ g c -am '7c. Marks'
 
 V2 implementation:
 
+    7c. Sections: Implement Section entity CRUD in state.js. Show a
+        sections list in controls area. Wire `ss` (set), `sd` (delete),
+        `sl` (loop current section) bindings. Goal: sections work via
+        keyboard.
+
+    g c -am '7c. Sections'
+
+    =============
+
+    /rename loopllama-v2-stage-7d
+
     7d. Named loops: Implement Loop entity CRUD in state.js (save, load,
         delete, save-back). Wire `lo`, `ls`, `ld`, `lb` bindings.
         Goal: named loops can be saved and loaded via keyboard.
+
+    g c -am '7d. Named loops'
+
+    =============
+
+    /rename loopllama-v2-stage-7e
 
     7e. Edit-scratch-loop-mode: Implement the mode where `Left`/`Right`
         nudge loop start/end; `Tab` toggles focus between start and end.
         Show mode indicator in message area. Goal: fine-tuning loop
         endpoints works without leaving the keyboard.
+
+    g c -am '7e. Edit-scratch-loop-mode'
 
 Posts:
     x RH rudiments #1: alternating bass

@@ -3,7 +3,11 @@
 import { LitElement, html, css } from 'lit';
 import { createVideoController }    from '../videoController.js';
 import { createKeyboardController } from '../keyboardController.js';
-import { DEFAULT_OPTIONS, addMark, deleteMarkById, nearestMarkLeft } from '../state.js';
+import {
+  DEFAULT_OPTIONS,
+  addMark, deleteMarkById, nearestMarkLeft,
+  addSection, deleteSectionById, nearestSectionLeft, getSectionBounds,
+} from '../state.js';
 import './llama-whichkey.js';
 import './llama-controls.js';
 
@@ -101,6 +105,7 @@ class LlamaApp extends LitElement {
     #player-container {
       width: 100%;
       aspect-ratio: 16 / 9;
+      max-height: 40vh;     /* temporary: cap height so controls stay visible */
       background: #000;
     }
 
@@ -137,6 +142,7 @@ class LlamaApp extends LitElement {
     looping:       { type: Boolean },
     loopStart:     { type: Number },
     loopEnd:       { type: Number },
+    sections:      { type: Array },
     marks:         { type: Array },
     statusMsg:     { type: String },
     wkPrefix:      { type: String },
@@ -153,6 +159,7 @@ class LlamaApp extends LitElement {
     this.looping       = false;
     this.loopStart     = 0;
     this.loopEnd       = 0;
+    this.sections      = [];
     this.marks         = [];
     this.statusMsg     = 'Initializing...';
     this.wkPrefix      = null;
@@ -213,10 +220,31 @@ class LlamaApp extends LitElement {
       saveBack:      stub('saveBack'),
       editScratch:   stub('editScratch'),
       deleteLoop:    stub('deleteLoop'),
-      setSection:    stub('setSection'),
+      setSection: () => {
+        addSection(this.sections, this._vc?.getCurrentTime() ?? 0);
+        this.sections = [...this.sections];
+      },
       editSection:   stub('editSection'),
-      loopSection:   stub('loopSection'),
-      deleteSection: stub('deleteSection'),
+      loopSection: () => {
+        const bounds = getSectionBounds(this.sections, this.currentTime, this.duration);
+        if (!bounds || bounds.end == null) {
+          this.statusMsg = 'No section at current position.';
+          return;
+        }
+        const padStart   = DEFAULT_OPTIONS.section_loop_pad_start;
+        const padEnd     = DEFAULT_OPTIONS.section_loop_pad_end;
+        this.loopStart   = Math.max(0, bounds.start - padStart);
+        this.loopEnd     = bounds.end + padEnd;
+        this.looping     = true;
+        this.statusMsg   = 'Looping section.';
+      },
+      deleteSection: () => {
+        const section = nearestSectionLeft(this.sections, this.currentTime);
+        if (section) {
+          deleteSectionById(this.sections, section.id);
+          this.sections = [...this.sections];
+        }
+      },
       setMark: () => {
         addMark(this.marks, this._vc?.getCurrentTime() ?? 0);
         this.marks = [...this.marks];
@@ -400,6 +428,16 @@ class LlamaApp extends LitElement {
   _onLoopStartChange(e) { this.loopStart = e.detail.value; }
   _onLoopEndChange(e)   { this.loopEnd   = e.detail.value; }
 
+  _onSetSection() {
+    addSection(this.sections, this._vc?.getCurrentTime() ?? 0);
+    this.sections = [...this.sections];
+  }
+
+  _onDeleteSection(e) {
+    deleteSectionById(this.sections, e.detail.id);
+    this.sections = [...this.sections];
+  }
+
   _onSetMark() {
     addMark(this.marks, this._vc?.getCurrentTime() ?? 0);
     this.marks = [...this.marks];
@@ -450,6 +488,7 @@ class LlamaApp extends LitElement {
           .looping=${this.looping}
           .loopStart=${this.loopStart}
           .loopEnd=${this.loopEnd}
+          .sections=${this.sections}
           .marks=${this.marks}
           @ll-play-pause=${this._onPlayPause}
           @ll-seek-forward=${this._onSeekForward}
@@ -459,6 +498,8 @@ class LlamaApp extends LitElement {
           @ll-set-loop-end-now=${this._onSetLoopEndNow}
           @ll-loop-start-change=${this._onLoopStartChange}
           @ll-loop-end-change=${this._onLoopEndChange}
+          @ll-set-section=${this._onSetSection}
+          @ll-delete-section=${this._onDeleteSection}
           @ll-set-mark=${this._onSetMark}
           @ll-delete-mark=${this._onDeleteMark}
         ></llama-controls>
