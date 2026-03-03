@@ -73,6 +73,18 @@ class LlamaControls extends LitElement {
 
     .btn-play-pause {
       min-width: 4.5rem;
+      padding: 0.4rem 1.1rem;
+      background: var(--ll-accent, #7ec8e3);
+      border-color: var(--ll-accent, #7ec8e3);
+      color: #1a1a1a;
+      font-weight: bold;
+      font-size: var(--ll-text-base, 1rem);
+    }
+
+    .btn-play-pause:hover {
+      background: #9fd5e8;
+      border-color: #9fd5e8;
+      color: #1a1a1a;
     }
 
     .btn-loop-toggle {
@@ -80,8 +92,16 @@ class LlamaControls extends LitElement {
     }
 
     .btn-loop-toggle.active {
+      background: var(--ll-accent, #7ec8e3);
       border-color: var(--ll-accent, #7ec8e3);
-      color: var(--ll-accent, #7ec8e3);
+      color: #1a1a1a;
+      font-weight: bold;
+    }
+
+    .btn-loop-toggle.active:hover {
+      background: #9fd5e8;
+      border-color: #9fd5e8;
+      color: #1a1a1a;
     }
 
     @keyframes loop-violation-flash {
@@ -120,7 +140,7 @@ class LlamaControls extends LitElement {
     .time-input {
       font-family: var(--ll-font-mono, monospace);
       font-size: var(--ll-text-sm, 0.85rem);
-      width: 6ch;
+      width: 7ch;
       padding: 0.2rem 0.4rem;
       background: var(--ll-surface-raised, #2a2a2a);
       border: 1px solid var(--ll-border, #444);
@@ -217,6 +237,7 @@ class LlamaControls extends LitElement {
     loopSource:         { type: String },
     editScratchActive:  { type: Boolean },
     editScratchFocus:   { type: String },
+    editScratchDelta:   { type: Number },
     loopViolation:      { type: Boolean },
   };
 
@@ -236,6 +257,7 @@ class LlamaControls extends LitElement {
     this.editScratchActive = false;
     this.editScratchFocus  = 'start';
     this.loopViolation     = false;
+    this.editScratchDelta  = 1;
     this._startRef          = createRef();
     this._endRef      = createRef();
     this._loopNameRef = createRef();
@@ -246,6 +268,19 @@ class LlamaControls extends LitElement {
     const m = Math.floor(secs / 60);
     const s = Math.floor(secs % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
+  }
+
+  // Format for loop-endpoint inputs: uses m:ss.t when sub-second delta is
+  // active (delta < 1); falls back to m:ss otherwise.
+  _fmtLoop(secs) {
+    if (secs == null) return '?';
+    if (this.editScratchDelta < 1) {
+      const rounded = Math.round(secs * 10) / 10;
+      const m = Math.floor(rounded / 60);
+      const rawS = rounded % 60;
+      return `${m}:${rawS.toFixed(1).padStart(4, '0')}`;
+    }
+    return this._fmt(secs);
   }
 
   // Parse a time string to seconds. Returns a Number or null if invalid.
@@ -270,19 +305,22 @@ class LlamaControls extends LitElement {
   }
 
   firstUpdated() {
-    if (this._startRef.value) this._startRef.value.value = this._fmt(this.loopStart);
-    if (this._endRef.value)   this._endRef.value.value   = this._fmt(this.loopEnd);
+    if (this._startRef.value) this._startRef.value.value = this._fmtLoop(this.loopStart);
+    if (this._endRef.value)   this._endRef.value.value   = this._fmtLoop(this.loopEnd);
   }
 
   // Sync inputs when loopStart/loopEnd change from outside (keyboard or Now
   // button), but only when loopStart/loopEnd actually changed -- so a poll
   // re-render (which only changes currentTime) never disturbs a user mid-edit.
+  // Also re-sync when editScratchDelta changes, since the format may change.
   updated(changedProps) {
-    if (changedProps.has('loopStart') && this._startRef.value) {
-      this._startRef.value.value = this._fmt(this.loopStart);
+    if ((changedProps.has('loopStart') || changedProps.has('editScratchDelta'))
+        && this._startRef.value) {
+      this._startRef.value.value = this._fmtLoop(this.loopStart);
     }
-    if (changedProps.has('loopEnd') && this._endRef.value) {
-      this._endRef.value.value = this._fmt(this.loopEnd);
+    if ((changedProps.has('loopEnd') || changedProps.has('editScratchDelta'))
+        && this._endRef.value) {
+      this._endRef.value.value = this._fmtLoop(this.loopEnd);
     }
   }
 

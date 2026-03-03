@@ -194,7 +194,7 @@ class LlamaApp extends LitElement {
     this.windowFocused       = true;
     this.editScratchActive   = false;
     this.editScratchFocus    = 'start';
-    this.editScratchDelta    = EDIT_SCRATCH_DELTAS[0];
+    this.editScratchDelta    = EDIT_SCRATCH_DELTAS[2];
     this.loopViolation       = false;
     this._vc                 = null;
     this._kb                 = null;
@@ -229,8 +229,8 @@ class LlamaApp extends LitElement {
       entityType:    stub('entityType'),
       nextEntity:    stub('nextEntity'),
       jumpToStart:   () => this._vc?.seekTo(this.looping ? this.loopStart : 0),
-      setLoopStart:  () => { this.loopStart = this._vc?.getCurrentTime() ?? 0; },
-      setLoopEnd:    () => { this.loopEnd   = this._vc?.getCurrentTime() ?? 0; },
+      setLoopStart:  () => { this.loopStart = this._vc?.getCurrentTime() ?? 0; this._autoDisableLoopIfInvalid(); },
+      setLoopEnd:    () => { this.loopEnd   = this._vc?.getCurrentTime() ?? 0; this._autoDisableLoopIfInvalid(); },
       undo:          stub('undo'),
       redo:          stub('redo'),
       helpKeys:      stub('helpKeys'),
@@ -246,7 +246,14 @@ class LlamaApp extends LitElement {
       jumpHistory:   stub('jumpHistory'),
       jumpBack:      stub('jumpBack'),
       jumpForward:   stub('jumpForward'),
-      toggleLoop: () => { this.looping = !this.looping; },
+      toggleLoop: () => {
+        if (!this.looping && !this._isLoopValid()) {
+          this._flashLoopViolation();
+          this.statusMsg = 'Invalid loop range: start must be before end.';
+          return;
+        }
+        this.looping = !this.looping;
+      },
       saveLoop: () => {
         addLoop(this.namedLoops, this.loopStart, this.loopEnd);
         this.namedLoops = [...this.namedLoops];
@@ -403,7 +410,7 @@ class LlamaApp extends LitElement {
     this._kb.disable();
     this.editScratchActive   = true;
     this.editScratchFocus    = 'start';
-    this.editScratchDelta    = EDIT_SCRATCH_DELTAS[0];
+    this.editScratchDelta    = EDIT_SCRATCH_DELTAS[2];
     this._editScratchHandler = (e) => this._editScratchKeyDown(e);
     document.addEventListener('keydown', this._editScratchHandler);
   }
@@ -438,6 +445,7 @@ class LlamaApp extends LitElement {
       } else {
         this.loopEnd = Math.max(0, Math.min(this.loopEnd + delta, maxT));
       }
+      this._autoDisableLoopIfInvalid();
       return;
     }
 
@@ -469,6 +477,7 @@ class LlamaApp extends LitElement {
       } else {
         this.loopEnd = this.duration ?? 0;
       }
+      this._autoDisableLoopIfInvalid();
       return;
     }
 
@@ -605,11 +614,42 @@ class LlamaApp extends LitElement {
     this._seek(-this.seekDelta);
   }
 
-  _onToggleLoop()       { this.looping   = !this.looping; }
-  _onSetLoopStartNow()  { this.loopStart = this.currentTime; }
-  _onSetLoopEndNow()    { this.loopEnd   = this.currentTime; }
-  _onLoopStartChange(e) { this.loopStart = e.detail.value; }
-  _onLoopEndChange(e)   { this.loopEnd   = e.detail.value; }
+  _isLoopValid() {
+    return this.loopStart < this.loopEnd;
+  }
+
+  _autoDisableLoopIfInvalid() {
+    if (this.looping && !this._isLoopValid()) this.looping = false;
+  }
+
+  _onToggleLoop() {
+    if (!this.looping && !this._isLoopValid()) {
+      this._flashLoopViolation();
+      this.statusMsg = 'Invalid loop range: start must be before end.';
+      return;
+    }
+    this.looping = !this.looping;
+  }
+
+  _onSetLoopStartNow() {
+    this.loopStart = this.currentTime;
+    this._autoDisableLoopIfInvalid();
+  }
+
+  _onSetLoopEndNow() {
+    this.loopEnd = this.currentTime;
+    this._autoDisableLoopIfInvalid();
+  }
+
+  _onLoopStartChange(e) {
+    this.loopStart = e.detail.value;
+    this._autoDisableLoopIfInvalid();
+  }
+
+  _onLoopEndChange(e) {
+    this.loopEnd = e.detail.value;
+    this._autoDisableLoopIfInvalid();
+  }
 
   _onSetSection() {
     addSection(this.sections, this._vc?.getCurrentTime() ?? 0);
@@ -716,6 +756,7 @@ class LlamaApp extends LitElement {
           .loopSource=${this.loopSource}
           .editScratchActive=${this.editScratchActive}
           .editScratchFocus=${this.editScratchFocus}
+          .editScratchDelta=${this.editScratchDelta}
           .loopViolation=${this.loopViolation}
           @ll-play-pause=${this._onPlayPause}
           @ll-seek-forward=${this._onSeekForward}

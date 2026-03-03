@@ -8,41 +8,7 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 ## TODO
 
 V2 implementation:
-
-    8b-1. Mechanical fixes:
-        - Enter in start/end input: submit then blur, returning focus to the
-          app (not leaving focus stuck in the text box).
-        - Back/Fwd buttons: replace "Back" / "Fwd" text with arrow symbols
-          (e.g., ◀ / ▶).
-        - Edit-scratch delta choices: change constant to [0.1, 1, 5, 10, 30].
-
-    g c -am '8b-1. Mechanical fixes'
-
-    =====================
-
-    /rename loopllama-v2-stage-8b-2
-
-    8b-2. Visual polish and state logic:
-        - Play/Pause: make it visually prominent (distinct color or size) as
-          the primary action button on the page.
-        - Loop button: improve toggle visual treatment (active vs. inactive
-          styling clearly distinguishable) without Shoelace. A full toggle
-          switch component is deferred until Shoelace is introduced.
-        - Invalid loop: looping must never be true when loopStart >= loopEnd.
-          Two enforcement points: (a) if the user tries to enable looping
-          via `ll` or the button when the range is invalid, block it and
-          show a warning -- state stays false; (b) if looping is currently
-          true and the user edits endpoints so the range becomes invalid,
-          auto-set looping to false. The button always reflects the actual
-          state; no visual deception needed.
-        - Sub-second display: when editScratchDelta is 0.1, format start/end
-          in the text boxes as m:ss.t (one decimal place) so nudges are
-          visible. Revert to m:ss when delta >= 1.
-
-    g c -am '8b-2. Visual polish and state logic'
-
-    =====================
-
+    
     /rename loopllama-v2-stage-8b-3
 
     8b-3. Layout grouping and edit-scratch visual indicator:
