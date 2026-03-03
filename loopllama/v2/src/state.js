@@ -139,6 +139,20 @@ export function nearestSectionLeft(sections, time) {
   return result;
 }
 
+// Add a named loop (sorted by start). Returns the new loop.
+export function addLoop(loops, start, end, name = '') {
+  const loop = createLoop(start, end, name);
+  loops.push(loop);
+  loops.sort((a, b) => a.start - b.start);
+  return loop;
+}
+
+// Remove a named loop by id.
+export function deleteLoopById(loops, id) {
+  const idx = loops.findIndex(l => l.id === id);
+  if (idx !== -1) loops.splice(idx, 1);
+}
+
 // Get the effective start/end bounds of the section containing the given time.
 // Returns { start, end } or null if the playhead is outside any section
 // (before the first divider, or in a gap zone created by an explicit section.end).

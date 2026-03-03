@@ -7,6 +7,7 @@ import {
   DEFAULT_OPTIONS,
   addMark, deleteMarkById, nearestMarkLeft,
   addSection, deleteSectionById, nearestSectionLeft, getSectionBounds,
+  addLoop, deleteLoopById,
 } from '../state.js';
 import './llama-whichkey.js';
 import './llama-controls.js';
@@ -144,6 +145,8 @@ class LlamaApp extends LitElement {
     loopEnd:       { type: Number },
     sections:      { type: Array },
     marks:         { type: Array },
+    namedLoops:    { type: Array },
+    loopSource:    { type: String },
     statusMsg:     { type: String },
     wkPrefix:      { type: String },
     wkCompletions: { type: Object },
@@ -161,6 +164,8 @@ class LlamaApp extends LitElement {
     this.loopEnd       = 0;
     this.sections      = [];
     this.marks         = [];
+    this.namedLoops    = [];
+    this.loopSource    = null;
     this.statusMsg     = 'Initializing...';
     this.wkPrefix      = null;
     this.wkCompletions = null;
@@ -214,12 +219,51 @@ class LlamaApp extends LitElement {
       jumpHistory:   stub('jumpHistory'),
       jumpBack:      stub('jumpBack'),
       jumpForward:   stub('jumpForward'),
-      toggleLoop:    () => { this.looping = !this.looping; },
-      openLoop:      stub('openLoop'),
-      saveLoop:      stub('saveLoop'),
-      saveBack:      stub('saveBack'),
-      editScratch:   stub('editScratch'),
-      deleteLoop:    stub('deleteLoop'),
+      toggleLoop: () => { this.looping = !this.looping; },
+      saveLoop: () => {
+        addLoop(this.namedLoops, this.loopStart, this.loopEnd);
+        this.namedLoops = [...this.namedLoops];
+        this.statusMsg  = 'Loop saved.';
+      },
+      openLoop: () => {
+        if (!this.namedLoops.length) {
+          this.statusMsg = 'No saved loops.';
+          return;
+        }
+        // Cycle: load the next loop after the current source (wrapping).
+        const idx  = this.namedLoops.findIndex(l => l.id === this.loopSource);
+        const next = this.namedLoops[(idx + 1) % this.namedLoops.length];
+        this.loopStart  = next.start;
+        this.loopEnd    = next.end;
+        this.loopSource = next.id;
+        this.statusMsg  = `Loop loaded: ${next.name || 'unnamed'}`;
+      },
+      saveBack: () => {
+        if (!this.loopSource) {
+          this.statusMsg = 'No source loop to save back to.';
+          return;
+        }
+        const idx = this.namedLoops.findIndex(l => l.id === this.loopSource);
+        if (idx === -1) {
+          this.statusMsg = 'Source loop not found.';
+          return;
+        }
+        this.namedLoops[idx].start = this.loopStart;
+        this.namedLoops[idx].end   = this.loopEnd;
+        this.namedLoops = [...this.namedLoops];
+        this.statusMsg  = 'Saved back to source loop.';
+      },
+      editScratch: stub('editScratch'),
+      deleteLoop: () => {
+        if (!this.loopSource) {
+          this.statusMsg = 'No source loop to delete.';
+          return;
+        }
+        deleteLoopById(this.namedLoops, this.loopSource);
+        this.namedLoops = [...this.namedLoops];
+        this.loopSource = null;
+        this.statusMsg  = 'Source loop deleted.';
+      },
       setSection: () => {
         addSection(this.sections, this._vc?.getCurrentTime() ?? 0);
         this.sections = [...this.sections];
@@ -448,6 +492,26 @@ class LlamaApp extends LitElement {
     this.marks = [...this.marks];
   }
 
+  _onSaveLoop(e) {
+    addLoop(this.namedLoops, this.loopStart, this.loopEnd, e.detail.name);
+    this.namedLoops = [...this.namedLoops];
+  }
+
+  _onLoadLoop(e) {
+    const loop = this.namedLoops.find(l => l.id === e.detail.id);
+    if (!loop) return;
+    this.loopStart  = loop.start;
+    this.loopEnd    = loop.end;
+    this.loopSource = loop.id;
+    this.statusMsg  = `Loop loaded: ${loop.name || 'unnamed'}`;
+  }
+
+  _onDeleteLoop(e) {
+    deleteLoopById(this.namedLoops, e.detail.id);
+    this.namedLoops = [...this.namedLoops];
+    if (this.loopSource === e.detail.id) this.loopSource = null;
+  }
+
   render() {
     return html`
       <header class="app-header">
@@ -490,6 +554,8 @@ class LlamaApp extends LitElement {
           .loopEnd=${this.loopEnd}
           .sections=${this.sections}
           .marks=${this.marks}
+          .namedLoops=${this.namedLoops}
+          .loopSource=${this.loopSource}
           @ll-play-pause=${this._onPlayPause}
           @ll-seek-forward=${this._onSeekForward}
           @ll-seek-back=${this._onSeekBack}
@@ -502,6 +568,9 @@ class LlamaApp extends LitElement {
           @ll-delete-section=${this._onDeleteSection}
           @ll-set-mark=${this._onSetMark}
           @ll-delete-mark=${this._onDeleteMark}
+          @ll-save-loop=${this._onSaveLoop}
+          @ll-load-loop=${this._onLoadLoop}
+          @ll-delete-loop=${this._onDeleteLoop}
         ></llama-controls>
       </div>
 

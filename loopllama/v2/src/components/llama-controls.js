@@ -24,6 +24,9 @@
 //   ll-delete-section       -- delete a section; detail.id = section id
 //   ll-set-mark             -- set a mark at current time
 //   ll-delete-mark          -- delete a mark; detail.id = mark id
+//   ll-save-loop            -- save scratch as named loop; detail.name = string
+//   ll-load-loop            -- load a named loop; detail.id = loop id
+//   ll-delete-loop          -- delete a named loop; detail.id = loop id
 
 import { LitElement, html, css } from 'lit';
 import { createRef, ref } from 'lit/directives/ref.js';
@@ -164,6 +167,26 @@ class LlamaControls extends LitElement {
       color: var(--ll-text, #e0e0e0);
       border-color: transparent;
     }
+
+    .mark-chip.loaded {
+      border-color: var(--ll-accent, #7ec8e3);
+    }
+
+    .loop-name-input {
+      font-family: var(--ll-font-mono, monospace);
+      font-size: var(--ll-text-sm, 0.85rem);
+      width: 8ch;
+      padding: 0.2rem 0.4rem;
+      background: var(--ll-surface-raised, #2a2a2a);
+      border: 1px solid var(--ll-border, #444);
+      border-radius: var(--ll-radius, 3px);
+      color: var(--ll-text, #e0e0e0);
+    }
+
+    .loop-name-input:focus {
+      outline: none;
+      border-color: var(--ll-accent, #7ec8e3);
+    }
   `;
 
   static properties = {
@@ -176,6 +199,8 @@ class LlamaControls extends LitElement {
     loopEnd:     { type: Number },
     sections:    { type: Array },
     marks:       { type: Array },
+    namedLoops:  { type: Array },
+    loopSource:  { type: String },
   };
 
   constructor() {
@@ -189,8 +214,11 @@ class LlamaControls extends LitElement {
     this.loopEnd     = 0;
     this.sections    = [];
     this.marks       = [];
-    this._startRef   = createRef();
-    this._endRef     = createRef();
+    this.namedLoops  = [];
+    this.loopSource  = null;
+    this._startRef    = createRef();
+    this._endRef      = createRef();
+    this._loopNameRef = createRef();
   }
 
   _fmt(secs) {
@@ -246,6 +274,12 @@ class LlamaControls extends LitElement {
       // Revert invalid input to the current value.
       this._startRef.value.value = this._fmt(this.loopStart);
     }
+  }
+
+  _onSaveLoopClick() {
+    const name = this._loopNameRef.value?.value?.trim() ?? '';
+    this._emit('ll-save-loop', { name });
+    if (this._loopNameRef.value) this._loopNameRef.value.value = '';
   }
 
   _submitEnd() {
@@ -339,6 +373,39 @@ class LlamaControls extends LitElement {
                       class="btn-delete"
                       title="Delete mark"
                       @click=${() => this._emit('ll-delete-mark', { id: m.id })}
+                    >×</button>
+                  </span>
+                `)}
+              </div>
+            `}
+        </div>
+
+        <div class="controls-row">
+          <span class="label">Loops:</span>
+          <input
+            ${ref(this._loopNameRef)}
+            class="loop-name-input"
+            type="text"
+            placeholder="name"
+          />
+          <button @click=${this._onSaveLoopClick}>Save</button>
+          ${this.namedLoops.length === 0
+            ? html`<span class="sep">none</span>`
+            : html`
+              <div class="marks-list">
+                ${this.namedLoops.map((l, i) => html`
+                  <span class="mark-chip ${l.id === this.loopSource ? 'loaded' : ''}">
+                    <span class="mark-label">${l.name || `#${i + 1}`}</span>
+                    <span class="mark-time">${this._fmt(l.start)}–${this._fmt(l.end)}</span>
+                    <button
+                      class="btn-delete"
+                      title="Load loop"
+                      @click=${() => this._emit('ll-load-loop', { id: l.id })}
+                    >load</button>
+                    <button
+                      class="btn-delete"
+                      title="Delete loop"
+                      @click=${() => this._emit('ll-delete-loop', { id: l.id })}
                     >×</button>
                   </span>
                 `)}

@@ -1,27 +1,13 @@
 
 ## CURRENT SESSION
 
-/rename loopllama-v2-stage-7c
-
-    =============
-
 Current stage to implement:
 
 The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclear or need adjustment.
 
-    =============
-
 ## TODO
 
 V2 implementation:
-
-    /rename loopllama-v2-stage-7d
-
-    7d. Named loops: Implement Loop entity CRUD in state.js (save, load,
-        delete, save-back). Wire `lo`, `ls`, `ld`, `lb` bindings.
-        Goal: named loops can be saved and loaded via keyboard.
-
-    g c -am '7d. Named loops'
 
     =============
 
