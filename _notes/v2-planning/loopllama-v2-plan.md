@@ -400,8 +400,6 @@ v2/
     scratch-loop) and loops-picker (load a saved loop). Wire `ls` and
     `lo` bindings.
 
-### TODO
-
 9d. Code cleanup (delete/edit handlers): Replace the three wrong
     handler implementations that predate the picker-based delete/edit
     design: deleteSection (used nearestSectionLeft), deleteMark (used
@@ -426,7 +424,25 @@ v2/
 9g. Loop delete: add a delete mode to the existing loops-picker
     (same `mode` pattern). Wire `ld` (picker → delete).
 
-9h. Chapter support: Chapter entity CRUD in state.js (create, edit,
+### TODO
+
+10. Jump to loop via picker: wire the `jl` binding to the existing
+    loops-picker in 'open' mode. (`jm` and `js` were already wired
+    in stages 9e/9f; no new component needed here.)
+
+11. Jump by time: build a time-input modal (single field accepting
+    mm:ss or raw seconds). Wire `jj` binding. Seek the player to
+    the entered time and push a jump-history entry.
+
+12. Entity-type navigation: add `activeEntityType` to app state
+    (values: 'any' | 'video' | 'section' | 'loop' | 'mark'; default
+    'any'). Build an entity-type picker that sets this value. Wire
+    `/` to open the picker. Wire `,` and `.` to seek to the
+    previous/next entity of the active type, using playhead position
+    as reference. 'any' navigates across all entity types sorted by
+    time position.
+
+13. Chapter support: Chapter entity CRUD in state.js (create, edit,
     delete). Chapter picker (select which chapter to make active) and
     edit-chapter-modal (name, start, end). Next/prev chapter
     navigation. Timeline scoping: when a chapter is active, constrain
@@ -434,7 +450,7 @@ v2/
     entities to those whose chapterId matches. Wire chapter key
     bindings: cc, co, ce, cd.
 
-9i. Dropdown menus: build a reusable dropdown menu component and add
+14. Dropdown menus: build a reusable dropdown menu component and add
     the six menu buttons to the controls area (Video, Section, Loop,
     Mark, Jump, App, Help). Wire each menu item to its corresponding
     already-implemented operation, modal, or picker. Items whose
@@ -442,7 +458,7 @@ v2/
     Help modals) are rendered as disabled stubs; they will be wired
     as each later stage completes.
 
-9j. UI polish: with the full layout in place (video area, timeline,
+15. UI polish: with the full layout in place (video area, timeline,
     controls with menus), dial in sizing and proportions -- YouTube
     frame dimensions, spacing between page regions, visual hierarchy
     in the controls area, typography, and any remaining rough edges.
@@ -450,31 +466,31 @@ v2/
     the menu bar changes the controls area layout enough to make
     earlier polish premature.
 
-10. Undo: snapshot-based undo/redo. Push a video state snapshot before
+16. Undo: snapshot-based undo/redo. Push a video state snapshot before
     each destructive or modifying operation. Implement `u`/`U` bindings.
     Session-only; no persistence needed.
 
-11. Persistence: export all data as JSON (full dump and per-video scope).
+17. Persistence: export all data as JSON (full dump and per-video scope).
     Import via file picker. URL loop sharing (encode video ID + start +
     end as query params).
 
-12. Navigation safety: persist the jump list (video.jumps). Push
+18. Navigation safety: persist the jump list (video.jumps). Push
     user-initiated seeks above the threshold. Implement `jb`/`jf`
     bindings.
 
-13a. Options-modal: seek delta, speed delta, and section padding
+19. Options-modal: seek delta, speed delta, and section padding
      settings. Wire `o` binding.
 
-13b. Help-modal: key bindings reference organized by topic sub-keys
+20. Help-modal: key bindings reference organized by topic sub-keys
      (`k`, `v`, `p`, `n`, `l`, `s`, `m`, `a`). Wire `hh`, `hk`, `?`.
 
-13c. Delete-data-modal: checkboxes for selective data clearing.
+21. Delete-data-modal: checkboxes for selective data clearing.
      Wire `dd` binding.
 
-14. Deploy: update `loopllama/index.html` to route to v2. Verify on
+22. Deploy: update `loopllama/index.html` to route to v2. Verify on
     GitHub Pages.
 
-15. Header art: add a llama mascot or logo image next to the LoopLlama
+23. Header art: add a llama mascot or logo image next to the LoopLlama
     title in the header. Requires sourcing or creating an image asset.
     Pure visual polish; defer until after deploy.
 

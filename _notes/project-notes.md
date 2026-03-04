@@ -9,61 +9,11 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 V2 implementation:
 
-    [ACTIVE]
-    9g. Loop delete: add a delete mode to the existing loops-picker
-        (same `mode` pattern). Wire `ld` (picker → delete).
-
-    g c -am '9g. Loop delete'
-
-    ===============================
-
-    /rename loopllama-v2-stage-9h
-
-    9h. Chapter support: Chapter entity CRUD in state.js (create, edit,
-        delete). Chapter picker (select which chapter to make active) and
-        edit-chapter-modal (name, start, end). Next/prev chapter
-        navigation. Timeline scoping: when a chapter is active, constrain
-        the timeline view to chapter.start/end and filter the displayed
-        entities to those whose chapterId matches. Wire chapter key
-        bindings: cc, co, ce, cd.
-
-    g c -am '9h. Chapter support'
-
-    ===============================
-
-    /rename loopllama-v2-stage-9i
-
-    9i. Dropdown menus: build a reusable dropdown menu component and add
-        the six menu buttons to the controls area (Video, Section, Loop,
-        Mark, Jump, App, Help). Wire each menu item to its corresponding
-        already-implemented operation, modal, or picker. Items whose
-        features are not yet built (Undo, Options, Export/Import,
-        Help modals) are rendered as disabled stubs; they will be wired
-        as each later stage completes.
-
-    g c -am '9i. Dropdown menus'
-
-    ===============================
-
-    /rename loopllama-v2-stage-9j
-
-    9j. UI polish: with the full layout in place (video area, timeline,
-        controls with menus), dial in sizing and proportions -- YouTube
-        frame dimensions, spacing between page regions, visual hierarchy
-        in the controls area, typography, and any remaining rough edges.
-        This pass is specifically deferred until after menus land because
-        the menu bar changes the controls area layout enough to make
-        earlier polish premature.
-
-        - Timeline: show section names if they fit.
-
-    g c -am '9j. UI polish'
-
     ===============================
 
     /rename loopllama-v2-stage-__
 
-    __
+    ==
 
     g c -am '__'
 
