@@ -458,13 +458,13 @@ v2/
     to edit the active chapter (error message if no `activeChapterId`; no picker
     needed). Wire `cz` as a stub (real impl in 13d).
 
-### TODO
-
 13d. Chapter zoom: implement `cz` (toggle chapter zoom). Add a
     `chapterZoom` boolean to app state. When true and
     `activeChapterId` is set, pass `scopeStart`/`scopeEnd` from
     the active chapter to `llama-timeline` to restrict the visible
     time range. Clearing `activeChapterId` also resets zoom.
+
+### TODO
 
 13e. Chapter entity-type navigation: add 'chapter' to the valid
     values of `activeEntityType` (extending Stage 12's 'any' |

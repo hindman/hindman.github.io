@@ -9,18 +9,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 CURRENT:
 
-    ...
-
-    13d. Chapter zoom: implement `cz` (toggle chapter zoom). Add a
-        `chapterZoom` boolean to app state. When true and
-        `activeChapterId` is set, pass `scopeStart`/`scopeEnd` from
-        the active chapter to `llama-timeline` to restrict the visible
-        time range. Clearing `activeChapterId` also resets zoom.
-
-    git commit -am '13d. Chapter zoom'
-
-    =============
-
     /rename loopllama-v2-stage-13e
 
     13e. Chapter entity-type navigation: add 'chapter' to the valid
