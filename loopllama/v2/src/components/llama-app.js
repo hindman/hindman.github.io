@@ -9,7 +9,7 @@ import {
   addMark, deleteMarkById,
   addSection, deleteSectionById, getSectionBounds, nearestSectionLeft,
   addLoop, deleteLoopById,
-  addChapter, deleteChapterById,
+  addChapter, deleteChapterById, updateChapter,
 } from '../state.js';
 import { load, save } from '../storage.js';
 import './llama-whichkey.js';
@@ -26,6 +26,7 @@ import './llama-sections-picker.js';
 import './llama-edit-section-modal.js';
 import './llama-jump-time-modal.js';
 import './llama-chapter-picker.js';
+import './llama-edit-chapter-modal.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
@@ -209,7 +210,8 @@ class LlamaApp extends LitElement {
     this._sectionsPickerEl   = null;
     this._editSectionModalEl = null;
     this._jumpTimeModalEl    = null;
-    this._chapterPickerEl    = null;
+    this._chapterPickerEl      = null;
+    this._editChapterModalEl   = null;
     this.seekDelta     = DEFAULT_OPTIONS.seek_delta_default;
     this.speedDelta    = DEFAULT_OPTIONS.speed_delta;
   }
@@ -359,9 +361,26 @@ class LlamaApp extends LitElement {
       },
       editMark:   () => this._openMarksPicker('edit'),
       deleteMark: () => this._openMarksPicker('delete'),
-      setChapter:    stub('setChapter'),
+      setChapter: () => {
+        if (!this._isLoopValid()) {
+          this.statusMsg = 'Set a valid scratch loop first (start must be before end).';
+          return;
+        }
+        this._editChapterModalEl?.showCreate(this.loopStart, this.loopEnd);
+      },
       openChapter:   () => this._openChapterPicker('open'),
-      editChapter:   stub('editChapter'),
+      editChapter: () => {
+        if (!this.activeChapterId) {
+          this.statusMsg = 'No active chapter. Open one first (co).';
+          return;
+        }
+        const chapter = this.chapters.find(c => c.id === this.activeChapterId);
+        if (!chapter) {
+          this.statusMsg = 'Active chapter not found.';
+          return;
+        }
+        this._editChapterModalEl?.showEdit(chapter);
+      },
       deleteChapter: () => this._openChapterPicker('delete'),
       zoomChapter:   stub('zoomChapter'),
       helpGeneral:   stub('helpGeneral'),
@@ -417,6 +436,7 @@ class LlamaApp extends LitElement {
     this._editSectionModalEl = this.renderRoot.querySelector('llama-edit-section-modal');
     this._jumpTimeModalEl    = this.renderRoot.querySelector('llama-jump-time-modal');
     this._chapterPickerEl    = this.renderRoot.querySelector('llama-chapter-picker');
+    this._editChapterModalEl = this.renderRoot.querySelector('llama-edit-chapter-modal');
 
     window.addEventListener('blur',  () => { this.windowFocused = false; });
     window.addEventListener('focus', () => { this.windowFocused = true; });
@@ -974,6 +994,24 @@ class LlamaApp extends LitElement {
     this.statusMsg = `Chapter: ${chapter.name || `${_fmtTimePlain(chapter.start)} → ${_fmtTimePlain(chapter.end)}`}`;
   }
 
+  // Handle ll-create-chapter from edit-chapter-modal (create mode).
+  _onCreateChapter(e) {
+    const { name, start, end } = e.detail;
+    addChapter(this.chapters, name, start, end);
+    this.chapters  = [...this.chapters];
+    this.statusMsg = `Chapter created: ${name || _fmtTimePlain(start)}`;
+    this._saveCurrentState();
+  }
+
+  // Handle ll-update-chapter from edit-chapter-modal (edit mode).
+  _onUpdateChapter(e) {
+    const { id, name, start, end } = e.detail;
+    updateChapter(this.chapters, id, { name, start, end });
+    this.chapters  = [...this.chapters];
+    this.statusMsg = `Chapter updated: ${name || _fmtTimePlain(start)}`;
+    this._saveCurrentState();
+  }
+
   // Handle ll-delete-chapter from chapter picker (mode='delete').
   _onDeleteChapter(e) {
     deleteChapterById(this.chapters, e.detail.id);
@@ -1156,6 +1194,13 @@ class LlamaApp extends LitElement {
         @ll-open-chapter=${this._onOpenChapter}
         @ll-delete-chapter=${this._onDeleteChapter}
       ></llama-chapter-picker>
+
+      <llama-edit-chapter-modal
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+        @ll-create-chapter=${this._onCreateChapter}
+        @ll-update-chapter=${this._onUpdateChapter}
+      ></llama-edit-chapter-modal>
 
       <llama-whichkey
         .prefix=${this.wkPrefix}

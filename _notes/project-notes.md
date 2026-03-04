@@ -9,7 +9,7 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 CURRENT:
 
-    /rename loopllama-v2-stage-13c
+    ...
 
     13c. Edit-chapter-modal: build `llama-edit-chapter-modal` (name,
         Edit-chapter-modal: build `llama-edit-chapter-modal` (name, start, end
