@@ -9,11 +9,16 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 CURRENT:
 
-    ...  Chapter picker: build `llama-chapter-picker` (mode:
-        'open' | 'delete'). Wire `co` to open picker in 'open' mode
-        (sets activeChapterId) and `cd` to 'delete' mode.
+    /rename loopllama-v2-stage-13c
 
-    git commit -am '13b. Chapter picker'
+    13c. Edit-chapter-modal: build `llama-edit-chapter-modal` (name,
+        Edit-chapter-modal: build `llama-edit-chapter-modal` (name, start, end
+        fields). Wire `cc` to open the modal in create mode, pre-filled with the
+        current scratch-loop start/end (error if scratch loop is invalid). Wire `ce`
+        to edit the active chapter (error message if no `activeChapterId`; no picker
+        needed). Wire `cz` as a stub (real impl in 13d).
+
+    git commit -am '13c. Edit-chapter-modal'
 
 URLS:
 

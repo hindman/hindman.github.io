@@ -68,10 +68,11 @@ export const BINDINGS = {
   }},
 
   'c': { completions: {
-    'c': { handler: 'setChapter',    desc: 'Set new chapter here' },
+    'c': { handler: 'setChapter',    desc: 'Create chapter from scratch loop' },
     'o': { handler: 'openChapter',   desc: 'Open chapter' },
     'e': { handler: 'editChapter',   desc: 'Edit current chapter' },
-    'd': { handler: 'deleteChapter', desc: 'Delete current chapter' },
+    'd': { handler: 'deleteChapter', desc: 'Delete a chapter' },
+    'z': { handler: 'zoomChapter',   desc: 'Toggle chapter zoom' },
   }},
 
   's': { completions: {

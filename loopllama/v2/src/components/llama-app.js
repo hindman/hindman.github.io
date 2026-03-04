@@ -363,6 +363,7 @@ class LlamaApp extends LitElement {
       openChapter:   () => this._openChapterPicker('open'),
       editChapter:   stub('editChapter'),
       deleteChapter: () => this._openChapterPicker('delete'),
+      zoomChapter:   stub('zoomChapter'),
       helpGeneral:   stub('helpGeneral'),
       deleteData:    stub('deleteData'),
       exportAll:     stub('exportAll'),
@@ -960,12 +961,17 @@ class LlamaApp extends LitElement {
   }
 
   // Handle ll-open-chapter from chapter picker (mode='open').
+  // Sets activeChapterId, loads chapter's range into scratch loop,
+  // and seeks the player to chapter.start.
   _onOpenChapter(e) {
-    this.activeChapterId = e.detail.id;
     const chapter = this.chapters.find(c => c.id === e.detail.id);
-    this.statusMsg = chapter
-      ? `Chapter: ${chapter.name || `${_fmtTimePlain(chapter.start)} → ${_fmtTimePlain(chapter.end)}`}`
-      : '';
+    if (!chapter) return;
+    this.activeChapterId = chapter.id;
+    this.loopStart = chapter.start;
+    this.loopEnd   = chapter.end;
+    this._autoDisableLoopIfInvalid();
+    this._vc?.seekTo(chapter.start);
+    this.statusMsg = `Chapter: ${chapter.name || `${_fmtTimePlain(chapter.start)} → ${_fmtTimePlain(chapter.end)}`}`;
   }
 
   // Handle ll-delete-chapter from chapter picker (mode='delete').

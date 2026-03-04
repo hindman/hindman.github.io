@@ -440,31 +440,37 @@ v2/
     as reference. 'any' navigates across all entity types sorted by
     time position.
 
-### TODO
-
 13a. Chapter state layer: add `activeChapterId` to app state. Add
     `createChapter` factory. Add CRUD helpers (`addChapter`,
-    `updateChapter`, `deleteChapter`) to state.js. Wire
-    `activeChapterId` as a reactive property in llama-app.js.
+    `updateChapter`, `deleteChapter`) to state.js. Wire `chapters`
+    and `activeChapterId` as reactive properties in llama-app.js.
+    Sync chapters in `_syncFromVideo` and `_saveCurrentState`.
 
 13b. Chapter picker: build `llama-chapter-picker` (mode:
-    'open' | 'delete'). Wire `co` to open picker in 'open' mode
-    (sets activeChapterId) and `cd` to 'delete' mode.
+    'open' | 'delete'). Wire `co` to open picker in 'open' mode:
+    sets `activeChapterId`, loads chapter's start/end into scratch
+    loop, seeks player to chapter.start. Wire `cd` to 'delete' mode.
+
+### TODO
 
 13c. Edit-chapter-modal: build `llama-edit-chapter-modal` (name,
-    start, end fields). Wire `cc` to open in create mode (positioned
-    at current playhead time) and `ce` to edit the active chapter.
+    Edit-chapter-modal: build `llama-edit-chapter-modal` (name, start, end
+    fields). Wire `cc` to open the modal in create mode, pre-filled with the
+    current scratch-loop start/end (error if scratch loop is invalid). Wire `ce`
+    to edit the active chapter (error message if no `activeChapterId`; no picker
+    needed). Wire `cz` as a stub (real impl in 13d).
 
-13d. Timeline scoping: when `activeChapterId` is set, pass
-    scopeStart/scopeEnd from the active chapter to llama-timeline;
-    filter displayed sections, loops, and marks to those with
-    matching chapterId.
+13d. Chapter zoom: implement `cz` (toggle chapter zoom). Add a
+    `chapterZoom` boolean to app state. When true and
+    `activeChapterId` is set, pass `scopeStart`/`scopeEnd` from
+    the active chapter to `llama-timeline` to restrict the visible
+    time range. Clearing `activeChapterId` also resets zoom.
 
-13e. Chapter entity-type navigation: add 'chapter' to the valid values
-    of `activeEntityType` (extending Stage 12's 'any' | 'video' |
-    'section' | 'loop' | 'mark'). Add 'chapter' as an option in the
-    entity-type picker. Ensure the `,`/`.` navigation logic can find
-    prev/next chapter by time position relative to the playhead.
+13e. Chapter entity-type navigation: add 'chapter' to the valid
+    values of `activeEntityType` (extending Stage 12's 'any' |
+    'video' | 'section' | 'loop' | 'mark'). Add 'chapter' as an
+    option in the entity-type picker. Ensure `,`/`.` navigation
+    finds prev/next chapter by `chapter.start` relative to playhead.
 
 14a. Dropdown component + controls layout: build the reusable dropdown
     component (thin wrapper around Shoelace sl-dropdown/sl-menu/
