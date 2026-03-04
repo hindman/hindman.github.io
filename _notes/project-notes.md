@@ -11,14 +11,25 @@ CURRENT:
 
     ...
 
-    13c. Edit-chapter-modal: build `llama-edit-chapter-modal` (name,
-        Edit-chapter-modal: build `llama-edit-chapter-modal` (name, start, end
-        fields). Wire `cc` to open the modal in create mode, pre-filled with the
-        current scratch-loop start/end (error if scratch loop is invalid). Wire `ce`
-        to edit the active chapter (error message if no `activeChapterId`; no picker
-        needed). Wire `cz` as a stub (real impl in 13d).
+    13d. Chapter zoom: implement `cz` (toggle chapter zoom). Add a
+        `chapterZoom` boolean to app state. When true and
+        `activeChapterId` is set, pass `scopeStart`/`scopeEnd` from
+        the active chapter to `llama-timeline` to restrict the visible
+        time range. Clearing `activeChapterId` also resets zoom.
 
-    git commit -am '13c. Edit-chapter-modal'
+    git commit -am '13d. Chapter zoom'
+
+    =============
+
+    /rename loopllama-v2-stage-13e
+
+    13e. Chapter entity-type navigation: add 'chapter' to the valid
+        values of `activeEntityType` (extending Stage 12's 'any' |
+        'video' | 'section' | 'loop' | 'mark'). Add 'chapter' as an
+        option in the entity-type picker. Ensure `,`/`.` navigation
+        finds prev/next chapter by `chapter.start` relative to playhead.
+
+    git commit -am '13e. Chapter entity-type navigation'
 
 URLS:
 

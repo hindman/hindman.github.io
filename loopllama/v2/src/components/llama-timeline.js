@@ -8,6 +8,8 @@
 //   marks:       Array    -- Mark objects sorted by time { id, time, name }
 //   loopStart:   Number   -- scratch-loop start (seconds)
 //   loopEnd:     Number   -- scratch-loop end (seconds)
+//   scopeStart:  Number   -- visible range start (seconds); null = 0
+//   scopeEnd:    Number   -- visible range end (seconds); null = duration
 //
 // Fires (bubbles + composed):
 //   ll-seek-to  -- user clicked the video zone; detail.time = seconds
@@ -151,6 +153,8 @@ class LlamaTimeline extends LitElement {
     marks:       { type: Array },
     loopStart:   { type: Number },
     loopEnd:     { type: Number },
+    scopeStart:  { type: Number },
+    scopeEnd:    { type: Number },
   };
 
   constructor() {
@@ -161,11 +165,16 @@ class LlamaTimeline extends LitElement {
     this.marks       = [];
     this.loopStart   = 0;
     this.loopEnd     = 0;
+    this.scopeStart  = null;
+    this.scopeEnd    = null;
   }
 
-  // Convert a time value (seconds) to a percentage of the timeline width.
+  // Convert a time value (seconds) to a percentage of the visible range.
+  // When scopeStart/scopeEnd are set (chapter zoom), maps within that range.
   _pct(t) {
-    return Math.max(0, Math.min(100, (t / this.duration) * 100));
+    const start = this.scopeStart ?? 0;
+    const end   = this.scopeEnd   ?? this.duration;
+    return Math.max(0, Math.min(100, ((t - start) / (end - start)) * 100));
   }
 
   // Format seconds as m:ss for tooltip display.
@@ -194,9 +203,11 @@ class LlamaTimeline extends LitElement {
 
   _onVideoZoneClick(e) {
     if (!this.duration) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const pct  = (e.clientX - rect.left) / rect.width;
-    const time = Math.max(0, Math.min(this.duration, pct * this.duration));
+    const start = this.scopeStart ?? 0;
+    const end   = this.scopeEnd   ?? this.duration;
+    const rect  = e.currentTarget.getBoundingClientRect();
+    const pct   = (e.clientX - rect.left) / rect.width;
+    const time  = Math.max(start, Math.min(end, start + pct * (end - start)));
     this.dispatchEvent(new CustomEvent('ll-seek-to', {
       bubbles: true, composed: true, detail: { time },
     }));

@@ -167,6 +167,7 @@ class LlamaApp extends LitElement {
     activeEntityType:   { type: String },
     chapters:           { type: Array },
     activeChapterId:    { type: String },
+    chapterZoom:        { type: Boolean },
   };
 
   constructor() {
@@ -195,6 +196,7 @@ class LlamaApp extends LitElement {
     this.activeEntityType    = 'any';
     this.chapters            = [];
     this.activeChapterId     = null;
+    this.chapterZoom         = false;
     this._vc                 = null;
     this._kb                 = null;
     this._pollId             = null;
@@ -229,6 +231,13 @@ class LlamaApp extends LitElement {
     this.loopSource = null;
     this.speed      = video.speed ?? 1.0;
     this._vc?.setPlaybackRate(this.speed);
+    if (this.activeChapterId) {
+      this.activeChapterId = null;
+      if (this.chapterZoom) {
+        this.chapterZoom = false;
+        this.statusMsg   = 'Chapter zoom cleared.';
+      }
+    }
   }
 
   // Persist current reactive state back to the current video and save to
@@ -382,7 +391,14 @@ class LlamaApp extends LitElement {
         this._editChapterModalEl?.showEdit(chapter);
       },
       deleteChapter: () => this._openChapterPicker('delete'),
-      zoomChapter:   stub('zoomChapter'),
+      zoomChapter: () => {
+        if (!this.activeChapterId) {
+          this.statusMsg = 'No active chapter. Open one first (co).';
+          return;
+        }
+        this.chapterZoom = !this.chapterZoom;
+        this.statusMsg   = this.chapterZoom ? 'Chapter zoom on.' : 'Chapter zoom off.';
+      },
       helpGeneral:   stub('helpGeneral'),
       deleteData:    stub('deleteData'),
       exportAll:     stub('exportAll'),
@@ -1016,7 +1032,13 @@ class LlamaApp extends LitElement {
   _onDeleteChapter(e) {
     deleteChapterById(this.chapters, e.detail.id);
     this.chapters = [...this.chapters];
-    if (this.activeChapterId === e.detail.id) this.activeChapterId = null;
+    if (this.activeChapterId === e.detail.id) {
+      this.activeChapterId = null;
+      if (this.chapterZoom) {
+        this.chapterZoom = false;
+        this.statusMsg   = 'Chapter zoom cleared.';
+      }
+    }
     this._saveCurrentState();
   }
 
@@ -1050,7 +1072,10 @@ class LlamaApp extends LitElement {
   }
 
   render() {
-    const currentVideo = this._appState?.videos.find(v => v.id === this.currentVideoId) ?? null;
+    const currentVideo   = this._appState?.videos.find(v => v.id === this.currentVideoId) ?? null;
+    const zoomedChapter  = this.chapterZoom && this.activeChapterId
+      ? this.chapters.find(c => c.id === this.activeChapterId) ?? null
+      : null;
     return html`
       <header class="app-header">
         <span class="app-title">LoopLlama</span>
@@ -1072,6 +1097,8 @@ class LlamaApp extends LitElement {
               .marks=${this.marks}
               .loopStart=${this.loopStart}
               .loopEnd=${this.loopEnd}
+              .scopeStart=${zoomedChapter?.start ?? null}
+              .scopeEnd=${zoomedChapter?.end ?? null}
               @ll-seek-to=${this._onSeekTo}
             ></llama-timeline>
           </div>

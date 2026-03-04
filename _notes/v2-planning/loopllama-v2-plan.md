@@ -451,14 +451,14 @@ v2/
     sets `activeChapterId`, loads chapter's start/end into scratch
     loop, seeks player to chapter.start. Wire `cd` to 'delete' mode.
 
-### TODO
-
 13c. Edit-chapter-modal: build `llama-edit-chapter-modal` (name,
     Edit-chapter-modal: build `llama-edit-chapter-modal` (name, start, end
     fields). Wire `cc` to open the modal in create mode, pre-filled with the
     current scratch-loop start/end (error if scratch loop is invalid). Wire `ce`
     to edit the active chapter (error message if no `activeChapterId`; no picker
     needed). Wire `cz` as a stub (real impl in 13d).
+
+### TODO
 
 13d. Chapter zoom: implement `cz` (toggle chapter zoom). Add a
     `chapterZoom` boolean to app state. When true and
