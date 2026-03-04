@@ -424,8 +424,6 @@ v2/
 9g. Loop delete: add a delete mode to the existing loops-picker
     (same `mode` pattern). Wire `ld` (picker → delete).
 
-### TODO
-
 10. Jump to loop via picker: wire the `jl` binding to the existing
     loops-picker in 'open' mode. (`jm` and `js` were already wired
     in stages 9e/9f; no new component needed here.)
@@ -442,21 +440,42 @@ v2/
     as reference. 'any' navigates across all entity types sorted by
     time position.
 
-13. Chapter support: Chapter entity CRUD in state.js (create, edit,
-    delete). Chapter picker (select which chapter to make active) and
-    edit-chapter-modal (name, start, end). Next/prev chapter
-    navigation. Timeline scoping: when a chapter is active, constrain
-    the timeline view to chapter.start/end and filter the displayed
-    entities to those whose chapterId matches. Wire chapter key
-    bindings: cc, co, ce, cd.
+### TODO
 
-14. Dropdown menus: build a reusable dropdown menu component and add
-    the six menu buttons to the controls area (Video, Section, Loop,
-    Mark, Jump, App, Help). Wire each menu item to its corresponding
-    already-implemented operation, modal, or picker. Items whose
-    features are not yet built (Undo, Options, Export/Import,
-    Help modals) are rendered as disabled stubs; they will be wired
-    as each later stage completes.
+13a. Chapter state layer: add `activeChapterId` to app state. Add
+    `createChapter` factory. Add CRUD helpers (`addChapter`,
+    `updateChapter`, `deleteChapter`) to state.js. Wire
+    `activeChapterId` as a reactive property in llama-app.js.
+
+13b. Chapter picker: build `llama-chapter-picker` (mode:
+    'open' | 'delete'). Wire `co` to open picker in 'open' mode
+    (sets activeChapterId) and `cd` to 'delete' mode.
+
+13c. Edit-chapter-modal: build `llama-edit-chapter-modal` (name,
+    start, end fields). Wire `cc` to open in create mode (positioned
+    at current playhead time) and `ce` to edit the active chapter.
+
+13d. Timeline scoping: when `activeChapterId` is set, pass
+    scopeStart/scopeEnd from the active chapter to llama-timeline;
+    filter displayed sections, loops, and marks to those with
+    matching chapterId.
+
+13e. Chapter entity-type navigation: add 'chapter' to the valid values
+    of `activeEntityType` (extending Stage 12's 'any' | 'video' |
+    'section' | 'loop' | 'mark'). Add 'chapter' as an option in the
+    entity-type picker. Ensure the `,`/`.` navigation logic can find
+    prev/next chapter by time position relative to the playhead.
+
+14a. Dropdown component + controls layout: build the reusable dropdown
+    component (thin wrapper around Shoelace sl-dropdown/sl-menu/
+    sl-menu-item). Add all seven menu buttons to the controls area
+    (Video, Section, Loop, Mark, Jump, App, Help). Populate all menu
+    items but wire nothing yet -- every item stubs to console.log.
+    Goal: layout proven, component working.
+
+14b. Wire all menu items: connect each item to its existing handler,
+    modal, or picker. Mark unimplemented items (Undo, Options,
+    Export/Import, Help modals) as disabled stubs.
 
 15. UI polish: with the full layout in place (video area, timeline,
     controls with menus), dial in sizing and proportions -- YouTube
