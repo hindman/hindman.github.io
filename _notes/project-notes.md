@@ -9,8 +9,7 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 V2 implementation:
 
-    /rename loopllama-v2-stage-9g
-
+    [ACTIVE]
     9g. Loop delete: add a delete mode to the existing loops-picker
         (same `mode` pattern). Wire `ld` (picker → delete).
 

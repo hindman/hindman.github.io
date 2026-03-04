@@ -3,17 +3,24 @@
 // Props:
 //   namedLoops: Array of Loop objects (is_scratch=false)
 //   loopSource: string | null  -- id of the currently loaded loop
+//   mode:       'load' | 'delete'
 //
 // Events fired (composed, bubbling):
-//   ll-load-loop  { id: string }  -- user selected a loop
+//   ll-load-loop    { id: string }  -- mode='load': user selected a loop
+//   ll-delete-loop  { id: string }  -- mode='delete': delete the loop
 //
 // API:
-//   show() / hide()
+//   show(mode?) / hide()
 
 import { LitElement, html, css } from 'lit';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
+
+const TITLES = {
+  load:   'Load Loop',
+  delete: 'Delete Loop',
+};
 
 class LlamaLoopPicker extends LitElement {
   static styles = css`
@@ -52,6 +59,10 @@ class LlamaLoopPicker extends LitElement {
       border-color: var(--ll-accent-warm, #e3a857);
       box-shadow: 0 0 0 1px var(--ll-accent, #7ec8e3);
     }
+    .loop-row.mode-delete:hover,
+    .loop-row.mode-delete.selected {
+      border-color: var(--sl-color-danger-600, #c0392b);
+    }
     .loop-primary {
       font-size: var(--ll-text-base, 1.05rem);
     }
@@ -70,6 +81,7 @@ class LlamaLoopPicker extends LitElement {
   static properties = {
     namedLoops: { type: Array },
     loopSource: { type: String },
+    mode:       { type: String },
     _filter:    { state: true },
     _selIdx:    { state: true },
   };
@@ -78,11 +90,13 @@ class LlamaLoopPicker extends LitElement {
     super();
     this.namedLoops = [];
     this.loopSource = null;
+    this.mode       = 'load';
     this._filter    = '';
     this._selIdx    = 0;
   }
 
-  show() {
+  show(mode) {
+    if (mode) this.mode = mode;
     this._filter = '';
     this._selIdx = 0;
     this.renderRoot.querySelector('llama-modal')?.show();
@@ -126,8 +140,9 @@ class LlamaLoopPicker extends LitElement {
   }
 
   _select(loop) {
-    this.dispatchEvent(new CustomEvent('ll-load-loop', {
-      detail: { id: loop.id },
+    const event = this.mode === 'delete' ? 'll-delete-loop' : 'll-load-loop';
+    this.dispatchEvent(new CustomEvent(event, {
+      detail:   { id: loop.id },
       bubbles:  true,
       composed: true,
     }));
@@ -155,9 +170,11 @@ class LlamaLoopPicker extends LitElement {
   }
 
   render() {
-    const filtered = this._filtered();
+    const filtered  = this._filtered();
+    const title     = TITLES[this.mode] ?? 'Select Loop';
+    const isDelete  = this.mode === 'delete';
     return html`
-      <llama-modal label="Load Loop" @ll-modal-initial-focus=${this._onInitialFocus}>
+      <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="filter-wrap">
           <sl-input
             placeholder="Filter by name…"
@@ -172,6 +189,7 @@ class LlamaLoopPicker extends LitElement {
             ? filtered.map((l, i) => html`
                 <div
                   class="loop-row
+                    ${isDelete ? 'mode-delete' : ''}
                     ${l.id === this.loopSource ? 'active' : ''}
                     ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(l)}

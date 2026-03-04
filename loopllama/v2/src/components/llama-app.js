@@ -297,15 +297,10 @@ class LlamaApp extends LitElement {
           return;
         }
         this.looping = !this.looping;
+        if (this.looping) this._seekIntoLoopIfNeeded();
       },
       saveLoop: () => this._saveLoopModalEl?.show(),
-      openLoop: () => {
-        if (!this.namedLoops.length) {
-          this.statusMsg = 'No saved loops.';
-          return;
-        }
-        this._loopPickerEl?.show();
-      },
+      openLoop: () => this._openLoopsPicker('load'),
       saveBack: () => {
         if (!this.loopSource) {
           this.statusMsg = 'No source loop to save back to.';
@@ -323,7 +318,7 @@ class LlamaApp extends LitElement {
         this._saveCurrentState();
       },
       editScratch: () => this._enterEditScratch(),
-      deleteLoop: () => { this.statusMsg = 'Loop delete: not yet implemented.'; },
+      deleteLoop: () => this._openLoopsPicker('delete'),
       setSection: () => {
         addSection(this.sections, this._vc?.getCurrentTime() ?? 0);
         this.sections = [...this.sections];
@@ -723,6 +718,16 @@ class LlamaApp extends LitElement {
     if (this.looping && !this._isLoopValid()) this.looping = false;
   }
 
+  // When looping is just enabled, seek to loopStart if the playhead is
+  // outside [loopStart, loopEnd].
+  _seekIntoLoopIfNeeded() {
+    const t = this._vc?.getCurrentTime();
+    if (t == null) return;
+    if (t < this.loopStart || t >= this.loopEnd) {
+      this._vc.seekTo(this.loopStart);
+    }
+  }
+
   _onToggleLoop() {
     if (!this.looping && !this._isLoopValid()) {
       this._flashLoopViolation();
@@ -730,6 +735,7 @@ class LlamaApp extends LitElement {
       return;
     }
     this.looping = !this.looping;
+    if (this.looping) this._seekIntoLoopIfNeeded();
   }
 
   _onSetLoopStartNow() {
@@ -810,6 +816,15 @@ class LlamaApp extends LitElement {
     this.namedLoops = [...this.namedLoops];
     if (this.loopSource === e.detail.id) this.loopSource = null;
     this._saveCurrentState();
+  }
+
+  // Open the loop picker in the given mode, with a guard for empty list.
+  _openLoopsPicker(mode) {
+    if (!this.namedLoops.length) {
+      this.statusMsg = 'No saved loops.';
+      return;
+    }
+    this._loopPickerEl?.show(mode);
   }
 
   // Open the marks picker in the given mode, with a guard for empty list.
@@ -983,6 +998,7 @@ class LlamaApp extends LitElement {
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-load-loop=${this._onLoadLoop}
+        @ll-delete-loop=${this._onDeleteLoop}
       ></llama-loop-picker>
 
       <llama-marks-picker
