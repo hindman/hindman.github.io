@@ -387,8 +387,6 @@ v2/
     - A subsequent Enter or Esc (when no input is focused) exits
       edit-scratch-loop mode entirely.
 
-### TODO
-
 9a. Base modal pattern: create a reusable Shoelace modal scaffolding
     and verify keyboard focus management (Esc/Enter exit, body scroll
     lock). Build url-input-modal as the first concrete modal. Wire
@@ -402,10 +400,33 @@ v2/
     scratch-loop) and loops-picker (load a saved loop). Wire `ls` and
     `lo` bindings.
 
-9d. Entity edit modals: edit-section-modal and edit-mark-modal. Wire
-    `se` and `me` bindings.
+### TODO
 
-9e. Chapter support: Chapter entity CRUD in state.js (create, edit,
+9d. Code cleanup (delete/edit handlers): Replace the three wrong
+    handler implementations that predate the picker-based delete/edit
+    design: deleteSection (used nearestSectionLeft), deleteMark (used
+    nearestMarkLeft), and deleteLoop (deleted source loop immediately).
+    Convert all three to stubs that show a status message. Fix the
+    stale desc strings in keyboardController for `sd`, `ld`, `me`,
+    and `md`.
+
+9e. Marks picker and modals: marks-picker component with a `mode`
+    prop ('open' | 'delete') so it serves multiple callers. Wire `me`
+    (picker → edit-mark-modal) and `md` (picker → delete). The
+    marks-picker also serves `jm` (jump to mark), so wire that binding
+    here as well. Build edit-mark-modal (name, time fields).
+
+9f. Sections picker and edit modal: sections-picker component,
+    same `mode` pattern as marks-picker. Wire `sd` (picker → delete)
+    and `se` (edit current section via edit-section-modal -- no picker
+    needed, current section is unambiguous). The sections-picker also
+    serves `js` (jump to section), so wire that binding here as well.
+    Build edit-section-modal (name, time fields).
+
+9g. Loop delete: add a delete mode to the existing loops-picker
+    (same `mode` pattern). Wire `ld` (picker → delete).
+
+9h. Chapter support: Chapter entity CRUD in state.js (create, edit,
     delete). Chapter picker (select which chapter to make active) and
     edit-chapter-modal (name, start, end). Next/prev chapter
     navigation. Timeline scoping: when a chapter is active, constrain

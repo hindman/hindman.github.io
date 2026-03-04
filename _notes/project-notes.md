@@ -3,50 +3,79 @@
 
 Current stage to implement:
 
-    9c. Loop modals: save-loop-modal (name + start/end, defaults to
-        scratch-loop) and loops-picker (load a saved loop). Wire `ls` and
-        `lo` bindings.
-
 The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclear or need adjustment.
 
 ## TODO
 
 V2 implementation:
     
-    9c. Loop modals: save-loop-modal (name + start/end, defaults to
-        scratch-loop) and loops-picker (load a saved loop). Wire `ls` and
-        `lo` bindings.
-
-    g c -am '9c. Loop modals'
-
     ===============================
 
     /rename loopllama-v2-stage-9d
 
-    9d. Entity edit modals: edit-section-modal and edit-mark-modal. Wire
-        `se` and `me` bindings.
+    9d. Code cleanup (delete/edit handlers): Replace the three wrong
+        handler implementations that predate the picker-based delete/edit
+        design: deleteSection (used nearestSectionLeft), deleteMark (used
+        nearestMarkLeft), and deleteLoop (deleted source loop immediately).
+        Convert all three to stubs that show a status message. Fix the
+        stale desc strings in keyboardController for `sd`, `ld`, `me`,
+        and `md`.
 
-    g c -am '9d. Entity edit modals'
+    g c -am '9d. Code cleanup (delete/edit handlers)'
 
     ===============================
 
     /rename loopllama-v2-stage-9e
 
-    9e. Chapter support: Chapter entity CRUD in state.js (create, edit,
+    9e. Marks picker and modals: marks-picker component with a `mode`
+        prop ('open' | 'delete') so it serves multiple callers. Wire `me`
+        (picker → edit-mark-modal) and `md` (picker → delete). The
+        marks-picker also serves `jm` (jump to mark), so wire that binding
+        here as well. Build edit-mark-modal (name, time fields).
+
+    g c -am '9e. Marks picker and modals'
+
+    ===============================
+
+    /rename loopllama-v2-stage-9f
+
+    9f. Sections picker and edit modal: sections-picker component,
+        same `mode` pattern as marks-picker. Wire `sd` (picker → delete)
+        and `se` (edit current section via edit-section-modal -- no picker
+        needed, current section is unambiguous). The sections-picker also
+        serves `js` (jump to section), so wire that binding here as well.
+        Build edit-section-modal (name, time fields).
+
+    g c -am '9f. Sections picker and edit modal'
+
+    ===============================
+
+    /rename loopllama-v2-stage-9g
+
+    9g. Loop delete: add a delete mode to the existing loops-picker
+        (same `mode` pattern). Wire `ld` (picker → delete).
+
+    g c -am '9g. Loop delete'
+
+    ===============================
+
+    /rename loopllama-v2-stage-9h
+
+    9h. Chapter support: Chapter entity CRUD in state.js (create, edit,
         delete). Chapter picker (select which chapter to make active) and
         edit-chapter-modal (name, start, end). Next/prev chapter
         navigation. Timeline scoping: when a chapter is active, constrain
         the timeline view to chapter.start/end and filter the displayed
         entities to those whose chapterId matches. Wire chapter key
-        bindings (TBD by user).
+        bindings: cc, co, ce, cd.
 
-    g c -am '9e. Chapter support'
+    g c -am '9h. Chapter support'
 
     ===============================
 
     /rename loopllama-v2-stage-__
 
-    Blah blah blah.
+    __
 
     g c -am '__'
 
