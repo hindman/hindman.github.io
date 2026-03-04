@@ -161,6 +161,7 @@ class LlamaApp extends LitElement {
     loopViolation:      { type: Boolean },
     videos:             { type: Array },
     currentVideoId:     { type: String },
+    activeEntityType:   { type: String },
   };
 
   constructor() {
@@ -186,6 +187,7 @@ class LlamaApp extends LitElement {
     this.loopViolation       = false;
     this.videos              = [];
     this.currentVideoId      = null;
+    this.activeEntityType    = 'any';
     this._vc                 = null;
     this._kb                 = null;
     this._pollId             = null;
@@ -271,9 +273,9 @@ class LlamaApp extends LitElement {
       seekBack:      () => this._onSeekBack(),
       seekDeltaDown: stub('seekDeltaDown'),
       seekDeltaUp:   stub('seekDeltaUp'),
-      prevEntity:    stub('prevEntity'),
-      entityType:    stub('entityType'),
-      nextEntity:    stub('nextEntity'),
+      prevEntity:    () => this._navigateEntity('prev'),
+      entityType:    () => this.renderRoot.querySelector('llama-controls')?.focusEntitySelect(),
+      nextEntity:    () => this._navigateEntity('next'),
       jumpToStart:   () => this._vc?.seekTo(this.looping ? this.loopStart : 0),
       setLoopStart:  () => { this.loopStart = this._vc?.getCurrentTime() ?? 0; this._autoDisableLoopIfInvalid(); },
       setLoopEnd:    () => { this.loopEnd   = this._vc?.getCurrentTime() ?? 0; this._autoDisableLoopIfInvalid(); },
@@ -761,6 +763,51 @@ class LlamaApp extends LitElement {
     this._autoDisableLoopIfInvalid();
   }
 
+  // Collect all entity time points for the given type, deduped and sorted.
+  // 'any' combines all types.
+  _getEntityTimes(type) {
+    const times = new Set();
+    const add = (t) => { if (t != null && isFinite(t)) times.add(t); };
+    if (type === 'any' || type === 'section') this.sections.forEach(s => add(s.time));
+    if (type === 'any' || type === 'loop')    this.namedLoops.forEach(l => add(l.start));
+    if (type === 'any' || type === 'mark')    this.marks.forEach(m => add(m.time));
+    if (type === 'any' || type === 'video') {
+      const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
+      if (video) {
+        add(video.start ?? 0);
+        if (video.end != null) add(video.end);
+        else if (this.duration != null) add(this.duration);
+      }
+    }
+    return [...times].sort((a, b) => a - b);
+  }
+
+  // Seek to the previous or next entity of the active type.
+  // Uses a small epsilon so that being near an entity's time doesn't get stuck.
+  _navigateEntity(direction) {
+    const time  = this._vc?.getCurrentTime() ?? this.currentTime;
+    const times = this._getEntityTimes(this.activeEntityType);
+    if (!times.length) return;
+    // Larger epsilon for prev: skip entities within 2s behind the playhead,
+    // so that pressing prev while playing jumps to the entity before the current
+    // one rather than snapping back a fraction of a second.
+    const EPS = direction === 'prev' ? 2.0 : 0.1;
+    let target = null;
+    if (direction === 'prev') {
+      for (const t of times) {
+        if (t < time - EPS) target = t;
+        else break;
+      }
+    } else {
+      target = times.find(t => t > time + EPS) ?? null;
+    }
+    if (target != null) this._vc?.seekTo(target);
+  }
+
+  _onEntityTypeChange(e) {
+    this.activeEntityType = e.detail.value;
+  }
+
   _onSetSection() {
     addSection(this.sections, this._vc?.getCurrentTime() ?? 0);
     this.sections = [...this.sections];
@@ -962,6 +1009,7 @@ class LlamaApp extends LitElement {
           .editScratchFocus=${this.editScratchFocus}
           .editScratchDelta=${this.editScratchDelta}
           .loopViolation=${this.loopViolation}
+          .activeEntityType=${this.activeEntityType}
           @ll-play-pause=${this._onPlayPause}
           @ll-seek-forward=${this._onSeekForward}
           @ll-seek-back=${this._onSeekBack}
@@ -972,6 +1020,9 @@ class LlamaApp extends LitElement {
           @ll-loop-end-change=${this._onLoopEndChange}
           @ll-set-section=${this._onSetSection}
           @ll-set-mark=${this._onSetMark}
+          @ll-prev-entity=${() => this._navigateEntity('prev')}
+          @ll-next-entity=${() => this._navigateEntity('next')}
+          @ll-entity-type-change=${this._onEntityTypeChange}
         ></llama-controls>
       </div>
 

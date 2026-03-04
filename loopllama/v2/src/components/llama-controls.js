@@ -1,27 +1,31 @@
 // llama-controls.js -- playback controls display.
 //
 // Receives:
-//   currentTime: Number   -- current playback position (seconds)
-//   duration:    Number   -- total video duration (seconds), or null
-//   speed:       Number   -- playback speed (e.g. 1.0 = 100%)
-//   isPlaying:   Boolean  -- true while the video is playing
-//   looping:     Boolean  -- true when looping is active
-//   loopStart:   Number   -- scratch-loop start (seconds)
-//   loopEnd:     Number   -- scratch-loop end (seconds)
-//   sections:    Array    -- array of Section objects { id, time, name }
-//   marks:       Array    -- array of Mark objects { id, time, name }
+//   currentTime:      Number   -- current playback position (seconds)
+//   duration:         Number   -- total video duration (seconds), or null
+//   speed:            Number   -- playback speed (e.g. 1.0 = 100%)
+//   isPlaying:        Boolean  -- true while the video is playing
+//   looping:          Boolean  -- true when looping is active
+//   loopStart:        Number   -- scratch-loop start (seconds)
+//   loopEnd:          Number   -- scratch-loop end (seconds)
+//   sections:         Array    -- array of Section objects { id, time, name }
+//   marks:            Array    -- array of Mark objects { id, time, name }
+//   activeEntityType: String   -- 'any'|'section'|'loop'|'mark'|'video'
 //
 // Fires (bubbles + composed):
-//   ll-play-pause           -- toggle play/pause
-//   ll-seek-forward         -- seek forward by current seek delta
-//   ll-seek-back            -- seek back by current seek delta
-//   ll-toggle-loop          -- toggle looping on/off
-//   ll-set-loop-start-now   -- set loop start to current time
-//   ll-set-loop-end-now     -- set loop end to current time
-//   ll-loop-start-change    -- user edited start; detail.value = seconds
-//   ll-loop-end-change      -- user edited end; detail.value = seconds
-//   ll-set-section          -- set a section divider at current time
-//   ll-set-mark             -- set a mark at current time
+//   ll-play-pause             -- toggle play/pause
+//   ll-seek-forward           -- seek forward by current seek delta
+//   ll-seek-back              -- seek back by current seek delta
+//   ll-toggle-loop            -- toggle looping on/off
+//   ll-set-loop-start-now     -- set loop start to current time
+//   ll-set-loop-end-now       -- set loop end to current time
+//   ll-loop-start-change      -- user edited start; detail.value = seconds
+//   ll-loop-end-change        -- user edited end; detail.value = seconds
+//   ll-set-section            -- set a section divider at current time
+//   ll-set-mark               -- set a mark at current time
+//   ll-prev-entity            -- navigate to previous entity
+//   ll-next-entity            -- navigate to next entity
+//   ll-entity-type-change     -- entity type changed; detail.value = type string
 
 import { LitElement, html, css } from 'lit';
 import { createRef, ref } from 'lit/directives/ref.js';
@@ -132,6 +136,21 @@ class LlamaControls extends LitElement {
       text-align: right;
     }
 
+    select.entity-type-select {
+      padding: 0.2rem 0.4rem;
+      background: var(--ll-surface-raised, #2a2a2a);
+      border: 1px solid var(--ll-border, #444);
+      border-radius: var(--ll-radius, 3px);
+      color: var(--ll-text, #e0e0e0);
+      font-size: var(--ll-text-sm, 0.85rem);
+      cursor: pointer;
+    }
+
+    select.entity-type-select:focus {
+      outline: none;
+      border-color: var(--ll-accent, #7ec8e3);
+    }
+
     .time-input {
       font-family: var(--ll-font-mono, monospace);
       font-size: var(--ll-text-sm, 0.85rem);
@@ -177,17 +196,18 @@ class LlamaControls extends LitElement {
   `;
 
   static properties = {
-    currentTime: { type: Number },
-    duration:    { type: Number },
-    speed:       { type: Number },
-    isPlaying:   { type: Boolean },
-    looping:     { type: Boolean },
-    loopStart:   { type: Number },
-    loopEnd:     { type: Number },
+    currentTime:      { type: Number },
+    duration:         { type: Number },
+    speed:            { type: Number },
+    isPlaying:        { type: Boolean },
+    looping:          { type: Boolean },
+    loopStart:        { type: Number },
+    loopEnd:          { type: Number },
     editScratchActive:  { type: Boolean },
     editScratchFocus:   { type: String },
     editScratchDelta:   { type: Number },
     loopViolation:      { type: Boolean },
+    activeEntityType:   { type: String },
   };
 
   constructor() {
@@ -203,8 +223,10 @@ class LlamaControls extends LitElement {
     this.editScratchFocus  = 'start';
     this.loopViolation     = false;
     this.editScratchDelta  = 1;
-    this._startRef = createRef();
-    this._endRef   = createRef();
+    this.activeEntityType  = 'any';
+    this._startRef       = createRef();
+    this._endRef         = createRef();
+    this._entitySelectRef = createRef();
   }
 
   _fmt(secs) {
@@ -300,6 +322,10 @@ class LlamaControls extends LitElement {
     this._endRef.value?.select();
   }
 
+  focusEntitySelect() {
+    this._entitySelectRef.value?.focus();
+  }
+
   render() {
     const speedPct = `${(this.speed * 100).toFixed(0)}%`;
     return html`
@@ -316,6 +342,20 @@ class LlamaControls extends LitElement {
           </span>
           <span class="sep">|</span>
           <span class="speed-display">${speedPct}</span>
+          <span class="sep">|</span>
+          <button @click=${() => this._emit('ll-prev-entity')}>⏮</button>
+          <select
+            ${ref(this._entitySelectRef)}
+            class="entity-type-select"
+            @change=${(e) => { this._emit('ll-entity-type-change', { value: e.target.value }); e.target.blur(); }}
+          >
+            <option value="any"     ?selected=${this.activeEntityType === 'any'}>Any</option>
+            <option value="section" ?selected=${this.activeEntityType === 'section'}>Section</option>
+            <option value="loop"    ?selected=${this.activeEntityType === 'loop'}>Loop</option>
+            <option value="mark"    ?selected=${this.activeEntityType === 'mark'}>Mark</option>
+            <option value="video"   ?selected=${this.activeEntityType === 'video'}>Video</option>
+          </select>
+          <button @click=${() => this._emit('ll-next-entity')}>⏭</button>
         </div>
 
         <div class="controls-row loop-row">
