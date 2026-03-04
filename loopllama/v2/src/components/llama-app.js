@@ -19,6 +19,8 @@ import './llama-video-picker.js';
 import './llama-edit-video-modal.js';
 import './llama-save-loop-modal.js';
 import './llama-loop-picker.js';
+import './llama-marks-picker.js';
+import './llama-edit-mark-modal.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
@@ -191,6 +193,8 @@ class LlamaApp extends LitElement {
     this._editVideoModalEl   = null;
     this._saveLoopModalEl    = null;
     this._loopPickerEl       = null;
+    this._marksPickerEl      = null;
+    this._editMarkModalEl    = null;
     this.seekDelta     = DEFAULT_OPTIONS.seek_delta_default;
     this.speedDelta    = DEFAULT_OPTIONS.speed_delta;
   }
@@ -278,7 +282,7 @@ class LlamaApp extends LitElement {
       jumpTime:      stub('jumpTime'),
       jumpSection:   stub('jumpSection'),
       jumpLoop:      stub('jumpLoop'),
-      jumpMark:      stub('jumpMark'),
+      jumpMark:      () => this._openMarksPicker('jump'),
       jumpHistory:   stub('jumpHistory'),
       jumpBack:      stub('jumpBack'),
       jumpForward:   stub('jumpForward'),
@@ -341,8 +345,8 @@ class LlamaApp extends LitElement {
         this.marks = [...this.marks];
         this._saveCurrentState();
       },
-      editMark: stub('editMark'),
-      deleteMark: () => { this.statusMsg = 'Mark delete: not yet implemented.'; },
+      editMark:   () => this._openMarksPicker('edit'),
+      deleteMark: () => this._openMarksPicker('delete'),
       helpGeneral:   stub('helpGeneral'),
       deleteData:    stub('deleteData'),
       exportAll:     stub('exportAll'),
@@ -390,6 +394,8 @@ class LlamaApp extends LitElement {
     this._editVideoModalEl = this.renderRoot.querySelector('llama-edit-video-modal');
     this._saveLoopModalEl  = this.renderRoot.querySelector('llama-save-loop-modal');
     this._loopPickerEl     = this.renderRoot.querySelector('llama-loop-picker');
+    this._marksPickerEl    = this.renderRoot.querySelector('llama-marks-picker');
+    this._editMarkModalEl  = this.renderRoot.querySelector('llama-edit-mark-modal');
 
     window.addEventListener('blur',  () => { this.windowFocused = false; });
     window.addEventListener('focus', () => { this.windowFocused = true; });
@@ -800,6 +806,40 @@ class LlamaApp extends LitElement {
     this._saveCurrentState();
   }
 
+  // Open the marks picker in the given mode, with a guard for empty list.
+  _openMarksPicker(mode) {
+    if (!this.marks.length) {
+      this.statusMsg = 'No marks set.';
+      return;
+    }
+    this._marksPickerEl?.show(mode);
+  }
+
+  // Handle ll-jump-mark from marks picker (mode='jump').
+  _onJumpMark(e) {
+    this._vc?.seekTo(e.detail.time);
+  }
+
+  // Handle ll-pick-mark-edit from marks picker (mode='edit').
+  // Looks up the mark and opens edit-mark-modal.
+  _onPickMarkEdit(e) {
+    const mark = this.marks.find(m => m.id === e.detail.id);
+    if (!mark) return;
+    this._editMarkModalEl?.show(mark);
+  }
+
+  // Handle ll-update-mark from edit-mark-modal.
+  _onUpdateMark(e) {
+    const { id, name, time } = e.detail;
+    const mark = this.marks.find(m => m.id === id);
+    if (!mark) return;
+    mark.name = name;
+    mark.time = time;
+    this.marks = [...this.marks].sort((a, b) => a.time - b.time);
+    this.statusMsg = `Mark updated: ${name || _fmtTimePlain(time)}`;
+    this._saveCurrentState();
+  }
+
   render() {
     const currentVideo = this._appState?.videos.find(v => v.id === this.currentVideoId) ?? null;
     return html`
@@ -895,6 +935,21 @@ class LlamaApp extends LitElement {
         @ll-load-loop=${this._onLoadLoop}
       ></llama-loop-picker>
 
+      <llama-marks-picker
+        .marks=${this.marks}
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+        @ll-jump-mark=${this._onJumpMark}
+        @ll-pick-mark-edit=${this._onPickMarkEdit}
+        @ll-delete-mark=${this._onDeleteMark}
+      ></llama-marks-picker>
+
+      <llama-edit-mark-modal
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+        @ll-update-mark=${this._onUpdateMark}
+      ></llama-edit-mark-modal>
+
       <llama-whichkey
         .prefix=${this.wkPrefix}
         .completions=${this.wkCompletions}
@@ -902,6 +957,13 @@ class LlamaApp extends LitElement {
       ></llama-whichkey>
     `;
   }
+}
+
+// Format seconds as m:ss (for status messages).
+function _fmtTimePlain(secs) {
+  if (secs == null || isNaN(secs)) return '?';
+  const s = Math.floor(secs);
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
 
 customElements.define('llama-app', LlamaApp);

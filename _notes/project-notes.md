@@ -8,16 +8,10 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 ## TODO
 
 V2 implementation:
-    
-    /rename loopllama-v2-stage-9e
 
-    9e. Marks picker and modals: marks-picker component with a `mode`
-        prop ('open' | 'delete') so it serves multiple callers. Wire `me`
-        (picker → edit-mark-modal) and `md` (picker → delete). The
-        marks-picker also serves `jm` (jump to mark), so wire that binding
-        here as well. Build edit-mark-modal (name, time fields).
+    /rename loopllama-v2-menu-planning
 
-    g c -am '9e. Marks picker and modals'
+    Our implementation stages don't appear to mention the Menus.
 
     ===============================
 
