@@ -434,6 +434,22 @@ v2/
     entities to those whose chapterId matches. Wire chapter key
     bindings: cc, co, ce, cd.
 
+9i. Dropdown menus: build a reusable dropdown menu component and add
+    the six menu buttons to the controls area (Video, Section, Loop,
+    Mark, Jump, App, Help). Wire each menu item to its corresponding
+    already-implemented operation, modal, or picker. Items whose
+    features are not yet built (Undo, Options, Export/Import,
+    Help modals) are rendered as disabled stubs; they will be wired
+    as each later stage completes.
+
+9j. UI polish: with the full layout in place (video area, timeline,
+    controls with menus), dial in sizing and proportions -- YouTube
+    frame dimensions, spacing between page regions, visual hierarchy
+    in the controls area, typography, and any remaining rough edges.
+    This pass is specifically deferred until after menus land because
+    the menu bar changes the controls area layout enough to make
+    earlier polish premature.
+
 10. Undo: snapshot-based undo/redo. Push a video state snapshot before
     each destructive or modifying operation. Implement `u`/`U` bindings.
     Session-only; no persistence needed.

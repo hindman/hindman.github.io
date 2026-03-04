@@ -9,14 +9,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 V2 implementation:
 
-    /rename loopllama-v2-menu-planning
-
-    Our implementation stages don't appear to mention the Menus.
-
-    ===============================
-
-    /rename loopllama-v2-stage-9f
-
     9f. Sections picker and edit modal: sections-picker component,
         same `mode` pattern as marks-picker. Wire `sd` (picker → delete)
         and `se` (edit current section via edit-section-modal -- no picker
