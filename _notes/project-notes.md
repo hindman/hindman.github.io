@@ -9,17 +9,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 V2 implementation:
 
-    9f. Sections picker and edit modal: sections-picker component,
-        same `mode` pattern as marks-picker. Wire `sd` (picker → delete)
-        and `se` (edit current section via edit-section-modal -- no picker
-        needed, current section is unambiguous). The sections-picker also
-        serves `js` (jump to section), so wire that binding here as well.
-        Build edit-section-modal (name, time fields).
-
-    g c -am '9f. Sections picker and edit modal'
-
-    ===============================
-
     /rename loopllama-v2-stage-9g
 
     9g. Loop delete: add a delete mode to the existing loops-picker
@@ -40,6 +29,36 @@ V2 implementation:
         bindings: cc, co, ce, cd.
 
     g c -am '9h. Chapter support'
+
+    ===============================
+
+    /rename loopllama-v2-stage-9i
+
+    9i. Dropdown menus: build a reusable dropdown menu component and add
+        the six menu buttons to the controls area (Video, Section, Loop,
+        Mark, Jump, App, Help). Wire each menu item to its corresponding
+        already-implemented operation, modal, or picker. Items whose
+        features are not yet built (Undo, Options, Export/Import,
+        Help modals) are rendered as disabled stubs; they will be wired
+        as each later stage completes.
+
+    g c -am '9i. Dropdown menus'
+
+    ===============================
+
+    /rename loopllama-v2-stage-9j
+
+    9j. UI polish: with the full layout in place (video area, timeline,
+        controls with menus), dial in sizing and proportions -- YouTube
+        frame dimensions, spacing between page regions, visual hierarchy
+        in the controls area, typography, and any remaining rough edges.
+        This pass is specifically deferred until after menus land because
+        the menu bar changes the controls area layout enough to make
+        earlier polish premature.
+
+        - Timeline: show section names if they fit.
+
+    g c -am '9j. UI polish'
 
     ===============================
 

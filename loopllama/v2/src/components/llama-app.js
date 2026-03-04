@@ -7,7 +7,7 @@ import {
   DEFAULT_OPTIONS,
   createVideo, createAppState, createScratchLoop,
   addMark, deleteMarkById,
-  addSection, deleteSectionById, getSectionBounds,
+  addSection, deleteSectionById, getSectionBounds, nearestSectionLeft,
   addLoop, deleteLoopById,
 } from '../state.js';
 import { load, save } from '../storage.js';
@@ -21,6 +21,8 @@ import './llama-save-loop-modal.js';
 import './llama-loop-picker.js';
 import './llama-marks-picker.js';
 import './llama-edit-mark-modal.js';
+import './llama-sections-picker.js';
+import './llama-edit-section-modal.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
@@ -195,6 +197,8 @@ class LlamaApp extends LitElement {
     this._loopPickerEl       = null;
     this._marksPickerEl      = null;
     this._editMarkModalEl    = null;
+    this._sectionsPickerEl   = null;
+    this._editSectionModalEl = null;
     this.seekDelta     = DEFAULT_OPTIONS.seek_delta_default;
     this.speedDelta    = DEFAULT_OPTIONS.speed_delta;
   }
@@ -280,7 +284,7 @@ class LlamaApp extends LitElement {
       editVideo:     () => this._editVideoModalEl?.show(),
       deleteVideo:   stub('deleteVideo'),
       jumpTime:      stub('jumpTime'),
-      jumpSection:   stub('jumpSection'),
+      jumpSection:   () => this._openSectionsPicker('jump'),
       jumpLoop:      stub('jumpLoop'),
       jumpMark:      () => this._openMarksPicker('jump'),
       jumpHistory:   stub('jumpHistory'),
@@ -325,7 +329,7 @@ class LlamaApp extends LitElement {
         this.sections = [...this.sections];
         this._saveCurrentState();
       },
-      editSection:   stub('editSection'),
+      editSection:   () => this._editCurrentSection(),
       loopSection: () => {
         const bounds = getSectionBounds(this.sections, this.currentTime, this.duration);
         if (!bounds || bounds.end == null) {
@@ -339,7 +343,7 @@ class LlamaApp extends LitElement {
         this.looping     = true;
         this.statusMsg   = 'Looping section.';
       },
-      deleteSection: () => { this.statusMsg = 'Section delete: not yet implemented.'; },
+      deleteSection: () => this._openSectionsPicker('delete'),
       setMark: () => {
         addMark(this.marks, this._vc?.getCurrentTime() ?? 0);
         this.marks = [...this.marks];
@@ -394,8 +398,10 @@ class LlamaApp extends LitElement {
     this._editVideoModalEl = this.renderRoot.querySelector('llama-edit-video-modal');
     this._saveLoopModalEl  = this.renderRoot.querySelector('llama-save-loop-modal');
     this._loopPickerEl     = this.renderRoot.querySelector('llama-loop-picker');
-    this._marksPickerEl    = this.renderRoot.querySelector('llama-marks-picker');
-    this._editMarkModalEl  = this.renderRoot.querySelector('llama-edit-mark-modal');
+    this._marksPickerEl      = this.renderRoot.querySelector('llama-marks-picker');
+    this._editMarkModalEl    = this.renderRoot.querySelector('llama-edit-mark-modal');
+    this._sectionsPickerEl   = this.renderRoot.querySelector('llama-sections-picker');
+    this._editSectionModalEl = this.renderRoot.querySelector('llama-edit-section-modal');
 
     window.addEventListener('blur',  () => { this.windowFocused = false; });
     window.addEventListener('focus', () => { this.windowFocused = true; });
@@ -840,6 +846,50 @@ class LlamaApp extends LitElement {
     this._saveCurrentState();
   }
 
+  // Open the sections picker in the given mode, with a guard for empty list.
+  _openSectionsPicker(mode) {
+    if (!this.sections.length) {
+      this.statusMsg = 'No sections set.';
+      return;
+    }
+    this._sectionsPickerEl?.show(mode);
+  }
+
+  // Edit the current section (se): no picker — find section nearest to
+  // the playhead and open the edit modal directly.
+  _editCurrentSection() {
+    const section = nearestSectionLeft(this.sections, this.currentTime);
+    if (!section) {
+      this.statusMsg = 'No section at current position.';
+      return;
+    }
+    this._editSectionModalEl?.show(section);
+  }
+
+  // Handle ll-jump-section from sections picker (mode='jump').
+  _onJumpSection(e) {
+    this._vc?.seekTo(e.detail.time);
+  }
+
+  // Handle ll-pick-section-edit from sections picker (mode='edit').
+  _onPickSectionEdit(e) {
+    const section = this.sections.find(s => s.id === e.detail.id);
+    if (!section) return;
+    this._editSectionModalEl?.show(section);
+  }
+
+  // Handle ll-update-section from edit-section-modal.
+  _onUpdateSection(e) {
+    const { id, name, time } = e.detail;
+    const section = this.sections.find(s => s.id === id);
+    if (!section) return;
+    section.name = name;
+    section.time = time;
+    this.sections = [...this.sections].sort((a, b) => a.time - b.time);
+    this.statusMsg = `Section updated: ${name || _fmtTimePlain(time)}`;
+    this._saveCurrentState();
+  }
+
   render() {
     const currentVideo = this._appState?.videos.find(v => v.id === this.currentVideoId) ?? null;
     return html`
@@ -949,6 +999,21 @@ class LlamaApp extends LitElement {
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-update-mark=${this._onUpdateMark}
       ></llama-edit-mark-modal>
+
+      <llama-sections-picker
+        .sections=${this.sections}
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+        @ll-jump-section=${this._onJumpSection}
+        @ll-pick-section-edit=${this._onPickSectionEdit}
+        @ll-delete-section=${this._onDeleteSection}
+      ></llama-sections-picker>
+
+      <llama-edit-section-modal
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+        @ll-update-section=${this._onUpdateSection}
+      ></llama-edit-section-modal>
 
       <llama-whichkey
         .prefix=${this.wkPrefix}
