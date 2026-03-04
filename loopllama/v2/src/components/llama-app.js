@@ -285,7 +285,7 @@ class LlamaApp extends LitElement {
       deleteVideo:   stub('deleteVideo'),
       jumpTime:      stub('jumpTime'),
       jumpSection:   () => this._openSectionsPicker('jump'),
-      jumpLoop:      stub('jumpLoop'),
+      jumpLoop:      () => this._openLoopsPicker('jump'),
       jumpMark:      () => this._openMarksPicker('jump'),
       jumpHistory:   stub('jumpHistory'),
       jumpBack:      stub('jumpBack'),
@@ -801,6 +801,11 @@ class LlamaApp extends LitElement {
     if (this.looping) this._vc?.seekTo(loop.start);
   }
 
+  // Handle ll-jump-loop from loop picker (mode='jump').
+  _onJumpLoop(e) {
+    this._vc?.seekTo(e.detail.start);
+  }
+
   _onSeekTo(e) {
     const t = e.detail.time;
     if (this.looping && this.loopStart < this.loopEnd
@@ -997,6 +1002,7 @@ class LlamaApp extends LitElement {
         .loopSource=${this.loopSource}
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
+        @ll-jump-loop=${this._onJumpLoop}
         @ll-load-loop=${this._onLoadLoop}
         @ll-delete-loop=${this._onDeleteLoop}
       ></llama-loop-picker>

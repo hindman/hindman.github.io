@@ -3,9 +3,10 @@
 // Props:
 //   namedLoops: Array of Loop objects (is_scratch=false)
 //   loopSource: string | null  -- id of the currently loaded loop
-//   mode:       'load' | 'delete'
+//   mode:       'jump' | 'load' | 'delete'
 //
 // Events fired (composed, bubbling):
+//   ll-jump-loop    { id, start }   -- mode='jump': seek to loop's start
 //   ll-load-loop    { id: string }  -- mode='load': user selected a loop
 //   ll-delete-loop  { id: string }  -- mode='delete': delete the loop
 //
@@ -18,6 +19,7 @@ import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
 
 const TITLES = {
+  jump:   'Jump to Loop',
   load:   'Load Loop',
   delete: 'Delete Loop',
 };
@@ -140,12 +142,23 @@ class LlamaLoopPicker extends LitElement {
   }
 
   _select(loop) {
-    const event = this.mode === 'delete' ? 'll-delete-loop' : 'll-load-loop';
-    this.dispatchEvent(new CustomEvent(event, {
-      detail:   { id: loop.id },
-      bubbles:  true,
-      composed: true,
-    }));
+    const mode = this.mode;
+    if (mode === 'jump') {
+      this.dispatchEvent(new CustomEvent('ll-jump-loop', {
+        detail: { id: loop.id, start: loop.start },
+        bubbles: true, composed: true,
+      }));
+    } else if (mode === 'delete') {
+      this.dispatchEvent(new CustomEvent('ll-delete-loop', {
+        detail: { id: loop.id },
+        bubbles: true, composed: true,
+      }));
+    } else {
+      this.dispatchEvent(new CustomEvent('ll-load-loop', {
+        detail: { id: loop.id },
+        bubbles: true, composed: true,
+      }));
+    }
     this.hide();
   }
 
