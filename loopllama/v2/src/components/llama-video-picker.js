@@ -40,6 +40,11 @@ class LlamaVideoPicker extends LitElement {
     .video-row.current {
       border-color: var(--ll-accent, #7ec8e3);
     }
+    .video-row.selected {
+      background: var(--ll-surface-raised, #2a2a2a);
+      border-color: var(--ll-accent, #7ec8e3);
+      outline: none;
+    }
     .video-primary {
       font-size: var(--ll-text-base, 1.05rem);
     }
@@ -59,6 +64,7 @@ class LlamaVideoPicker extends LitElement {
     videos:         { type: Array },
     currentVideoId: { type: String },
     _filter:        { state: true },
+    _selIdx:        { state: true },
   };
 
   constructor() {
@@ -66,10 +72,12 @@ class LlamaVideoPicker extends LitElement {
     this.videos         = [];
     this.currentVideoId = null;
     this._filter        = '';
+    this._selIdx        = 0;
   }
 
   show() {
     this._filter = '';
+    this._selIdx = 0;
     this.renderRoot.querySelector('llama-modal')?.show();
   }
 
@@ -82,10 +90,35 @@ class LlamaVideoPicker extends LitElement {
   }
 
   _onFilterKeyDown(e) {
-    if (e.key === 'Enter') {
-      const filtered = this._filtered();
-      if (filtered.length > 0) this._select(filtered[0]);
+    const filtered = this._filtered();
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      this._selIdx = Math.min(this._selIdx + 1, filtered.length - 1);
+      this._scrollSelectedIntoView();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      this._selIdx = Math.max(this._selIdx - 1, 0);
+      this._scrollSelectedIntoView();
+    } else if (e.key === 'Enter') {
+      const target = filtered[this._selIdx] ?? filtered[0];
+      if (target) this._select(target);
     }
+  }
+
+  // Reset selection to 0 whenever the filter changes so the highlighted
+  // item stays within the visible results.
+  _onFilterInput(e) {
+    this._filter = e.target.value;
+    this._selIdx = 0;
+  }
+
+  _scrollSelectedIntoView() {
+    // Run after Lit has re-rendered the updated selection.
+    this.updateComplete.then(() => {
+      const list = this.renderRoot.querySelector('.video-list');
+      const row  = list?.querySelector('.video-row.selected');
+      row?.scrollIntoView({ block: 'nearest' });
+    });
   }
 
   _select(video) {
@@ -126,16 +159,18 @@ class LlamaVideoPicker extends LitElement {
           <sl-input
             placeholder="Filter by name or title…"
             .value=${this._filter}
-            @sl-input=${e => { this._filter = e.target.value; }}
+            @sl-input=${this._onFilterInput}
             @keydown=${this._onFilterKeyDown}
             clearable
           ></sl-input>
         </div>
         <div class="video-list">
           ${filtered.length
-            ? filtered.map(v => html`
+            ? filtered.map((v, i) => html`
                 <div
-                  class="video-row ${v.id === this.currentVideoId ? 'current' : ''}"
+                  class="video-row
+                    ${v.id === this.currentVideoId ? 'current' : ''}
+                    ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(v)}
                 >
                   <div class="video-primary">${this._primaryLabel(v)}</div>

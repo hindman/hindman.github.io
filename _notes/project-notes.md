@@ -9,20 +9,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 V2 implementation:
     
-    confirm this addition to .gitignore was correct:
-
-        loopllama/v2/dist/
-
-    [ALMOST DONE: HIT RATE LIMIT UNTIL 2PM]
-    [ACTIVE]
-    9b. Video picker and edit-video-modal: video-picker (list of known
-        videos, filter by name/title) and edit-video-modal (URL, name,
-        title, start, end, delete button). Wire `vv` and `ve` bindings.
-
-    g c -am '9b. Video picker and edit-video-modal'
-
-    ===============================
-
     /rename loopllama-v2-stage-9c
 
     9c. Loop modals: save-loop-modal (name + start/end, defaults to
