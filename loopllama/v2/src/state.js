@@ -87,6 +87,28 @@ export function createMark(time, name = '') {
   return { id: createId(), chapterId: null, time, name };
 }
 
+// Add a chapter (sorted by start time). Returns the new chapter.
+export function addChapter(chapters, name, start, end) {
+  const chapter = createChapter(name, start, end);
+  chapters.push(chapter);
+  chapters.sort((a, b) => a.start - b.start);
+  return chapter;
+}
+
+// Remove a chapter by id.
+export function deleteChapterById(chapters, id) {
+  const idx = chapters.findIndex(c => c.id === id);
+  if (idx !== -1) chapters.splice(idx, 1);
+}
+
+// Update chapter fields by id. fields: { name?, start?, end? }
+export function updateChapter(chapters, id, fields) {
+  const chapter = chapters.find(c => c.id === id);
+  if (!chapter) return;
+  Object.assign(chapter, fields);
+  chapters.sort((a, b) => a.start - b.start);
+}
+
 // Add a mark at the given time to the marks array (sorted by time).
 // Returns the new mark.
 export function addMark(marks, time, name = '') {

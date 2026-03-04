@@ -924,10 +924,11 @@ Looping:
 
 Chapters:
 
-    cc | Set new chapter here
-    co | Open chapter
+    cc | Create new chapter [new-chapter-modal, using scratch-loop start/end]
+    co | Open chapter [via picker => populate scratch-loop start/end]
     ce | Edit current chapter
     cd | Delete chapter [via picker]
+    cz | Toggle chapter timline zoom status
 
 Sections:
 

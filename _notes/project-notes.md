@@ -3,19 +3,13 @@
 
 Current stage to implement:
 
-    13b. Chapter picker: build `llama-chapter-picker` (mode:
-        'open' | 'delete'). Wire `co` to open picker in 'open' mode
-        (sets activeChapterId) and `cd` to 'delete' mode.
-
 The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclear or need adjustment.
 
 ## TODO
 
 CURRENT:
 
-    /rename loopllama-v2-stage-13b
-
-    13b. Chapter picker: build `llama-chapter-picker` (mode:
+    ...  Chapter picker: build `llama-chapter-picker` (mode:
         'open' | 'delete'). Wire `co` to open picker in 'open' mode
         (sets activeChapterId) and `cd` to 'delete' mode.
 

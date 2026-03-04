@@ -9,6 +9,7 @@ import {
   addMark, deleteMarkById,
   addSection, deleteSectionById, getSectionBounds, nearestSectionLeft,
   addLoop, deleteLoopById,
+  addChapter, deleteChapterById,
 } from '../state.js';
 import { load, save } from '../storage.js';
 import './llama-whichkey.js';
@@ -24,6 +25,7 @@ import './llama-edit-mark-modal.js';
 import './llama-sections-picker.js';
 import './llama-edit-section-modal.js';
 import './llama-jump-time-modal.js';
+import './llama-chapter-picker.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
@@ -162,6 +164,8 @@ class LlamaApp extends LitElement {
     videos:             { type: Array },
     currentVideoId:     { type: String },
     activeEntityType:   { type: String },
+    chapters:           { type: Array },
+    activeChapterId:    { type: String },
   };
 
   constructor() {
@@ -188,6 +192,8 @@ class LlamaApp extends LitElement {
     this.videos              = [];
     this.currentVideoId      = null;
     this.activeEntityType    = 'any';
+    this.chapters            = [];
+    this.activeChapterId     = null;
     this._vc                 = null;
     this._kb                 = null;
     this._pollId             = null;
@@ -203,12 +209,14 @@ class LlamaApp extends LitElement {
     this._sectionsPickerEl   = null;
     this._editSectionModalEl = null;
     this._jumpTimeModalEl    = null;
+    this._chapterPickerEl    = null;
     this.seekDelta     = DEFAULT_OPTIONS.seek_delta_default;
     this.speedDelta    = DEFAULT_OPTIONS.speed_delta;
   }
 
   // Sync per-video state from a Video object into reactive props.
   _syncFromVideo(video) {
+    this.chapters   = [...(video.chapters ?? [])];
     this.sections   = [...(video.sections ?? [])];
     this.marks      = [...(video.marks    ?? [])];
     this.namedLoops = (video.loops ?? []).filter(l => !l.is_scratch);
@@ -226,6 +234,7 @@ class LlamaApp extends LitElement {
   _saveCurrentState() {
     const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
     if (!video) return;
+    video.chapters = this.chapters;
     video.sections = this.sections;
     video.marks    = this.marks;
     video.time     = this.currentTime;
@@ -350,6 +359,10 @@ class LlamaApp extends LitElement {
       },
       editMark:   () => this._openMarksPicker('edit'),
       deleteMark: () => this._openMarksPicker('delete'),
+      setChapter:    stub('setChapter'),
+      openChapter:   () => this._openChapterPicker('open'),
+      editChapter:   stub('editChapter'),
+      deleteChapter: () => this._openChapterPicker('delete'),
       helpGeneral:   stub('helpGeneral'),
       deleteData:    stub('deleteData'),
       exportAll:     stub('exportAll'),
@@ -402,6 +415,7 @@ class LlamaApp extends LitElement {
     this._sectionsPickerEl   = this.renderRoot.querySelector('llama-sections-picker');
     this._editSectionModalEl = this.renderRoot.querySelector('llama-edit-section-modal');
     this._jumpTimeModalEl    = this.renderRoot.querySelector('llama-jump-time-modal');
+    this._chapterPickerEl    = this.renderRoot.querySelector('llama-chapter-picker');
 
     window.addEventListener('blur',  () => { this.windowFocused = false; });
     window.addEventListener('focus', () => { this.windowFocused = true; });
@@ -936,6 +950,32 @@ class LlamaApp extends LitElement {
     this._editSectionModalEl?.show(section);
   }
 
+  // Open the chapter picker in the given mode, with a guard for empty list.
+  _openChapterPicker(mode) {
+    if (!this.chapters.length) {
+      this.statusMsg = 'No chapters set.';
+      return;
+    }
+    this._chapterPickerEl?.show(mode);
+  }
+
+  // Handle ll-open-chapter from chapter picker (mode='open').
+  _onOpenChapter(e) {
+    this.activeChapterId = e.detail.id;
+    const chapter = this.chapters.find(c => c.id === e.detail.id);
+    this.statusMsg = chapter
+      ? `Chapter: ${chapter.name || `${_fmtTimePlain(chapter.start)} → ${_fmtTimePlain(chapter.end)}`}`
+      : '';
+  }
+
+  // Handle ll-delete-chapter from chapter picker (mode='delete').
+  _onDeleteChapter(e) {
+    deleteChapterById(this.chapters, e.detail.id);
+    this.chapters = [...this.chapters];
+    if (this.activeChapterId === e.detail.id) this.activeChapterId = null;
+    this._saveCurrentState();
+  }
+
   // Handle ll-jump-time from jump-time-modal.
   _onJumpTime(e) {
     this._vc?.seekTo(e.detail.time);
@@ -1101,6 +1141,15 @@ class LlamaApp extends LitElement {
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-jump-time=${this._onJumpTime}
       ></llama-jump-time-modal>
+
+      <llama-chapter-picker
+        .chapters=${this.chapters}
+        .activeChapterId=${this.activeChapterId}
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+        @ll-open-chapter=${this._onOpenChapter}
+        @ll-delete-chapter=${this._onDeleteChapter}
+      ></llama-chapter-picker>
 
       <llama-whichkey
         .prefix=${this.wkPrefix}
