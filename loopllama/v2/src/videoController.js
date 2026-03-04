@@ -54,10 +54,16 @@ export function createVideoController({ onReady, onStateChange } = {}) {
     });
   }
 
-  // Load a video by YouTube ID. Optionally seek to startSeconds.
+  // Load a video by YouTube ID and start playing. Optionally seek to startSeconds.
   function loadVideo(videoId, startSeconds = 0) {
     durationReady = false;
     player.loadVideoById({ videoId, startSeconds });
+  }
+
+  // Cue a video by YouTube ID without auto-playing.
+  function cueVideo(videoId, startSeconds = 0) {
+    durationReady = false;
+    player.cueVideoById({ videoId, startSeconds });
   }
 
   function play()  { player.playVideo(); }
@@ -83,6 +89,7 @@ export function createVideoController({ onReady, onStateChange } = {}) {
   return {
     initialize,
     loadVideo,
+    cueVideo,
     play,
     pause,
     seekTo,

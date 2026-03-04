@@ -411,7 +411,7 @@ v2/
     navigation. Timeline scoping: when a chapter is active, constrain
     the timeline view to chapter.start/end and filter the displayed
     entities to those whose chapterId matches. Wire chapter key
-    bindings (TBD by user).
+    bindings: cc, co, ce, cd.
 
 10. Undo: snapshot-based undo/redo. Push a video state snapshot before
     each destructive or modifying operation. Implement `u`/`U` bindings.
@@ -738,6 +738,72 @@ Mark
 
 ---
 
+## Delete and Edit UX Principles
+
+### Delete operations
+
+Delete is infrequent and destructive, so picker-based selection is the
+right model for all entity types (marks, loops, sections, chapters,
+videos). "Delete nearest/current" was considered but rejected:
+
+- "Nearest mark" requires a subtle mental model of playhead position
+  vs. mark positions -- not discoverable or learnable.
+- "Current loop" is ambiguous: loops are not exclusive, so the playhead
+  can sit inside multiple loops simultaneously.
+- Destructive operations benefit from deliberateness. The extra step of
+  a picker is a feature, not overhead, especially since delete is rare.
+
+The `...` convention in menu labels (e.g., "Delete mark...") signals
+that a picker selection step will follow before the action completes.
+
+Bulk delete (e.g., checkboxes in the picker) is a natural extension
+and can be added if a cleanup-pass use case arises.
+
+### Edit operations
+
+Edit-current is appropriate when "current" is unambiguous and the
+operation is frequent:
+
+- video: one current video; edit-current is clear
+- section: sections are non-overlapping and exhaustive (divider-based),
+  so the playhead is always inside exactly one section; edit-current
+  is unambiguous
+- chapter: same logic as section
+- scratch-loop: one scratch-loop exists; editing it (start/end, label)
+  is one of the most frequent operations
+
+Edit-current is NOT used for:
+
+- marks: "nearest mark" has the same ambiguity problem as delete
+- named loops: "current loop" is ambiguous (multiple overlapping loops)
+
+Named loop and mark editing goes through a picker instead.
+
+### Scratch-loop and named loop operations
+
+The scratch-loop is its own distinct object, not a proxy for any named
+loop. The relationship between scratch-loop and named loops:
+
+- `lo` (open): load a named loop's start/end into the scratch-loop
+- `ls` (save-new): create a new named loop from the scratch-loop
+- `lb` (save-back): copy the scratch-loop's current start/end back to
+  the named loop it was loaded from; no modal, no picker -- immediate
+  action on the source loop
+- `le` (edit scratch-loop mode): interactive fine-tuning of start/end;
+  this is a distinct mode, not a modal
+
+Renaming a named loop (changing its label without adjusting endpoints)
+goes through a picker. There is no "edit current named loop" keybinding.
+
+### Non-current edits (video, section, chapter)
+
+Editing an entity without first making it current (e.g., a metadata
+cleanup pass) is a plausible use case but is deferred. Edit-current
+keybindings are sufficient for now; a picker-based edit path can be
+added if actual usage creates friction.
+
+---
+
 ## Key bindings
 
 Videos:
@@ -745,8 +811,8 @@ Videos:
     vu | Switch to YouTube video via a URL [url-input-modal]
     y  | YouTube: short synonym for `vu`.
     vv | Switch to video [video-picker]
-    ve | Edit video attributes [edit-video-modal]
-    vd | Delete current video
+    ve | Edit current video [edit-video-modal]
+    vd | Delete video [via picker]
 
 Playing:
 
@@ -782,27 +848,27 @@ Looping:
     ls   | Save-new: a new loop [save-loop-modal]
     lb   | Save-back: save scratch-loop endpoints back to source Loop
     le   | Edit: scratch-loop [edit-scratch-loop-mode]
-    ld   | Delete: current loop-source [applies only if source was a Loop]
+    ld   | Delete loop [via picker]
 
 Chapters:
 
     cc | Set new chapter here
     co | Open chapter
     ce | Edit current chapter
-    cd | Delete current chapter
+    cd | Delete chapter [via picker]
 
 Sections:
 
     ss | Set: sets a new section divider at current time
     se | Edit: edit current section [edit-section-modal]
     sl | Loop: makes current section the scratch-loop source
-    sd | Delete: the current section [delete section-divider to the left]
+    sd | Delete section [via picker]
 
 Marks:
 
     mm   | Set mark at current time
-    me   | Edit: nearest mark (to the left) [edit-mark-modal]
-    md   | Delete: nearest mark (to the left)
+    me   | Edit mark [via picker]
+    md   | Delete mark [via picker]
 
 Undo and help:
 
@@ -1060,17 +1126,17 @@ Dropdowns for less frequent operations:
     Video:
         - Open video
         - Edit current
-        - Delete current
+        - Delete video...
         ----------------------------
         - Open chapter
         - Set new chapter here
         - Edit current chapter
-        - Delete current chapter
+        - Delete chapter...
 
     Section:
         - Set new here
         - Edit current
-        - Delete current
+        - Delete section...
         - Loop current
         - Select section to loop
 
@@ -1080,12 +1146,12 @@ Dropdowns for less frequent operations:
         - Save new
         - Save back to source loop
         - Select section to loop [alt route to same operation in Section menu]
-        - Delete current source loop
+        - Delete loop...
 
     Mark:
         - Set here
-        - Edit nearest
-        - Delete nearest
+        - Edit mark...
+        - Delete mark...
 
     Jump:
         - Time

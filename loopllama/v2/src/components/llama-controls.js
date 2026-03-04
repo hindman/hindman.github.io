@@ -21,12 +21,7 @@
 //   ll-loop-start-change    -- user edited start; detail.value = seconds
 //   ll-loop-end-change      -- user edited end; detail.value = seconds
 //   ll-set-section          -- set a section divider at current time
-//   ll-delete-section       -- delete a section; detail.id = section id
 //   ll-set-mark             -- set a mark at current time
-//   ll-delete-mark          -- delete a mark; detail.id = mark id
-//   ll-save-loop            -- save scratch as named loop; detail.name = string
-//   ll-load-loop            -- load a named loop; detail.id = loop id
-//   ll-delete-loop          -- delete a named loop; detail.id = loop id
 
 import { LitElement, html, css } from 'lit';
 import { createRef, ref } from 'lit/directives/ref.js';
@@ -159,69 +154,6 @@ class LlamaControls extends LitElement {
       box-shadow: 0 0 0 1px var(--ll-accent-warm, #e3a857);
     }
 
-    .marks-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.3rem;
-      flex: 1;
-    }
-
-    .mark-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.2rem;
-      background: var(--ll-surface-raised, #2a2a2a);
-      border: 1px solid var(--ll-border, #444);
-      border-radius: var(--ll-radius, 3px);
-      padding: 0.1rem 0.35rem;
-      font-size: var(--ll-text-sm, 0.85rem);
-    }
-
-    .mark-chip .mark-label {
-      color: var(--ll-text-dim, #aaa);
-    }
-
-    .mark-chip .mark-time {
-      font-family: var(--ll-font-mono, monospace);
-      color: var(--ll-accent, #7ec8e3);
-    }
-
-    .mark-chip .btn-delete {
-      padding: 0 0.2rem;
-      background: transparent;
-      border: none;
-      color: var(--ll-text-muted, #666);
-      font-size: 0.8rem;
-      line-height: 1;
-      cursor: pointer;
-      margin-left: 0.1rem;
-    }
-
-    .mark-chip .btn-delete:hover {
-      color: var(--ll-text, #e0e0e0);
-      border-color: transparent;
-    }
-
-    .mark-chip.loaded {
-      border-color: var(--ll-accent, #7ec8e3);
-    }
-
-    .loop-name-input {
-      font-family: var(--ll-font-mono, monospace);
-      font-size: var(--ll-text-sm, 0.85rem);
-      width: 8ch;
-      padding: 0.2rem 0.4rem;
-      background: var(--ll-surface-raised, #2a2a2a);
-      border: 1px solid var(--ll-border, #444);
-      border-radius: var(--ll-radius, 3px);
-      color: var(--ll-text, #e0e0e0);
-    }
-
-    .loop-name-input:focus {
-      outline: none;
-      border-color: var(--ll-accent, #7ec8e3);
-    }
-
     /* Tight bordered group for each loop endpoint (label + input + Now). */
     .loop-endpoint-group {
       display: flex;
@@ -252,10 +184,6 @@ class LlamaControls extends LitElement {
     looping:     { type: Boolean },
     loopStart:   { type: Number },
     loopEnd:     { type: Number },
-    sections:    { type: Array },
-    marks:       { type: Array },
-    namedLoops:         { type: Array },
-    loopSource:         { type: String },
     editScratchActive:  { type: Boolean },
     editScratchFocus:   { type: String },
     editScratchDelta:   { type: Number },
@@ -271,17 +199,12 @@ class LlamaControls extends LitElement {
     this.looping     = false;
     this.loopStart   = 0;
     this.loopEnd     = 0;
-    this.sections    = [];
-    this.marks       = [];
-    this.namedLoops        = [];
-    this.loopSource        = null;
     this.editScratchActive = false;
     this.editScratchFocus  = 'start';
     this.loopViolation     = false;
     this.editScratchDelta  = 1;
-    this._startRef          = createRef();
-    this._endRef      = createRef();
-    this._loopNameRef = createRef();
+    this._startRef = createRef();
+    this._endRef   = createRef();
   }
 
   _fmt(secs) {
@@ -353,12 +276,6 @@ class LlamaControls extends LitElement {
       // Revert invalid input to the current value.
       this._startRef.value.value = this._fmt(this.loopStart);
     }
-  }
-
-  _onSaveLoopClick() {
-    const name = this._loopNameRef.value?.value?.trim() ?? '';
-    this._emit('ll-save-loop', { name });
-    if (this._loopNameRef.value) this._loopNameRef.value.value = '';
   }
 
   _submitEnd() {
@@ -434,79 +351,13 @@ class LlamaControls extends LitElement {
         <div class="controls-row">
           <span class="label">Sections:</span>
           <button @click=${() => this._emit('ll-set-section')}>Set here</button>
-          ${this.sections.length === 0
-            ? html`<span class="sep">none</span>`
-            : html`
-              <div class="marks-list">
-                ${this.sections.map((s, i) => html`
-                  <span class="mark-chip">
-                    <span class="mark-label">${s.name || `#${i + 1}`}</span>
-                    <span class="mark-time">${this._fmt(s.time)}</span>
-                    <button
-                      class="btn-delete"
-                      title="Delete section"
-                      @click=${() => this._emit('ll-delete-section', { id: s.id })}
-                    >×</button>
-                  </span>
-                `)}
-              </div>
-            `}
         </div>
 
         <div class="controls-row">
           <span class="label">Marks:</span>
           <button @click=${() => this._emit('ll-set-mark')}>Set here</button>
-          ${this.marks.length === 0
-            ? html`<span class="sep">none</span>`
-            : html`
-              <div class="marks-list">
-                ${this.marks.map((m, i) => html`
-                  <span class="mark-chip">
-                    <span class="mark-label">${m.name || `#${i + 1}`}</span>
-                    <span class="mark-time">${this._fmt(m.time)}</span>
-                    <button
-                      class="btn-delete"
-                      title="Delete mark"
-                      @click=${() => this._emit('ll-delete-mark', { id: m.id })}
-                    >×</button>
-                  </span>
-                `)}
-              </div>
-            `}
         </div>
 
-        <div class="controls-row">
-          <span class="label">Loops:</span>
-          <input
-            ${ref(this._loopNameRef)}
-            class="loop-name-input"
-            type="text"
-            placeholder="name"
-          />
-          <button @click=${this._onSaveLoopClick}>Save</button>
-          ${this.namedLoops.length === 0
-            ? html`<span class="sep">none</span>`
-            : html`
-              <div class="marks-list">
-                ${this.namedLoops.map((l, i) => html`
-                  <span class="mark-chip ${l.id === this.loopSource ? 'loaded' : ''}">
-                    <span class="mark-label">${l.name || `#${i + 1}`}</span>
-                    <span class="mark-time">${this._fmt(l.start)}–${this._fmt(l.end)}</span>
-                    <button
-                      class="btn-delete"
-                      title="Load loop"
-                      @click=${() => this._emit('ll-load-loop', { id: l.id })}
-                    >load</button>
-                    <button
-                      class="btn-delete"
-                      title="Delete loop"
-                      @click=${() => this._emit('ll-delete-loop', { id: l.id })}
-                    >×</button>
-                  </span>
-                `)}
-              </div>
-            `}
-        </div>
       </div>
     `;
   }

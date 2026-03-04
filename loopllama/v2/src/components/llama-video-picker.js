@@ -17,11 +17,14 @@ import './llama-modal.js';
 
 class LlamaVideoPicker extends LitElement {
   static styles = css`
+    :host {
+      --width: 52rem;
+    }
     .filter-wrap {
       margin-bottom: 0.75rem;
     }
     .video-list {
-      max-height: 320px;
+      max-height: 520px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;

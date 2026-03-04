@@ -3,14 +3,16 @@
 
 Current stage to implement:
 
+    9c. Loop modals: save-loop-modal (name + start/end, defaults to
+        scratch-loop) and loops-picker (load a saved loop). Wire `ls` and
+        `lo` bindings.
+
 The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclear or need adjustment.
 
 ## TODO
 
 V2 implementation:
     
-    /rename loopllama-v2-stage-9c
-
     9c. Loop modals: save-loop-modal (name + start/end, defaults to
         scratch-loop) and loops-picker (load a saved loop). Wire `ls` and
         `lo` bindings.

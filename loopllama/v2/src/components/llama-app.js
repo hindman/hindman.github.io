@@ -17,6 +17,8 @@ import './llama-timeline.js';
 import './llama-url-input-modal.js';
 import './llama-video-picker.js';
 import './llama-edit-video-modal.js';
+import './llama-save-loop-modal.js';
+import './llama-loop-picker.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
@@ -187,6 +189,8 @@ class LlamaApp extends LitElement {
     this._urlInputModalEl    = null;
     this._videoPickerEl      = null;
     this._editVideoModalEl   = null;
+    this._saveLoopModalEl    = null;
+    this._loopPickerEl       = null;
     this.seekDelta     = DEFAULT_OPTIONS.seek_delta_default;
     this.speedDelta    = DEFAULT_OPTIONS.speed_delta;
   }
@@ -286,24 +290,13 @@ class LlamaApp extends LitElement {
         }
         this.looping = !this.looping;
       },
-      saveLoop: () => {
-        addLoop(this.namedLoops, this.loopStart, this.loopEnd);
-        this.namedLoops = [...this.namedLoops];
-        this.statusMsg  = 'Loop saved.';
-        this._saveCurrentState();
-      },
+      saveLoop: () => this._saveLoopModalEl?.show(),
       openLoop: () => {
         if (!this.namedLoops.length) {
           this.statusMsg = 'No saved loops.';
           return;
         }
-        // Cycle: load the next loop after the current source (wrapping).
-        const idx  = this.namedLoops.findIndex(l => l.id === this.loopSource);
-        const next = this.namedLoops[(idx + 1) % this.namedLoops.length];
-        this.loopStart  = next.start;
-        this.loopEnd    = next.end;
-        this.loopSource = next.id;
-        this.statusMsg  = `Loop loaded: ${next.name || 'unnamed'}`;
+        this._loopPickerEl?.show();
       },
       saveBack: () => {
         if (!this.loopSource) {
@@ -419,17 +412,19 @@ class LlamaApp extends LitElement {
     this._urlInputModalEl  = this.renderRoot.querySelector('llama-url-input-modal');
     this._videoPickerEl    = this.renderRoot.querySelector('llama-video-picker');
     this._editVideoModalEl = this.renderRoot.querySelector('llama-edit-video-modal');
+    this._saveLoopModalEl  = this.renderRoot.querySelector('llama-save-loop-modal');
+    this._loopPickerEl     = this.renderRoot.querySelector('llama-loop-picker');
 
     window.addEventListener('blur',  () => { this.windowFocused = false; });
     window.addEventListener('focus', () => { this.windowFocused = true; });
 
-    // Auto-load the current video from persisted state.
+    // Restore the last-used video on startup -- cue without auto-playing.
     if (this._appState.currentVideoId) {
       const video = this._appState.videos.find(v => v.id === this._appState.currentVideoId);
       if (video) {
         this._syncFromVideo(video);
-        this._vc.loadVideo(video.id, video.time ?? 0);
-        this.statusMsg = `Loading: ${video.id}`;
+        this._vc.cueVideo(video.id, video.time ?? 0);
+        this.statusMsg = `Video cued: ${video.name || video.id}`;
       }
     }
 
@@ -794,8 +789,11 @@ class LlamaApp extends LitElement {
   }
 
   _onSaveLoop(e) {
-    addLoop(this.namedLoops, this.loopStart, this.loopEnd, e.detail.name);
+    const start = e.detail.start ?? this.loopStart;
+    const end   = e.detail.end   ?? this.loopEnd;
+    addLoop(this.namedLoops, start, end, e.detail.name);
     this.namedLoops = [...this.namedLoops];
+    this.statusMsg  = `Loop saved: ${e.detail.name || 'unnamed'}`;
     this._saveCurrentState();
   }
 
@@ -806,6 +804,7 @@ class LlamaApp extends LitElement {
     this.loopEnd    = loop.end;
     this.loopSource = loop.id;
     this.statusMsg  = `Loop loaded: ${loop.name || 'unnamed'}`;
+    if (this.looping) this._vc?.seekTo(loop.start);
   }
 
   _onSeekTo(e) {
@@ -865,10 +864,6 @@ class LlamaApp extends LitElement {
           .looping=${this.looping}
           .loopStart=${this.loopStart}
           .loopEnd=${this.loopEnd}
-          .sections=${this.sections}
-          .marks=${this.marks}
-          .namedLoops=${this.namedLoops}
-          .loopSource=${this.loopSource}
           .editScratchActive=${this.editScratchActive}
           .editScratchFocus=${this.editScratchFocus}
           .editScratchDelta=${this.editScratchDelta}
@@ -882,12 +877,7 @@ class LlamaApp extends LitElement {
           @ll-loop-start-change=${this._onLoopStartChange}
           @ll-loop-end-change=${this._onLoopEndChange}
           @ll-set-section=${this._onSetSection}
-          @ll-delete-section=${this._onDeleteSection}
           @ll-set-mark=${this._onSetMark}
-          @ll-delete-mark=${this._onDeleteMark}
-          @ll-save-loop=${this._onSaveLoop}
-          @ll-load-loop=${this._onLoadLoop}
-          @ll-delete-loop=${this._onDeleteLoop}
         ></llama-controls>
       </div>
 
@@ -912,6 +902,22 @@ class LlamaApp extends LitElement {
         @ll-update-video=${this._onUpdateVideo}
         @ll-delete-video=${this._onDeleteVideo}
       ></llama-edit-video-modal>
+
+      <llama-save-loop-modal
+        .loopStart=${this.loopStart}
+        .loopEnd=${this.loopEnd}
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+        @ll-save-loop=${this._onSaveLoop}
+      ></llama-save-loop-modal>
+
+      <llama-loop-picker
+        .namedLoops=${this.namedLoops}
+        .loopSource=${this.loopSource}
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+        @ll-load-loop=${this._onLoadLoop}
+      ></llama-loop-picker>
 
       <llama-whichkey
         .prefix=${this.wkPrefix}
