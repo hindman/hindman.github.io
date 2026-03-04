@@ -64,7 +64,7 @@ export const BINDINGS = {
     's': { handler: 'saveLoop',      desc: 'Save new loop' },
     'b': { handler: 'saveBack',      desc: 'Save back to source loop' },
     'e': { handler: 'editScratch',   desc: 'Edit scratch loop' },
-    'd': { handler: 'deleteLoop',    desc: 'Delete source loop' },
+    'd': { handler: 'deleteLoop',    desc: 'Delete a loop' },
   }},
 
   'c': { completions: {
@@ -78,13 +78,13 @@ export const BINDINGS = {
     's': { handler: 'setSection',    desc: 'Set section divider here' },
     'e': { handler: 'editSection',   desc: 'Edit current section' },
     'l': { handler: 'loopSection',   desc: 'Loop current section' },
-    'd': { handler: 'deleteSection', desc: 'Delete current section' },
+    'd': { handler: 'deleteSection', desc: 'Delete a section' },
   }},
 
   'm': { completions: {
     'm': { handler: 'setMark',    desc: 'Set mark here' },
-    'e': { handler: 'editMark',   desc: 'Edit nearest mark' },
-    'd': { handler: 'deleteMark', desc: 'Delete nearest mark' },
+    'e': { handler: 'editMark',   desc: 'Edit a mark' },
+    'd': { handler: 'deleteMark', desc: 'Delete a mark' },
   }},
 
   'h': { completions: {

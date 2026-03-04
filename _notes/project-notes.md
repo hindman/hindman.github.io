@@ -9,22 +9,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 V2 implementation:
     
-    ===============================
-
-    /rename loopllama-v2-stage-9d
-
-    9d. Code cleanup (delete/edit handlers): Replace the three wrong
-        handler implementations that predate the picker-based delete/edit
-        design: deleteSection (used nearestSectionLeft), deleteMark (used
-        nearestMarkLeft), and deleteLoop (deleted source loop immediately).
-        Convert all three to stubs that show a status message. Fix the
-        stale desc strings in keyboardController for `sd`, `ld`, `me`,
-        and `md`.
-
-    g c -am '9d. Code cleanup (delete/edit handlers)'
-
-    ===============================
-
     /rename loopllama-v2-stage-9e
 
     9e. Marks picker and modals: marks-picker component with a `mode`

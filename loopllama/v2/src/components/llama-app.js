@@ -6,8 +6,8 @@ import { createKeyboardController } from '../keyboardController.js';
 import {
   DEFAULT_OPTIONS,
   createVideo, createAppState, createScratchLoop,
-  addMark, deleteMarkById, nearestMarkLeft,
-  addSection, deleteSectionById, nearestSectionLeft, getSectionBounds,
+  addMark, deleteMarkById,
+  addSection, deleteSectionById, getSectionBounds,
   addLoop, deleteLoopById,
 } from '../state.js';
 import { load, save } from '../storage.js';
@@ -315,17 +315,7 @@ class LlamaApp extends LitElement {
         this._saveCurrentState();
       },
       editScratch: () => this._enterEditScratch(),
-      deleteLoop: () => {
-        if (!this.loopSource) {
-          this.statusMsg = 'No source loop to delete.';
-          return;
-        }
-        deleteLoopById(this.namedLoops, this.loopSource);
-        this.namedLoops = [...this.namedLoops];
-        this.loopSource = null;
-        this.statusMsg  = 'Source loop deleted.';
-        this._saveCurrentState();
-      },
+      deleteLoop: () => { this.statusMsg = 'Loop delete: not yet implemented.'; },
       setSection: () => {
         addSection(this.sections, this._vc?.getCurrentTime() ?? 0);
         this.sections = [...this.sections];
@@ -345,28 +335,14 @@ class LlamaApp extends LitElement {
         this.looping     = true;
         this.statusMsg   = 'Looping section.';
       },
-      deleteSection: () => {
-        const section = nearestSectionLeft(this.sections, this.currentTime);
-        if (section) {
-          deleteSectionById(this.sections, section.id);
-          this.sections = [...this.sections];
-          this._saveCurrentState();
-        }
-      },
+      deleteSection: () => { this.statusMsg = 'Section delete: not yet implemented.'; },
       setMark: () => {
         addMark(this.marks, this._vc?.getCurrentTime() ?? 0);
         this.marks = [...this.marks];
         this._saveCurrentState();
       },
       editMark: stub('editMark'),
-      deleteMark: () => {
-        const mark = nearestMarkLeft(this.marks, this.currentTime);
-        if (mark) {
-          deleteMarkById(this.marks, mark.id);
-          this.marks = [...this.marks];
-          this._saveCurrentState();
-        }
-      },
+      deleteMark: () => { this.statusMsg = 'Mark delete: not yet implemented.'; },
       helpGeneral:   stub('helpGeneral'),
       deleteData:    stub('deleteData'),
       exportAll:     stub('exportAll'),
