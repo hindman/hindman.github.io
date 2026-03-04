@@ -23,6 +23,7 @@ import './llama-marks-picker.js';
 import './llama-edit-mark-modal.js';
 import './llama-sections-picker.js';
 import './llama-edit-section-modal.js';
+import './llama-jump-time-modal.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
@@ -199,6 +200,7 @@ class LlamaApp extends LitElement {
     this._editMarkModalEl    = null;
     this._sectionsPickerEl   = null;
     this._editSectionModalEl = null;
+    this._jumpTimeModalEl    = null;
     this.seekDelta     = DEFAULT_OPTIONS.seek_delta_default;
     this.speedDelta    = DEFAULT_OPTIONS.speed_delta;
   }
@@ -283,7 +285,7 @@ class LlamaApp extends LitElement {
       videoPicker:   () => this._videoPickerEl?.show(),
       editVideo:     () => this._editVideoModalEl?.show(),
       deleteVideo:   stub('deleteVideo'),
-      jumpTime:      stub('jumpTime'),
+      jumpTime:      () => this._jumpTimeModalEl?.show(),
       jumpSection:   () => this._openSectionsPicker('jump'),
       jumpLoop:      () => this._openLoopsPicker('jump'),
       jumpMark:      () => this._openMarksPicker('jump'),
@@ -397,6 +399,7 @@ class LlamaApp extends LitElement {
     this._editMarkModalEl    = this.renderRoot.querySelector('llama-edit-mark-modal');
     this._sectionsPickerEl   = this.renderRoot.querySelector('llama-sections-picker');
     this._editSectionModalEl = this.renderRoot.querySelector('llama-edit-section-modal');
+    this._jumpTimeModalEl    = this.renderRoot.querySelector('llama-jump-time-modal');
 
     window.addEventListener('blur',  () => { this.windowFocused = false; });
     window.addEventListener('focus', () => { this.windowFocused = true; });
@@ -886,6 +889,11 @@ class LlamaApp extends LitElement {
     this._editSectionModalEl?.show(section);
   }
 
+  // Handle ll-jump-time from jump-time-modal.
+  _onJumpTime(e) {
+    this._vc?.seekTo(e.detail.time);
+  }
+
   // Handle ll-jump-section from sections picker (mode='jump').
   _onJumpSection(e) {
     this._vc?.seekTo(e.detail.time);
@@ -1036,6 +1044,12 @@ class LlamaApp extends LitElement {
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-update-section=${this._onUpdateSection}
       ></llama-edit-section-modal>
+
+      <llama-jump-time-modal
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+        @ll-jump-time=${this._onJumpTime}
+      ></llama-jump-time-modal>
 
       <llama-whichkey
         .prefix=${this.wkPrefix}

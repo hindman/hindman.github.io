@@ -9,16 +9,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 V2 implementation:
 
-    /rename loopllama-v2-stage-11
-
-    11. Jump by time: build a time-input modal (single field accepting
-        mm:ss or raw seconds). Wire `jj` binding. Seek the player to
-        the entered time and push a jump-history entry.
-
-    g c -am '11. Jump by time'
-
-    ===============================
-
     /rename loopllama-v2-stage-12
 
     12. Entity-type navigation: add `activeEntityType` to app state
