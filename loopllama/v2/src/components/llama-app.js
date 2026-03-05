@@ -431,8 +431,9 @@ class LlamaApp extends LitElement {
     });
     await this._vc.initialize(container);
 
+    this._handlers = this._makeHandlers();
     this._kb = createKeyboardController(
-      this._makeHandlers(),
+      this._handlers,
       {
         onPendingKey: (prefix, completions) => {
           this.wkPrefix      = prefix;
@@ -1072,6 +1073,13 @@ class LlamaApp extends LitElement {
     this._saveCurrentState();
   }
 
+  // Handle ll-menu-select from llama-controls menus.
+  // Dispatches to the same handlers used by keyboard bindings.
+  _onMenuSelect(e) {
+    const handler = this._handlers?.[e.detail.action];
+    if (handler) handler();
+  }
+
   render() {
     const currentVideo   = this._appState?.videos.find(v => v.id === this.currentVideoId) ?? null;
     const zoomedChapter  = this.chapterZoom && this.activeChapterId
@@ -1135,6 +1143,7 @@ class LlamaApp extends LitElement {
           @ll-prev-entity=${() => this._navigateEntity('prev')}
           @ll-next-entity=${() => this._navigateEntity('next')}
           @ll-entity-type-change=${this._onEntityTypeChange}
+          @ll-menu-select=${this._onMenuSelect}
         ></llama-controls>
       </div>
 

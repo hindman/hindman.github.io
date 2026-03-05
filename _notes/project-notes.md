@@ -9,14 +9,7 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 CURRENT:
 
-    ...
-    13e. Chapter entity-type navigation: add 'chapter' to the valid
-        values of `activeEntityType` (extending Stage 12's 'any' |
-        'video' | 'section' | 'loop' | 'mark'). Add 'chapter' as an
-        option in the entity-type picker. Ensure `,`/`.` navigation
-        finds prev/next chapter by `chapter.start` relative to playhead.
-
-    git commit -am '13e. Chapter entity-type navigation'
+    git commit -am '14. Dropdown menus'
 
 URLS:
 

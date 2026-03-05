@@ -26,9 +26,91 @@
 //   ll-prev-entity            -- navigate to previous entity
 //   ll-next-entity            -- navigate to next entity
 //   ll-entity-type-change     -- entity type changed; detail.value = type string
+//   ll-menu-select            -- menu item clicked; detail.action, detail.label
 
 import { LitElement, html, css } from 'lit';
 import { createRef, ref } from 'lit/directives/ref.js';
+import './llama-dropdown.js';
+
+// Menu definitions for the seven action menus.
+// Each item: { label, action } or { type: 'divider' }.
+const MENUS = [
+  {
+    label: 'Video',
+    items: [
+      { label: 'Load URL',     action: 'videoUrl'    },
+      { label: 'Switch video', action: 'videoPicker' },
+      { label: 'Edit video',   action: 'editVideo'   },
+      { label: 'Delete video', action: 'deleteVideo', disabled: true },
+    ],
+  },
+  {
+    label: 'Section',
+    items: [
+      { label: 'Set section here',     action: 'setSection'    },
+      { label: 'Edit current section', action: 'editSection'   },
+      { label: 'Loop current section', action: 'loopSection'   },
+      { label: 'Delete section',       action: 'deleteSection' },
+      { type: 'divider' },
+      { label: 'Create chapter',  action: 'setChapter'    },
+      { label: 'Open chapter',    action: 'openChapter'   },
+      { label: 'Edit chapter',    action: 'editChapter'   },
+      { label: 'Delete chapter',  action: 'deleteChapter' },
+      { label: 'Zoom chapter',    action: 'zoomChapter'   },
+    ],
+  },
+  {
+    label: 'Loop',
+    items: [
+      { label: 'Toggle loop',       action: 'toggleLoop'  },
+      { label: 'Open saved loop',   action: 'openLoop'    },
+      { label: 'Save new loop',     action: 'saveLoop'    },
+      { label: 'Save back',         action: 'saveBack'    },
+      { label: 'Edit scratch loop', action: 'editScratch' },
+      { label: 'Delete loop',       action: 'deleteLoop'  },
+    ],
+  },
+  {
+    label: 'Mark',
+    items: [
+      { label: 'Set mark here', action: 'setMark'    },
+      { label: 'Edit mark',     action: 'editMark'   },
+      { label: 'Delete mark',   action: 'deleteMark' },
+    ],
+  },
+  {
+    label: 'Jump',
+    items: [
+      { label: 'Jump by time',    action: 'jumpTime'    },
+      { label: 'Jump to section', action: 'jumpSection' },
+      { label: 'Jump to loop',    action: 'jumpLoop'    },
+      { label: 'Jump to mark',    action: 'jumpMark'    },
+      { type: 'divider' },
+      { label: 'Jump history',  action: 'jumpHistory', disabled: true },
+      { label: 'Jump back',     action: 'jumpBack',    disabled: true },
+      { label: 'Jump forward',  action: 'jumpForward', disabled: true },
+    ],
+  },
+  {
+    label: 'App',
+    items: [
+      { label: 'Options',      action: 'options',     disabled: true },
+      { type: 'divider' },
+      { label: 'Export data',  action: 'exportAll',   disabled: true },
+      { label: 'Import data',  action: 'importData',  disabled: true },
+      { label: 'Delete data',  action: 'deleteData',  disabled: true },
+      { type: 'divider' },
+      { label: 'Inspect data', action: 'inspectData', disabled: true },
+    ],
+  },
+  {
+    label: 'Help',
+    items: [
+      { label: 'General help', action: 'helpGeneral', disabled: true },
+      { label: 'Key bindings', action: 'helpKeys',    disabled: true },
+    ],
+  },
+];
 
 class LlamaControls extends LitElement {
   static styles = css`
@@ -53,6 +135,10 @@ class LlamaControls extends LitElement {
 
     .controls-row + .controls-row {
       border-top: 1px solid var(--ll-border, #444);
+    }
+
+    .menus-row {
+      flex-wrap: wrap;
     }
 
     button {
@@ -397,6 +483,12 @@ class LlamaControls extends LitElement {
         <div class="controls-row">
           <span class="label">Marks:</span>
           <button @click=${() => this._emit('ll-set-mark')}>Set here</button>
+        </div>
+
+        <div class="controls-row menus-row">
+          ${MENUS.map(menu => html`
+            <llama-dropdown .label=${menu.label} .items=${menu.items}></llama-dropdown>
+          `)}
         </div>
 
       </div>

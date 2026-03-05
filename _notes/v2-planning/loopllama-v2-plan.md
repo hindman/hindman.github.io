@@ -464,13 +464,13 @@ v2/
     the active chapter to `llama-timeline` to restrict the visible
     time range. Clearing `activeChapterId` also resets zoom.
 
-### TODO
-
 13e. Chapter entity-type navigation: add 'chapter' to the valid
     values of `activeEntityType` (extending Stage 12's 'any' |
     'video' | 'section' | 'loop' | 'mark'). Add 'chapter' as an
     option in the entity-type picker. Ensure `,`/`.` navigation
     finds prev/next chapter by `chapter.start` relative to playhead.
+
+### TODO
 
 14a. Dropdown component + controls layout: build the reusable dropdown
     component (thin wrapper around Shoelace sl-dropdown/sl-menu/
