@@ -1,9 +1,10 @@
-// llama-timeline.js -- horizontal timeline, 3-zone design.
+// llama-timeline.js -- horizontal timeline, 4-zone design.
 //
-// Zones (top to bottom, equal height):
-//   Play zone      -- thick track + dot playhead; click to seek.
-//   Section zone   -- section regions, divider lines, labels, hover tooltip.
-//   Loop-mark zone -- placeholder (Stage 18c).
+// Zones (top to bottom):
+//   Play zone    (24px) -- thick track + dot playhead; click to seek.
+//   Section zone (18px) -- section regions, divider lines, labels, hover tooltip.
+//   Mark zone    (12px) -- mark dots (yellow circles), hover tooltip.
+//   Loop zone    (18px) -- horizontal loop bars; 2 packed lanes; hover tooltip.
 //
 // Receives:
 //   videoId:     String   -- current video ID, or null if none loaded
@@ -11,6 +12,7 @@
 //   duration:    Number   -- total video duration (seconds), or null
 //   sections:    Array    -- Section objects { id, time, name, end? }
 //   marks:       Array    -- Mark objects { id, time, name }
+//   namedLoops:  Array    -- Loop objects { id, start, end, name }
 //   loopStart:   Number   -- scratch-loop start (seconds)
 //   loopEnd:     Number   -- scratch-loop end (seconds)
 //   scopeStart:  Number   -- visible range start (seconds); null = 0
@@ -46,13 +48,10 @@ class LlamaTimeline extends LitElement {
 
     /* === Zones === */
 
-    .zone {
-      height: 24px;
-    }
-
     /* Play zone: thick track + dot playhead */
 
     .zone--play {
+      height: 24px;
       position: relative;
       background: #1a1a1a;
       cursor: pointer;
@@ -100,6 +99,7 @@ class LlamaTimeline extends LitElement {
 
     /* Section zone */
     .zone--section {
+      height: 18px;
       background: var(--ll-surface, #252525);
       position: relative;
       overflow: hidden;
@@ -146,9 +146,55 @@ class LlamaTimeline extends LitElement {
       color: var(--ll-accent, #7ec8e3);
     }
 
-    /* Loop-mark zone -- placeholder */
+    /* Mark zone */
+    .zone--mark {
+      height: 12px;
+      background: var(--ll-bg, #1a1a1a);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Mark dot: small yellow circle, centered vertically in the mark zone */
+    .mark-dot {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #f0c040;
+      top: 6px;
+      transform: translate(-50%, -50%);
+      cursor: default;
+    }
+
+    /* Loop zone */
     .zone--loop {
+      height: 18px;
       background: var(--ll-surface-raised, #2a2a2a);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Horizontal loop bar: full lane height as hit area, 2px visual line via ::after */
+    .loop-bar {
+      position: absolute;
+      height: 9px;
+      background: transparent;
+      cursor: default;
+    }
+
+    .loop-bar::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 2px;
+      transform: translateY(-50%);
+      background: #c87820;
+    }
+
+    .loop-bar--scratch::after {
+      background: var(--ll-accent, #7ec8e3);
     }
   `;
 
@@ -158,6 +204,7 @@ class LlamaTimeline extends LitElement {
     duration:    { type: Number },
     sections:    { type: Array },
     marks:       { type: Array },
+    namedLoops:  { type: Array },
     loopStart:   { type: Number },
     loopEnd:     { type: Number },
     scopeStart:  { type: Number },
@@ -172,6 +219,7 @@ class LlamaTimeline extends LitElement {
     this.duration    = null;
     this.sections    = [];
     this.marks       = [];
+    this.namedLoops  = [];
     this.loopStart   = 0;
     this.loopEnd     = 0;
     this.scopeStart  = null;
@@ -250,6 +298,83 @@ class LlamaTimeline extends LitElement {
     });
   }
 
+  // Returns true if time t falls within the visible scope.
+  _inScope(t) {
+    const start = this.scopeStart ?? 0;
+    const end   = this.scopeEnd   ?? this.duration;
+    return t >= start && t <= end;
+  }
+
+  // Returns true if any part of loop overlaps the visible scope.
+  _loopInScope(loop) {
+    const start = this.scopeStart ?? 0;
+    const end   = this.scopeEnd   ?? this.duration;
+    return loop.end > start && loop.start < end;
+  }
+
+  // Greedy lane packing into 2 loop lanes (indices 0-1).
+  // Overflow (3+ overlapping) piles into lane 1.
+  _packLoops(loops) {
+    const lanes = [[], []];
+    for (const loop of [...loops].sort((a, b) => a.start - b.start)) {
+      let placed = false;
+      for (const lane of lanes) {
+        if (!lane.some(l => loop.start < l.end && loop.end > l.start)) {
+          lane.push(loop);
+          placed = true;
+          break;
+        }
+      }
+      if (!placed) lanes[1].push(loop);
+    }
+    return lanes;
+  }
+
+  // Render mark dots for the mark zone (12px, dot center at y=6px).
+  _renderMarks() {
+    return (this.marks ?? [])
+      .filter(m => this._inScope(m.time))
+      .map(m => html`
+        <div
+          class="mark-dot"
+          style="left: ${this._pct(m.time)}%"
+          title="${m.name}: ${this._fmt(m.time)}"
+        ></div>
+      `);
+  }
+
+  // Render loop bars for the loop zone (18px, two 9px lanes).
+  // Scratch loop (if valid) is included in packing; rendered in teal.
+  _renderLoops() {
+    const allLoops = [...(this.namedLoops ?? [])];
+    if (this.loopEnd > this.loopStart) {
+      allLoops.push({ _scratch: true, start: this.loopStart, end: this.loopEnd });
+    }
+
+    const els = [];
+    const lanes = this._packLoops(allLoops);
+    lanes.forEach((lane, laneIdx) => {
+      const barTop = laneIdx * 9 + 4;  // center 2px bar in 9px lane (9/2 - 1 = 3.5 → 4)
+      for (const loop of lane) {
+        if (!this._loopInScope(loop)) continue;
+        const leftPct  = this._pct(loop.start);
+        const widthPct = this._pct(loop.end) - leftPct;
+        const cls      = loop._scratch ? 'loop-bar loop-bar--scratch' : 'loop-bar';
+        const tooltip  = loop._scratch
+          ? `Loop: ${this._fmt(loop.start)} – ${this._fmt(loop.end)}`
+          : `${loop.name}: ${this._fmt(loop.start)} – ${this._fmt(loop.end)}`;
+        els.push(html`
+          <div
+            class="${cls}"
+            style="left: ${leftPct}%; width: ${widthPct}%; top: ${barTop}px"
+            title="${tooltip}"
+          ></div>
+        `);
+      }
+    });
+    return els;
+  }
+
   _onPlayZoneClick(e) {
     if (!this.duration) return;
     const start = this.scopeStart ?? 0;
@@ -277,16 +402,18 @@ class LlamaTimeline extends LitElement {
     return html`
       <div class="timeline-wrap">
 
-        <div class="zone zone--play" @click=${this._onPlayZoneClick}>
+        <div class="zone--play" @click=${this._onPlayZoneClick}>
           <div class="play-track">
             <div class="play-fill" style="width: ${phPct}%"></div>
           </div>
           <div class="play-dot" style="left: ${phPct}%"></div>
         </div>
 
-        <div class="zone zone--section">${this._renderSections()}</div>
+        <div class="zone--section">${this._renderSections()}</div>
 
-        <div class="zone zone--loop"></div>
+        <div class="zone--mark">${this._renderMarks()}</div>
+
+        <div class="zone--loop">${this._renderLoops()}</div>
 
       </div>
     `;

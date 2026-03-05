@@ -1207,6 +1207,7 @@ class LlamaApp extends LitElement {
               .duration=${this.duration}
               .sections=${this.sections}
               .marks=${this.marks}
+              .namedLoops=${this.namedLoops}
               .loopStart=${this.loopStart}
               .loopEnd=${this.loopEnd}
               .scopeStart=${zoomedChapter?.start ?? null}

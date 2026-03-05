@@ -7,13 +7,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-18c. Revised Timeline -- Loop-mark zone: render the scratch loop as a
-    shaded region (color 1). Render named loop starts as vertical lines
-    (color 2, related to color 1); hover tooltip shows name, start, end;
-    loop ends are not drawn (deliberate, to reduce clutter). Render
-    marks as a distinct symbol (diamond or similar -- not a circle, not
-    a vertical line); hover tooltip shows name and time.
-
 18d. Revised Timeline -- mouse clicks + chapter zoom: wire click
     handlers for Section zone (click = jump to section start), Loop-mark
     zone loops (click = jump to loop start + activate as scratch loop),
