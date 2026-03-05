@@ -27,6 +27,7 @@ import './llama-edit-section-modal.js';
 import './llama-jump-time-modal.js';
 import './llama-chapter-picker.js';
 import './llama-edit-chapter-modal.js';
+import './llama-current.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
@@ -84,7 +85,7 @@ class LlamaApp extends LitElement {
       padding: var(--ll-pad, 0.5rem);
     }
 
-    /* --- Main row: video + message --- */
+    /* --- Main row: video only (narrow) --- */
     .app-main {
       display: flex;
       gap: var(--ll-gap, 0.5rem);
@@ -104,39 +105,21 @@ class LlamaApp extends LitElement {
       background: #000;
     }
 
-    .message-area {
-      width: 220px;
-      flex-shrink: 0;
-      background: var(--ll-surface, #252525);
-      border: 1px solid var(--ll-border, #444);
-      border-radius: var(--ll-radius, 3px);
-      padding: var(--ll-pad, 0.5rem);
-      font-size: var(--ll-text-sm, 0.85rem);
-      color: var(--ll-text-dim, #aaa);
-    }
+    /* --- Wide layout: CSS grid puts current panel as right column --- */
+    @media (min-width: 768px) {
+      .app-body {
+        display: grid;
+        grid-template-areas:
+          "main    current"
+          "controls current";
+        grid-template-columns: 1fr 220px;
+        grid-template-rows: auto auto;
+        gap: var(--ll-gap, 0.5rem);
+      }
 
-    /* --- Edit-scratch-loop mode panel (shown in message area) --- */
-    .edit-mode-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
-
-    .edit-mode-title {
-      font-weight: bold;
-      color: var(--ll-accent-warm, #e3a857);
-      margin-bottom: 0.1rem;
-    }
-
-    .edit-mode-focus {
-      color: var(--ll-accent-warm, #e3a857);
-      font-weight: bold;
-    }
-
-    .edit-mode-keys {
-      margin-top: 0.3rem;
-      line-height: 1.7;
-      color: var(--ll-text-muted, #666);
+      .app-main      { grid-area: main; }
+      llama-controls { grid-area: controls; }
+      llama-current  { grid-area: current; }
     }
 
   `;
@@ -166,6 +149,8 @@ class LlamaApp extends LitElement {
     chapters:           { type: Array },
     activeChapterId:    { type: String },
     chapterZoom:        { type: Boolean },
+    loopSourceLabel:    { type: String },
+    loopSourceType:     { type: String },
   };
 
   constructor() {
@@ -194,6 +179,8 @@ class LlamaApp extends LitElement {
     this.chapters            = [];
     this.activeChapterId     = null;
     this.chapterZoom         = false;
+    this.loopSourceLabel     = null;
+    this.loopSourceType      = null;
     this._vc                 = null;
     this._kb                 = null;
     this._pollId             = null;
@@ -225,9 +212,11 @@ class LlamaApp extends LitElement {
     const scratch   = (video.loops ?? []).find(l => l.is_scratch);
     this.loopStart  = scratch?.start ?? 0;
     this.loopEnd    = scratch?.end   ?? 0;
-    this.looping    = false;
-    this.loopSource = null;
-    this.speed      = video.speed ?? 1.0;
+    this.looping         = false;
+    this.loopSource      = null;
+    this.loopSourceLabel = null;
+    this.loopSourceType  = null;
+    this.speed           = video.speed ?? 1.0;
     this._vc?.setPlaybackRate(this.speed);
     if (this.activeChapterId) {
       this.activeChapterId = null;
@@ -295,8 +284,8 @@ class LlamaApp extends LitElement {
       entityType:    () => this.renderRoot.querySelector('llama-controls')?.focusEntitySelect(),
       nextEntity:    () => this._navigateEntity('next'),
       jumpToStart:   () => this._vc?.seekTo(this.looping ? this.loopStart : 0),
-      setLoopStart:  () => { this.loopStart = this._vc?.getCurrentTime() ?? 0; this._autoDisableLoopIfInvalid(); },
-      setLoopEnd:    () => { this.loopEnd   = this._vc?.getCurrentTime() ?? 0; this._autoDisableLoopIfInvalid(); },
+      setLoopStart:  () => { this.loopStart = this._vc?.getCurrentTime() ?? 0; this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this._autoDisableLoopIfInvalid(); },
+      setLoopEnd:    () => { this.loopEnd   = this._vc?.getCurrentTime() ?? 0; this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this._autoDisableLoopIfInvalid(); },
       undo:          stub('undo'),
       redo:          stub('redo'),
       helpKeys:      stub('helpKeys'),
@@ -353,12 +342,16 @@ class LlamaApp extends LitElement {
           this.statusMsg = 'No section at current position.';
           return;
         }
+        const section    = nearestSectionLeft(this.sections, this.currentTime);
         const padStart   = DEFAULT_OPTIONS.section_loop_pad_start;
         const padEnd     = DEFAULT_OPTIONS.section_loop_pad_end;
-        this.loopStart   = Math.max(0, bounds.start - padStart);
-        this.loopEnd     = bounds.end + padEnd;
-        this.looping     = true;
-        this.statusMsg   = 'Looping section.';
+        this.loopStart       = Math.max(0, bounds.start - padStart);
+        this.loopEnd         = bounds.end + padEnd;
+        this.looping         = true;
+        this.loopSource      = null;
+        this.loopSourceLabel = section?.name || null;
+        this.loopSourceType  = 'section';
+        this.statusMsg       = 'Looping section.';
       },
       deleteSection: () => this._openSectionsPicker('delete'),
       setMark: () => {
@@ -589,26 +582,6 @@ class LlamaApp extends LitElement {
     }
   }
 
-  _renderEditScratchPanel() {
-    const focusLabel = this.editScratchFocus === 'start' ? 'Start' : 'End';
-    return html`
-      <div class="edit-mode-panel">
-        <div class="edit-mode-title">Edit Loop</div>
-        <div>Focus: <span class="edit-mode-focus">${focusLabel}</span></div>
-        <div>Delta: ${this.editScratchDelta}s</div>
-        <div class="edit-mode-keys">
-          Tab: toggle focus<br>
-          ←/→: nudge<br>
-          ↑/↓: delta<br>
-          Space: play/pause<br>
-          Bsp: reset<br>
-          0-9/: type time<br>
-          Enter/Esc: done
-        </div>
-      </div>
-    `;
-  }
-
   disconnectedCallback() {
     super.disconnectedCallback();
     clearInterval(this._pollId);
@@ -729,11 +702,13 @@ class LlamaApp extends LitElement {
       this.marks      = [];
       this.namedLoops = [];
       this.loopStart  = 0;
-      this.loopEnd    = 0;
-      this.looping    = false;
-      this.loopSource = null;
-      this.duration   = null;
-      this.statusMsg  = 'Video deleted.';
+      this.loopEnd         = 0;
+      this.looping         = false;
+      this.loopSource      = null;
+      this.loopSourceLabel = null;
+      this.loopSourceType  = null;
+      this.duration        = null;
+      this.statusMsg       = 'Video deleted.';
     }
     this.videos = [...this._appState.videos];
     save(this._appState);
@@ -797,12 +772,18 @@ class LlamaApp extends LitElement {
   }
 
   _onSetLoopStartNow() {
-    this.loopStart = this.currentTime;
+    this.loopStart       = this.currentTime;
+    this.loopSource      = null;
+    this.loopSourceLabel = null;
+    this.loopSourceType  = null;
     this._autoDisableLoopIfInvalid();
   }
 
   _onSetLoopEndNow() {
-    this.loopEnd = this.currentTime;
+    this.loopEnd         = this.currentTime;
+    this.loopSource      = null;
+    this.loopSourceLabel = null;
+    this.loopSourceType  = null;
     this._autoDisableLoopIfInvalid();
   }
 
@@ -898,10 +879,12 @@ class LlamaApp extends LitElement {
   _onLoadLoop(e) {
     const loop = this.namedLoops.find(l => l.id === e.detail.id);
     if (!loop) return;
-    this.loopStart  = loop.start;
-    this.loopEnd    = loop.end;
-    this.loopSource = loop.id;
-    this.statusMsg  = `Loop loaded: ${loop.name || 'unnamed'}`;
+    this.loopStart       = loop.start;
+    this.loopEnd         = loop.end;
+    this.loopSource      = loop.id;
+    this.loopSourceLabel = loop.name || null;
+    this.loopSourceType  = 'loop';
+    this.statusMsg       = `Loop loaded: ${loop.name || 'unnamed'}`;
     if (this.looping) this._vc?.seekTo(loop.start);
   }
 
@@ -923,7 +906,7 @@ class LlamaApp extends LitElement {
   _onDeleteLoop(e) {
     deleteLoopById(this.namedLoops, e.detail.id);
     this.namedLoops = [...this.namedLoops];
-    if (this.loopSource === e.detail.id) this.loopSource = null;
+    if (this.loopSource === e.detail.id) { this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; }
     this._saveCurrentState();
   }
 
@@ -1006,8 +989,11 @@ class LlamaApp extends LitElement {
     const chapter = this.chapters.find(c => c.id === e.detail.id);
     if (!chapter) return;
     this.activeChapterId = chapter.id;
-    this.loopStart = chapter.start;
-    this.loopEnd   = chapter.end;
+    this.loopStart       = chapter.start;
+    this.loopEnd         = chapter.end;
+    this.loopSource      = null;
+    this.loopSourceLabel = chapter.name || null;
+    this.loopSourceType  = 'chapter';
     this._autoDisableLoopIfInvalid();
     this._vc?.seekTo(chapter.start);
     this.statusMsg = `Chapter: ${chapter.name || `${_fmtTimePlain(chapter.start)} → ${_fmtTimePlain(chapter.end)}`}`;
@@ -1182,6 +1168,13 @@ class LlamaApp extends LitElement {
     const zoomedChapter  = this.chapterZoom && this.activeChapterId
       ? this.chapters.find(c => c.id === this.activeChapterId) ?? null
       : null;
+    const activeChapter  = this.activeChapterId
+      ? this.chapters.find(c => c.id === this.activeChapterId) ?? null
+      : null;
+    const currentSection = nearestSectionLeft(this.sections, this.currentTime);
+    const loopName       = this.loopSource
+      ? (this.namedLoops.find(l => l.id === this.loopSource)?.name ?? null)
+      : null;
     return html`
       <header class="app-header">
         <span class="app-title">LoopLlama</span>
@@ -1208,11 +1201,6 @@ class LlamaApp extends LitElement {
               .scopeEnd=${zoomedChapter?.end ?? null}
               @ll-seek-to=${this._onSeekTo}
             ></llama-timeline>
-          </div>
-          <div class="message-area">
-            ${this.editScratchActive
-              ? this._renderEditScratchPanel()
-              : html`<div>${this.statusMsg}</div>`}
           </div>
         </div>
         <llama-controls
@@ -1243,6 +1231,19 @@ class LlamaApp extends LitElement {
           @ll-entity-type-change=${this._onEntityTypeChange}
           @ll-menu-select=${this._onMenuSelect}
         ></llama-controls>
+
+        <llama-current
+          .videoName=${currentVideo?.name ?? ''}
+          .videoTitle=${currentVideo?.title ?? ''}
+          .chapterName=${activeChapter?.name ?? null}
+          .sectionName=${currentSection?.name ?? null}
+          .loopName=${loopName}
+          .loopSourceLabel=${this.loopSourceLabel}
+          .loopSourceType=${this.loopSourceType}
+          .editScratchActive=${this.editScratchActive}
+          .editScratchFocus=${this.editScratchFocus}
+          .editScratchDelta=${this.editScratchDelta}
+        ></llama-current>
       </div>
 
       <llama-url-input-modal

@@ -7,15 +7,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-16. Revised Current area: repurpose the existing Messages area component
-    into a focused "Current" area displaying top-level info about active
-    entities: video name, video title, active chapter name (if any),
-    current section name (if any), active loop name, and loop source
-    (name of the saved Loop, Section, or Chapter the scratch loop was
-    derived from; empty if manually created). Reactive: updates as app
-    state changes. Responsive: side column on wide windows; below Actions
-    area on narrow.
-
 17. Revised Messages footer: expand the existing which-key footer to
     handle all message types: which-key list (during key-pending),
     edit-scratch-loop cheatsheet (during that mode), warnings (keyboard
