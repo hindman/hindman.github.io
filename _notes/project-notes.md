@@ -7,9 +7,42 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
+Here's our next stage of work:
+
+    15. UI polish: with the full layout in place (video area, timeline,
+        controls with menus), dial in sizing and proportions.
+
+I have a longer list of things to change and experiment with, but here
+are some of the initial changes to make:
+
+    - In the controls area, we have two rows that can be dropped because their
+      functionality is now in the menu system:
+
+        Sections: [Set here button]
+        Marks: [Set here button]
+
+    - We have plenty of real estate on the page, so let's return to a more
+      reasonal/nature size and orientation for the YouTube frame.
+
+    - At least on a typical browser window on a computer, there is plenty of
+      room to put all of the play/speed/nav controls on the same row as the
+      looping controls. If this can be done in a way that supports window
+      resizing, that would be good -- in other words, if the window is made
+      more narrow, the looping controls would shift to being on a separate
+      row. If that resizing support is too difficult to be worth doing now,
+      let me know. The computer with regular browser window size is our primary
+      use case to support.
+
+Let me know if you have questions or push back.
+
 CURRENT:
 
-    git commit -am '14. Dropdown menus'
+    /rename loopllama-v2-stage-15
+
+    15. UI polish: with the full layout in place (video area, timeline,
+        controls with menus), dial in sizing and proportions.
+
+    git commit -am '15. UI polish'
 
 URLS:
 

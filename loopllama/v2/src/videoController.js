@@ -42,9 +42,12 @@ export function createVideoController({ onReady, onStateChange } = {}) {
           onStateChange: (event) => {
             // Duration bug fix: getDuration() returns unreliable values
             // before the player has actually started playing (especially
-            // for long videos). Set durationReady on the first PLAYING
-            // event; only then does getDuration() return a trusted value.
-            if (!durationReady && event.data === YT.PlayerState.PLAYING) {
+            // for long videos). Accept CUED (metadata loaded, reliable) and
+            // PLAYING as trusted states; skip BUFFERING to avoid the race
+            // condition on loadVideo before sufficient data has arrived.
+            if (!durationReady && (
+                event.data === YT.PlayerState.PLAYING ||
+                event.data === YT.PlayerState.CUED)) {
               durationReady = true;
             }
             onStateChange?.(event.data);

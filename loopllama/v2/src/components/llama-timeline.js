@@ -2,6 +2,7 @@
 // marks, and playhead.
 //
 // Receives:
+//   videoId:     String   -- current video ID, or null if none loaded
 //   currentTime: Number   -- current playback position (seconds)
 //   duration:    Number   -- total video duration (seconds), or null
 //   sections:    Array    -- Section objects sorted by time { id, time, name, end? }
@@ -147,6 +148,7 @@ class LlamaTimeline extends LitElement {
   `;
 
   static properties = {
+    videoId:     { type: String },
     currentTime: { type: Number },
     duration:    { type: Number },
     sections:    { type: Array },
@@ -159,6 +161,7 @@ class LlamaTimeline extends LitElement {
 
   constructor() {
     super();
+    this.videoId     = null;
     this.currentTime = 0;
     this.duration    = null;
     this.sections    = [];
@@ -215,9 +218,10 @@ class LlamaTimeline extends LitElement {
 
   render() {
     if (!this.duration) {
+      const msg = this.videoId ? 'Loading...' : 'No video loaded';
       return html`
         <div class="timeline-wrap">
-          <div class="no-video">No video loaded</div>
+          <div class="no-video">${msg}</div>
         </div>
       `;
     }

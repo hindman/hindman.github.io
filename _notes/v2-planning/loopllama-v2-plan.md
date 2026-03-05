@@ -470,8 +470,6 @@ v2/
     option in the entity-type picker. Ensure `,`/`.` navigation
     finds prev/next chapter by `chapter.start` relative to playhead.
 
-### TODO
-
 14a. Dropdown component + controls layout: build the reusable dropdown
     component (thin wrapper around Shoelace sl-dropdown/sl-menu/
     sl-menu-item). Add all seven menu buttons to the controls area
@@ -482,6 +480,8 @@ v2/
 14b. Wire all menu items: connect each item to its existing handler,
     modal, or picker. Mark unimplemented items (Undo, Options,
     Export/Import, Help modals) as disabled stubs.
+
+### TODO
 
 15. UI polish: with the full layout in place (video area, timeline,
     controls with menus), dial in sizing and proportions -- YouTube

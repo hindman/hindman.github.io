@@ -101,7 +101,6 @@ class LlamaApp extends LitElement {
     #player-container {
       width: 100%;
       aspect-ratio: 16 / 9;
-      max-height: 40vh;     /* temporary: cap height so controls stay visible */
       background: #000;
     }
 
@@ -161,7 +160,6 @@ class LlamaApp extends LitElement {
     editScratchActive:  { type: Boolean },
     editScratchFocus:   { type: String },
     editScratchDelta:   { type: Number },
-    loopViolation:      { type: Boolean },
     videos:             { type: Array },
     currentVideoId:     { type: String },
     activeEntityType:   { type: String },
@@ -190,7 +188,6 @@ class LlamaApp extends LitElement {
     this.editScratchActive   = false;
     this.editScratchFocus    = 'start';
     this.editScratchDelta    = EDIT_SCRATCH_DELTAS[2];
-    this.loopViolation       = false;
     this.videos              = [];
     this.currentVideoId      = null;
     this.activeEntityType    = 'any';
@@ -736,10 +733,8 @@ class LlamaApp extends LitElement {
     save(this._appState);
   }
 
-  _flashLoopViolation() {
-    this.loopViolation = true;
-    setTimeout(() => { this.loopViolation = false; }, 600);
-  }
+  // TODO: route loop-violation feedback through the message area (stage 15+).
+  _flashLoopViolation() {}
 
   _seek(delta) {
     const t = (this._vc?.getCurrentTime() ?? 0) + delta;
@@ -1100,6 +1095,7 @@ class LlamaApp extends LitElement {
           <div class="video-col">
             <div id="player-container"></div>
             <llama-timeline
+              .videoId=${this.currentVideoId}
               .currentTime=${this.currentTime}
               .duration=${this.duration}
               .sections=${this.sections}
@@ -1128,7 +1124,6 @@ class LlamaApp extends LitElement {
           .editScratchActive=${this.editScratchActive}
           .editScratchFocus=${this.editScratchFocus}
           .editScratchDelta=${this.editScratchDelta}
-          .loopViolation=${this.loopViolation}
           .activeEntityType=${this.activeEntityType}
           @ll-play-pause=${this._onPlayPause}
           @ll-seek-forward=${this._onSeekForward}
@@ -1138,6 +1133,7 @@ class LlamaApp extends LitElement {
           @ll-set-loop-end-now=${this._onSetLoopEndNow}
           @ll-loop-start-change=${this._onLoopStartChange}
           @ll-loop-end-change=${this._onLoopEndChange}
+          @ll-speed-change=${(e) => { const v = Math.max(0.25, Math.min(2.0, e.detail.value)); this._vc?.setPlaybackRate(v); this.speed = v; }}
           @ll-set-section=${this._onSetSection}
           @ll-set-mark=${this._onSetMark}
           @ll-prev-entity=${() => this._navigateEntity('prev')}
