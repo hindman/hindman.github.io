@@ -8,6 +8,7 @@
 //   hide()  -- close the modal
 
 import { LitElement, html, css } from 'lit';
+import { parseTime as _parseTime } from '../parseTime.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
@@ -101,23 +102,6 @@ class LlamaJumpTimeModal extends LitElement {
       </llama-modal>
     `;
   }
-}
-
-// Parse time string to seconds. Returns null on failure.
-// Supports: m:ss, h:mm:ss, raw seconds.
-function _parseTime(str) {
-  str = (str || '').trim().replace(/\//g, ':');
-  if (!str) return null;
-  const parts = str.split(':');
-  if (parts.length === 2 || parts.length === 3) {
-    const nums = parts.map(p => parseFloat(p));
-    if (nums.some(isNaN)) return null;
-    return parts.length === 2
-      ? nums[0] * 60 + nums[1]
-      : nums[0] * 3600 + nums[1] * 60 + nums[2];
-  }
-  const n = parseFloat(str);
-  return !isNaN(n) && n >= 0 ? n : null;
 }
 
 customElements.define('llama-jump-time-modal', LlamaJumpTimeModal);

@@ -31,6 +31,7 @@
 
 import { LitElement, html, css } from 'lit';
 import { createRef, ref } from 'lit/directives/ref.js';
+import { parseTime } from '../parseTime.js';
 import './llama-dropdown.js';
 import '@shoelace-style/shoelace/dist/components/switch/switch.js';
 
@@ -374,22 +375,7 @@ class LlamaControls extends LitElement {
     return this._fmt(secs);
   }
 
-  // Parse a time string to seconds. Returns a Number or null if invalid.
-  // Supports: mm:ss, hh:mm:ss, mm/ss, hh/mm/ss, raw seconds (int or decimal).
-  _parseTime(str) {
-    str = str.trim().replace(/\//g, ':');
-    if (!str) return null;
-    const parts = str.split(':');
-    if (parts.length === 2 || parts.length === 3) {
-      const nums = parts.map(p => parseFloat(p));
-      if (nums.some(isNaN)) return null;
-      return parts.length === 2
-        ? nums[0] * 60 + nums[1]
-        : nums[0] * 3600 + nums[1] * 60 + nums[2];
-    }
-    const n = parseFloat(str);
-    return !isNaN(n) && n >= 0 ? n : null;
-  }
+  _parseTime(str) { return parseTime(str); }
 
   // Parse a speed string: accepts "75", "75%", "0.75". Returns decimal or null.
   _parseSpeed(str) {
@@ -432,6 +418,7 @@ class LlamaControls extends LitElement {
       this._emit('ll-loop-start-change', { value: val });
     } else if (this._startRef.value) {
       this._startRef.value.value = this._fmtLoop(this.loopStart);
+      this._emit('ll-invalid-time', {});
     }
   }
 
@@ -441,6 +428,7 @@ class LlamaControls extends LitElement {
       this._emit('ll-loop-end-change', { value: val });
     } else if (this._endRef.value) {
       this._endRef.value.value = this._fmtLoop(this.loopEnd);
+      this._emit('ll-invalid-time', {});
     }
   }
 

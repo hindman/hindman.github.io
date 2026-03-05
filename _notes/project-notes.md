@@ -7,15 +7,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-17. Revised Messages footer: expand the existing which-key footer to
-    handle all message types: which-key list (during key-pending),
-    edit-scratch-loop cheatsheet (during that mode), warnings (keyboard
-    inactive, invalid loop range, etc.), and errors (red; serious
-    problems only). Which-key and warnings are rarely needed at the same
-    time; the main exception is edit-scratch-loop mode (cheatsheet +
-    invalid-time-entry warning), which fits in two rows at typical
-    widths. Verify the footer wraps gracefully on narrow windows.
-
 18a. Revised Timeline -- zone skeleton + Play zone: replace the existing
     single-zone timeline component with a 3-zone skeleton (three equal-
     height rows, full video-frame width, zones distinguished by

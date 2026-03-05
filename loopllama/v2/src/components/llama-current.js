@@ -1,9 +1,7 @@
 // llama-current.js -- "Current" panel showing active entity info.
 //
 // Displays top-level state: video name/title, active chapter, current
-// section, active loop name, and loop source. When editScratchActive
-// is true, shows the edit-loop cheatsheet instead (until Stage 17
-// moves that to the footer).
+// section, active loop name, and loop source.
 
 import { LitElement, html, css } from 'lit';
 
@@ -58,30 +56,6 @@ class LlamaCurrent extends LitElement {
       color: var(--ll-text-muted, #666);
     }
 
-    /* --- Edit-scratch panel (shown when editScratchActive) --- */
-    .edit-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
-
-    .edit-title {
-      font-weight: bold;
-      color: var(--ll-accent-warm, #e3a857);
-      margin-bottom: 0.1rem;
-    }
-
-    .edit-focus {
-      color: var(--ll-accent-warm, #e3a857);
-      font-weight: bold;
-    }
-
-    .edit-keys {
-      margin-top: 0.3rem;
-      line-height: 1.7;
-      color: var(--ll-text-muted, #666);
-      font-size: var(--ll-text-sm, 0.85rem);
-    }
   `;
 
   static properties = {
@@ -92,9 +66,6 @@ class LlamaCurrent extends LitElement {
     loopName:          { type: String },
     loopSourceLabel:   { type: String },
     loopSourceType:    { type: String },
-    editScratchActive: { type: Boolean },
-    editScratchFocus:  { type: String },
-    editScratchDelta:  { type: Number },
   };
 
   constructor() {
@@ -106,9 +77,6 @@ class LlamaCurrent extends LitElement {
     this.loopName          = null;
     this.loopSourceLabel   = null;
     this.loopSourceType    = null;
-    this.editScratchActive = false;
-    this.editScratchFocus  = 'start';
-    this.editScratchDelta  = 5;
   }
 
   _row(label, value) {
@@ -122,28 +90,6 @@ class LlamaCurrent extends LitElement {
   }
 
   render() {
-    if (this.editScratchActive) {
-      const focusLabel = this.editScratchFocus === 'start' ? 'Start' : 'End';
-      return html`
-        <div class="current-panel">
-          <div class="edit-panel">
-            <div class="edit-title">Edit Loop</div>
-            <div>Focus: <span class="edit-focus">${focusLabel}</span></div>
-            <div>Delta: ${this.editScratchDelta}s</div>
-            <div class="edit-keys">
-              Tab: toggle focus<br>
-              ←/→: nudge<br>
-              ↑/↓: delta<br>
-              Space: play/pause<br>
-              Bsp: reset<br>
-              0-9/: type time<br>
-              Enter/Esc: done
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
     const sourceTypeDisplay = this.loopSourceType
       ? this.loopSourceType[0].toUpperCase() + this.loopSourceType.slice(1)
       : null;

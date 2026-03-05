@@ -11,6 +11,7 @@
 //   Pass the mark directly to show() or set the .mark prop first.
 
 import { LitElement, html, css } from 'lit';
+import { parseTime as _parseTime } from '../parseTime.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
@@ -118,23 +119,6 @@ function _fmtTime(secs) {
   if (secs == null || isNaN(secs)) return '';
   const s = Math.floor(secs);
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-}
-
-// Parse time string to seconds. Returns null on failure.
-// Supports: m:ss, h:mm:ss, raw seconds.
-function _parseTime(str) {
-  str = (str || '').trim().replace(/\//g, ':');
-  if (!str) return null;
-  const parts = str.split(':');
-  if (parts.length === 2 || parts.length === 3) {
-    const nums = parts.map(p => parseFloat(p));
-    if (nums.some(isNaN)) return null;
-    return parts.length === 2
-      ? nums[0] * 60 + nums[1]
-      : nums[0] * 3600 + nums[1] * 60 + nums[2];
-  }
-  const n = parseFloat(str);
-  return !isNaN(n) && n >= 0 ? n : null;
 }
 
 customElements.define('llama-edit-mark-modal', LlamaEditMarkModal);

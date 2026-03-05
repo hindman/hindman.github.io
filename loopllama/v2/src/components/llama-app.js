@@ -151,6 +151,8 @@ class LlamaApp extends LitElement {
     chapterZoom:        { type: Boolean },
     loopSourceLabel:    { type: String },
     loopSourceType:     { type: String },
+    warningMsg:         { type: String },
+    errorMsg:           { type: String },
   };
 
   constructor() {
@@ -181,6 +183,9 @@ class LlamaApp extends LitElement {
     this.chapterZoom         = false;
     this.loopSourceLabel     = null;
     this.loopSourceType      = null;
+    this.warningMsg          = null;
+    this.errorMsg            = null;
+    this._warnTimeout        = null;
     this._vc                 = null;
     this._kb                 = null;
     this._pollId             = null;
@@ -303,8 +308,7 @@ class LlamaApp extends LitElement {
       jumpForward:   stub('jumpForward'),
       toggleLoop: () => {
         if (!this.looping && !this._isLoopValid()) {
-          this._flashLoopViolation();
-          this.statusMsg = 'Invalid loop range: start must be before end.';
+          this._setWarning('Invalid loop range: start must be before end.');
           return;
         }
         this.looping = !this.looping;
@@ -314,12 +318,12 @@ class LlamaApp extends LitElement {
       openLoop: () => this._openLoopsPicker('load'),
       saveBack: () => {
         if (!this.loopSource) {
-          this.statusMsg = 'No source loop to save back to.';
+          this._setWarning('No source loop to save back to.');
           return;
         }
         const idx = this.namedLoops.findIndex(l => l.id === this.loopSource);
         if (idx === -1) {
-          this.statusMsg = 'Source loop not found.';
+          this._setWarning('Source loop not found.');
           return;
         }
         this.namedLoops[idx].start = this.loopStart;
@@ -339,7 +343,7 @@ class LlamaApp extends LitElement {
       loopSection: () => {
         const bounds = getSectionBounds(this.sections, this.currentTime, this.duration);
         if (!bounds || bounds.end == null) {
-          this.statusMsg = 'No section at current position.';
+          this._setWarning('No section at current position.');
           return;
         }
         const section    = nearestSectionLeft(this.sections, this.currentTime);
@@ -363,7 +367,7 @@ class LlamaApp extends LitElement {
       deleteMark: () => this._openMarksPicker('delete'),
       setChapter: () => {
         if (!this._isLoopValid()) {
-          this.statusMsg = 'Set a valid scratch loop first (start must be before end).';
+          this._setWarning('Set a valid scratch loop first (start must be before end).');
           return;
         }
         this._editChapterModalEl?.showCreate(this.loopStart, this.loopEnd);
@@ -371,12 +375,12 @@ class LlamaApp extends LitElement {
       openChapter:   () => this._openChapterPicker('open'),
       editChapter: () => {
         if (!this.activeChapterId) {
-          this.statusMsg = 'No active chapter. Open one first (co).';
+          this._setWarning('No active chapter. Open one first (co).');
           return;
         }
         const chapter = this.chapters.find(c => c.id === this.activeChapterId);
         if (!chapter) {
-          this.statusMsg = 'Active chapter not found.';
+          this._setWarning('Active chapter not found.');
           return;
         }
         this._editChapterModalEl?.showEdit(chapter);
@@ -384,7 +388,7 @@ class LlamaApp extends LitElement {
       deleteChapter: () => this._openChapterPicker('delete'),
       zoomChapter: () => {
         if (!this.activeChapterId) {
-          this.statusMsg = 'No active chapter. Open one first (co).';
+          this._setWarning('No active chapter. Open one first (co).');
           return;
         }
         this.chapterZoom = !this.chapterZoom;
@@ -585,6 +589,7 @@ class LlamaApp extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback();
     clearInterval(this._pollId);
+    clearTimeout(this._warnTimeout);
     this._kb?.destroy();
     if (this._editScratchHandler) {
       document.removeEventListener('keydown', this._editScratchHandler);
@@ -648,7 +653,7 @@ class LlamaApp extends LitElement {
 
     const parsed = this._parseVideoInput(raw);
     if (!parsed) {
-      this.statusMsg = 'Could not parse a YouTube video ID from that input.';
+      this._setWarning('Could not parse a YouTube video ID from that input.');
       return;
     }
 
@@ -714,8 +719,16 @@ class LlamaApp extends LitElement {
     save(this._appState);
   }
 
-  // TODO: route loop-violation feedback through the message area (stage 15+).
-  _flashLoopViolation() {}
+  // Show a transient warning in the footer; auto-clears after 4 seconds.
+  _setWarning(msg) {
+    clearTimeout(this._warnTimeout);
+    this.warningMsg  = msg;
+    this._warnTimeout = setTimeout(() => { this.warningMsg = null; }, 4000);
+  }
+
+  _flashLoopViolation() {
+    this._setWarning('Outside active loop range.');
+  }
 
   _seek(delta) {
     const t = (this._vc?.getCurrentTime() ?? 0) + delta;
@@ -763,8 +776,7 @@ class LlamaApp extends LitElement {
 
   _onToggleLoop() {
     if (!this.looping && !this._isLoopValid()) {
-      this._flashLoopViolation();
-      this.statusMsg = 'Invalid loop range: start must be before end.';
+      this._setWarning('Invalid loop range: start must be before end.');
       return;
     }
     this.looping = !this.looping;
@@ -913,7 +925,7 @@ class LlamaApp extends LitElement {
   // Open the loop picker in the given mode, with a guard for empty list.
   _openLoopsPicker(mode) {
     if (!this.namedLoops.length) {
-      this.statusMsg = 'No saved loops.';
+      this._setWarning('No saved loops.');
       return;
     }
     this._loopPickerEl?.show(mode);
@@ -922,7 +934,7 @@ class LlamaApp extends LitElement {
   // Open the marks picker in the given mode, with a guard for empty list.
   _openMarksPicker(mode) {
     if (!this.marks.length) {
-      this.statusMsg = 'No marks set.';
+      this._setWarning('No marks set.');
       return;
     }
     this._marksPickerEl?.show(mode);
@@ -956,7 +968,7 @@ class LlamaApp extends LitElement {
   // Open the sections picker in the given mode, with a guard for empty list.
   _openSectionsPicker(mode) {
     if (!this.sections.length) {
-      this.statusMsg = 'No sections set.';
+      this._setWarning('No sections set.');
       return;
     }
     this._sectionsPickerEl?.show(mode);
@@ -967,7 +979,7 @@ class LlamaApp extends LitElement {
   _editCurrentSection() {
     const section = nearestSectionLeft(this.sections, this.currentTime);
     if (!section) {
-      this.statusMsg = 'No section at current position.';
+      this._setWarning('No section at current position.');
       return;
     }
     this._editSectionModalEl?.show(section);
@@ -976,7 +988,7 @@ class LlamaApp extends LitElement {
   // Open the chapter picker in the given mode, with a guard for empty list.
   _openChapterPicker(mode) {
     if (!this.chapters.length) {
-      this.statusMsg = 'No chapters set.';
+      this._setWarning('No chapters set.');
       return;
     }
     this._chapterPickerEl?.show(mode);
@@ -1045,7 +1057,7 @@ class LlamaApp extends LitElement {
   // Export the current video as a downloadable JSON file (single-video share).
   _shareVideo() {
     if (!this.currentVideoId) {
-      this.statusMsg = 'No video loaded.';
+      this._setWarning('No video loaded.');
       return;
     }
     const video    = this._appState.videos.find(v => v.id === this.currentVideoId);
@@ -1058,11 +1070,11 @@ class LlamaApp extends LitElement {
   // Copy a shareable loop URL to the clipboard: ?v=id&s=start&e=end
   _shareLoop() {
     if (!this.currentVideoId) {
-      this.statusMsg = 'No video loaded.';
+      this._setWarning('No video loaded.');
       return;
     }
     if (!this._isLoopValid()) {
-      this.statusMsg = 'Set a valid scratch loop first.';
+      this._setWarning('Set a valid scratch loop first.');
       return;
     }
     const url = new URL(window.location.href);
@@ -1088,7 +1100,7 @@ class LlamaApp extends LitElement {
         save(this._appState);
         this.statusMsg = `Imported: ${result.added} added, ${result.updated} updated.`;
       } catch (err) {
-        this.statusMsg = `Import failed: ${err.message}`;
+        this.errorMsg = `Import failed: ${err.message}`;
       }
     };
     reader.readAsText(file);
@@ -1229,6 +1241,7 @@ class LlamaApp extends LitElement {
           @ll-prev-entity=${() => this._navigateEntity('prev')}
           @ll-next-entity=${() => this._navigateEntity('next')}
           @ll-entity-type-change=${this._onEntityTypeChange}
+          @ll-invalid-time=${() => this._setWarning('Invalid time format.')}
           @ll-menu-select=${this._onMenuSelect}
         ></llama-controls>
 
@@ -1240,9 +1253,6 @@ class LlamaApp extends LitElement {
           .loopName=${loopName}
           .loopSourceLabel=${this.loopSourceLabel}
           .loopSourceType=${this.loopSourceType}
-          .editScratchActive=${this.editScratchActive}
-          .editScratchFocus=${this.editScratchFocus}
-          .editScratchDelta=${this.editScratchDelta}
         ></llama-current>
       </div>
 
@@ -1350,6 +1360,11 @@ class LlamaApp extends LitElement {
         .prefix=${this.wkPrefix}
         .completions=${this.wkCompletions}
         .windowFocused=${this.windowFocused}
+        .editScratchActive=${this.editScratchActive}
+        .editScratchFocus=${this.editScratchFocus}
+        .editScratchDelta=${this.editScratchDelta}
+        .warningMsg=${this.warningMsg}
+        .errorMsg=${this.errorMsg}
       ></llama-whichkey>
     `;
   }

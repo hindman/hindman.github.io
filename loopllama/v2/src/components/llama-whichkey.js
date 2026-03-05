@@ -1,15 +1,14 @@
-// llama-whichkey.js -- which-key overlay bar.
+// llama-whichkey.js -- footer bar handling all message types.
 //
-// Renders a fixed bar at the bottom of the viewport listing available
-// key completions when the user has pressed a prefix key and is waiting
-// to press a second key.
+// Renders a fixed bar at the bottom of the viewport. Handles (in priority order):
+//   1. Keyboard inactive warning (windowFocused = false) -- overrides all
+//   2. Edit-scratch cheatsheet (editScratchActive = true) -- top row
+//      + optional warningMsg on a second row
+//   3. Which-key completions (prefix + completions pending)
+//   4. Warning message (warningMsg, amber)
+//   5. Error message (errorMsg, red -- serious problems only)
 //
-// Receives:
-//   prefix:      the pending prefix key string (e.g. 'l'), or null
-//   completions: { key: { handler, desc }, ... }, or null
-//
-// Hidden when prefix is null. The keyboard controller manages the delay
-// before calling onPendingKey, so this component just shows or hides.
+// Hidden when none of the above apply.
 
 import { LitElement, html, css } from 'lit';
 
@@ -26,9 +25,15 @@ class LlamaWhichkey extends LitElement {
       font-family: monospace;
       font-size: 0.85rem;
       display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      z-index: 100;
+    }
+    .row {
+      display: flex;
       gap: 1.5rem;
       flex-wrap: wrap;
-      z-index: 100;
+      align-items: baseline;
     }
     .item {
       display: flex;
@@ -42,43 +47,133 @@ class LlamaWhichkey extends LitElement {
     .desc {
       color: #999;
     }
+    .state-val {
+      color: #e0e0e0;
+    }
     .warning {
       color: #c8a97e;
       font-style: italic;
     }
+    .error {
+      color: #e37e7e;
+      font-style: italic;
+    }
+    .cheat-label {
+      color: #e3a857;
+      font-weight: bold;
+    }
   `;
 
   static properties = {
-    prefix:        { type: String },
-    completions:   { type: Object },
-    windowFocused: { type: Boolean },
+    prefix:            { type: String },
+    completions:       { type: Object },
+    windowFocused:     { type: Boolean },
+    editScratchActive: { type: Boolean },
+    editScratchFocus:  { type: String },
+    editScratchDelta:  { type: Number },
+    warningMsg:        { type: String },
+    errorMsg:          { type: String },
   };
 
   constructor() {
     super();
-    this.prefix        = null;
-    this.completions   = null;
-    this.windowFocused = true;
+    this.prefix            = null;
+    this.completions       = null;
+    this.windowFocused     = true;
+    this.editScratchActive = false;
+    this.editScratchFocus  = 'start';
+    this.editScratchDelta  = 5;
+    this.warningMsg        = null;
+    this.errorMsg          = null;
+  }
+
+  _kbItem(key, desc) {
+    return html`
+      <span class="item">
+        <span class="key">${key}</span>
+        <span class="desc">${desc}</span>
+      </span>
+    `;
   }
 
   render() {
+    // Priority 1: keyboard inactive (overrides everything).
     if (!this.windowFocused) {
       return html`
         <div class="bar">
-          <span class="warning">
-            Keyboard control inactive — click anywhere in the app to restore
-          </span>
+          <div class="row">
+            <span class="warning">
+              Keyboard control inactive — click anywhere in the app to restore
+            </span>
+          </div>
         </div>
       `;
     }
-    if (!this.prefix || !this.completions) return html``;
-    const items = Object.entries(this.completions).map(([key, { desc }]) => html`
-      <span class="item">
-        <span class="key">${this.prefix}${key}</span>
-        <span class="desc">${desc}</span>
-      </span>
-    `);
-    return html`<div class="bar">${items}</div>`;
+
+    // Priority 2: edit-scratch mode cheatsheet.
+    if (this.editScratchActive) {
+      const focusLabel = this.editScratchFocus === 'start' ? 'Start' : 'End';
+      const cheatRow = html`
+        <div class="row">
+          <span class="cheat-label">Edit Loop</span>
+          ${this._kbItem('Tab', 'toggle focus')}
+          ${this._kbItem('←/→', 'nudge')}
+          ${this._kbItem('↑/↓', 'delta')}
+          ${this._kbItem('Space', 'play/pause')}
+          ${this._kbItem('Bsp', 'reset')}
+          ${this._kbItem('0-9/:', 'type time')}
+          ${this._kbItem('Enter/Esc', 'done')}
+          <span class="item">
+            <span class="desc">Focus:</span>
+            <span class="state-val">${focusLabel}</span>
+          </span>
+          <span class="item">
+            <span class="desc">Delta:</span>
+            <span class="state-val">${this.editScratchDelta}s</span>
+          </span>
+        </div>
+      `;
+      if (this.warningMsg) {
+        return html`
+          <div class="bar">
+            <div class="row"><span class="warning">${this.warningMsg}</span></div>
+            ${cheatRow}
+          </div>
+        `;
+      }
+      return html`<div class="bar">${cheatRow}</div>`;
+    }
+
+    // Priority 3: which-key completions.
+    if (this.prefix && this.completions) {
+      const items = Object.entries(this.completions).map(([key, { desc }]) => html`
+        <span class="item">
+          <span class="key">${this.prefix}${key}</span>
+          <span class="desc">${desc}</span>
+        </span>
+      `);
+      return html`<div class="bar"><div class="row">${items}</div></div>`;
+    }
+
+    // Priority 4: warning.
+    if (this.warningMsg) {
+      return html`
+        <div class="bar">
+          <div class="row"><span class="warning">${this.warningMsg}</span></div>
+        </div>
+      `;
+    }
+
+    // Priority 5: error.
+    if (this.errorMsg) {
+      return html`
+        <div class="bar">
+          <div class="row"><span class="error">${this.errorMsg}</span></div>
+        </div>
+      `;
+    }
+
+    return html``;
   }
 }
 
