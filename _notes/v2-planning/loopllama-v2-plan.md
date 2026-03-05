@@ -483,41 +483,95 @@ v2/
 
 ### TODO
 
-15. UI polish: with the full layout in place (video area, timeline,
+15. Persistence: export all data as JSON (full dump and per-video scope).
+    Import via file picker. URL loop sharing (encode video ID + start +
+    end as query params). Moving this early to support safe testing: set
+    up video metadata, export as backup, then experiment freely.
+
+16. Revised Current area: repurpose the existing Messages area component
+    into a focused "Current" area displaying top-level info about active
+    entities: video name, video title, active chapter name (if any),
+    current section name (if any), active loop name, and loop source
+    (name of the saved Loop, Section, or Chapter the scratch loop was
+    derived from; empty if manually created). Reactive: updates as app
+    state changes. Responsive: side column on wide windows; below Actions
+    area on narrow.
+
+17. Revised Messages footer: expand the existing which-key footer to
+    handle all message types: which-key list (during key-pending),
+    edit-scratch-loop cheatsheet (during that mode), warnings (keyboard
+    inactive, invalid loop range, etc.), and errors (red; serious
+    problems only). Which-key and warnings are rarely needed at the same
+    time; the main exception is edit-scratch-loop mode (cheatsheet +
+    invalid-time-entry warning), which fits in two rows at typical
+    widths. Verify the footer wraps gracefully on narrow windows.
+
+18a. Revised Timeline -- zone skeleton + Play zone: replace the existing
+    single-zone timeline component with a 3-zone skeleton (three equal-
+    height rows, full video-frame width, zones distinguished by
+    background color rather than explicit dividers). Implement the Play
+    zone: thick horizontal line, small circle/dot playhead, elapsed/
+    remaining color split. Wire click handler to jump to that time.
+    Goal: the new skeleton renders and Play zone is fully functional;
+    Section and Loop-mark zones are empty placeholders.
+
+18b. Revised Timeline -- Section zone: draw section labels inside each
+    section's span (show label only if it fits available width; omit
+    entirely if the section is too narrow -- no truncation/ellipsis).
+    Draw section divider lines (start of each section). Highlight the
+    current section with a distinct color. Add hover tooltip showing
+    section name and start time.
+
+18c. Revised Timeline -- Loop-mark zone: render the scratch loop as a
+    shaded region (color 1). Render named loop starts as vertical lines
+    (color 2, related to color 1); hover tooltip shows name, start, end;
+    loop ends are not drawn (deliberate, to reduce clutter). Render
+    marks as a distinct symbol (diamond or similar -- not a circle, not
+    a vertical line); hover tooltip shows name and time.
+
+18d. Revised Timeline -- mouse clicks + chapter zoom: wire click
+    handlers for Section zone (click = jump to section start), Loop-mark
+    zone loops (click = jump to loop start + activate as scratch loop),
+    and Loop-mark zone marks (click = jump to mark time). No click-to-
+    edit; edit via keyboard or menus. Verify chapter zoom (Stage 13d)
+    correctly scopes all three zones to chapter.start/end when active.
+
+19. Video-info modal: build llama-video-info-modal -- a generously
+    sized, scrollable, formatted display of the current video and all
+    its child entities (chapters, sections, loops, marks). Organized by
+    entity type; read-only (editing goes through existing modals). Wire
+    `vi` key binding. Add "Video info" item to the Video dropdown menu.
+
+20. UI polish: with the full layout in place (video area, timeline,
     controls with menus), dial in sizing and proportions -- YouTube
     frame dimensions, spacing between page regions, visual hierarchy
     in the controls area, typography, and any remaining rough edges.
-    This pass is specifically deferred until after menus land because
-    the menu bar changes the controls area layout enough to make
-    earlier polish premature.
 
-16. Undo: snapshot-based undo/redo. Push a video state snapshot before
+21. Header sizzle: add visual character to the header. Options: llama
+    mascot image (preferred if a good image can be sourced via LLM or
+    other means); multi-colored flag-style banner with hover quips
+    ("Freedom to loop", "Keep on loopin' in the free world", etc.);
+    colored typography. Decide and implement one approach.
+
+22. Undo: snapshot-based undo/redo. Push a video state snapshot before
     each destructive or modifying operation. Implement `u`/`U` bindings.
     Session-only; no persistence needed.
 
-17. Persistence: export all data as JSON (full dump and per-video scope).
-    Import via file picker. URL loop sharing (encode video ID + start +
-    end as query params).
-
-18. Navigation safety: persist the jump list (video.jumps). Push
+23. Navigation safety: persist the jump list (video.jumps). Push
     user-initiated seeks above the threshold. Implement `jb`/`jf`
     bindings.
 
-19. Options-modal: seek delta, speed delta, and section padding
-     settings. Wire `o` binding.
+24. Options-modal: seek delta, speed delta, and section padding
+    settings. Wire `o` binding.
 
-20. Help-modal: key bindings reference organized by topic sub-keys
-     (`k`, `v`, `p`, `n`, `l`, `s`, `m`, `a`). Wire `hh`, `hk`, `?`.
+25. Help-modals: general help (via Menu, `hh`, and `?`) and
+    key binding help (via Menu or `hk`).
 
-21. Delete-data-modal: checkboxes for selective data clearing.
-     Wire `dd` binding.
+26. Delete-data-modal: checkboxes for selective data clearing.
+    Wire `dd` binding.
 
-22. Deploy: update `loopllama/index.html` to route to v2. Verify on
+27. Deploy: update `loopllama/index.html` to route to v2. Verify on
     GitHub Pages.
-
-23. Header art: add a llama mascot or logo image next to the LoopLlama
-    title in the header. Requires sourcing or creating an image asset.
-    Pure visual polish; defer until after deploy.
 
 ---
 
@@ -891,6 +945,7 @@ Videos:
     vv | Switch to video [video-picker]
     ve | Edit current video [edit-video-modal]
     vd | Delete video [via picker]
+    vi | Video info [video-info-modal]
 
 Playing:
 
@@ -1029,24 +1084,15 @@ Edit-section-modal:
 Edit-mark-modal:
     - Basic modal to edit mark attributes.
 
-Help-modal:
-    - Displays the main help text explaining the basics:
+Help-modals:
+    - Access via the `hh` and `hk` bindings or via Action menu.
+    - General help (hh): explains the basics:
         - What LoopLlama is.
         - Getting started.
         - Basic concepts.
         - Etc.
-    - To see key bindings the user can press one of these to list the relevant
-      bindings (either all or for a specific topic).
-    - The main help modal should communicate a cheat sheet for the bindings.
-
-        k | All
-        v | Videos
-        p | Playing
-        n | Navigatation
-        l | Loops
-        s | Sections
-        m | Marks
-        a | Application
+    - Key bindings (hk):
+        - Compact, well-organized info on bindings.
 
 Options-modal:
     - A modal where the user can customize app settings:
@@ -1260,4 +1306,105 @@ Dropdowns for less frequent operations:
     Help:
         - General
         - Key bindings
+
+## Revised UI plan
+
+Note: This section supersedes earlier UI descriptions where they conflict.
+It reflects decisions made after hands-on evaluation of the v2 app.
+
+### Current area (formerly Messages area)
+
+Repurpose the Messages area into a focused "Current" area that shows
+top-level info about the user's active entities:
+    - Video name
+    - Video title
+    - Chapter name (LL Chapter entity, if any active)
+    - Section name (if any current section)
+    - Loop name (if any; the scratch loop's name or source name)
+    - Loop source: name of the source entity (saved Loop, Section, or
+      Chapter) from which the scratch loop was derived; empty if the
+      scratch loop was created manually
+
+Layout:
+    - Wide window: Current area appears beside the YouTube video player,
+      as in the original page mockup (the "Message area" column).
+    - Narrow window (iPad or skinny browser): Current area moves below
+      the controls/actions area. Full vertical stack order on narrow:
+      Header > Video player > Controls > Actions > Current area >
+      Messages footer.
+
+### Messages footer (formerly Which-key area)
+
+The footer was improvised during dev and proven effective. Expand its
+purpose to handle all message types:
+    - Which-key info: available key continuations during key-pending.
+    - Scratch-loop-edit key bindings: cheatsheet shown while in
+      edit-scratch-loop mode.
+    - Warnings: keyboard control inactive, loop start/end violation, etc.
+    - Errors: reserved (red color) for serious problems only.
+
+Which-key and other messages are rarely needed simultaneously. The main
+exception is edit-scratch-loop mode, where the which-key cheatsheet and
+an invalid-time-entry warning may coexist. This fits comfortably in two
+rows at typical window widths. The footer already wraps well on narrow
+windows.
+
+### Video-info modal
+
+A new modal for viewing all information about the current video and its
+child entities (chapters, sections, loops, marks). Intended as a
+convenient information resource when setting up or reviewing a video.
+    - Trigger: `vi` key binding; also available via the Video dropdown.
+    - Design: generously sized, scrollable, nicely formatted for reading
+      (not raw JSON). Organized by entity type.
+    - Initially read-only; editing goes through the existing modals.
+
+### Timeline
+
+The existing timeline is a functional first draft but is cluttered and
+confusing, especially for loops and marks. Replace with a 3-zone design.
+
+Three zones stacked vertically, each the full width of the video frame,
+each the same height (the current Play zone is too thin; all three
+should be equal first-class citizens). Zone dividers may be implicit
+(different background color) rather than explicit lines.
+
+Play zone:
+    - Mimics the YouTube timeline idiom: a thick horizontal line with a
+      small circle/dot for the playhead.
+    - Left portion (elapsed): colored; right (remaining): gray.
+    - Click to jump to that time.
+
+Section zone:
+    - Section labels drawn inside each section's span.
+    - Show label only if it fits the available width; show nothing if
+      the section is too narrow (no truncated text with ellipsis).
+    - Section start lines (dividers).
+    - Current section: slightly different color.
+
+Loop-mark zone:
+    - Current scratch loop: shaded region (color 1); conveys extent.
+    - Named loop starts: vertical lines (color 2, related to color 1).
+      Loop ends are deliberately not shown to reduce clutter; hover
+      reveals name, start, and end for any named loop.
+    - Marks: distinct symbol (diamond or similar -- not a circle like
+      the playhead, not a line like sections/loops).
+    - No persistent zone labels; users discover purpose by using the app.
+
+Mouse interactions:
+    - Hover on any entity: tooltip showing name, start/end time.
+    - Play zone click: jump to that time.
+    - Section zone click: jump to section start.
+    - Loop click: jump to loop start and activate as scratch loop.
+    - Mark click: jump to mark time.
+    - No click-to-edit (timing/UX conflict with single-click). Edit
+      via keyboard bindings or the Action menus.
+
+### Header
+
+Needs more visual character. Options under consideration (TBD):
+    - Llama mascot image (preferred if a good image can be sourced).
+    - Multi-colored flag-style banner with hover quips ("Freedom to
+      loop", "Keep on loopin' in the free world", etc.).
+    - Colored typography for the title.
 
