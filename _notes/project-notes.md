@@ -7,42 +7,109 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-Here's our next stage of work:
+Revised UI plan:
 
-    15. UI polish: with the full layout in place (video area, timeline,
-        controls with menus), dial in sizing and proportions.
+    - Repurpose: Messages area => Current area:
+        - The area lacks a super compelling purpose so far.
+        - On comfortably wide monitors, use the same only for top-level info
+          about current entities.
+            - Video name
+            - Video title
+            - Chapter name [if applicable]
+            - Section name
+            - Loop name
+            - Loop source
+        - On narrowwer monitors (iPad or skinny browser window), the Current
+          area could be pushed to the bottom of the page (below Actions menu).
 
-I have a longer list of things to change and experiment with, but here
-are some of the initial changes to make:
+    - Rename: Which-key area => Messages footer:
+        - The footer was not in the original plan; you improvised it during
+          dev work and it has been effective.
+        - Expand its purpose to hold all messages.
+            - Which-key info.
+            - Scratch-loop-edit key bindings.
+            - Warnings:
+                - Keyboard control inactive
+                - Loop start-end violation
+                - Etc
+            - Errors:
+                - Might not be needed.
+                - Reserve the concept (and red color) for serious problems.
+                
+    - Header:
+        - Needs more sizzle.
+        - Maybe some color on the fonts.
+        - Maybe also an image, such as:
+            - Mascot (llama drawing)
+            - Multi-colored flag-style banner (short and wide), with some very
+              subtle political content (that probably only I understand)
+              wrapped in something absurdist, such as quips on mouse-hover:
+                - Freedom to Loop
+                - etc.
 
-    - In the controls area, we have two rows that can be dropped because their
-      functionality is now in the menu system:
+    - Video-info modal:
+        - Add to Video menu: Video info.
+        - Key binding `vi`.
+        - A nice looking presentation of all info about the Video and all of
+          its child entities.
+            - While testing the app so far I have sometimes wanted to see a
+              list of stuff without having to travel through all of the
+              entity-specific pickers.
 
-        Sections: [Set here button]
-        Marks: [Set here button]
 
-    - We have plenty of real estate on the page, so let's return to a more
-      reasonal/nature size and orientation for the YouTube frame.
+    - Timeline:
+        - Problems:
+            - Current timeline is a good functional first draft.
+            - But its visual look is a bit cluttered, chaotic, and likely
+              unclear to users.
+            - Especially for loops (invisible other than current) and marks
+              (meaning unclear and they have same look as the playhead line).
 
-    - At least on a typical browser window on a computer, there is plenty of
-      room to put all of the play/speed/nav controls on the same row as the
-      looping controls. If this can be done in a way that supports window
-      resizing, that would be good -- in other words, if the window is made
-      more narrow, the looping controls would shift to being on a separate
-      row. If that resizing support is too difficult to be worth doing now,
-      let me know. The computer with regular browser window size is our primary
-      use case to support.
+        - Organize the timeline into three zones (or rows):
+            - Zone should have the same height.
+            - They are all first-class citizens.
+            - Uncertain whether the zones have visible dividers between them.
+            - Perhaps they can be distinguished via their background color.
 
-Let me know if you have questions or push back.
+        - Play zone:
+            - Mimics the YouTube timeline.
+            - Shows playhead.
+            - Supports click to jump-by-time, so mouse users don't have to
+              click in the YouTube frame for this.
+            - Mimic the visual character of a typical video timeline:
+                - A somewhat thick line.
+                - A small circle/dot for the playhead.
+                - Different color for the part of the video to the left vs
+                  right (YouTube uses red-left and gray-right).
+                - Because this zone uses a video timeline device, it might not
+                  need a background color the way section-regions and
+                  loop-regions do.
+
+        - Section zone:
+            - Section labels.
+            - Section start lines.
+            - Current section: slightly different color.
+
+        - Loop-mark zone:
+            - Current loop region:
+                - Maybe indicated via color 1.
+            - Other loop starts:
+                - Lines with color 2, one visually related to color 1.
+            - Marks:
+                - Totally different color 3.
+                - Or maybe the marks are shown with a different symbol: not a
+                  circle (playhead) and not lines (sections, loops), but
+                  something else (diamond, etc).
 
 CURRENT:
 
-    /rename loopllama-v2-stage-15
+OTHER:
 
-    15. UI polish: with the full layout in place (video area, timeline,
-        controls with menus), dial in sizing and proportions.
+    /rename loopllama-v2-stage-__
 
-    git commit -am '15. UI polish'
+    __
+
+    git commit -am '__'
 
 URLS:
 
