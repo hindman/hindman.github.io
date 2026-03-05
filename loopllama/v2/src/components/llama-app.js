@@ -822,6 +822,7 @@ class LlamaApp extends LitElement {
     if (type === 'any' || type === 'section') this.sections.forEach(s => add(s.time));
     if (type === 'any' || type === 'loop')    this.namedLoops.forEach(l => add(l.start));
     if (type === 'any' || type === 'mark')    this.marks.forEach(m => add(m.time));
+    if (type === 'any' || type === 'chapter') this.chapters.forEach(c => add(c.start));
     if (type === 'any' || type === 'video') {
       const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
       if (video) {

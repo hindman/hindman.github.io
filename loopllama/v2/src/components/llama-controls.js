@@ -10,7 +10,7 @@
 //   loopEnd:          Number   -- scratch-loop end (seconds)
 //   sections:         Array    -- array of Section objects { id, time, name }
 //   marks:            Array    -- array of Mark objects { id, time, name }
-//   activeEntityType: String   -- 'any'|'section'|'loop'|'mark'|'video'
+//   activeEntityType: String   -- 'any'|'section'|'loop'|'mark'|'chapter'|'video'
 //
 // Fires (bubbles + composed):
 //   ll-play-pause             -- toggle play/pause
@@ -353,6 +353,7 @@ class LlamaControls extends LitElement {
             <option value="section" ?selected=${this.activeEntityType === 'section'}>Section</option>
             <option value="loop"    ?selected=${this.activeEntityType === 'loop'}>Loop</option>
             <option value="mark"    ?selected=${this.activeEntityType === 'mark'}>Mark</option>
+            <option value="chapter" ?selected=${this.activeEntityType === 'chapter'}>Chapter</option>
             <option value="video"   ?selected=${this.activeEntityType === 'video'}>Video</option>
           </select>
           <button @click=${() => this._emit('ll-next-entity')}>⏭</button>
