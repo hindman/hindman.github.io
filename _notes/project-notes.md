@@ -7,13 +7,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-18b. Revised Timeline -- Section zone: draw section labels inside each
-    section's span (show label only if it fits available width; omit
-    entirely if the section is too narrow -- no truncation/ellipsis).
-    Draw section divider lines (start of each section). Highlight the
-    current section with a distinct color. Add hover tooltip showing
-    section name and start time.
-
 18c. Revised Timeline -- Loop-mark zone: render the scratch loop as a
     shaded region (color 1). Render named loop starts as vertical lines
     (color 2, related to color 1); hover tooltip shows name, start, end;

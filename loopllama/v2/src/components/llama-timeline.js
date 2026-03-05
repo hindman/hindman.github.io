@@ -2,7 +2,7 @@
 //
 // Zones (top to bottom, equal height):
 //   Play zone      -- thick track + dot playhead; click to seek.
-//   Section zone   -- placeholder (Stage 18b).
+//   Section zone   -- section regions, divider lines, labels, hover tooltip.
 //   Loop-mark zone -- placeholder (Stage 18c).
 //
 // Receives:
@@ -98,9 +98,52 @@ class LlamaTimeline extends LitElement {
       transition: transform 0.1s ease;
     }
 
-    /* Section zone -- placeholder */
+    /* Section zone */
     .zone--section {
       background: var(--ll-surface, #252525);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section-region {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      box-sizing: border-box;
+      border-left: 2px solid #666;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      padding: 0 4px;
+    }
+
+    .section-region:first-child {
+      border-left: none;
+    }
+
+    /* Alternating background tints so adjacent sections are distinguishable */
+    .section-region--even {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .section-region--odd {
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    .section-region--current {
+      background: rgba(126, 200, 227, 0.28);
+    }
+
+    .section-label {
+      font-size: var(--ll-text-xs, 0.75rem);
+      color: #aaa;
+      white-space: nowrap;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .section-region--current .section-label {
+      color: var(--ll-accent, #7ec8e3);
     }
 
     /* Loop-mark zone -- placeholder */
@@ -119,6 +162,7 @@ class LlamaTimeline extends LitElement {
     loopEnd:     { type: Number },
     scopeStart:  { type: Number },
     scopeEnd:    { type: Number },
+    _zoneWidth:  { type: Number, state: true },
   };
 
   constructor() {
@@ -132,6 +176,22 @@ class LlamaTimeline extends LitElement {
     this.loopEnd     = 0;
     this.scopeStart  = null;
     this.scopeEnd    = null;
+    this._zoneWidth  = 0;
+    this._ro         = null;
+  }
+
+  firstUpdated() {
+    // Observe the host element (always present) rather than .zone--section
+    // (which may not exist yet if no video is loaded on first render).
+    this._ro = new ResizeObserver(entries => {
+      this._zoneWidth = entries[0].contentRect.width;
+    });
+    this._ro.observe(this);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._ro?.disconnect();
   }
 
   // Convert a time value (seconds) to a percentage of the visible range.
@@ -162,6 +222,31 @@ class LlamaTimeline extends LitElement {
         name:      s.name,
         isCurrent: this.currentTime >= s.time && this.currentTime < end,
       };
+    });
+  }
+
+  // Returns Lit template for section region divs.
+  // Hides the label entirely if the section is too narrow to fit it
+  // (avoids truncation/ellipsis). Heuristic: ~7px per character + 8px padding.
+  _renderSections() {
+    if (!this.sections?.length) return '';
+    const regions = this._computeRegions();
+    return regions.map((r, i) => {
+      const leftPct  = this._pct(r.start);
+      const endPct   = r.end != null ? this._pct(r.end) : 100;
+      const widthPct = endPct - leftPct;
+      const widthPx  = (widthPct / 100) * this._zoneWidth;
+      const showLabel  = widthPx >= r.name.length * 7 + 8;
+      const tooltip    = `${r.name} (${this._fmt(r.start)})`;
+      const parityClass = i % 2 === 0 ? 'section-region--even' : 'section-region--odd';
+      const currentClass = r.isCurrent ? 'section-region--current' : parityClass;
+      return html`
+        <div
+          class="section-region ${currentClass}"
+          style="left: ${leftPct}%; width: ${widthPct}%"
+          title="${tooltip}"
+        >${showLabel ? html`<span class="section-label">${r.name}</span>` : ''}</div>
+      `;
     });
   }
 
@@ -199,7 +284,7 @@ class LlamaTimeline extends LitElement {
           <div class="play-dot" style="left: ${phPct}%"></div>
         </div>
 
-        <div class="zone zone--section"></div>
+        <div class="zone zone--section">${this._renderSections()}</div>
 
         <div class="zone zone--loop"></div>
 
