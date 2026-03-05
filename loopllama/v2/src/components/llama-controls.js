@@ -98,11 +98,13 @@ const MENUS = [
     items: [
       { label: 'Options',      action: 'options',     disabled: true },
       { type: 'divider' },
-      { label: 'Export data',  action: 'exportAll',   disabled: true },
-      { label: 'Import data',  action: 'importData',  disabled: true },
-      { label: 'Delete data',  action: 'deleteData',  disabled: true },
+      { label: 'Export all data',   action: 'exportAll'  },
+      { label: 'Export this video', action: 'shareVideo' },
+      { label: 'Import data',       action: 'importData' },
+      { label: 'Delete data',       action: 'deleteData', disabled: true },
       { type: 'divider' },
-      { label: 'Inspect data', action: 'inspectData', disabled: true },
+      { label: 'Share loop URL', action: 'shareLoop'    },
+      { label: 'Inspect data',   action: 'inspectData', disabled: true },
     ],
   },
   {

@@ -11,7 +11,7 @@ import {
   addLoop, deleteLoopById,
   addChapter, deleteChapterById, updateChapter,
 } from '../state.js';
-import { load, save } from '../storage.js';
+import { load, save, exportAll, exportVideo, importData as mergeImport } from '../storage.js';
 import './llama-whichkey.js';
 import './llama-controls.js';
 import './llama-timeline.js';
@@ -211,6 +211,7 @@ class LlamaApp extends LitElement {
     this._jumpTimeModalEl    = null;
     this._chapterPickerEl      = null;
     this._editChapterModalEl   = null;
+    this._fileInputEl          = null;
     this.seekDelta     = DEFAULT_OPTIONS.seek_delta_default;
     this.speedDelta    = DEFAULT_OPTIONS.speed_delta;
   }
@@ -398,11 +399,11 @@ class LlamaApp extends LitElement {
       },
       helpGeneral:   stub('helpGeneral'),
       deleteData:    stub('deleteData'),
-      exportAll:     stub('exportAll'),
-      importData:    stub('importData'),
+      exportAll:     () => this._exportAll(),
+      importData:    () => this._fileInputEl?.click(),
       inspectData:   stub('inspectData'),
-      shareVideo:    stub('shareVideo'),
-      shareLoop:     stub('shareLoop'),
+      shareVideo:    () => this._shareVideo(),
+      shareLoop:     () => this._shareLoop(),
     };
   }
 
@@ -451,12 +452,17 @@ class LlamaApp extends LitElement {
     this._jumpTimeModalEl    = this.renderRoot.querySelector('llama-jump-time-modal');
     this._chapterPickerEl    = this.renderRoot.querySelector('llama-chapter-picker');
     this._editChapterModalEl = this.renderRoot.querySelector('llama-edit-chapter-modal');
+    this._fileInputEl        = this.renderRoot.querySelector('#import-file-input');
 
     window.addEventListener('blur',  () => { this.windowFocused = false; });
     window.addEventListener('focus', () => { this.windowFocused = true; });
 
-    // Restore the last-used video on startup -- cue without auto-playing.
-    if (this._appState.currentVideoId) {
+    // Check for a shared loop URL (?v=id&s=start&e=end). If present,
+    // load that video and set the scratch loop; skip normal restore.
+    const didLoadSharedLoop = this._handleStartupUrlParams();
+
+    // Otherwise restore the last-used video on startup -- cue without auto-playing.
+    if (!didLoadSharedLoop && this._appState.currentVideoId) {
       const video = this._appState.videos.find(v => v.id === this._appState.currentVideoId);
       if (video) {
         this._syncFromVideo(video);
@@ -1044,6 +1050,102 @@ class LlamaApp extends LitElement {
     this._vc?.seekTo(e.detail.time);
   }
 
+  // Export all app data as a downloadable JSON file.
+  _exportAll() {
+    _downloadJson(exportAll(this._appState), 'loopllama-all.json');
+    this.statusMsg = 'Exported all data.';
+  }
+
+  // Export the current video as a downloadable JSON file (single-video share).
+  _shareVideo() {
+    if (!this.currentVideoId) {
+      this.statusMsg = 'No video loaded.';
+      return;
+    }
+    const video    = this._appState.videos.find(v => v.id === this.currentVideoId);
+    const safeName = (video?.name || this.currentVideoId)
+      .replace(/[^A-Za-z0-9_-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    _downloadJson(exportVideo(this._appState, this.currentVideoId), `loopllama-${safeName}.json`);
+    this.statusMsg = 'Exported video data.';
+  }
+
+  // Copy a shareable loop URL to the clipboard: ?v=id&s=start&e=end
+  _shareLoop() {
+    if (!this.currentVideoId) {
+      this.statusMsg = 'No video loaded.';
+      return;
+    }
+    if (!this._isLoopValid()) {
+      this.statusMsg = 'Set a valid scratch loop first.';
+      return;
+    }
+    const url = new URL(window.location.href);
+    url.searchParams.set('v', this.currentVideoId);
+    url.searchParams.set('s', Math.round(this.loopStart * 10) / 10);
+    url.searchParams.set('e', Math.round(this.loopEnd   * 10) / 10);
+    navigator.clipboard.writeText(url.toString()).then(() => {
+      this.statusMsg = 'Loop URL copied to clipboard.';
+    }).catch(() => {
+      this.statusMsg = `Loop URL: ${url.toString()}`;
+    });
+  }
+
+  // Handle file-picker change: read JSON and merge into app state.
+  _onFileImport(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const result = mergeImport(evt.target.result, this._appState);
+        this.videos = [...this._appState.videos];
+        save(this._appState);
+        this.statusMsg = `Imported: ${result.added} added, ${result.updated} updated.`;
+      } catch (err) {
+        this.statusMsg = `Import failed: ${err.message}`;
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';   // reset so the same file can be re-imported
+  }
+
+  // Parse ?v=id&s=start&e=end startup URL params for loop sharing.
+  // If all three are present and valid, loads the video and sets the scratch loop.
+  // Returns true if a shared loop was applied, false otherwise.
+  _handleStartupUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const videoId = params.get('v');
+    const start   = parseFloat(params.get('s'));
+    const end     = parseFloat(params.get('e'));
+    if (!videoId || isNaN(start) || isNaN(end) || start >= end) return false;
+
+    // Find or create the video entry.
+    let video = this._appState.videos.find(v => v.id === videoId);
+    if (!video) {
+      video = createVideo(videoId, videoId);
+      this._appState.videos.push(video);
+      this.videos = [...this._appState.videos];
+    }
+
+    this._appState.currentVideoId = video.id;
+    this.currentVideoId = video.id;
+    this._syncFromVideo(video);
+    this.loopStart = start;
+    this.loopEnd   = end;
+    this._vc.cueVideo(video.id, start);
+    this.statusMsg = `Shared loop loaded: ${_fmtTimePlain(start)} → ${_fmtTimePlain(end)}`;
+    save(this._appState);
+
+    // Remove the params from the URL bar without reloading the page.
+    const clean = new URL(window.location.href);
+    clean.searchParams.delete('v');
+    clean.searchParams.delete('s');
+    clean.searchParams.delete('e');
+    history.replaceState(null, '', clean.toString());
+
+    return true;
+  }
+
   // Handle ll-jump-section from sections picker (mode='jump').
   _onJumpSection(e) {
     this._vc?.seekTo(e.detail.time);
@@ -1235,6 +1337,14 @@ class LlamaApp extends LitElement {
         @ll-update-chapter=${this._onUpdateChapter}
       ></llama-edit-chapter-modal>
 
+      <input
+        id="import-file-input"
+        type="file"
+        accept=".json"
+        style="display:none"
+        @change=${this._onFileImport}
+      >
+
       <llama-whichkey
         .prefix=${this.wkPrefix}
         .completions=${this.wkCompletions}
@@ -1249,6 +1359,17 @@ function _fmtTimePlain(secs) {
   if (secs == null || isNaN(secs)) return '?';
   const s = Math.floor(secs);
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+}
+
+// Trigger a JSON file download in the browser.
+function _downloadJson(jsonStr, filename) {
+  const blob = new Blob([jsonStr], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 customElements.define('llama-app', LlamaApp);

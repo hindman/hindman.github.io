@@ -7,15 +7,53 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-CURRENT:
+16. Revised Current area: repurpose the existing Messages area component
+    into a focused "Current" area displaying top-level info about active
+    entities: video name, video title, active chapter name (if any),
+    current section name (if any), active loop name, and loop source
+    (name of the saved Loop, Section, or Chapter the scratch loop was
+    derived from; empty if manually created). Reactive: updates as app
+    state changes. Responsive: side column on wide windows; below Actions
+    area on narrow.
 
-OTHER:
+17. Revised Messages footer: expand the existing which-key footer to
+    handle all message types: which-key list (during key-pending),
+    edit-scratch-loop cheatsheet (during that mode), warnings (keyboard
+    inactive, invalid loop range, etc.), and errors (red; serious
+    problems only). Which-key and warnings are rarely needed at the same
+    time; the main exception is edit-scratch-loop mode (cheatsheet +
+    invalid-time-entry warning), which fits in two rows at typical
+    widths. Verify the footer wraps gracefully on narrow windows.
 
-    /rename loopllama-v2-stage-__
+18a. Revised Timeline -- zone skeleton + Play zone: replace the existing
+    single-zone timeline component with a 3-zone skeleton (three equal-
+    height rows, full video-frame width, zones distinguished by
+    background color rather than explicit dividers). Implement the Play
+    zone: thick horizontal line, small circle/dot playhead, elapsed/
+    remaining color split. Wire click handler to jump to that time.
+    Goal: the new skeleton renders and Play zone is fully functional;
+    Section and Loop-mark zones are empty placeholders.
 
-    __
+18b. Revised Timeline -- Section zone: draw section labels inside each
+    section's span (show label only if it fits available width; omit
+    entirely if the section is too narrow -- no truncation/ellipsis).
+    Draw section divider lines (start of each section). Highlight the
+    current section with a distinct color. Add hover tooltip showing
+    section name and start time.
 
-    git commit -am '__'
+18c. Revised Timeline -- Loop-mark zone: render the scratch loop as a
+    shaded region (color 1). Render named loop starts as vertical lines
+    (color 2, related to color 1); hover tooltip shows name, start, end;
+    loop ends are not drawn (deliberate, to reduce clutter). Render
+    marks as a distinct symbol (diamond or similar -- not a circle, not
+    a vertical line); hover tooltip shows name and time.
+
+18d. Revised Timeline -- mouse clicks + chapter zoom: wire click
+    handlers for Section zone (click = jump to section start), Loop-mark
+    zone loops (click = jump to loop start + activate as scratch loop),
+    and Loop-mark zone marks (click = jump to mark time). No click-to-
+    edit; edit via keyboard or menus. Verify chapter zoom (Stage 13d)
+    correctly scopes all three zones to chapter.start/end when active.
 
 URLS:
 
