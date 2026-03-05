@@ -1,19 +1,23 @@
-// llama-timeline.js -- horizontal timeline showing sections, loop range,
-// marks, and playhead.
+// llama-timeline.js -- horizontal timeline, 3-zone design.
+//
+// Zones (top to bottom, equal height):
+//   Play zone      -- thick track + dot playhead; click to seek.
+//   Section zone   -- placeholder (Stage 18b).
+//   Loop-mark zone -- placeholder (Stage 18c).
 //
 // Receives:
 //   videoId:     String   -- current video ID, or null if none loaded
 //   currentTime: Number   -- current playback position (seconds)
 //   duration:    Number   -- total video duration (seconds), or null
-//   sections:    Array    -- Section objects sorted by time { id, time, name, end? }
-//   marks:       Array    -- Mark objects sorted by time { id, time, name }
+//   sections:    Array    -- Section objects { id, time, name, end? }
+//   marks:       Array    -- Mark objects { id, time, name }
 //   loopStart:   Number   -- scratch-loop start (seconds)
 //   loopEnd:     Number   -- scratch-loop end (seconds)
 //   scopeStart:  Number   -- visible range start (seconds); null = 0
 //   scopeEnd:    Number   -- visible range end (seconds); null = duration
 //
 // Fires (bubbles + composed):
-//   ll-seek-to  -- user clicked the video zone; detail.time = seconds
+//   ll-seek-to  -- user clicked the Play zone; detail.time = seconds
 
 import { LitElement, html, css } from 'lit';
 
@@ -24,7 +28,7 @@ class LlamaTimeline extends LitElement {
     }
 
     .timeline-wrap {
-      background: var(--ll-surface, #252525);
+      background: var(--ll-bg, #1a1a1a);
       border: 1px solid var(--ll-border, #444);
       border-radius: var(--ll-radius, 3px);
       overflow: hidden;
@@ -40,110 +44,68 @@ class LlamaTimeline extends LitElement {
       color: var(--ll-text-muted, #555);
     }
 
-    /* --- Video zone: progress bar + playhead, click to jump --- */
+    /* === Zones === */
 
-    .video-zone {
+    .zone {
+      height: 24px;
+    }
+
+    /* Play zone: thick track + dot playhead */
+
+    .zone--play {
       position: relative;
-      height: 10px;
-      background: var(--ll-surface-raised, #333);
+      background: #1a1a1a;
       cursor: pointer;
-      border-bottom: 1px solid var(--ll-border, #444);
     }
 
-    .video-zone:hover {
-      filter: brightness(1.3);
+    .zone--play:hover .play-dot {
+      transform: translate(-50%, -50%) scale(1.4);
     }
 
-    .progress-fill {
+    /* Track: a thick horizontal line centered in the zone */
+    .play-track {
       position: absolute;
-      top: 0; left: 0; bottom: 0;
-      background: var(--ll-accent, #7ec8e3);
-      opacity: 0.25;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 5px;
+      background: var(--ll-text-muted, #555);
       pointer-events: none;
     }
 
-    .playhead {
+    /* Elapsed fill (left of playhead) */
+    .play-fill {
       position: absolute;
-      top: -2px; bottom: -2px;
-      width: 2px;
-      margin-left: -1px;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      background: var(--ll-accent, #7ec8e3);
+      pointer-events: none;
+    }
+
+    /* Playhead dot */
+    .play-dot {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
       background: var(--ll-accent, #7ec8e3);
       pointer-events: none;
       z-index: 10;
+      transition: transform 0.1s ease;
     }
 
-    /* --- Entity zone: sections, loop range, marks --- */
+    /* Section zone -- placeholder */
+    .zone--section {
+      background: var(--ll-surface, #252525);
+    }
 
-    .entity-zone {
-      position: relative;
-      height: 30px;
+    /* Loop-mark zone -- placeholder */
+    .zone--loop {
       background: var(--ll-surface-raised, #2a2a2a);
-      overflow: hidden;
-    }
-
-    .section-region {
-      position: absolute;
-      top: 0; bottom: 0;
-      background: #2d4a5a;
-      border-right: 1px solid var(--ll-border, #444);
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      padding: 0 3px;
-      box-sizing: border-box;
-      z-index: 1;
-    }
-
-    .section-region.current {
-      background: #3a6a80;
-    }
-
-    .section-label {
-      font-size: 0.7rem;
-      color: var(--ll-text-dim, #aaa);
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      pointer-events: none;
-      line-height: 1;
-    }
-
-    .section-region.current .section-label {
-      color: var(--ll-accent, #7ec8e3);
-    }
-
-    /* Scratch-loop range: a translucent band inset from top/bottom */
-    .loop-range {
-      position: absolute;
-      top: 25%; bottom: 25%;
-      background: var(--ll-accent-warm, #e3a857);
-      opacity: 0.55;
-      border-radius: 2px;
-      pointer-events: none;
-      z-index: 2;
-    }
-
-    /* Section dividers: full-height lines at each divider point */
-    .section-divider {
-      position: absolute;
-      top: 0; bottom: 0;
-      width: 2px;
-      margin-left: -1px;
-      background: rgba(255, 255, 255, 0.45);
-      pointer-events: none;
-      z-index: 4;
-    }
-
-    /* Mark ticks: short lines (top half only) to distinguish from dividers */
-    .mark-tick {
-      position: absolute;
-      top: 0;
-      height: 50%;
-      width: 2px;
-      margin-left: -1px;
-      background: #90ee90;
-      pointer-events: none;
-      z-index: 3;
     }
   `;
 
@@ -173,14 +135,14 @@ class LlamaTimeline extends LitElement {
   }
 
   // Convert a time value (seconds) to a percentage of the visible range.
-  // When scopeStart/scopeEnd are set (chapter zoom), maps within that range.
   _pct(t) {
     const start = this.scopeStart ?? 0;
     const end   = this.scopeEnd   ?? this.duration;
+    if (!end || end <= start) return 0;
     return Math.max(0, Math.min(100, ((t - start) / (end - start)) * 100));
   }
 
-  // Format seconds as m:ss for tooltip display.
+  // Format seconds as m:ss.
   _fmt(secs) {
     if (secs == null) return '?';
     const m = Math.floor(secs / 60);
@@ -189,8 +151,7 @@ class LlamaTimeline extends LitElement {
   }
 
   // Build displayable region objects from the sorted sections array.
-  // Each region has: { start, end, name, isCurrent }.
-  // End is either the section's explicit end, the next divider's time, or duration.
+  // Used in Stage 18b; kept here to avoid churn.
   _computeRegions() {
     return this.sections.map((s, i) => {
       const next = this.sections[i + 1];
@@ -204,7 +165,7 @@ class LlamaTimeline extends LitElement {
     });
   }
 
-  _onVideoZoneClick(e) {
+  _onPlayZoneClick(e) {
     if (!this.duration) return;
     const start = this.scopeStart ?? 0;
     const end   = this.scopeEnd   ?? this.duration;
@@ -226,52 +187,21 @@ class LlamaTimeline extends LitElement {
       `;
     }
 
-    const regions  = this._computeRegions();
-    const phPct    = this._pct(this.currentTime);
-    const lsPct    = this._pct(this.loopStart);
-    const leWidth  = this._pct(this.loopEnd) - this._pct(this.loopStart);
-    const hasLoop  = this.loopStart < this.loopEnd;
+    const phPct = this._pct(this.currentTime);
 
     return html`
       <div class="timeline-wrap">
 
-        <div class="video-zone" @click=${this._onVideoZoneClick}>
-          <div class="progress-fill" style="width: ${phPct}%"></div>
-          <div class="playhead"      style="left: ${phPct}%"></div>
+        <div class="zone zone--play" @click=${this._onPlayZoneClick}>
+          <div class="play-track">
+            <div class="play-fill" style="width: ${phPct}%"></div>
+          </div>
+          <div class="play-dot" style="left: ${phPct}%"></div>
         </div>
 
-        <div class="entity-zone">
+        <div class="zone zone--section"></div>
 
-          ${regions.map((r, i) => html`
-            <div
-              class="section-region ${r.isCurrent ? 'current' : ''}"
-              style="left: ${this._pct(r.start)}%; width: ${this._pct(r.end) - this._pct(r.start)}%"
-              title="${r.name || `#${i + 1}`}  ${this._fmt(r.start)}–${this._fmt(r.end)}"
-            ><span class="section-label">${r.name || ''}</span></div>
-            <div
-              class="section-divider"
-              style="left: ${this._pct(r.start)}%"
-              title="${r.name || `#${i + 1}`}  ${this._fmt(r.start)}"
-            ></div>
-          `)}
-
-          ${hasLoop ? html`
-            <div
-              class="loop-range"
-              style="left: ${lsPct}%; width: ${leWidth}%"
-              title="Loop: ${this._fmt(this.loopStart)}–${this._fmt(this.loopEnd)}"
-            ></div>
-          ` : ''}
-
-          ${this.marks.map((m, i) => html`
-            <div
-              class="mark-tick"
-              style="left: ${this._pct(m.time)}%"
-              title="${m.name || `#${i + 1}`}  ${this._fmt(m.time)}"
-            ></div>
-          `)}
-
-        </div>
+        <div class="zone zone--loop"></div>
 
       </div>
     `;

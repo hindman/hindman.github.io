@@ -7,15 +7,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-18a. Revised Timeline -- zone skeleton + Play zone: replace the existing
-    single-zone timeline component with a 3-zone skeleton (three equal-
-    height rows, full video-frame width, zones distinguished by
-    background color rather than explicit dividers). Implement the Play
-    zone: thick horizontal line, small circle/dot playhead, elapsed/
-    remaining color split. Wire click handler to jump to that time.
-    Goal: the new skeleton renders and Play zone is fully functional;
-    Section and Loop-mark zones are empty placeholders.
-
 18b. Revised Timeline -- Section zone: draw section labels inside each
     section's span (show label only if it fits available width; omit
     entirely if the section is too narrow -- no truncation/ellipsis).
@@ -36,6 +27,17 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
     and Loop-mark zone marks (click = jump to mark time). No click-to-
     edit; edit via keyboard or menus. Verify chapter zoom (Stage 13d)
     correctly scopes all three zones to chapter.start/end when active.
+
+19. UI polish: with the full layout in place (video area, timeline,
+    controls with menus), dial in sizing and proportions -- YouTube
+    frame dimensions, spacing between page regions, visual hierarchy
+    in the controls area, typography, and any remaining rough edges.
+
+20. Header sizzle: add visual character to the header. Options: llama
+    mascot image (preferred if a good image can be sourced via LLM or
+    other means); multi-colored flag-style banner with hover quips
+    ("Freedom to loop", "Keep on loopin' in the free world", etc.);
+    colored typography. Decide and implement one approach.
 
 URLS:
 

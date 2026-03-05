@@ -536,22 +536,22 @@ v2/
     edit; edit via keyboard or menus. Verify chapter zoom (Stage 13d)
     correctly scopes all three zones to chapter.start/end when active.
 
-19. Video-info modal: build llama-video-info-modal -- a generously
-    sized, scrollable, formatted display of the current video and all
-    its child entities (chapters, sections, loops, marks). Organized by
-    entity type; read-only (editing goes through existing modals). Wire
-    `vi` key binding. Add "Video info" item to the Video dropdown menu.
-
-20. UI polish: with the full layout in place (video area, timeline,
+19. UI polish: with the full layout in place (video area, timeline,
     controls with menus), dial in sizing and proportions -- YouTube
     frame dimensions, spacing between page regions, visual hierarchy
     in the controls area, typography, and any remaining rough edges.
 
-21. Header sizzle: add visual character to the header. Options: llama
+20. Header sizzle: add visual character to the header. Options: llama
     mascot image (preferred if a good image can be sourced via LLM or
     other means); multi-colored flag-style banner with hover quips
     ("Freedom to loop", "Keep on loopin' in the free world", etc.);
     colored typography. Decide and implement one approach.
+
+21. Video-info modal: build llama-video-info-modal -- a generously
+    sized, scrollable, formatted display of the current video and all
+    its child entities (chapters, sections, loops, marks). Organized by
+    entity type; read-only (editing goes through existing modals). Wire
+    `vi` key binding. Add "Video info" item to the Video dropdown menu.
 
 22. Undo: snapshot-based undo/redo. Push a video state snapshot before
     each destructive or modifying operation. Implement `u`/`U` bindings.
