@@ -1402,9 +1402,66 @@ Mouse interactions:
 
 ### Header
 
-Needs more visual character. Options under consideration (TBD):
-    - Llama mascot image (preferred if a good image can be sourced).
-    - Multi-colored flag-style banner with hover quips ("Freedom to
-      loop", "Keep on loopin' in the free world", etc.).
-    - Colored typography for the title.
+Layout (implemented):
+
+    LoopLlama [mascot]                    [flag] | The Fifth Fret | Code
+
+- App title on the left, immediately followed by the llama mascot image.
+- Right side: the flag strip, then nav links separated by pipes.
+- The flag and mascot are sized to 1.8rem height so they sit flush
+  within the header content area without expanding it.
+- Mascot is a PNG (black line art on white) rendered with
+  CSS `filter: invert(1)` to flip it for the dark header background.
+- Hover quips on the flag are planned but not yet implemented.
+
+#### The Flag
+
+The header includes a thin horizontal strip of seven equal vertical
+color bands, styled after the aesthetic of national and movement flags.
+It is a deliberate political statement: an amalgam flag representing
+the broad historical coalition that has fought fascism and
+authoritarianism. The color order reads left to right as a narrative
+arc -- from the hardest and darkest symbols of resistance, through a
+breath of peace at center, toward hope and liberty on the right.
+
+Band order and historical inspiration:
+
+1. Black (#1a1a1a) -- Anarchism and anarcho-syndicalism, the oldest
+   visual language of anti-fascist organizing. Black and red together
+   predate World War II as the colors of resistance to state tyranny.
+
+2. Deep red (#c0392b) -- The labor movement, international socialism,
+   and the blood of martyrs. Red is the one color that appears in
+   virtually every anti-authoritarian tradition.
+
+3. Purple (#6c3483) -- The tricolor of the Second Spanish Republic
+   (red, yellow, purple), whose defense drew volunteers from 53
+   countries to the International Brigades -- perhaps the broadest
+   anti-fascist coalition in history before the world war.
+
+4. White (#f0f0f0) -- Peace, purity of purpose, and nonviolent
+   resistance. Also the center band of the French tricolor (liberty
+   and civic equality) and the white of the Polish Solidarity movement,
+   one of the great nonviolent campaigns against authoritarian rule.
+   Placed at the center as a pivot point between the darker symbols of
+   struggle and the warmer colors of hope.
+
+5. Gold (#d4ac0d) -- The gold of the German democratic tradition
+   (schwarz-rot-gold), the colors of the Weimar Republic that the
+   Nazis explicitly rejected and the Federal Republic later reclaimed.
+   A color that carries the meaning: survived, endured, rebuilt.
+
+6. Forest green (#1e8449) -- Pan-African resistance, drawn from
+   Marcus Garvey's flag (black, red, green). Represents the struggle
+   against colonial domination and racial authoritarianism -- a
+   distinct but deeply related form of the same evil.
+
+7. French blue (#2471a3) -- Liberty and the republic, from the French
+   tricolor. The Resistance reclaimed these colors from Vichy
+   collaboration. Also evokes the broader ideal of liberal democratic
+   governance as the alternative to authoritarian rule.
+
+The flag is implemented as an SVG at public/flag.svg with a 700x100
+viewBox (7:1 ratio), a thin inset border, and no text -- the colors
+speak for themselves to anyone who recognizes them.
 

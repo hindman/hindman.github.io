@@ -49,6 +49,18 @@ class LlamaApp extends LitElement {
       border-bottom: 1px solid var(--ll-border, #444);
     }
 
+    .header-llama {
+      height: 1.8rem;
+      width: auto;
+      margin-left: 0.5rem;
+      filter: invert(1);
+    }
+
+    .header-flag {
+      height: 1.8rem;
+      width: auto;
+    }
+
     .app-title {
       font-size: var(--ll-text-xl, 1.4rem);
       font-weight: bold;
@@ -1190,7 +1202,10 @@ class LlamaApp extends LitElement {
     return html`
       <header class="app-header">
         <span class="app-title">LoopLlama</span>
+        <img src="/llama-mascot.png" class="header-llama" alt="">
         <nav class="header-nav">
+          <img src="/flag.svg" class="header-flag" alt="">
+          <span class="nav-sep">|</span>
           <a class="nav-link" href="https://hindman.github.io/" target="_blank" rel="noopener">The Fifth Fret</a>
           <span class="nav-sep">|</span>
           <a class="nav-link" href="https://github.com/hindman/hindman.github.io/tree/master/loopllama" target="_blank" rel="noopener">Code</a>
