@@ -1292,6 +1292,7 @@ class LlamaApp extends LitElement {
           .loopName=${loopName}
           .loopSourceLabel=${this.loopSourceLabel}
           .loopSourceType=${this.loopSourceType}
+          .seekDelta=${this.seekDelta}
         ></llama-current>
       </div>
 

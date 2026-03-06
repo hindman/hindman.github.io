@@ -7,6 +7,11 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
+Name is confusing:
+    - User: what is name vs title.
+    - Better: s/name/label/g
+    - When showing video info: Title first then Label.
+
 Seek duration:
     - Are the key bindings working?
     - Need to show current seek duration on page.
@@ -21,6 +26,17 @@ Header: try font color: blue or yellow
 Try on other monitors:
     - laptop
     - ipad
+
+Bug: forgets prior-video details:
+    - Current location
+    - scratch-loop start/end
+
+scratch-loop editing bindings:
+    - need more shortcuts
+    - quick start/end adjustments w/o full `le` process
+        - reset
+        - quick nudge
+    - single-key synonym for `le`: maybe `\`
 
 19. UI polish: with the full layout in place (video area, timeline,
     controls with menus), dial in sizing and proportions -- YouTube

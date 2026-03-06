@@ -66,6 +66,7 @@ class LlamaCurrent extends LitElement {
     loopName:          { type: String },
     loopSourceLabel:   { type: String },
     loopSourceType:    { type: String },
+    seekDelta:         { type: Number },
   };
 
   constructor() {
@@ -77,6 +78,7 @@ class LlamaCurrent extends LitElement {
     this.loopName          = null;
     this.loopSourceLabel   = null;
     this.loopSourceType    = null;
+    this.seekDelta         = null;
   }
 
   _row(label, value) {
@@ -105,6 +107,7 @@ class LlamaCurrent extends LitElement {
           ${this._row('Loop',        this.loopName)}
           ${this._row('Source',      this.loopSourceLabel)}
           ${this._row('Source type', sourceTypeDisplay)}
+          ${this._row('Seek delta',  this.seekDelta != null ? `${this.seekDelta}s` : null)}
         </div>
       </div>
     `;
