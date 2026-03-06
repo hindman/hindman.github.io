@@ -295,8 +295,16 @@ class LlamaApp extends LitElement {
       speedReset:    () => { this._vc?.setPlaybackRate(1.0); this.speed = 1.0; },
       seekForward:   () => this._onSeekForward(),
       seekBack:      () => this._onSeekBack(),
-      seekDeltaDown: stub('seekDeltaDown'),
-      seekDeltaUp:   stub('seekDeltaUp'),
+      seekDeltaDown: () => {
+        const choices = DEFAULT_OPTIONS.seek_delta_choices;
+        const idx = choices.indexOf(this.seekDelta);
+        this.seekDelta = choices[Math.max(idx - 1, 0)];
+      },
+      seekDeltaUp: () => {
+        const choices = DEFAULT_OPTIONS.seek_delta_choices;
+        const idx = choices.indexOf(this.seekDelta);
+        this.seekDelta = choices[Math.min(idx + 1, choices.length - 1)];
+      },
       prevEntity:    () => this._navigateEntity('prev'),
       entityType:    () => this.renderRoot.querySelector('llama-controls')?.focusEntitySelect(),
       nextEntity:    () => this._navigateEntity('next'),

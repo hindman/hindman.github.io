@@ -7,6 +7,21 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
+Seek duration:
+    - Are the key bindings working?
+    - Need to show current seek duration on page.
+
+Zoom for all start-end entities:
+    cs: chapter
+    lz: loop
+    sz: section
+
+Header: try font color: blue or yellow
+
+Try on other monitors:
+    - laptop
+    - ipad
+
 19. UI polish: with the full layout in place (video area, timeline,
     controls with menus), dial in sizing and proportions -- YouTube
     frame dimensions, spacing between page regions, visual hierarchy
