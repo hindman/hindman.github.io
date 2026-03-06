@@ -7,13 +7,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-18d. Revised Timeline -- mouse clicks + chapter zoom: wire click
-    handlers for Section zone (click = jump to section start), Loop-mark
-    zone loops (click = jump to loop start + activate as scratch loop),
-    and Loop-mark zone marks (click = jump to mark time). No click-to-
-    edit; edit via keyboard or menus. Verify chapter zoom (Stage 13d)
-    correctly scopes all three zones to chapter.start/end when active.
-
 19. UI polish: with the full layout in place (video area, timeline,
     controls with menus), dial in sizing and proportions -- YouTube
     frame dimensions, spacing between page regions, visual hierarchy

@@ -912,6 +912,20 @@ class LlamaApp extends LitElement {
     if (this.looping) this._vc?.seekTo(loop.start);
   }
 
+  // Handle ll-activate-loop from timeline zone click: activate named loop as
+  // scratch and always seek to its start (unlike _onLoadLoop, no looping guard).
+  _onActivateLoop(e) {
+    const loop = this.namedLoops.find(l => l.id === e.detail.id);
+    if (!loop) return;
+    this.loopStart       = loop.start;
+    this.loopEnd         = loop.end;
+    this.loopSource      = loop.id;
+    this.loopSourceLabel = loop.name || null;
+    this.loopSourceType  = 'loop';
+    this.statusMsg       = `Loop loaded: ${loop.name || 'unnamed'}`;
+    this._vc?.seekTo(loop.start);
+  }
+
   // Handle ll-jump-loop from loop picker (mode='jump').
   _onJumpLoop(e) {
     this._vc?.seekTo(e.detail.start);
@@ -1228,6 +1242,7 @@ class LlamaApp extends LitElement {
               .scopeStart=${zoomedChapter?.start ?? null}
               .scopeEnd=${zoomedChapter?.end ?? null}
               @ll-seek-to=${this._onSeekTo}
+              @ll-activate-loop=${this._onActivateLoop}
             ></llama-timeline>
           </div>
         </div>

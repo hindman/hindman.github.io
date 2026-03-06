@@ -2,9 +2,9 @@
 //
 // Zones (top to bottom):
 //   Play zone    (24px) -- thick track + dot playhead; click to seek.
-//   Section zone (18px) -- section regions, divider lines, labels, hover tooltip.
-//   Mark zone    (12px) -- mark dots (yellow circles), hover tooltip.
-//   Loop zone    (18px) -- horizontal loop bars; 2 packed lanes; hover tooltip.
+//   Section zone (18px) -- section regions; click = seek to section start.
+//   Mark zone    (12px) -- mark dots (yellow circles); click = seek to mark time.
+//   Loop zone    (18px) -- loop bars; named: click = activate + seek; scratch: seek.
 //
 // Receives:
 //   videoId:     String   -- current video ID, or null if none loaded
@@ -19,7 +19,8 @@
 //   scopeEnd:    Number   -- visible range end (seconds); null = duration
 //
 // Fires (bubbles + composed):
-//   ll-seek-to  -- user clicked the Play zone; detail.time = seconds
+//   ll-seek-to       -- play zone, section, mark, or scratch-loop click; detail.time
+//   ll-activate-loop -- named loop bar click; detail.id = loop id
 
 import { LitElement, html, css } from 'lit';
 
@@ -115,6 +116,7 @@ class LlamaTimeline extends LitElement {
       align-items: center;
       overflow: hidden;
       padding: 0 4px;
+      cursor: pointer;
     }
 
     .section-region:first-child {
@@ -163,7 +165,7 @@ class LlamaTimeline extends LitElement {
       background: #f0c040;
       top: 6px;
       transform: translate(-50%, -50%);
-      cursor: default;
+      cursor: pointer;
     }
 
     /* Loop zone */
@@ -179,7 +181,7 @@ class LlamaTimeline extends LitElement {
       position: absolute;
       height: 9px;
       background: transparent;
-      cursor: default;
+      cursor: pointer;
     }
 
     .loop-bar::after {
@@ -293,6 +295,7 @@ class LlamaTimeline extends LitElement {
           class="section-region ${currentClass}"
           style="left: ${leftPct}%; width: ${widthPct}%"
           title="${tooltip}"
+          @click=${() => this._onSectionClick(r)}
         >${showLabel ? html`<span class="section-label">${r.name}</span>` : ''}</div>
       `;
     });
@@ -339,6 +342,7 @@ class LlamaTimeline extends LitElement {
           class="mark-dot"
           style="left: ${this._pct(m.time)}%"
           title="${m.name}: ${this._fmt(m.time)}"
+          @click=${() => this._onMarkClick(m)}
         ></div>
       `);
   }
@@ -368,11 +372,36 @@ class LlamaTimeline extends LitElement {
             class="${cls}"
             style="left: ${leftPct}%; width: ${widthPct}%; top: ${barTop}px"
             title="${tooltip}"
+            @click=${() => this._onLoopBarClick(loop)}
           ></div>
         `);
       }
     });
     return els;
+  }
+
+  _fireSeekTo(time) {
+    this.dispatchEvent(new CustomEvent('ll-seek-to', {
+      bubbles: true, composed: true, detail: { time },
+    }));
+  }
+
+  _onSectionClick(region) {
+    this._fireSeekTo(region.start);
+  }
+
+  _onMarkClick(mark) {
+    this._fireSeekTo(mark.time);
+  }
+
+  _onLoopBarClick(loop) {
+    if (loop._scratch) {
+      this._fireSeekTo(loop.start);
+    } else {
+      this.dispatchEvent(new CustomEvent('ll-activate-loop', {
+        bubbles: true, composed: true, detail: { id: loop.id },
+      }));
+    }
   }
 
   _onPlayZoneClick(e) {
@@ -382,9 +411,7 @@ class LlamaTimeline extends LitElement {
     const rect  = e.currentTarget.getBoundingClientRect();
     const pct   = (e.clientX - rect.left) / rect.width;
     const time  = Math.max(start, Math.min(end, start + pct * (end - start)));
-    this.dispatchEvent(new CustomEvent('ll-seek-to', {
-      bubbles: true, composed: true, detail: { time },
-    }));
+    this._fireSeekTo(time);
   }
 
   render() {
