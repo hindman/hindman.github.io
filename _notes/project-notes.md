@@ -7,90 +7,16 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-Name is confusing:
-    - User: what is name vs title.
-    - Better: s/name/label/g
-    - When showing video info: Title first then Label.
-
-Zoom for all start-end entities:
-    cs: chapter
-    lz: loop
-    sz: section
-
-Header: try font color: blue or yellow
-
-Try on other monitors:
-    - laptop
-    - ipad
-
-Bug: forgets prior-video details:
-    - Current location
-    - scratch-loop start/end
-
-Problems:
-    - Deltas need to be first-class citizens:
-        - Direct controls: dropdowns.
-        - Highly visible: current status should be obvious.
-        - Tucking that info away, off to the side, hinders the user.
-    - Scratch-loop-edit mode:
-        - It is useful: mostly as a fine-tuning tool.
-        - Fast/approximate loop editing is much more common:
-            - Better done via quick key presses.
-            - The extra apparatus of the mode is too much.
-    - Those concerns drove three related sets of changes:
-        - Nudges for loop points:
-            - Decrease/increase the start or end by nudge_delta.
-            - Plus logic biased toward legal loops.
-            - Explained via a scenario:
-                - Initial: start=0  end=0  nudge_delta=5
-                - Play video until 10 sec.
-                - Press `[` to set start=10.
-                - Press `]=` to perform nudge-end-increase:
-                    - Regular nudge  | 0 + 5 = 5   | no: 10-5
-                    - Relative nudge | 10 + 5 = 15 | yes: 10-15
-            - The rule:
-                - If regular nudge makes a legal loop, use it.
-                - If relative nudge makes a legal loop, use it.
-                - Otherwise, fall back to regular.
-        - UI controls and actions menus:
-            - Added direct controls for deltas.
-            - Reorganized and reordered.
-        - Expanded key bindings for scratch-loop editing.
-    - 
-
-Scratch-loop:
-    - Added single-key synonym for `le`.
-    - Converted brackets to prefixes:
-        - Allows an expanded binding scheme.
-        - Purpose: immediate edits to start/end without a separate mode.
-    - Bindings in edit-scratch-loop mode:
-        - Use `[` and `]` to specify start or end, not tab.
-        - Reinforce the binding scheme.
-
-    [[     | loop start: set to now
-    [<bsp> | loop start: reset to video start
-    [-     | loop start: nudge: decrease
-    [=     | loop start: nudge: increase
-    []     | loop start: nudge_delta: activate dropdown
-    ----------------------------------------
-    ]]     | loop end: set to now
-    ]<bsp> | loop end: reset to video end
-    ]-     | loop end: nudge: decrease
-    ]=     | loop end: nudge: increase
-    ][     | loop end: nudge_delta: activate dropdown [synonym key binding]
-    ----------------------------------------
-    ll     | Toggle looping on/off
-    lo     | Open: opens/loads a saved-loop into scratch-loop [loops-picker]
-    ls     | Save-new: a new loop [save-loop-modal]
-    lb     | Save-back: save scratch-loop endpoints back to source Loop
-    le     | Edit: scratch-loop [edit-scratch-loop-mode]
-    \      | Edit: scratch-loop [synonym key binding]
-    ld     | Delete loop [via picker]
-
 19. UI polish: with the full layout in place (video area, timeline,
     controls with menus), dial in sizing and proportions -- YouTube
     frame dimensions, spacing between page regions, visual hierarchy
     in the controls area, typography, and any remaining rough edges.
+
+    - Header: try font color: blue or yellow
+
+    - Try on other monitors:
+        - laptop
+        - ipad
 
 20. Header sizzle: add visual character to the header. Options: llama
     mascot image (preferred if a good image can be sourced via LLM or

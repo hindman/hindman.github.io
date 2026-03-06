@@ -1,5 +1,27 @@
 
-# LoopLlama v2 Plan
+<!--
+
+# CONTENTS (h2 headings only)
+
+## What LoopLlama Is
+## v2 Goals
+## Technology Decisions
+## Known v1 Bugs to Fix in v2
+## Directory Structure
+## Implementation Stages
+## Undo
+## Time Input Formats
+## Sections Model
+## Looping Model
+## Data schema
+## Delete and Edit UX Principles
+## Key bindings
+## Modals, pickers, and other UI elements
+## Mockup of page layout and UI controls
+## Revised UI plan
+## Revised UI plan: round 2
+
+-->
 
 ---
 
@@ -974,14 +996,27 @@ Navigation:
 
 Looping:
 
-    ll   | Toggle looping on/off
-    [    | Set scratch-loop start to current time
-    ]    | Set scratch-loop end to current time
-    lo   | Open: opens/loads a saved-loop into scratch-loop [loops-picker]
-    ls   | Save-new: a new loop [save-loop-modal]
-    lb   | Save-back: save scratch-loop endpoints back to source Loop
-    le   | Edit: scratch-loop [edit-scratch-loop-mode]
-    ld   | Delete loop [via picker]
+    ll | Toggle looping on/off
+    [  | Set scratch-loop start to current time
+    ]  | Set scratch-loop end to current time
+    lo | Open: opens/loads a saved-loop into scratch-loop [loops-picker]
+    ls | Save-new: a new loop [save-loop-modal]
+    lb | Save-back: save scratch-loop endpoints back to source Loop
+    le | Edit: scratch-loop [edit-scratch-loop-mode]
+    \  | Edit: scratch-loop [synonym key binding]
+    ld | Delete loop [via picker]
+
+    [[     | Loop start: set to now
+    [<bsp> | Loop start: reset to video start
+    [-     | Loop start: nudge: decrease
+    [=     | Loop start: nudge: increase
+    []     | Loop start: nudge_delta: activate dropdown
+
+    ]]     | Loop end: set to now
+    ]<bsp> | Loop end: reset to video end
+    ]-     | Loop end: nudge: decrease
+    ]=     | Loop end: nudge: increase
+    ][     | Loop end: nudge_delta: activate dropdown [synonym key binding]
 
 Chapters:
 
@@ -1229,13 +1264,15 @@ Play:
     play/pause    | button
     time          | text box
 
-    Notes:
+    Notes on round-2 changes:
+        - Seek controls are no longer in this group.
         - Make time a text box, not informational item.
         - The jump-by-time modal can be dropped.
-        - Instead `jj` moves focus to the box.
+        - Instead `jj` moves focus to the text box.
         - And the "Jump to time" menu item can be dropped.
         - Mouse user can directly click to edit in the usual way.
-        - Move video duration to Current Area.
+        - Move video duration to Current Area: it's not a first-class citizen,
+          but a rarely consulted info item.
 
 Speed:
 
@@ -1251,8 +1288,8 @@ Navigate:
     entity: type     | dropdown
     next: entity     | button
 
-    Notes:
-        - Seek controls now in this group [previously "Play" group]
+    Notes on round-2 changes:
+        - Seek controls are now in this group.
 
 Looping:
 
@@ -1261,24 +1298,21 @@ Looping:
     start: Now       | button
     end              | text box
     end: Now         | button
-    loop_nudge_delta | dropdown (same values as seek_delta)
+    loop_nudge_delta | dropdown (same choices as seek_delta)
 
-    Notes:
+    Notes on round-2 changes:
         - Loop nudge dropdown is new.
 
 Actions:
 
-    Notes:
-        - These are menus.
-        - The plan below implies various changes:
-            - Wording: indicated explicitly.
-            - Grouping: use the ordering/grouping as listed.
-            - Deletions implied:
-                - Loop:
-                    - Toggle loop
-                    - Edit scratch loop
-                - Jump:
-                    - Jump by time
+    Notes on round-2 changes:
+        - Wording changes: indicated explicitly below.
+        - Grouping changes: use the ordering/grouping as listed below.
+        - Deletions implied by the listing below:
+            - Loop:
+                - Toggle loop
+            - Jump:
+                - Jump by time
 
     Video:
         - Load URL
@@ -1301,8 +1335,10 @@ Actions:
     Loop:
         - Open loop [currently called "Open saved loop"]
         - Save new loop
-        - Delete loop
         - Save back to loop source [currently called "Save back"]
+        - Delete loop
+        ---------------------------
+        - Edit scratch loop
 
     Mark:
         - Set mark here
@@ -1494,4 +1530,160 @@ Band order and historical inspiration:
 The flag is implemented as an SVG at public/flag.svg with a 700x100
 viewBox (7:1 ratio), a thin inset border, and no text -- the colors
 speak for themselves to anyone who recognizes them.
+
+## Revised UI plan: round 2
+
+### Issue: video name vs title is confusing
+
+v1 had a primitive UI:
+    - Short, code-like names/labels were used as primary keys.
+    - Both for data storage and for data entry by the user.
+    - That legacy need drove the plan to give videos both title and name.
+
+The v2 UI has no strong use case for the short IDs:
+    - Full titles/labels can be shown in various contexts:
+        - Current area.
+        - Entity edit modals.
+        - Info on mouse hover.
+    - Only one known use case so far for a short ID:
+        - Exporting JSON for one video.
+        - ID becomes the file name.
+        - But that's a weak rationale.
+    - A user cannot infer that purpose for name while in the edit-video modal.
+
+Solution:
+    - Abandon the short ID/label concept.
+    - But keep "name" for consistency with other entities.
+    - Implementation:
+        - Convert video title to name: name will function like the old title.
+        - Then drop title.
+    - Our first data migration:
+        - Our data model has a "version" attribute, currently v1.
+        - Ideally, the app would know how to handle a scenario like this:
+            - User opens the app.
+            - But their local storage app data is at a version older than the
+              code's current data version.
+            - Run a migration to update the user's data.
+        - Is it feasible to implement support for this now, so we can test the
+          migration system with a real use case?
+            - The data in my browser has "title" attributes that should be
+              migrated to become the new "name" attributes for my videos.
+
+### Issue: users need to zoom more than just chapters
+
+Chapters were conceived as a solution to a large video challenge:
+    - Long video.
+    - With multiple songs of interest.
+    - While practicing a specific song, you want to zoom the timeline to that
+      song (ie chapter), so you can see your sections, loops, marks.
+
+But the problem is more general:
+    - Creating a single section or loop in a large video results in tiny
+      visual ranges on the entire timeline:
+        - You cannot see section labels.
+        - Section/loop durations are tiny: too small to work with visually.
+
+Solution:
+    - Support timeline zoom for all entities with start and end.
+    - Support new bindings:
+        cz: chapter zoom
+        lz: loop zoom
+        sz: section zoom
+    - Add analogous entries to the relevant Action menus.
+
+### Issue: navigation deltas need to be first-class citizens
+
+Optimization gone too far:
+    - An early UI plan had seek_delta as a dropdown control:
+        - We dropped it to economize on screen real estate.
+        - That was a mistake.
+    - The seek delta is tucked away in the Current area:
+        - It does not command immediate visual attention.
+        - It is remote from the main place of action:
+            - Seek controls.
+            - Current-time display.
+        - Easy, hesitation-free navigation requires the duration to be
+          displayed front and center.
+
+Solution:
+    - Reorganize the Controls area (details below).
+    - Add a seek_delta dropdown.
+    - The dropdown will sit between the seek-back and seek-forward buttons so
+      that the connections between the controls are direct and obvious.
+
+### Issue: loop-editing needs better keyboard suport
+
+Two general styles of loop editing:
+    - Quick and dirty:
+        - The goal is to rapidly create a simple loop.
+        - Typically a short one.
+        - You might not know in advance how much time you will spend with it.
+    - Finely tuned:
+        - You are practicing something in depth.
+        - You want to dial in the start and end times carefully.
+        - Sometimes even super-precisely for very tight loops.
+
+The problem:
+    - Scratch-loop-edit mode:
+        - Great for finely tuned loop editing.
+        - But it is too much apparatus/hassle for quick and dirty.
+        - And even when you want finely tuned loop editing, the `le` key
+          binding, while conceptually coherent, is not convenient enough
+          relative to how often loop-editing mode is needed.
+    - Quick and dirty work is more common.
+        - So it needs first-class keyboard support.
+
+Solution:
+    - Convert `[` and `]` to key binding prefixes.
+        - Imposes a small cost: double key presses for set-here.
+        - But it opens up real estate for an organized scheme of bindings to
+          perform quick and dirty loop editing without the full process of
+          edit-loop mode.
+    - Create a new operation: loop nudge:
+        - A nudge increases/decreases a start/end a small delta.
+        - But with extra logic biased toward creating legal loops.
+        - Two kinds of nudges:
+            - Regular: apply the delta to self (start or end).
+            - Relative: apply the delta relative to other (end or start).
+        - The nudge policy:
+            - If regular nudge makes a legal loop, use it.
+            - If relative nudge makes a legal loop, use it.
+            - Otherwise, fall back to regular.
+        - Explained via a scenario:
+            - Initial: start=0  end=2  nudge_delta=5
+            - Play video until 10 sec.
+            - Set loop start=10.
+            - Execute a nudge-end-increase:
+                - Regular nudge  | 2 + 5 = 7   | illegal 10-7
+                - Relative nudge | 10 + 5 = 15 | legal 10-15
+            - Decision: perform a relative nudge.
+    - New UI control:
+        - Loop nudge delta: a dropdown similar to seek delta.
+    - Key binding scheme:
+        - Current bindings that remain as-is:
+            - ll, lo, ls, lb, le, ld
+        - New bindings:
+
+            [[     | loop start: set to now
+            [<bsp> | loop start: reset to video start
+            [-     | loop start: nudge: decrease
+            [=     | loop start: nudge: increase
+            []     | loop start: nudge_delta: activate dropdown
+            ----------------------------------------
+            ]]     | loop end: set to now
+            ]<bsp> | loop end: reset to video end
+            ]-     | loop end: nudge: decrease
+            ]=     | loop end: nudge: increase
+            ][     | loop end: nudge_delta: activate dropdown [synonym key binding]
+            ----------------------------------------
+            \      | Edit: scratch-loop [synonym key binding]
+
+### Issue: controls and menus need fine tuning
+
+To support the needs discussed above and to make general improvements, the
+controls and menus have been reorganized somewhat and some of their labels
+have been edited. Refer to these sub-sections, which have been reworked:
+
+    ## Key bindings
+    ### Controls area
 
