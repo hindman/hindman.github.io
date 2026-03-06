@@ -12,10 +12,6 @@ Name is confusing:
     - Better: s/name/label/g
     - When showing video info: Title first then Label.
 
-Seek duration:
-    - Are the key bindings working?
-    - Need to show current seek duration on page.
-
 Zoom for all start-end entities:
     cs: chapter
     lz: loop
@@ -41,17 +37,35 @@ Problems:
         - Fast/approximate loop editing is much more common:
             - Better done via quick key presses.
             - The extra apparatus of the mode is too much.
-    - Those concerns drove two sets of changes:
+    - Those concerns drove three related sets of changes:
+        - Nudges for loop points:
+            - Decrease/increase the start or end by nudge_delta.
+            - Plus logic biased toward legal loops.
+            - Explained via a scenario:
+                - Initial: start=0  end=0  nudge_delta=5
+                - Play video until 10 sec.
+                - Press `[` to set start=10.
+                - Press `]=` to perform nudge-end-increase:
+                    - Regular nudge  | 0 + 5 = 5   | no: 10-5
+                    - Relative nudge | 10 + 5 = 15 | yes: 10-15
+            - The rule:
+                - If regular nudge makes a legal loop, use it.
+                - If relative nudge makes a legal loop, use it.
+                - Otherwise, fall back to regular.
         - UI controls and actions menus:
             - Added direct controls for deltas.
             - Reorganized and reordered.
         - Expanded key bindings for scratch-loop editing.
+    - 
 
 Scratch-loop:
-
     - Added single-key synonym for `le`.
-    - Converted brackets to prefixes, enabling a binding scheme to make quick
-      edits to start/end without fully invoking edit-scratch-loop-mode.
+    - Converted brackets to prefixes:
+        - Allows an expanded binding scheme.
+        - Purpose: immediate edits to start/end without a separate mode.
+    - Bindings in edit-scratch-loop mode:
+        - Use `[` and `]` to specify start or end, not tab.
+        - Reinforce the binding scheme.
 
     [[     | loop start: set to now
     [<bsp> | loop start: reset to video start
