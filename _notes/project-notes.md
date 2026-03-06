@@ -33,10 +33,21 @@ Bug: forgets prior-video details:
 
 scratch-loop editing bindings:
     - need more shortcuts
-    - quick start/end adjustments w/o full `le` process
-        - reset
-        - quick nudge
     - single-key synonym for `le`: maybe `\`
+    - quick start/end adjustments w/o full `le` process
+        - quick nudge: 5s decr/incr (and make legal)
+        - reset
+        - Two approaches:
+            - 3-key bindings: `l[r`
+                - seems complex
+                - makes the which-key for `l` verbose
+            - brackets as prefixes:
+                set              | [[    ]]
+                reset            | [r    ]r
+                nudge-decr       | [-    ]-
+                nudge-incr       | [=    ]=
+                nudge-delta-decr | [-    ]-
+                nudge-delta-incr | [=    ]=
 
 19. UI polish: with the full layout in place (video area, timeline,
     controls with menus), dial in sizing and proportions -- YouTube
