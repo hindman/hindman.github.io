@@ -1222,89 +1222,119 @@ Policy:
     - Direct controls only for frequently used operations.
     - Everything else is organized under menus.
     - Users annoyed by 2 clicks rather than 1 can learn the key bindings.
+    - Controls are organized in labelled groups as documented below.
 
-Play controls:
+Play:
 
     play/pause    | button
     time          | text box
-    speed         | text box [clamp: 25 - 200, increments of 5]
 
-Navigation controls:
+    Notes:
+        - Make time a text box, not informational item.
+        - The jump-by-time modal can be dropped.
+        - Instead `jj` moves focus to the box.
+        - And the "Jump to time" menu item can be dropped.
+        - Mouse user can directly click to edit in the usual way.
+        - Move video duration to Current Area.
 
-    seek: back       | button
-    seek_delta       | dropdown
-    seek: forward    | button
+Speed:
+
+    speed | text box [clamp: 25 - 200, increments of 5]
+
+Navigate:
+
+    seek: back    | button
+    seek_delta    | dropdown
+    seek: forward | button
+
     previous: entity | button
-    entity: type     | dropdown: any, video, section, loop, mark [default: any]
+    entity: type     | dropdown
     next: entity     | button
 
-Loop controls:
+    Notes:
+        - Seek controls now in this group [previously "Play" group]
 
-    looping: on/off | toggle
-    start           | text box
-    start: Now      | button
-    end             | text box
-    end: Now        | button
+Looping:
 
-Dropdowns for less frequent operations:
+    looping: on/off  | toggle
+    start            | text box
+    start: Now       | button
+    end              | text box
+    end: Now         | button
+    loop_nudge_delta | dropdown (same values as seek_delta)
+
+    Notes:
+        - Loop nudge dropdown is new.
+
+Actions:
+
+    Notes:
+        - These are menus.
+        - The plan below implies various changes:
+            - Wording: indicated explicitly.
+            - Grouping: use the ordering/grouping as listed.
+            - Deletions implied:
+                - Loop:
+                    - Toggle loop
+                    - Edit scratch loop
+                - Jump:
+                    - Jump by time
 
     Video:
-        - Open video
+        - Load URL
+        - Open video [currently "Switch video"]
         - Edit current
-        - Delete video...
+        - Delete video
         ----------------------------
+        - Creater chapter
         - Open chapter
-        - Set new chapter here
-        - Edit current chapter
-        - Delete chapter...
+        - Edit chapter
+        - Delete chapter
+        - Zoom chapter
 
     Section:
-        - Set new here
-        - Edit current
-        - Delete section...
-        - Loop current
-        - Select section to loop
+        - Set section here
+        - Edit current section
+        - Loop current section
+        - Delete section
 
     Loop:
-        - Edit [edit-scratch-loop-modal]
-        - Open
-        - Save new
-        - Save back to source loop
-        - Select section to loop [alt route to same operation in Section menu]
-        - Delete loop...
+        - Open loop [currently called "Open saved loop"]
+        - Save new loop
+        - Delete loop
+        - Save back to loop source [currently called "Save back"]
 
     Mark:
-        - Set here
-        - Edit mark...
-        - Delete mark...
+        - Set mark here
+        - Edit mark
+        - Delete mark
 
     Jump:
-        - Time
-        ----------------------------
-        - Section
-        - Loop
-        - Mark
+        - Jump to Section
+        - Jump to Loop
+        - Jump to Mark
         ----------------------------
         - Jump history
-        - Back
-        - Forward
+        - Jump Back
+        - Jump Forward
 
     App:
         - Undo
         - Redo
         ----------------------------
         - Share: loop via URL
-        - Share: video as JSON
+        - Share loop URL
         ----------------------------
-        - Options
-        ----------------------------
-        - Export
-        - Import
+        - Export current video [currently "Export this video"]
+        - Export all data
+        - Import data
         - Inspect JSON
+        ----------------------------
         - Bulk data delete
+        - Options
 
     Help:
-        - General
+        - General help
         - Key bindings
 
 ## Revised UI plan

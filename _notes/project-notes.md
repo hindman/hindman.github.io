@@ -31,23 +31,47 @@ Bug: forgets prior-video details:
     - Current location
     - scratch-loop start/end
 
-scratch-loop editing bindings:
-    - need more shortcuts
-    - single-key synonym for `le`: maybe `\`
-    - quick start/end adjustments w/o full `le` process
-        - quick nudge: 5s decr/incr (and make legal)
-        - reset
-        - Two approaches:
-            - 3-key bindings: `l[r`
-                - seems complex
-                - makes the which-key for `l` verbose
-            - brackets as prefixes:
-                set              | [[    ]]
-                reset            | [r    ]r
-                nudge-decr       | [-    ]-
-                nudge-incr       | [=    ]=
-                nudge-delta-decr | [-    ]-
-                nudge-delta-incr | [=    ]=
+Problems:
+    - Deltas need to be first-class citizens:
+        - Direct controls: dropdowns.
+        - Highly visible: current status should be obvious.
+        - Tucking that info away, off to the side, hinders the user.
+    - Scratch-loop-edit mode:
+        - It is useful: mostly as a fine-tuning tool.
+        - Fast/approximate loop editing is much more common:
+            - Better done via quick key presses.
+            - The extra apparatus of the mode is too much.
+    - Those concerns drove two sets of changes:
+        - UI controls and actions menus:
+            - Added direct controls for deltas.
+            - Reorganized and reordered.
+        - Expanded key bindings for scratch-loop editing.
+
+Scratch-loop:
+
+    - Added single-key synonym for `le`.
+    - Converted brackets to prefixes, enabling a binding scheme to make quick
+      edits to start/end without fully invoking edit-scratch-loop-mode.
+
+    [[     | loop start: set to now
+    [<bsp> | loop start: reset to video start
+    [-     | loop start: nudge: decrease
+    [=     | loop start: nudge: increase
+    []     | loop start: nudge_delta: activate dropdown
+    ----------------------------------------
+    ]]     | loop end: set to now
+    ]<bsp> | loop end: reset to video end
+    ]-     | loop end: nudge: decrease
+    ]=     | loop end: nudge: increase
+    ][     | loop end: nudge_delta: activate dropdown [synonym key binding]
+    ----------------------------------------
+    ll     | Toggle looping on/off
+    lo     | Open: opens/loads a saved-loop into scratch-loop [loops-picker]
+    ls     | Save-new: a new loop [save-loop-modal]
+    lb     | Save-back: save scratch-loop endpoints back to source Loop
+    le     | Edit: scratch-loop [edit-scratch-loop-mode]
+    \      | Edit: scratch-loop [synonym key binding]
+    ld     | Delete loop [via picker]
 
 19. UI polish: with the full layout in place (video area, timeline,
     controls with menus), dial in sizing and proportions -- YouTube
