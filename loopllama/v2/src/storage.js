@@ -1,14 +1,55 @@
 // storage.js -- localStorage persistence and JSON export/import.
 
+import { SCHEMA_VERSION } from './state.js';
+
 const STORAGE_KEY = 'loopllama-v2';
 
-// Load app state from localStorage. Returns null if nothing is stored
-// or if the stored data cannot be parsed.
+// ---------------------------------------------------------------------------
+// Migration
+// ---------------------------------------------------------------------------
+
+// Apply all needed migrations to a single video object in place.
+function _migrateVideo(video) {
+  const v = video.version ?? 1;
+  if (v < 2) {
+    // v1 → v2: title becomes name (overwriting), then drop title.
+    if (video.title) video.name = video.title;
+    delete video.title;
+    video.version = 2;
+  }
+  return video;
+}
+
+// Apply all needed migrations to the full app state in place.
+// Returns the (mutated) state.
+function _migrateAppState(state) {
+  if (!state.version) state.version = 1;
+  if (state.version < 2) {
+    for (const video of state.videos ?? []) _migrateVideo(video);
+    state.version = 2;
+  }
+  return state;
+}
+
+// ---------------------------------------------------------------------------
+// Load / save
+// ---------------------------------------------------------------------------
+
+// Load app state from localStorage. Runs migrations if the stored schema
+// version is older than the current version, then re-saves.
+// Returns null if nothing is stored or if the stored data cannot be parsed.
 export function load() {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) return null;
   try {
-    return JSON.parse(raw);
+    const state = JSON.parse(raw);
+    const origVersion = state.version;
+    _migrateAppState(state);
+    if (state.version !== origVersion) {
+      console.log(`LoopLlama: migrated stored data from v${origVersion} to v${state.version}`);
+      save(state);
+    }
+    return state;
   } catch (e) {
     console.error('LoopLlama: failed to parse stored data', e);
     return null;
@@ -26,10 +67,12 @@ export function exportAll(state) {
 }
 
 // Return a pretty-printed JSON string for a single video.
+// Wrapped in a versioned envelope so the importer can migrate if needed:
+//   { version, videos: [video] }
 export function exportVideo(state, videoId) {
   const video = state.videos.find(v => v.id === videoId);
   if (!video) throw new Error(`exportVideo: no video with id "${videoId}"`);
-  return JSON.stringify(video, null, 2);
+  return JSON.stringify({ version: SCHEMA_VERSION, videos: [video] }, null, 2);
 }
 
 // Merge imported JSON into current state. Supports two formats:
@@ -49,6 +92,9 @@ export function importData(jsonStr, state) {
   } else {
     throw new Error('Unrecognized format: expected a LoopLlama export.');
   }
+
+  // Migrate each incoming video to the current schema before inserting.
+  incoming = incoming.map(_migrateVideo);
 
   let added = 0, updated = 0;
   for (const video of incoming) {

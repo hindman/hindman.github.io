@@ -7,10 +7,76 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-NEXT:
-    - see CC reply
-    - make fixes identified
-    - reply: ask for revised implementation stages
+R2-2. Controls area reorganization: restructure llama-controls.js to match
+    the round-2 Controls area spec.
+
+    Play group: play/pause button + time textbox (not a static display).
+    Wire `jj` to focus the time textbox. Enter in the textbox seeks to the
+    entered time and blurs the input; Esc blurs without seeking.
+
+    Speed group: no change.
+
+    Navigate group: seek-back button + seek_delta dropdown + seek-forward
+    button + prev-entity button + entity-type dropdown + next-entity button.
+    Move the seek buttons here from the Play group. The seek_delta dropdown
+    is the primary mouse control; Up/Down keys continue to work.
+
+    Looping group: add loop_nudge_delta dropdown after the end-Now button
+    (same choices as seek_delta, default 5 sec). Wire it as a placeholder
+    only; nudge logic comes in R2-3.
+
+    Also in this stage:
+    - Move video duration to llama-current; remove it from Controls.
+    - Remove seek_delta from llama-current (now lives in Controls).
+    - Update Action menus to match the round-2 spec: remove "Toggle loop"
+      from Loop menu; remove "Jump by time" from Jump menu; add stubbed
+      "Zoom loop" to Loop menu; add stubbed "Zoom section" to Section menu;
+      apply all label wording changes from the Controls area spec.
+
+    Goal: Controls area matches the round-2 layout; menus are updated;
+    `jj` jumps via the time textbox.
+
+R2-3. `[`/`]` prefix conversion + nudge logic: convert `[` and `]` from
+    single-key bindings to prefix keys in keyboardController.js. Remove the
+    old standalone `[` and `]` dispatch entries. Add which-key overlay
+    entries for both prefixes.
+
+    Implement nudge logic in state.js: `nudgeLoopStart(delta, state)` and
+    `nudgeLoopEnd(delta, state)`. Policy: apply regular nudge (delta to
+    self) if the result is a legal loop; otherwise apply relative nudge
+    (delta relative to the other endpoint); fall back to regular if both
+    are illegal. All nudges clamp to [0, video duration].
+
+    Wire all new bindings:
+    - `[[` / `]]`: set start/end to current time
+    - `[<bsp>` / `]<bsp>`: reset start to 0 / end to video duration
+    - `[-` / `[=` / `]-` / `]=`: nudge start/end decrease/increase
+    - `[]` / `][`: focus the loop_nudge_delta dropdown (synonyms)
+
+    Wire `loopNudgeDelta` app state to the dropdown added in R2-2.
+    Goal: all new `[`/`]` bindings work; nudge operations produce legal
+    loops; nudge_delta dropdown is live.
+
+R2-4. Timeline zoom generalization: replace the chapter-specific
+    `chapterZoom` boolean with a general `zoomSource: null | {start, end}`
+    in app state. Pass it to llama-timeline as `scopeStart`/`scopeEnd`.
+    Derive the value from the active entity based on which zoom binding
+    triggered it.
+
+    Wire `lz`: scope = scratch loop start/end. No-op with a footer warning
+    if the scratch loop spans the full video (start === 0 and end ===
+    duration).
+    Wire `sz`: scope = current section start and its derived end. No-op
+    with a footer warning if no current section is defined.
+    Refactor `cz` to use the same zoomSource mechanism.
+
+    All three bindings toggle: a second press of the same binding clears
+    zoom. Loading a new video clears zoom.
+
+    Replace the stubbed "Zoom loop" and "Zoom section" menu items (from
+    R2-2) with live handlers.
+    Goal: `lz`, `sz`, `cz` all scope the timeline correctly; degenerate
+    cases produce footer warnings.
 
 19. UI polish: with the full layout in place (video area, timeline,
     controls with menus), dial in sizing and proportions -- YouTube

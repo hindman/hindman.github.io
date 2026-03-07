@@ -4,7 +4,7 @@
 // These factories produce plain objects matching the v2 data schema.
 // Mutation functions will be added in later stages as needed.
 
-const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 function createId() {
   return Math.random().toString(36).slice(2, 9);
@@ -41,7 +41,6 @@ export function createVideo(url, youtubeId) {
     start:       0,       // user-adjustable effective start
     end:         null,    // user-adjustable effective end; null = use duration
     name:        '',
-    title:       '',
     looping:     false,
     speed:       1.0,
     seek_delta:  DEFAULT_OPTIONS.seek_delta_default,

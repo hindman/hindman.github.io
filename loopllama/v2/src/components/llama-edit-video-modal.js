@@ -4,7 +4,7 @@
 //   video: Video object | null  -- the current video to edit
 //
 // Events fired (composed, bubbling):
-//   ll-update-video  { id, name, title, url, start, end }
+//   ll-update-video  { id, name, url, start, end }
 //   ll-delete-video  { id }
 //
 // API:
@@ -47,7 +47,6 @@ class LlamaEditVideoModal extends LitElement {
   static properties = {
     video:  { type: Object },
     _name:  { state: true },
-    _title: { state: true },
     _url:   { state: true },
     _start: { state: true },
     _end:   { state: true },
@@ -57,7 +56,6 @@ class LlamaEditVideoModal extends LitElement {
     super();
     this.video  = null;
     this._name  = '';
-    this._title = '';
     this._url   = '';
     this._start = '';
     this._end   = '';
@@ -67,7 +65,6 @@ class LlamaEditVideoModal extends LitElement {
     const v = this.video;
     if (v) {
       this._name  = v.name  || '';
-      this._title = v.title || '';
       this._url   = v.url   || '';
       this._start = v.start > 0     ? _fmtTime(v.start) : '';
       this._end   = v.end != null   ? _fmtTime(v.end)   : '';
@@ -91,7 +88,6 @@ class LlamaEditVideoModal extends LitElement {
       detail: {
         id:    this.video.id,
         name:  this._name.trim(),
-        title: this._title.trim(),
         url:   this._url.trim(),
         start,
         end,
@@ -140,9 +136,6 @@ class LlamaEditVideoModal extends LitElement {
         ${this._renderField('Name', 'name', this._name,
             'Short label (e.g. "Autumn Leaves")',
             e => { this._name = e.target.value; })}
-        ${this._renderField('Title', 'title', this._title,
-            'Full song or video title',
-            e => { this._title = e.target.value; })}
         ${this._renderField('URL', 'url', this._url,
             'YouTube URL or video ID',
             e => { this._url = e.target.value; })}

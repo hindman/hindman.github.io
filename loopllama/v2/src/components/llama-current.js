@@ -1,6 +1,6 @@
 // llama-current.js -- "Current" panel showing active entity info.
 //
-// Displays top-level state: video name/title, active chapter, current
+// Displays top-level state: video name, active chapter, current
 // section, active loop name, and loop source.
 
 import { LitElement, html, css } from 'lit';
@@ -60,7 +60,6 @@ class LlamaCurrent extends LitElement {
 
   static properties = {
     videoName:         { type: String },
-    videoTitle:        { type: String },
     chapterName:       { type: String },
     sectionName:       { type: String },
     loopName:          { type: String },
@@ -72,7 +71,6 @@ class LlamaCurrent extends LitElement {
   constructor() {
     super();
     this.videoName         = '';
-    this.videoTitle        = '';
     this.chapterName       = null;
     this.sectionName       = null;
     this.loopName          = null;
@@ -101,7 +99,6 @@ class LlamaCurrent extends LitElement {
         <div class="panel-title">Current</div>
         <div class="current-rows">
           ${this._row('Name',        this.videoName)}
-          ${this._row('Title',       this.videoTitle)}
           ${this._row('Chapter',     this.chapterName)}
           ${this._row('Section',     this.sectionName)}
           ${this._row('Loop',        this.loopName)}

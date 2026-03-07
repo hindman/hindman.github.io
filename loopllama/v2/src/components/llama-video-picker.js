@@ -1,4 +1,4 @@
-// llama-video-picker.js -- modal to pick a known video, with name/title filter.
+// llama-video-picker.js -- modal to pick a known video, with name filter.
 //
 // Props:
 //   videos:         Array of Video objects
@@ -137,20 +137,18 @@ class LlamaVideoPicker extends LitElement {
     const q = this._filter.trim().toLowerCase();
     if (!q) return this.videos;
     return this.videos.filter(v =>
-      (v.name  || '').toLowerCase().includes(q) ||
-      (v.title || '').toLowerCase().includes(q) ||
+      (v.name || '').toLowerCase().includes(q) ||
       v.id.toLowerCase().includes(q)
     );
   }
 
-  // Preferred display label: name > title > id.
+  // Preferred display label: name > id.
   _primaryLabel(v) {
-    return v.name || v.title || v.id;
+    return v.name || v.id;
   }
 
-  // Secondary label: show title if name is already shown, otherwise the id.
+  // Secondary label: always the video ID.
   _subLabel(v) {
-    if (v.name && v.title) return v.title;
     return v.id;
   }
 
@@ -160,7 +158,7 @@ class LlamaVideoPicker extends LitElement {
       <llama-modal label="Switch Video" @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="filter-wrap">
           <sl-input
-            placeholder="Filter by name or title…"
+            placeholder="Filter by name…"
             .value=${this._filter}
             @sl-input=${this._onFilterInput}
             @keydown=${this._onFilterKeyDown}

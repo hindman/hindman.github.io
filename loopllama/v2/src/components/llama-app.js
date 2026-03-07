@@ -702,11 +702,10 @@ class LlamaApp extends LitElement {
 
   // Handle ll-update-video from the edit-video-modal.
   _onUpdateVideo(e) {
-    const { id, name, title, url, start, end } = e.detail;
+    const { id, name, url, start, end } = e.detail;
     const video = this._appState?.videos.find(v => v.id === id);
     if (!video) return;
     video.name  = name;
-    video.title = title;
     video.url   = url;
     video.start = start;
     video.end   = end;
@@ -1286,7 +1285,6 @@ class LlamaApp extends LitElement {
 
         <llama-current
           .videoName=${currentVideo?.name ?? ''}
-          .videoTitle=${currentVideo?.title ?? ''}
           .chapterName=${activeChapter?.name ?? null}
           .sectionName=${currentSection?.name ?? null}
           .loopName=${loopName}
