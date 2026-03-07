@@ -165,6 +165,8 @@ class LlamaApp extends LitElement {
     loopSourceType:     { type: String },
     warningMsg:         { type: String },
     errorMsg:           { type: String },
+    loopNudgeDelta:     { type: Number },
+    seekDelta:          { type: Number },
   };
 
   constructor() {
@@ -216,8 +218,9 @@ class LlamaApp extends LitElement {
     this._chapterPickerEl      = null;
     this._editChapterModalEl   = null;
     this._fileInputEl          = null;
-    this.seekDelta     = DEFAULT_OPTIONS.seek_delta_default;
-    this.speedDelta    = DEFAULT_OPTIONS.speed_delta;
+    this.seekDelta        = DEFAULT_OPTIONS.seek_delta_default;
+    this.speedDelta       = DEFAULT_OPTIONS.speed_delta;
+    this.loopNudgeDelta   = 5;
   }
 
   // Sync per-video state from a Video object into reactive props.
@@ -319,7 +322,7 @@ class LlamaApp extends LitElement {
       videoPicker:   () => this._videoPickerEl?.show(),
       editVideo:     () => this._editVideoModalEl?.show(),
       deleteVideo:   stub('deleteVideo'),
-      jumpTime:      () => this._jumpTimeModalEl?.show(),
+      jumpTime:      () => this.renderRoot.querySelector('llama-controls')?.focusTimeInput(),
       jumpSection:   () => this._openSectionsPicker('jump'),
       jumpLoop:      () => this._openLoopsPicker('jump'),
       jumpMark:      () => this._openMarksPicker('jump'),
@@ -354,6 +357,8 @@ class LlamaApp extends LitElement {
       },
       editScratch: () => this._enterEditScratch(),
       deleteLoop: () => this._openLoopsPicker('delete'),
+      zoomLoop:    stub('zoomLoop'),
+      zoomSection: stub('zoomSection'),
       setSection: () => {
         addSection(this.sections, this._vc?.getCurrentTime() ?? 0);
         this.sections = [...this.sections];
@@ -1255,27 +1260,29 @@ class LlamaApp extends LitElement {
         </div>
         <llama-controls
           .currentTime=${this.currentTime}
-          .duration=${this.duration}
           .speed=${this.speed}
           .isPlaying=${this.isPlaying}
           .looping=${this.looping}
           .loopStart=${this.loopStart}
           .loopEnd=${this.loopEnd}
+          .seekDelta=${this.seekDelta}
+          .loopNudgeDelta=${this.loopNudgeDelta}
           .editScratchActive=${this.editScratchActive}
           .editScratchFocus=${this.editScratchFocus}
           .editScratchDelta=${this.editScratchDelta}
           .activeEntityType=${this.activeEntityType}
           @ll-play-pause=${this._onPlayPause}
+          @ll-seek-to=${(e) => this._vc?.seekTo(e.detail.value)}
           @ll-seek-forward=${this._onSeekForward}
           @ll-seek-back=${this._onSeekBack}
+          @ll-seek-delta-change=${(e) => { this.seekDelta = e.detail.value; }}
+          @ll-loop-nudge-delta-change=${(e) => { this.loopNudgeDelta = e.detail.value; }}
           @ll-toggle-loop=${this._onToggleLoop}
           @ll-set-loop-start-now=${this._onSetLoopStartNow}
           @ll-set-loop-end-now=${this._onSetLoopEndNow}
           @ll-loop-start-change=${this._onLoopStartChange}
           @ll-loop-end-change=${this._onLoopEndChange}
           @ll-speed-change=${(e) => { const v = Math.max(0.25, Math.min(2.0, e.detail.value)); this._vc?.setPlaybackRate(v); this.speed = v; }}
-          @ll-set-section=${this._onSetSection}
-          @ll-set-mark=${this._onSetMark}
           @ll-prev-entity=${() => this._navigateEntity('prev')}
           @ll-next-entity=${() => this._navigateEntity('next')}
           @ll-entity-type-change=${this._onEntityTypeChange}
@@ -1290,7 +1297,7 @@ class LlamaApp extends LitElement {
           .loopName=${loopName}
           .loopSourceLabel=${this.loopSourceLabel}
           .loopSourceType=${this.loopSourceType}
-          .seekDelta=${this.seekDelta}
+          .duration=${this.duration}
         ></llama-current>
       </div>
 

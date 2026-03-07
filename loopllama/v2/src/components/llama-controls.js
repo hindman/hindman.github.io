@@ -2,28 +2,28 @@
 //
 // Receives:
 //   currentTime:      Number   -- current playback position (seconds)
-//   duration:         Number   -- total video duration (seconds), or null
 //   speed:            Number   -- playback speed (e.g. 1.0 = 100%)
 //   isPlaying:        Boolean  -- true while the video is playing
 //   looping:          Boolean  -- true when looping is active
 //   loopStart:        Number   -- scratch-loop start (seconds)
 //   loopEnd:          Number   -- scratch-loop end (seconds)
-//   sections:         Array    -- array of Section objects { id, time, name }
-//   marks:            Array    -- array of Mark objects { id, time, name }
+//   seekDelta:        Number   -- current seek delta (seconds)
+//   loopNudgeDelta:   Number   -- current loop nudge delta (seconds)
 //   activeEntityType: String   -- 'any'|'section'|'loop'|'mark'|'chapter'|'video'
 //
 // Fires (bubbles + composed):
 //   ll-play-pause             -- toggle play/pause
+//   ll-seek-to                -- time textbox committed; detail.value = seconds
 //   ll-seek-forward           -- seek forward by current seek delta
 //   ll-seek-back              -- seek back by current seek delta
+//   ll-seek-delta-change      -- seek delta dropdown changed; detail.value = seconds
+//   ll-loop-nudge-delta-change -- nudge delta dropdown changed; detail.value = seconds
 //   ll-toggle-loop            -- toggle looping on/off
 //   ll-set-loop-start-now     -- set loop start to current time
 //   ll-set-loop-end-now       -- set loop end to current time
 //   ll-loop-start-change      -- user edited start; detail.value = seconds
 //   ll-loop-end-change        -- user edited end; detail.value = seconds
 //   ll-speed-change           -- user edited speed; detail.value = decimal (e.g. 0.75)
-//   ll-set-section            -- set a section divider at current time
-//   ll-set-mark               -- set a mark at current time
 //   ll-prev-entity            -- navigate to previous entity
 //   ll-next-entity            -- navigate to next entity
 //   ll-entity-type-change     -- entity type changed; detail.value = type string
@@ -32,6 +32,7 @@
 import { LitElement, html, css } from 'lit';
 import { createRef, ref } from 'lit/directives/ref.js';
 import { parseTime } from '../parseTime.js';
+import { DEFAULT_OPTIONS } from '../state.js';
 import './llama-dropdown.js';
 import '@shoelace-style/shoelace/dist/components/switch/switch.js';
 
@@ -42,9 +43,15 @@ const MENUS = [
     label: 'Video',
     items: [
       { label: 'Load URL',     action: 'videoUrl'    },
-      { label: 'Switch video', action: 'videoPicker' },
-      { label: 'Edit video',   action: 'editVideo'   },
+      { label: 'Open video',   action: 'videoPicker' },
+      { label: 'Edit current', action: 'editVideo'   },
       { label: 'Delete video', action: 'deleteVideo', disabled: true },
+      { type: 'divider' },
+      { label: 'Create chapter',       action: 'setChapter'    },
+      { label: 'Open chapter',         action: 'openChapter'   },
+      { label: 'Edit chapter',         action: 'editChapter'   },
+      { label: 'Delete chapter',       action: 'deleteChapter' },
+      { label: 'Zoom current chapter', action: 'zoomChapter'   },
     ],
   },
   {
@@ -54,23 +61,19 @@ const MENUS = [
       { label: 'Edit current section', action: 'editSection'   },
       { label: 'Loop current section', action: 'loopSection'   },
       { label: 'Delete section',       action: 'deleteSection' },
-      { type: 'divider' },
-      { label: 'Create chapter',  action: 'setChapter'    },
-      { label: 'Open chapter',    action: 'openChapter'   },
-      { label: 'Edit chapter',    action: 'editChapter'   },
-      { label: 'Delete chapter',  action: 'deleteChapter' },
-      { label: 'Zoom chapter',    action: 'zoomChapter'   },
+      { label: 'Zoom current section', action: 'zoomSection', disabled: true },
     ],
   },
   {
     label: 'Loop',
     items: [
-      { label: 'Toggle loop',       action: 'toggleLoop'  },
-      { label: 'Open saved loop',   action: 'openLoop'    },
-      { label: 'Save new loop',     action: 'saveLoop'    },
-      { label: 'Save back',         action: 'saveBack'    },
+      { label: 'Open loop',                action: 'openLoop'    },
+      { label: 'Save new loop',            action: 'saveLoop'    },
+      { label: 'Save back to loop source', action: 'saveBack'    },
+      { label: 'Delete loop',              action: 'deleteLoop'  },
+      { label: 'Zoom current loop',        action: 'zoomLoop', disabled: true },
+      { type: 'divider' },
       { label: 'Edit scratch loop', action: 'editScratch' },
-      { label: 'Delete loop',       action: 'deleteLoop'  },
     ],
   },
   {
@@ -84,28 +87,30 @@ const MENUS = [
   {
     label: 'Jump',
     items: [
-      { label: 'Jump by time',    action: 'jumpTime'    },
-      { label: 'Jump to section', action: 'jumpSection' },
-      { label: 'Jump to loop',    action: 'jumpLoop'    },
-      { label: 'Jump to mark',    action: 'jumpMark'    },
+      { label: 'Jump to Section', action: 'jumpSection' },
+      { label: 'Jump to Loop',    action: 'jumpLoop'    },
+      { label: 'Jump to Mark',    action: 'jumpMark'    },
       { type: 'divider' },
       { label: 'Jump history',  action: 'jumpHistory', disabled: true },
-      { label: 'Jump back',     action: 'jumpBack',    disabled: true },
-      { label: 'Jump forward',  action: 'jumpForward', disabled: true },
+      { label: 'Jump Back',     action: 'jumpBack',    disabled: true },
+      { label: 'Jump Forward',  action: 'jumpForward', disabled: true },
     ],
   },
   {
     label: 'App',
     items: [
-      { label: 'Options',      action: 'options',     disabled: true },
+      { label: 'Undo',  action: 'undo', disabled: true },
+      { label: 'Redo',  action: 'redo', disabled: true },
       { type: 'divider' },
-      { label: 'Export all data',   action: 'exportAll'  },
-      { label: 'Export this video', action: 'shareVideo' },
-      { label: 'Import data',       action: 'importData' },
-      { label: 'Delete data',       action: 'deleteData', disabled: true },
+      { label: 'Share loop URL', action: 'shareLoop' },
       { type: 'divider' },
-      { label: 'Share loop URL', action: 'shareLoop'    },
-      { label: 'Inspect data',   action: 'inspectData', disabled: true },
+      { label: 'Export current video', action: 'shareVideo' },
+      { label: 'Export all data',      action: 'exportAll'  },
+      { label: 'Import data',          action: 'importData' },
+      { label: 'Inspect JSON',         action: 'inspectData', disabled: true },
+      { type: 'divider' },
+      { label: 'Bulk data delete', action: 'deleteData', disabled: true },
+      { label: 'Options',          action: 'options',    disabled: true },
     ],
   },
   {
@@ -165,6 +170,37 @@ class LlamaControls extends LitElement {
       gap: 0.4rem;
     }
 
+    /* --- Button groups: zero-gap connected controls --- */
+
+    .btn-group {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .btn-group > * {
+      border-radius: 0;
+    }
+
+    .btn-group > * + * {
+      margin-left: -1px;
+    }
+
+    .btn-group > *:first-child {
+      border-radius: var(--ll-radius, 3px) 0 0 var(--ll-radius, 3px);
+    }
+
+    .btn-group > *:last-child {
+      border-radius: 0 var(--ll-radius, 3px) var(--ll-radius, 3px) 0;
+    }
+
+    /* Bring the active/hovered element's border to the front. */
+    .btn-group > *:hover,
+    .btn-group > *:focus {
+      position: relative;
+      z-index: 1;
+    }
+
     /* --- Menus row --- */
 
     .controls-row {
@@ -210,15 +246,16 @@ class LlamaControls extends LitElement {
       color: #1a1a1a;
     }
 
-    /* Now buttons share the accent color of the Play button. */
-    .btn-now {
+    /* Accent-colored buttons: Play/Pause, Now, and nav/seek buttons. */
+    .btn-now,
+    .btn-accent {
       background: var(--ll-accent, #7ec8e3);
       border-color: var(--ll-accent, #7ec8e3);
       color: #1a1a1a;
-      font-weight: bold;
     }
 
-    .btn-now:hover {
+    .btn-now:hover,
+    .btn-accent:hover {
       background: #9fd5e8;
       border-color: #9fd5e8;
       color: #1a1a1a;
@@ -235,11 +272,38 @@ class LlamaControls extends LitElement {
 
     /* --- Text displays and inputs --- */
 
-    .time-display {
+    /* Standalone time textbox in the Play group. */
+    .time-input-play {
       font-family: var(--ll-font-mono, monospace);
       font-size: var(--ll-text-sm, 0.85rem);
+      width: 7ch;
+      padding: 0.2rem 0.4rem;
+      background: var(--ll-surface-raised, #2a2a2a);
+      border: 1px solid var(--ll-border, #444);
+      border-radius: var(--ll-radius, 3px);
       color: var(--ll-accent, #7ec8e3);
-      min-width: 11ch;
+      text-align: right;
+    }
+
+    .time-input-play:focus {
+      outline: none;
+      border-color: var(--ll-accent, #7ec8e3);
+    }
+
+    /* Delta dropdowns (seek_delta, loop_nudge_delta). */
+    select.delta-select {
+      padding: 0.2rem 0.4rem;
+      background: var(--ll-surface-raised, #2a2a2a);
+      border: 1px solid var(--ll-border, #444);
+      border-radius: var(--ll-radius, 3px);
+      color: var(--ll-text, #e0e0e0);
+      font-size: var(--ll-text-sm, 0.85rem);
+      cursor: pointer;
+    }
+
+    select.delta-select:focus {
+      outline: none;
+      border-color: var(--ll-accent, #7ec8e3);
     }
 
     .time-input {
@@ -249,8 +313,6 @@ class LlamaControls extends LitElement {
       padding: 0.2rem 0.4rem;
       background: var(--ll-surface-raised, #2a2a2a);
       border: 1px solid var(--ll-border, #444);
-      border-radius: var(--ll-radius, 3px) 0 0 var(--ll-radius, 3px);
-      border-right: none;
       color: var(--ll-text, #e0e0e0);
       text-align: right;
     }
@@ -258,19 +320,11 @@ class LlamaControls extends LitElement {
     .time-input:focus {
       outline: none;
       border-color: var(--ll-accent, #7ec8e3);
-      z-index: 1;
-      position: relative;
     }
 
     .time-input.loop-edit-focus {
       border-color: var(--ll-accent-warm, #e3a857);
       box-shadow: 0 0 0 1px var(--ll-accent-warm, #e3a857);
-    }
-
-    /* Now button flush against its time-input: square left corners, no left border. */
-    .btn-now-attached {
-      border-radius: 0 var(--ll-radius, 3px) var(--ll-radius, 3px) 0;
-      padding: 0.25rem 0.5rem;
     }
 
     .speed-input {
@@ -324,12 +378,13 @@ class LlamaControls extends LitElement {
 
   static properties = {
     currentTime:      { type: Number },
-    duration:         { type: Number },
     speed:            { type: Number },
     isPlaying:        { type: Boolean },
     looping:          { type: Boolean },
     loopStart:        { type: Number },
     loopEnd:          { type: Number },
+    seekDelta:        { type: Number },
+    loopNudgeDelta:   { type: Number },
     editScratchActive:  { type: Boolean },
     editScratchFocus:   { type: String },
     editScratchDelta:   { type: Number },
@@ -338,17 +393,20 @@ class LlamaControls extends LitElement {
 
   constructor() {
     super();
-    this.currentTime = 0;
-    this.duration    = null;
-    this.speed       = 1;
-    this.isPlaying   = false;
-    this.looping     = false;
-    this.loopStart   = 0;
-    this.loopEnd     = 0;
+    this.currentTime      = 0;
+    this.speed            = 1;
+    this.isPlaying        = false;
+    this.looping          = false;
+    this.loopStart        = 0;
+    this.loopEnd          = 0;
+    this.seekDelta        = DEFAULT_OPTIONS.seek_delta_default;
+    this.loopNudgeDelta   = 5;
     this.editScratchActive = false;
     this.editScratchFocus  = 'start';
     this.editScratchDelta  = 1;
     this.activeEntityType  = 'any';
+    this._timeRef         = createRef();
+    this._timeFocused     = false;
     this._startRef        = createRef();
     this._endRef          = createRef();
     this._speedRef        = createRef();
@@ -360,6 +418,11 @@ class LlamaControls extends LitElement {
     const m = Math.floor(secs / 60);
     const s = Math.floor(secs % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
+  }
+
+  _fmtDelta(secs) {
+    if (secs < 60) return `${secs}s`;
+    return `${secs / 60}m`;
   }
 
   // Format for loop-endpoint inputs: uses m:ss.t when sub-second delta is
@@ -391,14 +454,19 @@ class LlamaControls extends LitElement {
   }
 
   firstUpdated() {
+    if (this._timeRef.value)  this._timeRef.value.value  = this._fmt(this.currentTime);
     if (this._startRef.value) this._startRef.value.value = this._fmtLoop(this.loopStart);
     if (this._endRef.value)   this._endRef.value.value   = this._fmtLoop(this.loopEnd);
     if (this._speedRef.value) this._speedRef.value.value = `${(this.speed * 100).toFixed(0)}%`;
   }
 
   // Sync inputs when values change from outside (keyboard or Now button).
-  // Guarded so poll re-renders (currentTime only) never disturb a user mid-edit.
+  // Time input is only synced when not focused (user may be mid-edit).
+  // Loop endpoint inputs are guarded similarly via blur/submit handlers.
   updated(changedProps) {
+    if (changedProps.has('currentTime') && this._timeRef.value && !this._timeFocused) {
+      this._timeRef.value.value = this._fmt(this.currentTime);
+    }
     if ((changedProps.has('loopStart') || changedProps.has('editScratchDelta'))
         && this._startRef.value) {
       this._startRef.value.value = this._fmtLoop(this.loopStart);
@@ -441,6 +509,22 @@ class LlamaControls extends LitElement {
     }
   }
 
+  // Public: called by llama-app for the `jj` binding to focus the time textbox.
+  focusTimeInput() {
+    const input = this._timeRef.value;
+    if (input) { input.focus(); input.select(); }
+  }
+
+  _onTimeKeyDown(e) {
+    if (e.key === 'Enter') {
+      const val = this._parseTime(this._timeRef.value?.value ?? '');
+      if (val !== null) this._emit('ll-seek-to', { value: val });
+      e.target.blur();
+    } else if (e.key === 'Escape') {
+      e.target.blur();
+    }
+  }
+
   // Public: called by llama-app during edit-scratch mode to focus an endpoint
   // input for direct time entry. Selects all so the first typed character
   // replaces the current value.
@@ -467,14 +551,17 @@ class LlamaControls extends LitElement {
           <div class="ctrl-group">
             <span class="ctrl-group-label">Play</span>
             <div class="ctrl-group-body">
-              <button @click=${() => this._emit('ll-seek-back')}>◀</button>
               <button class="btn-play-pause" @click=${() => this._emit('ll-play-pause')}>
                 ${this.isPlaying ? 'Pause' : 'Play'}
               </button>
-              <button @click=${() => this._emit('ll-seek-forward')}>▶</button>
-              <span class="time-display">
-                ${this._fmt(this.currentTime)} / ${this._fmt(this.duration)}
-              </span>
+              <input
+                ${ref(this._timeRef)}
+                class="time-input-play"
+                type="text"
+                @focus=${() => { this._timeFocused = true; this._timeRef.value?.select(); }}
+                @blur=${() => { this._timeFocused = false; if (this._timeRef.value) this._timeRef.value.value = this._fmt(this.currentTime); }}
+                @keydown=${this._onTimeKeyDown}
+              />
             </div>
           </div>
 
@@ -494,20 +581,35 @@ class LlamaControls extends LitElement {
           <div class="ctrl-group">
             <span class="ctrl-group-label">Navigate</span>
             <div class="ctrl-group-body">
-              <button @click=${() => this._emit('ll-prev-entity')}>⏮</button>
-              <select
-                ${ref(this._entitySelectRef)}
-                class="entity-type-select"
-                @change=${(e) => { this._emit('ll-entity-type-change', { value: e.target.value }); e.target.blur(); }}
-              >
-                <option value="any"     ?selected=${this.activeEntityType === 'any'}>Any</option>
-                <option value="section" ?selected=${this.activeEntityType === 'section'}>Section</option>
-                <option value="loop"    ?selected=${this.activeEntityType === 'loop'}>Loop</option>
-                <option value="mark"    ?selected=${this.activeEntityType === 'mark'}>Mark</option>
-                <option value="chapter" ?selected=${this.activeEntityType === 'chapter'}>Chapter</option>
-                <option value="video"   ?selected=${this.activeEntityType === 'video'}>Video</option>
-              </select>
-              <button @click=${() => this._emit('ll-next-entity')}>⏭</button>
+              <div class="btn-group">
+                <button class="btn-accent" @click=${() => this._emit('ll-seek-back')}>◀</button>
+                <select
+                  class="delta-select"
+                  @change=${(e) => { this._emit('ll-seek-delta-change', { value: Number(e.target.value) }); e.target.blur(); }}
+                >
+                  ${DEFAULT_OPTIONS.seek_delta_choices.map(n => html`
+                    <option value=${n} ?selected=${this.seekDelta === n}>${this._fmtDelta(n)}</option>
+                  `)}
+                </select>
+                <button class="btn-accent" @click=${() => this._emit('ll-seek-forward')}>▶</button>
+              </div>
+              <div class="btn-group">
+                <button class="btn-accent" @click=${() => this._emit('ll-prev-entity')}>⏮</button>
+                <select
+                  ${ref(this._entitySelectRef)}
+                  class="entity-type-select"
+                  @change=${(e) => { this._emit('ll-entity-type-change', { value: e.target.value }); e.target.blur(); }}
+                  @keydown=${(e) => { if (e.key === 'Enter' || e.key === 'Escape') e.target.blur(); }}
+                >
+                  <option value="any"     ?selected=${this.activeEntityType === 'any'}>Any</option>
+                  <option value="section" ?selected=${this.activeEntityType === 'section'}>Section</option>
+                  <option value="loop"    ?selected=${this.activeEntityType === 'loop'}>Loop</option>
+                  <option value="mark"    ?selected=${this.activeEntityType === 'mark'}>Mark</option>
+                  <option value="chapter" ?selected=${this.activeEntityType === 'chapter'}>Chapter</option>
+                  <option value="video"   ?selected=${this.activeEntityType === 'video'}>Video</option>
+                </select>
+                <button class="btn-accent" @click=${() => this._emit('ll-next-entity')}>⏭</button>
+              </div>
             </div>
           </div>
 
@@ -519,26 +621,40 @@ class LlamaControls extends LitElement {
                 ?checked=${this.looping}
                 @sl-change=${() => this._emit('ll-toggle-loop')}
               ></sl-switch>
-              <input
-                ${ref(this._startRef)}
-                class="time-input ${this.editScratchActive && this.editScratchFocus === 'start' ? 'loop-edit-focus' : ''}"
-                type="text"
-                @keydown=${(e) => { if (e.key === 'Enter') { this._submitStart(); e.target.blur(); } }}
-                @blur=${() => this._submitStart()}
-              /><button
-                class="btn-now btn-now-attached"
-                @click=${() => this._emit('ll-set-loop-start-now')}
-              >Now</button>
-              <input
-                ${ref(this._endRef)}
-                class="time-input ${this.editScratchActive && this.editScratchFocus === 'end' ? 'loop-edit-focus' : ''}"
-                type="text"
-                @keydown=${(e) => { if (e.key === 'Enter') { this._submitEnd(); e.target.blur(); } }}
-                @blur=${() => this._submitEnd()}
-              /><button
-                class="btn-now btn-now-attached"
-                @click=${() => this._emit('ll-set-loop-end-now')}
-              >Now</button>
+              <div class="btn-group">
+                <input
+                  ${ref(this._startRef)}
+                  class="time-input ${this.editScratchActive && this.editScratchFocus === 'start' ? 'loop-edit-focus' : ''}"
+                  type="text"
+                  @keydown=${(e) => { if (e.key === 'Enter') { this._submitStart(); e.target.blur(); } }}
+                  @blur=${() => this._submitStart()}
+                />
+                <button
+                  class="btn-now"
+                  @click=${() => this._emit('ll-set-loop-start-now')}
+                >Now</button>
+              </div>
+              <div class="btn-group">
+                <input
+                  ${ref(this._endRef)}
+                  class="time-input ${this.editScratchActive && this.editScratchFocus === 'end' ? 'loop-edit-focus' : ''}"
+                  type="text"
+                  @keydown=${(e) => { if (e.key === 'Enter') { this._submitEnd(); e.target.blur(); } }}
+                  @blur=${() => this._submitEnd()}
+                />
+                <button
+                  class="btn-now"
+                  @click=${() => this._emit('ll-set-loop-end-now')}
+                >Now</button>
+              </div>
+              <select
+                class="delta-select"
+                @change=${(e) => { this._emit('ll-loop-nudge-delta-change', { value: Number(e.target.value) }); e.target.blur(); }}
+              >
+                ${DEFAULT_OPTIONS.seek_delta_choices.map(n => html`
+                  <option value=${n} ?selected=${this.loopNudgeDelta === n}>${this._fmtDelta(n)}</option>
+                `)}
+              </select>
             </div>
           </div>
 

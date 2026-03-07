@@ -7,35 +7,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-R2-2. Controls area reorganization: restructure llama-controls.js to match
-    the round-2 Controls area spec.
-
-    Play group: play/pause button + time textbox (not a static display).
-    Wire `jj` to focus the time textbox. Enter in the textbox seeks to the
-    entered time and blurs the input; Esc blurs without seeking.
-
-    Speed group: no change.
-
-    Navigate group: seek-back button + seek_delta dropdown + seek-forward
-    button + prev-entity button + entity-type dropdown + next-entity button.
-    Move the seek buttons here from the Play group. The seek_delta dropdown
-    is the primary mouse control; Up/Down keys continue to work.
-
-    Looping group: add loop_nudge_delta dropdown after the end-Now button
-    (same choices as seek_delta, default 5 sec). Wire it as a placeholder
-    only; nudge logic comes in R2-3.
-
-    Also in this stage:
-    - Move video duration to llama-current; remove it from Controls.
-    - Remove seek_delta from llama-current (now lives in Controls).
-    - Update Action menus to match the round-2 spec: remove "Toggle loop"
-      from Loop menu; remove "Jump by time" from Jump menu; add stubbed
-      "Zoom loop" to Loop menu; add stubbed "Zoom section" to Section menu;
-      apply all label wording changes from the Controls area spec.
-
-    Goal: Controls area matches the round-2 layout; menus are updated;
-    `jj` jumps via the time textbox.
-
 R2-3. `[`/`]` prefix conversion + nudge logic: convert `[` and `]` from
     single-key bindings to prefix keys in keyboardController.js. Remove the
     old standalone `[` and `]` dispatch entries. Add which-key overlay

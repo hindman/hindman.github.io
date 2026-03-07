@@ -65,7 +65,7 @@ class LlamaCurrent extends LitElement {
     loopName:          { type: String },
     loopSourceLabel:   { type: String },
     loopSourceType:    { type: String },
-    seekDelta:         { type: Number },
+    duration:          { type: Number },
   };
 
   constructor() {
@@ -76,7 +76,13 @@ class LlamaCurrent extends LitElement {
     this.loopName          = null;
     this.loopSourceLabel   = null;
     this.loopSourceType    = null;
-    this.seekDelta         = null;
+    this.duration          = null;
+  }
+
+  _fmtDuration(secs) {
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
   }
 
   _row(label, value) {
@@ -104,7 +110,7 @@ class LlamaCurrent extends LitElement {
           ${this._row('Loop',        this.loopName)}
           ${this._row('Source',      this.loopSourceLabel)}
           ${this._row('Source type', sourceTypeDisplay)}
-          ${this._row('Seek delta',  this.seekDelta != null ? `${this.seekDelta}s` : null)}
+          ${this._row('Duration',    this.duration != null ? this._fmtDuration(this.duration) : null)}
         </div>
       </div>
     `;
