@@ -1261,16 +1261,6 @@ Play:
     play/pause    | button
     time          | text box
 
-    Notes on round-2 changes:
-        - Seek controls are no longer in this group.
-        - Make time a text box, not informational item.
-        - The jump-by-time modal can be dropped.
-        - Instead `jj` moves focus to the text box.
-        - And the "Jump to time" menu item can be dropped.
-        - Mouse user can directly click to edit in the usual way.
-        - Move video duration to Current Area: it's not a first-class citizen,
-          but a rarely consulted info item.
-
 Speed:
 
     speed | text box [clamp: 25 - 200, increments of 5]
@@ -1285,35 +1275,20 @@ Navigate:
     entity: type     | dropdown
     next: entity     | button
 
-    Notes on round-2 changes:
-        - Seek controls are now in this group.
-
 Looping:
 
     looping: on/off  | toggle
-    start            | text box
     start: Now       | button
+    start            | text box
+    loop_nudge_delta | dropdown (same choices as seek_delta)
     end              | text box
     end: Now         | button
-    loop_nudge_delta | dropdown (same choices as seek_delta)
-
-    Notes on round-2 changes:
-        - Loop nudge dropdown is new.
 
 Actions:
 
-    Notes on round-2 changes:
-        - Wording changes: indicated explicitly below.
-        - Grouping changes: use the ordering/grouping as listed below.
-        - Deletions implied by the listing below:
-            - Loop:
-                - Toggle loop
-            - Jump:
-                - Jump by time
-
     Video:
         - Load URL
-        - Open video [currently "Switch video"]
+        - Open video
         - Edit current
         - Delete video
         ----------------------------
@@ -1331,9 +1306,9 @@ Actions:
         - Zoom current section
 
     Loop:
-        - Open loop [currently called "Open saved loop"]
+        - Open loop
         - Save new loop
-        - Save back to loop source [currently called "Save back"]
+        - Save back to loop source
         - Delete loop
         - Zoom current loop
         ---------------------------
@@ -1359,7 +1334,7 @@ Actions:
         ----------------------------
         - Share loop URL
         ----------------------------
-        - Export current video [currently "Export this video"]
+        - Export current video
         - Export all data
         - Import data
         - Inspect JSON
@@ -1777,4 +1752,468 @@ R2-4. Timeline zoom generalization: replace the chapter-specific
     R2-2) with live handlers.
     Goal: `lz`, `sz`, `cz` all scope the timeline correctly; degenerate
     cases produce footer warnings.
+
+### UI round 2: messages inventory
+
+A complete inventory of all user-visible text in the current app, organized
+by category. Intended as a baseline for an editing/fine-tuning pass.
+
+---
+
+#### A. Footer bar warnings and errors (llama-whichkey.js / llama-app.js)
+
+Warnings are amber, auto-dismiss after 4 seconds. Errors are red and
+persistent until overwritten.
+
+Priority 1 — keyboard inactive (overrides all other footer content):
+
+  - "Keyboard control inactive — click anywhere in the app to restore"
+  - window blur event
+  - Note: cannot distinguish YouTube iframe capturing focus from the user
+    switching to another app; both trigger this.
+
+Warning messages:
+
+  Loop:
+
+    - "Invalid loop range: start must be before end."
+    - toggleLoop (ll)
+    - Looping switch (mouse)
+    - Note: fires when enabling looping with loopStart >= loopEnd. Two
+      separate code paths (keyboard handler vs. switch event), same message.
+
+    - "Outside active loop range."
+    - seekForward (ArrowRight), seekBack (ArrowLeft)
+    - time textbox commit (controls, jj)
+    - Note: fires when the seek target falls outside [loopStart, loopEnd]
+      while looping is on. Seek is blocked.
+
+    - "No valid scratch loop to zoom."
+    - zoomLoop (lz)
+    - Note: fires when loopStart >= loopEnd (loop is invalid to begin with).
+
+    - "Loop spans full video; zoom has no effect."
+    - zoomLoop (lz)
+    - Note: fires when loopStart === 0 and loopEnd === duration.
+
+    - "No source loop to save back to."
+    - saveBack (lb)
+    - Note: fires when loopSource is null — scratch loop was not derived
+      from a named loop.
+
+    - "Source loop not found."
+    - saveBack (lb)
+    - Note: defensive guard; loopSource is set but the loop was deleted.
+      Rare in practice.
+
+    - "Set a valid scratch loop first (start must be before end)."
+    - setChapter (cc)
+    - Note: longer form; used when a valid loop range is required as input
+      for the operation.
+
+    - "Set a valid scratch loop first."
+    - shareLoop (dl)
+    - Note: shorter form of the same idea; different operation.
+
+    - "No saved loops."
+    - openLoop (lo), deleteLoop (ld), jumpLoop (jl)
+
+  Section:
+
+    - "No section at current position."
+    - loopSection (sl)
+    - zoomSection (sz)
+    - editSection (se)
+    - Note: fires when sections is empty OR when there is no section
+      at/before the current playhead position. sl and sz use getSectionBounds;
+      se uses nearestSectionLeft. All three conflate the empty-list and
+      not-in-section cases into one message (see gap #5 in section G).
+
+    - "No sections set."
+    - jumpSection (js), deleteSection (sd)
+    - Note: early-exit guard before opening the picker. Fires only for
+      the empty-list case.
+
+  Mark:
+
+    - "No marks set."
+    - jumpMark (jm), editMark (me), deleteMark (md)
+
+  Chapter:
+
+    - "No active chapter. Open one first (co)."
+    - editChapter (ce)
+    - zoomChapter (cz)
+
+    - "Active chapter not found."
+    - editChapter (ce)
+    - zoomChapter (cz)
+    - Note: defensive guard; activeChapterId is set but the chapter was
+      deleted. Rare in practice.
+
+    - "No chapters set."
+    - openChapter (co), deleteChapter (cd)
+
+  Video / URL:
+
+    - "Could not parse a YouTube video ID from that input."
+    - URL input modal submit (y / vu / Video > Load URL)
+
+    - "No video loaded."
+    - shareVideo (dv)
+    - shareLoop (dl)
+    - Note: also missing from editVideo (ve) — see gap #3 in section G.
+
+  Time input:
+
+    - "Invalid time format."
+    - loop start or end textbox (Looping group in controls)
+    - Note: fires on blur or Enter when the text cannot be parsed as a time.
+      The field reverts to the previous value.
+
+Error messages:
+
+  - "Import failed: ${err.message}"
+  - importData (di) — file picker
+  - Note: red, persistent (no auto-dismiss). Only current error message.
+
+---
+
+#### B. Footer bar: which-key and edit-scratch overlays
+
+Which-key completions are shown ~300ms after a prefix key, one entry per
+pending second-key option. Format: key + short desc.
+
+  [ prefix:
+    [[    Set loop start to current time
+    [Bsp  Reset loop start to 0
+    [-    Nudge start: decrease
+    [=    Nudge start: increase
+    []    Loop nudge delta dropdown
+    [\    Loop start: edit
+
+  ] prefix:
+    ]]    Set loop end to current time
+    ]Bsp  Reset loop end to duration
+    ]-    Nudge end: decrease
+    ]=    Nudge end: increase
+    ][    Loop nudge delta dropdown
+    ]\    Loop end: edit
+
+  v prefix:
+    vu    Switch to YouTube video via URL
+    vv    Switch to video
+    ve    Edit video attributes
+    vd    Delete current video
+
+  j prefix:
+    jj    Jump by time
+    js    Jump to section
+    jl    Jump to loop
+    jm    Jump to mark
+    jh    Jump history picker
+    jb    Jump back in history
+    jf    Jump forward in history
+
+  l prefix:
+    ll    Toggle looping
+    lo    Open saved loop
+    ls    Save new loop
+    lb    Save back to source loop
+    le    Edit scratch loop
+    ld    Delete a loop
+    lz    Toggle loop zoom
+
+  c prefix:
+    cc    Create chapter from scratch loop
+    co    Open chapter
+    ce    Edit current chapter
+    cd    Delete a chapter
+    cz    Toggle chapter zoom
+
+  s prefix:
+    ss    Set section divider here
+    se    Edit current section
+    sl    Loop current section
+    sd    Delete a section
+    sz    Toggle section zoom
+
+  m prefix:
+    mm    Set mark here
+    me    Edit a mark
+    md    Delete a mark
+
+  h prefix:
+    hh    General help
+    hk    Key bindings
+
+  d prefix:
+    dd    Delete data modal
+    de    Export data as JSON
+    di    Import data from JSON
+    dI    Inspect data as JSON
+    dv    Share video as JSON
+    dl    Share loop via URL
+
+Edit-scratch mode cheatsheet (replaces which-key while mode is active):
+
+  Label:  "Edit Loop"
+  Tab         toggle focus
+  ←/→         nudge
+  ↑/↓         delta
+  Space       play/pause
+  Bsp         reset
+  0-9/:       type time
+  Enter/Esc   done
+  Focus:      Start | End       [state indicator]
+  Delta:      Ns                [state indicator]
+
+---
+
+#### C. Modals — titles, field labels, placeholders, inline errors, buttons
+
+Load Video modal (llama-url-input-modal.js):
+  Title:       "Load Video"
+  Placeholder: "YouTube URL or video ID"
+  Hint:        "Paste a URL or bare video ID (e.g. dQw4w9WgXcQ)"
+  Buttons:     Cancel | Load
+
+Save Loop modal (llama-save-loop-modal.js):
+  Title:       "Save Loop"
+  Name label:  "Name (optional)"
+  Name ph:     Short label (e.g. "outro lick")
+  Start label: "Start"
+  Start ph:    "m:ss"
+  End label:   "End"
+  End ph:      "m:ss"
+  Errors:      "Start and end are required."
+               "End must be after start."
+  Buttons:     Cancel | Save
+
+Edit Video modal (llama-edit-video-modal.js):
+  Title:       "Edit Video"
+  Name label:  "Name"
+  Name ph:     Short label (e.g. "Autumn Leaves")
+  URL label:   "URL"
+  URL ph:      "YouTube URL or video ID"
+  Start label: "Start"
+  Start ph:    "0 or m:ss — effective start offset"
+  End label:   "End"
+  End ph:      "m:ss or blank (use video duration)"
+  ID label:    "Video ID (read-only)"
+  Buttons:     Delete Video (danger) | Cancel | Save
+
+Edit Mark modal (llama-edit-mark-modal.js):
+  Title:       "Edit Mark"
+  Name label:  "Name"
+  Name ph:     Optional label (e.g. "Bridge start")
+  Time label:  "Time (m:ss)"
+  Time ph:     "e.g. 1:23"
+  Buttons:     Cancel | Save
+
+Edit Section modal (llama-edit-section-modal.js):
+  Title:       "Edit Section"
+  Name label:  "Name"
+  Name ph:     Optional label (e.g. "Verse", "Solo")
+  Time label:  "Time (m:ss)"
+  Time ph:     "e.g. 1:23"
+  Buttons:     Cancel | Save
+
+Create/Edit Chapter modal (llama-edit-chapter-modal.js):
+  Title:       "Create Chapter" | "Edit Chapter"
+  Name label:  "Name (optional)"
+  Name ph:     e.g. "Verse", "Bridge"
+  Start label: "Start"
+  Start ph:    "m:ss"
+  End label:   "End"
+  End ph:      "m:ss"
+  Errors:      "Start and end are required."
+               "End must be after start."
+  Buttons:     Cancel | Save
+
+Jump to Time modal (llama-jump-time-modal.js):
+  Title:       "Jump to Time"
+  Placeholder: "e.g. 1:23 or 83"
+  Hint:        "Enter m:ss (e.g. 1:23) or raw seconds (e.g. 83)."
+  Error:       "Invalid time — use m:ss or raw seconds."
+  Buttons:     Cancel | Go
+
+---
+
+#### D. Pickers — titles, filter placeholders, empty states, buttons
+
+Video picker (llama-video-picker.js):
+  Title:       "Switch Video"
+  Filter ph:   "Filter by name…"
+  Empty:       "No videos match."
+  Buttons:     Cancel
+
+Loop picker (llama-loop-picker.js):
+  Titles:      "Jump to Loop" | "Load Loop" | "Delete Loop"
+  Filter ph:   "Filter by name…"
+  Empty:       "No loops match." | "No loops saved."
+  Buttons:     Cancel
+
+Marks picker (llama-marks-picker.js):
+  Titles:      "Jump to Mark" | "Edit Mark" | "Delete Mark"
+  Filter ph:   "Filter by name or time…"
+  Empty:       "No marks match." | "No marks set."
+  Buttons:     Cancel
+
+Sections picker (llama-sections-picker.js):
+  Titles:      "Jump to Section" | "Edit Section" | "Delete Section"
+  Filter ph:   "Filter by name or time…"
+  Empty:       "No sections match." | "No sections set."
+  Buttons:     Cancel
+
+Chapter picker (llama-chapter-picker.js):
+  Titles:      "Open Chapter" | "Delete Chapter"
+  Filter ph:   "Filter by name or time…"
+  Empty:       "No chapters match." | "No chapters set."
+  Buttons:     Cancel
+
+---
+
+#### E. Timeline hover tooltips (llama-timeline.js)
+
+Section region:   "${name} (${start})"
+Loop bar (named): "${name}: ${start} – ${end}"
+Loop bar (scratch): "Loop: ${start} – ${end}"
+Mark:             "${name}: ${time}"
+
+---
+
+#### F. Current panel row labels (llama-current.js)
+
+  Name | Chapter | Section | Loop | Source | Source type | Duration | Zoom
+
+Empty value placeholder: "—"
+
+---
+
+#### G. Gaps in current message coverage
+
+These are places where user actions either silently fail or silently succeed
+without any feedback. Listed in rough priority order.
+
+1. statusMsg is a dead channel (highest priority)
+
+   statusMsg is set in ~20 places (loop saved, mark updated, export done,
+   zoom on/off, etc.) but is never rendered anywhere in the template. All
+   confirmation and feedback messages are invisible. See section H below
+   for the full candidate list.
+
+2. saveBack does not validate the scratch loop
+
+   If loopStart >= loopEnd, saveBack silently overwrites the named loop with
+   an invalid range. Every other handler that acts on the scratch loop checks
+   _isLoopValid() first. The existing message "Invalid loop range: start must
+   be before end." fits; it just isn't wired here.
+
+3. editVideo has no "no video loaded" guard
+
+   editVideo opens the modal unconditionally. When no video is loaded,
+   currentVideo is null, fields are blank, and clicking Save silently does
+   nothing (_save() returns early on !this.video). The same guard used by
+   shareVideo and shareLoop is missing here.
+
+4. Edit-mark and edit-section modals: silent failure on invalid time
+
+   In both llama-edit-mark-modal.js and llama-edit-section-modal.js,
+   _save() calls _parseTime() and if null just returns — no inline error,
+   no warning. The user clicks Save and nothing happens. The save-loop
+   and edit-chapter modals already handle this with an _error state;
+   these two don't.
+
+5. "No section at current position" fires when there are no sections at all
+
+   editSection (se), loopSection (sl), and zoomSection (sz) all use the same
+   guard path and emit the same message whether sections is empty or just not
+   at the current position. The loop/mark/chapter pickers all have a distinct
+   "No X set." early-exit guard for the empty-list case. These three section
+   handlers skip it.
+
+6. YouTube player error states are unhandled
+
+   onStateChange maps the five normal YouTube API states but not the error
+   codes: 100 (video not found/removed), 101/150 (not embeddable). When one
+   of these fires, the app does nothing and the user only sees YouTube's
+   own in-iframe error. This is the strongest true error use case we have.
+
+7. _shareLoop clipboard fallback is invisible
+
+   The clipboard .catch() path sets statusMsg to the raw URL, which is
+   already invisible (gap 1). If clipboard access fails, the user gets
+   no feedback at all.
+
+---
+
+#### H. Info-level message candidates (statusMsg channel)
+
+statusMsg is set in many places but never displayed. Before wiring it up,
+we need to decide what to show and where.
+
+Display proposal: use the same footer bar (llama-whichkey) at the lowest
+priority level — below errors, warnings, and which-key, shown only when
+everything else is quiet. Neutral color (dimmer than warning amber). Auto-
+dismiss after ~3 seconds, same mechanism as warnings.
+
+Below is the full candidate list, organized by category, with a suggested
+message for each. Asterisks mark actions that currently set statusMsg
+already (messages are just invisible). The rest would be new.
+
+  Video:
+  * Video loaded/cued on startup        "Video cued: {name}"
+  * Video loaded from URL               "Loading: {id}"   [already set in
+                                         _loadVideoObject; wording TBD]
+    Video created (new URL, not in registry) — currently no message
+  * Video deleted                       "Video deleted."
+    Video updated (edit-video modal)    "Video updated."   [currently silent]
+
+  Loop:
+  * Loop saved (new)                    "Loop saved: {name}"
+  * Loop loaded                         "Loop loaded: {name}"
+  * Saved back to source loop           "Saved back to source loop."
+    Loop deleted                        "Loop deleted."   [currently silent]
+    Looping toggled on                  "Looping on."     [currently silent]
+    Looping toggled off                 "Looping off."    [currently silent]
+
+  Section:
+    Section created (ss)                "Section set."    [currently silent]
+    Section updated (edit modal)        "Section updated: {name}" [has statusMsg]
+    Section deleted                     "Section deleted." [currently silent]
+
+  Mark:
+    Mark created (mm)                   "Mark set."       [currently silent]
+  * Mark updated (edit modal)           "Mark updated: {name}"
+    Mark deleted                        "Mark deleted."   [currently silent]
+
+  Chapter:
+  * Chapter created                     "Chapter created: {name}"
+  * Chapter updated                     "Chapter updated: {name}"
+    Chapter deleted                     "Chapter deleted." [currently silent;
+                                         note: zoom-clear case does set statusMsg]
+
+  Zoom:
+  * Loop zoom on/off                    "Loop zoom on." / "Loop zoom off."
+  * Section zoom on/off                 "Section zoom on." / "Section zoom off."
+  * Chapter zoom on/off                 "Chapter zoom on." / "Chapter zoom off."
+    [these are probably the least necessary since the Current panel
+     shows the zoom label when active]
+
+  Export / import:
+  * Exported all data                   "Exported all data."
+  * Exported video data                 "Exported video data."
+  * Imported data                       "Imported: {n} added, {n} updated."
+  * Shared loop URL copied              "Loop URL copied to clipboard."
+  * Shared loop loaded (startup)        "Shared loop loaded: {start} → {end}"
+
+Notes:
+- Create/set actions (ss, mm) produce short messages since no name exists yet.
+- Delete actions are the weakest candidates: the entity just disappears from
+  the picker, which is its own confirmation.
+- Zoom on/off messages are redundant with the Current panel zoom label.
+  They may still be useful on "off" since the label disappears.
+- Speed-related actions (speed up/down/reset) are probably not worth
+  messaging; the Speed input already reflects the new value immediately.
 

@@ -176,16 +176,16 @@ class LlamaTimeline extends LitElement {
 
     /* Loop zone */
     .zone--loop {
-      height: 18px;
+      height: 21px;
       background: var(--ll-surface-raised, #2a2a2a);
       position: relative;
       overflow: hidden;
     }
 
-    /* Horizontal loop bar: full lane height as hit area, 2px visual line via ::after */
+    /* Horizontal loop bar: lane height as hit area, 2px visual line via ::after */
     .loop-bar {
       position: absolute;
-      height: 9px;
+      height: 7px;
       background: transparent;
       cursor: pointer;
     }
@@ -323,8 +323,9 @@ class LlamaTimeline extends LitElement {
     return loop.end > start && loop.start < end;
   }
 
-  // Greedy lane packing into 2 loop lanes (indices 0-1).
+  // Greedy lane packing for named loops into 2 lanes (indices 0-1).
   // Overflow (3+ overlapping) piles into lane 1.
+  // Scratch loop is handled separately and never passed here.
   _packLoops(loops) {
     const lanes = [[], []];
     for (const loop of [...loops].sort((a, b) => a.start - b.start)) {
@@ -355,31 +356,42 @@ class LlamaTimeline extends LitElement {
       `);
   }
 
-  // Render loop bars for the loop zone (18px, two 9px lanes).
-  // Scratch loop (if valid) is included in packing; rendered in teal.
+  // Render loop bars for the loop zone (18px, three 6px lanes).
+  // Lane 0 (top):    scratch loop only — dedicated, never competes with named loops.
+  // Lanes 1-2 (below): named loops packed greedily; stable regardless of scratch changes.
   _renderLoops() {
-    const allLoops = [...(this.namedLoops ?? [])];
+    const els = [];
+
+    // Scratch loop: fixed in lane 0 (barTop 0, visual line at 3px).
     if (this.loopEnd > this.loopStart) {
-      allLoops.push({ _scratch: true, start: this.loopStart, end: this.loopEnd });
+      const scratch = { _scratch: true, start: this.loopStart, end: this.loopEnd };
+      if (this._loopInScope(scratch)) {
+        const leftPct  = this._pct(scratch.start);
+        const widthPct = this._pct(scratch.end) - leftPct;
+        els.push(html`
+          <div
+            class="loop-bar loop-bar--scratch"
+            style="left: ${leftPct}%; width: ${widthPct}%; top: 0px"
+            title="Loop: ${this._fmt(scratch.start)} – ${this._fmt(scratch.end)}"
+            @click=${() => this._onLoopBarClick(scratch)}
+          ></div>
+        `);
+      }
     }
 
-    const els = [];
-    const lanes = this._packLoops(allLoops);
+    // Named loops: packed into zone lanes 1 and 2 (barTop 6 and 12).
+    const lanes = this._packLoops(this.namedLoops ?? []);
     lanes.forEach((lane, laneIdx) => {
-      const barTop = laneIdx * 9 + 4;  // center 2px bar in 9px lane (9/2 - 1 = 3.5 → 4)
+      const barTop = (laneIdx + 1) * 7;  // lane 0→7px, lane 1→14px
       for (const loop of lane) {
         if (!this._loopInScope(loop)) continue;
         const leftPct  = this._pct(loop.start);
         const widthPct = this._pct(loop.end) - leftPct;
-        const cls      = loop._scratch ? 'loop-bar loop-bar--scratch' : 'loop-bar';
-        const tooltip  = loop._scratch
-          ? `Loop: ${this._fmt(loop.start)} – ${this._fmt(loop.end)}`
-          : `${loop.name}: ${this._fmt(loop.start)} – ${this._fmt(loop.end)}`;
         els.push(html`
           <div
-            class="${cls}"
+            class="loop-bar"
             style="left: ${leftPct}%; width: ${widthPct}%; top: ${barTop}px"
-            title="${tooltip}"
+            title="${loop.name}: ${this._fmt(loop.start)} – ${this._fmt(loop.end)}"
             @click=${() => this._onLoopBarClick(loop)}
           ></div>
         `);

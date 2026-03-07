@@ -7,18 +7,14 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-19. UI polish: with the full layout in place (video area, timeline,
-    controls with menus), dial in sizing and proportions -- YouTube
-    frame dimensions, spacing between page regions, visual hierarchy
-    in the controls area, typography, and any remaining rough edges.
+19. UI polish.
 
-    - Check round-2 plan vs app.
+    x Loop lanes: switch to 3: current plus 2 for saved loops.
 
-    - Menu: check order; edit
+    - Messages/labels: edit.
 
-    - Messages: collect; edit.
-
-    - Which-key: collect; edit
+    - Bug: looping enforcement: jumps. The app allows you to jump beyond the
+      loop boundaries (jump by time or to specific entities).
 
 20. Header sizzle: add quips; maybe add font color.
 

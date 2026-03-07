@@ -282,7 +282,7 @@ class LlamaControls extends LitElement {
       border: 1px solid var(--ll-border, #444);
       border-radius: var(--ll-radius, 3px);
       color: var(--ll-accent, #7ec8e3);
-      text-align: right;
+      text-align: left;
     }
 
     .time-input-play:focus {
@@ -331,6 +331,10 @@ class LlamaControls extends LitElement {
       box-shadow: 0 0 0 1px var(--ll-accent-warm, #e3a857);
     }
 
+    .time-input.loop-invalid {
+      color: var(--ll-danger, #e05a5a);
+    }
+
     .speed-input {
       font-family: var(--ll-font-mono, monospace);
       font-size: var(--ll-text-sm, 0.85rem);
@@ -340,7 +344,7 @@ class LlamaControls extends LitElement {
       border: 1px solid var(--ll-border, #444);
       border-radius: var(--ll-radius, 3px);
       color: var(--ll-text-dim, #aaa);
-      text-align: right;
+      text-align: left;
     }
 
     .speed-input:focus {
@@ -637,7 +641,7 @@ class LlamaControls extends LitElement {
                 >Now</button>
                 <input
                   ${ref(this._startRef)}
-                  class="time-input align-left ${this.editScratchActive && this.editScratchFocus === 'start' ? 'loop-edit-focus' : ''}"
+                  class="time-input align-left ${this.editScratchActive && this.editScratchFocus === 'start' ? 'loop-edit-focus' : ''} ${this.loopStart >= this.loopEnd ? 'loop-invalid' : ''}"
                   type="text"
                   @keydown=${(e) => { if (e.key === 'Enter') { this._submitStart(); e.target.blur(); } else if (e.key === 'Escape') { e.target.value = this._fmtLoop(this.loopStart); e.target.blur(); } }}
                   @blur=${() => this._submitStart()}
@@ -656,7 +660,7 @@ class LlamaControls extends LitElement {
               <div class="btn-group">
                 <input
                   ${ref(this._endRef)}
-                  class="time-input ${this.editScratchActive && this.editScratchFocus === 'end' ? 'loop-edit-focus' : ''}"
+                  class="time-input ${this.editScratchActive && this.editScratchFocus === 'end' ? 'loop-edit-focus' : ''} ${this.loopStart >= this.loopEnd ? 'loop-invalid' : ''}"
                   type="text"
                   @keydown=${(e) => { if (e.key === 'Enter') { this._submitEnd(); e.target.blur(); } else if (e.key === 'Escape') { e.target.value = this._fmtLoop(this.loopEnd); e.target.blur(); } }}
                   @blur=${() => this._submitEnd()}
