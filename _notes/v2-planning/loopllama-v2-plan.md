@@ -1002,11 +1002,13 @@ Looping:
     [<bsp> | Loop start: reset to video start
     [-     | Loop start: nudge: decrease
     [=     | Loop start: nudge: increase
+    [\     | Loop start: edit [activate loop-start text box]
     --------------------------------------------------
     ]]     | Loop end: set to current time
     ]<bsp> | Loop end: reset to video end
     ]-     | Loop end: nudge: decrease
     ]=     | Loop end: nudge: increase
+    ]\     | Loop end: edit [activate loop-end text box]
     --------------------------------------------------
     []     | Nudge_delta: activate dropdown
     ][     | Synonym for `[]`

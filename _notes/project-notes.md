@@ -14,9 +14,7 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
     - Check round-2 plan vs app.
 
-    - Try on other monitors:
-        - laptop
-        - ipad
+    - Try on laptop
 
     - Messages: collect; edit.
 

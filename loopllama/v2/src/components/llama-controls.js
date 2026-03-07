@@ -322,6 +322,10 @@ class LlamaControls extends LitElement {
       border-color: var(--ll-accent, #7ec8e3);
     }
 
+    .time-input.align-left {
+      text-align: left;
+    }
+
     .time-input.loop-edit-focus {
       border-color: var(--ll-accent-warm, #e3a857);
       box-shadow: 0 0 0 1px var(--ll-accent-warm, #e3a857);
@@ -627,30 +631,17 @@ class LlamaControls extends LitElement {
                 @sl-change=${() => this._emit('ll-toggle-loop')}
               ></sl-switch>
               <div class="btn-group">
-                <input
-                  ${ref(this._startRef)}
-                  class="time-input ${this.editScratchActive && this.editScratchFocus === 'start' ? 'loop-edit-focus' : ''}"
-                  type="text"
-                  @keydown=${(e) => { if (e.key === 'Enter') { this._submitStart(); e.target.blur(); } }}
-                  @blur=${() => this._submitStart()}
-                />
                 <button
                   class="btn-now"
                   @click=${() => this._emit('ll-set-loop-start-now')}
                 >Now</button>
-              </div>
-              <div class="btn-group">
                 <input
-                  ${ref(this._endRef)}
-                  class="time-input ${this.editScratchActive && this.editScratchFocus === 'end' ? 'loop-edit-focus' : ''}"
+                  ${ref(this._startRef)}
+                  class="time-input align-left ${this.editScratchActive && this.editScratchFocus === 'start' ? 'loop-edit-focus' : ''}"
                   type="text"
-                  @keydown=${(e) => { if (e.key === 'Enter') { this._submitEnd(); e.target.blur(); } }}
-                  @blur=${() => this._submitEnd()}
+                  @keydown=${(e) => { if (e.key === 'Enter') { this._submitStart(); e.target.blur(); } else if (e.key === 'Escape') { e.target.value = this._fmtLoop(this.loopStart); e.target.blur(); } }}
+                  @blur=${() => this._submitStart()}
                 />
-                <button
-                  class="btn-now"
-                  @click=${() => this._emit('ll-set-loop-end-now')}
-                >Now</button>
               </div>
               <select
                 ${ref(this._nudgeDeltaRef)}
@@ -662,6 +653,19 @@ class LlamaControls extends LitElement {
                   <option value=${n} ?selected=${this.loopNudgeDelta === n}>${this._fmtDelta(n)}</option>
                 `)}
               </select>
+              <div class="btn-group">
+                <input
+                  ${ref(this._endRef)}
+                  class="time-input ${this.editScratchActive && this.editScratchFocus === 'end' ? 'loop-edit-focus' : ''}"
+                  type="text"
+                  @keydown=${(e) => { if (e.key === 'Enter') { this._submitEnd(); e.target.blur(); } else if (e.key === 'Escape') { e.target.value = this._fmtLoop(this.loopEnd); e.target.blur(); } }}
+                  @blur=${() => this._submitEnd()}
+                />
+                <button
+                  class="btn-now"
+                  @click=${() => this._emit('ll-set-loop-end-now')}
+                >Now</button>
+              </div>
             </div>
           </div>
 

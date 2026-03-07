@@ -36,6 +36,7 @@ export const BINDINGS = {
   '?':          { handler: 'helpKeys',      desc: 'Key bindings help' },
   'o':          { handler: 'options',       desc: 'Options' },
   'y':          { handler: 'videoUrl',      desc: 'Switch to YouTube URL' },
+  '\\':         { handler: 'editScratch',   desc: 'Edit scratch loop (synonym for le)' },
 
   // --- Prefix-key bindings ---
 
@@ -45,6 +46,7 @@ export const BINDINGS = {
     '-':         { handler: 'nudgeStartDown',       desc: 'Nudge start: decrease' },
     '=':         { handler: 'nudgeStartUp',         desc: 'Nudge start: increase' },
     ']':         { handler: 'focusLoopNudgeDelta',  desc: 'Loop nudge delta dropdown' },
+    '\\':        { handler: 'focusLoopStart',       desc: 'Loop start: edit' },
   }},
 
   ']': { completions: {
@@ -53,6 +55,7 @@ export const BINDINGS = {
     '-':         { handler: 'nudgeEndDown',         desc: 'Nudge end: decrease' },
     '=':         { handler: 'nudgeEndUp',           desc: 'Nudge end: increase' },
     '[':         { handler: 'focusLoopNudgeDelta',  desc: 'Loop nudge delta dropdown' },
+    '\\':        { handler: 'focusLoopEnd',         desc: 'Loop end: edit' },
   }},
 
   'v': { completions: {

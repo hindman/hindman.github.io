@@ -335,6 +335,8 @@ class LlamaApp extends LitElement {
         this._autoDisableLoopIfInvalid();
       },
       focusLoopNudgeDelta: () => this.renderRoot.querySelector('llama-controls')?.focusNudgeDeltaSelect(),
+      focusLoopStart:     () => this.renderRoot.querySelector('llama-controls')?.focusStartInput(),
+      focusLoopEnd:       () => this.renderRoot.querySelector('llama-controls')?.focusEndInput(),
       undo:          stub('undo'),
       redo:          stub('redo'),
       helpKeys:      stub('helpKeys'),
