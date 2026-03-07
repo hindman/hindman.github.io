@@ -118,6 +118,13 @@ class LlamaApp extends LitElement {
       background: #000;
     }
 
+    /* --- Short viewport: cap video height so controls stay visible --- */
+    @media (max-height: 920px) {
+      #player-container {
+        max-height: 63vh;
+      }
+    }
+
     /* --- Wide layout: CSS grid puts current panel as right column --- */
     @media (min-width: 768px) {
       .app-body {

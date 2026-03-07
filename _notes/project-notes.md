@@ -14,11 +14,9 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
     - Check round-2 plan vs app.
 
-    - Try on laptop
+    - Menu: check order; edit
 
     - Messages: collect; edit.
-
-    - Menu: check order; edit
 
     - Which-key: collect; edit
 
