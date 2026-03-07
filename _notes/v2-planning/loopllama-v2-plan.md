@@ -563,11 +563,7 @@ v2/
     frame dimensions, spacing between page regions, visual hierarchy
     in the controls area, typography, and any remaining rough edges.
 
-20. Header sizzle: add visual character to the header. Options: llama
-    mascot image (preferred if a good image can be sourced via LLM or
-    other means); multi-colored flag-style banner with hover quips
-    ("Freedom to loop", "Keep on loopin' in the free world", etc.);
-    colored typography. Decide and implement one approach.
+20. Header sizzle: add quips; maybe add font color.
 
 21. Video-info modal: build llama-video-info-modal -- a generously
     sized, scrollable, formatted display of the current video and all
