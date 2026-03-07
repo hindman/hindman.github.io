@@ -7,27 +7,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-R2-4. Timeline zoom generalization: replace the chapter-specific
-    `chapterZoom` boolean with a general `zoomSource: null | {start, end}`
-    in app state. Pass it to llama-timeline as `scopeStart`/`scopeEnd`.
-    Derive the value from the active entity based on which zoom binding
-    triggered it.
-
-    Wire `lz`: scope = scratch loop start/end. No-op with a footer warning
-    if the scratch loop spans the full video (start === 0 and end ===
-    duration).
-    Wire `sz`: scope = current section start and its derived end. No-op
-    with a footer warning if no current section is defined.
-    Refactor `cz` to use the same zoomSource mechanism.
-
-    All three bindings toggle: a second press of the same binding clears
-    zoom. Loading a new video clears zoom.
-
-    Replace the stubbed "Zoom loop" and "Zoom section" menu items (from
-    R2-2) with live handlers.
-    Goal: `lz`, `sz`, `cz` all scope the timeline correctly; degenerate
-    cases produce footer warnings.
-
 19. UI polish: with the full layout in place (video area, timeline,
     controls with menus), dial in sizing and proportions -- YouTube
     frame dimensions, spacing between page regions, visual hierarchy

@@ -161,7 +161,7 @@ class LlamaApp extends LitElement {
     activeEntityType:   { type: String },
     chapters:           { type: Array },
     activeChapterId:    { type: String },
-    chapterZoom:        { type: Boolean },
+    zoomSource:         { type: Object },
     loopSourceLabel:    { type: String },
     loopSourceType:     { type: String },
     warningMsg:         { type: String },
@@ -195,7 +195,7 @@ class LlamaApp extends LitElement {
     this.activeEntityType    = 'any';
     this.chapters            = [];
     this.activeChapterId     = null;
-    this.chapterZoom         = false;
+    this.zoomSource          = null;
     this.loopSourceLabel     = null;
     this.loopSourceType      = null;
     this.warningMsg          = null;
@@ -239,12 +239,9 @@ class LlamaApp extends LitElement {
     this.loopSourceType  = null;
     this.speed           = video.speed ?? 1.0;
     this._vc?.setPlaybackRate(this.speed);
+    this.zoomSource = null;
     if (this.activeChapterId) {
       this.activeChapterId = null;
-      if (this.chapterZoom) {
-        this.chapterZoom = false;
-        this.statusMsg   = 'Chapter zoom cleared.';
-      }
     }
   }
 
@@ -381,8 +378,38 @@ class LlamaApp extends LitElement {
       },
       editScratch: () => this._enterEditScratch(),
       deleteLoop: () => this._openLoopsPicker('delete'),
-      zoomLoop:    stub('zoomLoop'),
-      zoomSection: stub('zoomSection'),
+      zoomLoop: () => {
+        if (this.zoomSource?.trigger === 'loop') {
+          this.zoomSource = null;
+          this.statusMsg  = 'Loop zoom off.';
+          return;
+        }
+        if (!this._isLoopValid()) {
+          this._setWarning('No valid scratch loop to zoom.');
+          return;
+        }
+        if (this.loopStart === 0 && this.loopEnd === this.duration) {
+          this._setWarning('Loop spans full video; zoom has no effect.');
+          return;
+        }
+        this.zoomSource = { start: this.loopStart, end: this.loopEnd, trigger: 'loop' };
+        this.statusMsg  = 'Loop zoom on.';
+        this._seekIntoZoomIfNeeded();
+      },
+      zoomSection: () => {
+        if (this.zoomSource?.trigger === 'section') {
+          this.zoomSource = null;
+          this.statusMsg  = 'Section zoom off.';
+          return;
+        }
+        const bounds = getSectionBounds(this.sections, this.currentTime, this.duration);
+        if (!bounds || bounds.end == null) {
+          this._setWarning('No section at current position.');
+          return;
+        }
+        this.zoomSource = { start: bounds.start, end: bounds.end, trigger: 'section' };
+        this.statusMsg  = 'Section zoom on.';
+      },
       setSection: () => {
         addSection(this.sections, this._vc?.getCurrentTime() ?? 0);
         this.sections = [...this.sections];
@@ -436,12 +463,23 @@ class LlamaApp extends LitElement {
       },
       deleteChapter: () => this._openChapterPicker('delete'),
       zoomChapter: () => {
+        if (this.zoomSource?.trigger === 'chapter') {
+          this.zoomSource = null;
+          this.statusMsg  = 'Chapter zoom off.';
+          return;
+        }
         if (!this.activeChapterId) {
           this._setWarning('No active chapter. Open one first (co).');
           return;
         }
-        this.chapterZoom = !this.chapterZoom;
-        this.statusMsg   = this.chapterZoom ? 'Chapter zoom on.' : 'Chapter zoom off.';
+        const chapter = this.chapters.find(c => c.id === this.activeChapterId);
+        if (!chapter) {
+          this._setWarning('Active chapter not found.');
+          return;
+        }
+        this.zoomSource = { start: chapter.start, end: chapter.end, trigger: 'chapter' };
+        this.statusMsg  = 'Chapter zoom on.';
+        this._seekIntoZoomIfNeeded();
       },
       helpGeneral:   stub('helpGeneral'),
       deleteData:    stub('deleteData'),
@@ -526,11 +564,32 @@ class LlamaApp extends LitElement {
       const dur = this._vc.getDuration();
       if (dur !== null) this.duration = dur;
 
+      // Zoom boundary enforcement: pause at zoom end; snap to zoom start
+      // if playhead lands before it (e.g. on resume with an active zoom).
+      if (this.zoomSource && t !== null) {
+        if (t >= this.zoomSource.end) {
+          if (this.looping && this.loopStart < this.loopEnd) {
+            // Respect loop start if it's within the zoom; otherwise fall back
+            // to zoom start.
+            this._vc.seekTo(Math.max(this.zoomSource.start, this.loopStart));
+          } else if (this.looping) {
+            this._vc.seekTo(this.zoomSource.start);
+          } else {
+            this._vc.pause();
+          }
+        } else if (t < this.zoomSource.start) {
+          this._vc.seekTo(this.zoomSource.start);
+        }
+      }
+
       // Loop enforcement: when looping is on and playhead reaches the end
-      // point, seek back to the start point.
+      // point, seek back to the start point (clamped to zoom start if active).
       if (this.looping && this.loopStart < this.loopEnd
           && t !== null && t >= this.loopEnd) {
-        this._vc.seekTo(this.loopStart);
+        const target = this.zoomSource
+          ? Math.max(this.zoomSource.start, this.loopStart)
+          : this.loopStart;
+        this._vc.seekTo(target);
       }
     }, 500);
 
@@ -779,7 +838,10 @@ class LlamaApp extends LitElement {
   }
 
   _seek(delta) {
-    const t = (this._vc?.getCurrentTime() ?? 0) + delta;
+    let t = (this._vc?.getCurrentTime() ?? 0) + delta;
+    if (this.zoomSource) {
+      t = Math.max(this.zoomSource.start, Math.min(this.zoomSource.end, t));
+    }
     if (this.looping && this.loopStart < this.loopEnd
         && (t < this.loopStart || t > this.loopEnd)) {
       this._flashLoopViolation();
@@ -792,6 +854,14 @@ class LlamaApp extends LitElement {
     if (this._vc?.isPlaying()) {
       this._vc.pause();
     } else {
+      // If zoomed and playhead is at/past zoom end, restart from zoom start
+      // (mirrors the virtual-video model: play-at-end restarts from beginning).
+      if (this.zoomSource && this.currentTime >= this.zoomSource.end) {
+        const restartAt = (this.looping && this.loopStart < this.loopEnd)
+          ? Math.max(this.zoomSource.start, this.loopStart)
+          : this.zoomSource.start;
+        this._vc?.seekTo(restartAt);
+      }
       this._vc?.play();
     }
   }
@@ -810,6 +880,15 @@ class LlamaApp extends LitElement {
 
   _autoDisableLoopIfInvalid() {
     if (this.looping && !this._isLoopValid()) this.looping = false;
+  }
+
+  // If playhead is outside the active zoom range, seek to the zoom start.
+  _seekIntoZoomIfNeeded() {
+    if (!this.zoomSource) return;
+    const t = this._vc?.getCurrentTime() ?? this.currentTime;
+    if (t < this.zoomSource.start || t > this.zoomSource.end) {
+      this._vc?.seekTo(this.zoomSource.start);
+    }
   }
 
   // When looping is just enabled, seek to loopStart if the playhead is
@@ -968,7 +1047,10 @@ class LlamaApp extends LitElement {
   }
 
   _onSeekTo(e) {
-    const t = e.detail.time;
+    let t = e.detail.time;
+    if (this.zoomSource) {
+      t = Math.max(this.zoomSource.start, Math.min(this.zoomSource.end, t));
+    }
     if (this.looping && this.loopStart < this.loopEnd
         && (t < this.loopStart || t > this.loopEnd)) {
       this._flashLoopViolation();
@@ -1097,9 +1179,9 @@ class LlamaApp extends LitElement {
     this.chapters = [...this.chapters];
     if (this.activeChapterId === e.detail.id) {
       this.activeChapterId = null;
-      if (this.chapterZoom) {
-        this.chapterZoom = false;
-        this.statusMsg   = 'Chapter zoom cleared.';
+      if (this.zoomSource?.trigger === 'chapter') {
+        this.zoomSource = null;
+        this.statusMsg  = 'Chapter zoom cleared.';
       }
     }
     this._saveCurrentState();
@@ -1239,9 +1321,6 @@ class LlamaApp extends LitElement {
 
   render() {
     const currentVideo   = this._appState?.videos.find(v => v.id === this.currentVideoId) ?? null;
-    const zoomedChapter  = this.chapterZoom && this.activeChapterId
-      ? this.chapters.find(c => c.id === this.activeChapterId) ?? null
-      : null;
     const activeChapter  = this.activeChapterId
       ? this.chapters.find(c => c.id === this.activeChapterId) ?? null
       : null;
@@ -1249,6 +1328,22 @@ class LlamaApp extends LitElement {
     const loopName       = this.loopSource
       ? (this.namedLoops.find(l => l.id === this.loopSource)?.name ?? null)
       : null;
+    const zoomLabel = (() => {
+      if (!this.zoomSource) return null;
+      const { trigger, start, end } = this.zoomSource;
+      if (trigger === 'loop') {
+        return `Loop: ${_fmtTimePlain(start)} – ${_fmtTimePlain(end)}`;
+      }
+      if (trigger === 'section') {
+        const sec = nearestSectionLeft(this.sections, start);
+        return sec?.name ? `Section: ${sec.name}` : `Section: ${_fmtTimePlain(start)}`;
+      }
+      if (trigger === 'chapter') {
+        const ch = this.chapters.find(c => c.id === this.activeChapterId);
+        return ch?.name ? `Chapter: ${ch.name}` : `Chapter: ${_fmtTimePlain(start)}`;
+      }
+      return null;
+    })();
     return html`
       <header class="app-header">
         <span class="app-title">LoopLlama</span>
@@ -1275,8 +1370,9 @@ class LlamaApp extends LitElement {
               .namedLoops=${this.namedLoops}
               .loopStart=${this.loopStart}
               .loopEnd=${this.loopEnd}
-              .scopeStart=${zoomedChapter?.start ?? null}
-              .scopeEnd=${zoomedChapter?.end ?? null}
+              .zoomed=${!!this.zoomSource}
+              .scopeStart=${this.zoomSource?.start ?? null}
+              .scopeEnd=${this.zoomSource?.end ?? null}
               @ll-seek-to=${this._onSeekTo}
               @ll-activate-loop=${this._onActivateLoop}
             ></llama-timeline>
@@ -1322,6 +1418,7 @@ class LlamaApp extends LitElement {
           .loopSourceLabel=${this.loopSourceLabel}
           .loopSourceType=${this.loopSourceType}
           .duration=${this.duration}
+          .zoomLabel=${zoomLabel}
         ></llama-current>
       </div>
 

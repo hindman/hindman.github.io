@@ -56,6 +56,10 @@ class LlamaCurrent extends LitElement {
       color: var(--ll-text-muted, #666);
     }
 
+    .row-label.zoom-label {
+      color: var(--ll-warn, #f0c040);
+    }
+
   `;
 
   static properties = {
@@ -66,6 +70,7 @@ class LlamaCurrent extends LitElement {
     loopSourceLabel:   { type: String },
     loopSourceType:    { type: String },
     duration:          { type: Number },
+    zoomLabel:         { type: String },
   };
 
   constructor() {
@@ -77,6 +82,7 @@ class LlamaCurrent extends LitElement {
     this.loopSourceLabel   = null;
     this.loopSourceType    = null;
     this.duration          = null;
+    this.zoomLabel         = null;
   }
 
   _fmtDuration(secs) {
@@ -111,6 +117,11 @@ class LlamaCurrent extends LitElement {
           ${this._row('Source',      this.loopSourceLabel)}
           ${this._row('Source type', sourceTypeDisplay)}
           ${this._row('Duration',    this.duration != null ? this._fmtDuration(this.duration) : null)}
+          ${this.zoomLabel ? html`
+            <div class="current-row">
+              <div class="row-label zoom-label">Zoom</div>
+              <div class="row-value">${this.zoomLabel}</div>
+            </div>` : ''}
         </div>
       </div>
     `;

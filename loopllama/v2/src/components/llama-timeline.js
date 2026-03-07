@@ -98,6 +98,12 @@ class LlamaTimeline extends LitElement {
       transition: transform 0.1s ease;
     }
 
+    /* Zoomed state: recolor play fill and playhead to yellow */
+    .timeline-wrap.zoomed .play-fill,
+    .timeline-wrap.zoomed .play-dot {
+      background: #f0c040;
+    }
+
     /* Section zone */
     .zone--section {
       height: 18px;
@@ -211,6 +217,7 @@ class LlamaTimeline extends LitElement {
     loopEnd:     { type: Number },
     scopeStart:  { type: Number },
     scopeEnd:    { type: Number },
+    zoomed:      { type: Boolean },
     _zoneWidth:  { type: Number, state: true },
   };
 
@@ -226,6 +233,7 @@ class LlamaTimeline extends LitElement {
     this.loopEnd     = 0;
     this.scopeStart  = null;
     this.scopeEnd    = null;
+    this.zoomed      = false;
     this._zoneWidth  = 0;
     this._ro         = null;
   }
@@ -427,7 +435,7 @@ class LlamaTimeline extends LitElement {
     const phPct = this._pct(this.currentTime);
 
     return html`
-      <div class="timeline-wrap">
+      <div class="timeline-wrap ${this.zoomed ? 'zoomed' : ''}">
 
         <div class="zone--play" @click=${this._onPlayZoneClick}>
           <div class="play-track">

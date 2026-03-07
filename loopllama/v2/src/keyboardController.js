@@ -79,6 +79,7 @@ export const BINDINGS = {
     'b': { handler: 'saveBack',      desc: 'Save back to source loop' },
     'e': { handler: 'editScratch',   desc: 'Edit scratch loop' },
     'd': { handler: 'deleteLoop',    desc: 'Delete a loop' },
+    'z': { handler: 'zoomLoop',      desc: 'Toggle loop zoom' },
   }},
 
   'c': { completions: {
@@ -94,6 +95,7 @@ export const BINDINGS = {
     'e': { handler: 'editSection',   desc: 'Edit current section' },
     'l': { handler: 'loopSection',   desc: 'Loop current section' },
     'd': { handler: 'deleteSection', desc: 'Delete a section' },
+    'z': { handler: 'zoomSection',   desc: 'Toggle section zoom' },
   }},
 
   'm': { completions: {

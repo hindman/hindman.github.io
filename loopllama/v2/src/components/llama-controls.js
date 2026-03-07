@@ -61,7 +61,7 @@ const MENUS = [
       { label: 'Edit current section', action: 'editSection'   },
       { label: 'Loop current section', action: 'loopSection'   },
       { label: 'Delete section',       action: 'deleteSection' },
-      { label: 'Zoom current section', action: 'zoomSection', disabled: true },
+      { label: 'Zoom current section', action: 'zoomSection' },
     ],
   },
   {
@@ -71,7 +71,7 @@ const MENUS = [
       { label: 'Save new loop',            action: 'saveLoop'    },
       { label: 'Save back to loop source', action: 'saveBack'    },
       { label: 'Delete loop',              action: 'deleteLoop'  },
-      { label: 'Zoom current loop',        action: 'zoomLoop', disabled: true },
+      { label: 'Zoom current loop',        action: 'zoomLoop' },
       { type: 'divider' },
       { label: 'Edit scratch loop', action: 'editScratch' },
     ],
