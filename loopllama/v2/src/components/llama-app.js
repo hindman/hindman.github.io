@@ -10,6 +10,7 @@ import {
   addSection, deleteSectionById, getSectionBounds, nearestSectionLeft,
   addLoop, deleteLoopById,
   addChapter, deleteChapterById, updateChapter,
+  nudgeLoopStart, nudgeLoopEnd,
 } from '../state.js';
 import { load, save, exportAll, exportVideo, importData as mergeImport } from '../storage.js';
 import './llama-whichkey.js';
@@ -314,6 +315,29 @@ class LlamaApp extends LitElement {
       jumpToStart:   () => this._vc?.seekTo(this.looping ? this.loopStart : 0),
       setLoopStart:  () => { this.loopStart = this._vc?.getCurrentTime() ?? 0; this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this._autoDisableLoopIfInvalid(); },
       setLoopEnd:    () => { this.loopEnd   = this._vc?.getCurrentTime() ?? 0; this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this._autoDisableLoopIfInvalid(); },
+      resetLoopStart: () => { this.loopStart = 0; this._autoDisableLoopIfInvalid(); },
+      resetLoopEnd:   () => { this.loopEnd = this.duration ?? 0; this._autoDisableLoopIfInvalid(); },
+      nudgeStartDown: () => {
+        const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
+        this.loopStart = nudgeLoopStart(-this.loopNudgeDelta, state);
+        this._autoDisableLoopIfInvalid();
+      },
+      nudgeStartUp: () => {
+        const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
+        this.loopStart = nudgeLoopStart(+this.loopNudgeDelta, state);
+        this._autoDisableLoopIfInvalid();
+      },
+      nudgeEndDown: () => {
+        const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
+        this.loopEnd = nudgeLoopEnd(-this.loopNudgeDelta, state);
+        this._autoDisableLoopIfInvalid();
+      },
+      nudgeEndUp: () => {
+        const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
+        this.loopEnd = nudgeLoopEnd(+this.loopNudgeDelta, state);
+        this._autoDisableLoopIfInvalid();
+      },
+      focusLoopNudgeDelta: () => this.renderRoot.querySelector('llama-controls')?.focusNudgeDeltaSelect(),
       undo:          stub('undo'),
       redo:          stub('redo'),
       helpKeys:      stub('helpKeys'),

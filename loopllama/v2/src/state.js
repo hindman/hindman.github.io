@@ -174,6 +174,32 @@ export function deleteLoopById(loops, id) {
   if (idx !== -1) loops.splice(idx, 1);
 }
 
+// Nudge the loop start point by delta seconds.
+// state: { loopStart, loopEnd, duration }
+// Policy: try regular nudge (start + delta); if the result is a legal loop
+// (newStart < end), apply it. Otherwise try relative nudge (end + delta);
+// if that is legal, apply it. Fall back to regular if both are illegal.
+// All results are clamped to [0, duration].
+export function nudgeLoopStart(delta, { loopStart, loopEnd, duration }) {
+  const maxT = duration ?? Infinity;
+  const regular = Math.max(0, Math.min(loopStart + delta, maxT));
+  if (regular < loopEnd) return regular;
+  const relative = Math.max(0, Math.min(loopEnd + delta, maxT));
+  if (relative < loopEnd) return relative;
+  return regular;
+}
+
+// Nudge the loop end point by delta seconds.
+// Same policy as nudgeLoopStart, mirrored: legal means start < newEnd.
+export function nudgeLoopEnd(delta, { loopStart, loopEnd, duration }) {
+  const maxT = duration ?? Infinity;
+  const regular = Math.max(0, Math.min(loopEnd + delta, maxT));
+  if (loopStart < regular) return regular;
+  const relative = Math.max(0, Math.min(loopStart + delta, maxT));
+  if (loopStart < relative) return relative;
+  return regular;
+}
+
 // Get the effective start/end bounds of the section containing the given time.
 // Returns { start, end } or null if the playhead is outside any section
 // (before the first divider, or in a gap zone created by an explicit section.end).

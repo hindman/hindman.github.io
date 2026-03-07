@@ -7,27 +7,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-R2-3. `[`/`]` prefix conversion + nudge logic: convert `[` and `]` from
-    single-key bindings to prefix keys in keyboardController.js. Remove the
-    old standalone `[` and `]` dispatch entries. Add which-key overlay
-    entries for both prefixes.
-
-    Implement nudge logic in state.js: `nudgeLoopStart(delta, state)` and
-    `nudgeLoopEnd(delta, state)`. Policy: apply regular nudge (delta to
-    self) if the result is a legal loop; otherwise apply relative nudge
-    (delta relative to the other endpoint); fall back to regular if both
-    are illegal. All nudges clamp to [0, video duration].
-
-    Wire all new bindings:
-    - `[[` / `]]`: set start/end to current time
-    - `[<bsp>` / `]<bsp>`: reset start to 0 / end to video duration
-    - `[-` / `[=` / `]-` / `]=`: nudge start/end decrease/increase
-    - `[]` / `][`: focus the loop_nudge_delta dropdown (synonyms)
-
-    Wire `loopNudgeDelta` app state to the dropdown added in R2-2.
-    Goal: all new `[`/`]` bindings work; nudge operations produce legal
-    loops; nudge_delta dropdown is live.
-
 R2-4. Timeline zoom generalization: replace the chapter-specific
     `chapterZoom` boolean with a general `zoomSource: null | {start, end}`
     in app state. Pass it to llama-timeline as `scopeStart`/`scopeEnd`.
@@ -59,6 +38,12 @@ R2-4. Timeline zoom generalization: replace the chapter-specific
     - Try on other monitors:
         - laptop
         - ipad
+
+    - Messages: collect; edit.
+
+    - Menu: check order; edit
+
+    - which-key: collect; edit
 
 20. Header sizzle: add visual character to the header. Options: llama
     mascot image (preferred if a good image can be sourced via LLM or

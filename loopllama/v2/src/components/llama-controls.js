@@ -410,7 +410,8 @@ class LlamaControls extends LitElement {
     this._startRef        = createRef();
     this._endRef          = createRef();
     this._speedRef        = createRef();
-    this._entitySelectRef = createRef();
+    this._entitySelectRef   = createRef();
+    this._nudgeDeltaRef     = createRef();
   }
 
   _fmt(secs) {
@@ -542,6 +543,10 @@ class LlamaControls extends LitElement {
     this._entitySelectRef.value?.focus();
   }
 
+  focusNudgeDeltaSelect() {
+    this._nudgeDeltaRef.value?.focus();
+  }
+
   render() {
     return html`
       <div class="controls-wrap ${this.editScratchActive ? 'edit-scratch-active' : ''}">
@@ -648,8 +653,10 @@ class LlamaControls extends LitElement {
                 >Now</button>
               </div>
               <select
+                ${ref(this._nudgeDeltaRef)}
                 class="delta-select"
                 @change=${(e) => { this._emit('ll-loop-nudge-delta-change', { value: Number(e.target.value) }); e.target.blur(); }}
+                @keydown=${(e) => { if (e.key === 'Enter' || e.key === 'Escape') e.target.blur(); }}
               >
                 ${DEFAULT_OPTIONS.seek_delta_choices.map(n => html`
                   <option value=${n} ?selected=${this.loopNudgeDelta === n}>${this._fmtDelta(n)}</option>

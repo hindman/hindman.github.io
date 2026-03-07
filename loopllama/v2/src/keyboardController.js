@@ -31,8 +31,6 @@ export const BINDINGS = {
   '/':          { handler: 'entityType',    desc: 'Entity type dropdown' },
   '.':          { handler: 'nextEntity',    desc: 'Next entity' },
   'Enter':      { handler: 'jumpToStart',   desc: 'Jump to start' },
-  '[':          { handler: 'setLoopStart',  desc: 'Set loop start' },
-  ']':          { handler: 'setLoopEnd',    desc: 'Set loop end' },
   'u':          { handler: 'undo',          desc: 'Undo' },
   'U':          { handler: 'redo',          desc: 'Redo' },
   '?':          { handler: 'helpKeys',      desc: 'Key bindings help' },
@@ -40,6 +38,22 @@ export const BINDINGS = {
   'y':          { handler: 'videoUrl',      desc: 'Switch to YouTube URL' },
 
   // --- Prefix-key bindings ---
+
+  '[': { completions: {
+    '[':         { handler: 'setLoopStart',        desc: 'Set loop start to current time' },
+    'Backspace': { handler: 'resetLoopStart',       desc: 'Reset loop start to 0' },
+    '-':         { handler: 'nudgeStartDown',       desc: 'Nudge start: decrease' },
+    '=':         { handler: 'nudgeStartUp',         desc: 'Nudge start: increase' },
+    ']':         { handler: 'focusLoopNudgeDelta',  desc: 'Loop nudge delta dropdown' },
+  }},
+
+  ']': { completions: {
+    ']':         { handler: 'setLoopEnd',           desc: 'Set loop end to current time' },
+    'Backspace': { handler: 'resetLoopEnd',         desc: 'Reset loop end to duration' },
+    '-':         { handler: 'nudgeEndDown',         desc: 'Nudge end: decrease' },
+    '=':         { handler: 'nudgeEndUp',           desc: 'Nudge end: increase' },
+    '[':         { handler: 'focusLoopNudgeDelta',  desc: 'Loop nudge delta dropdown' },
+  }},
 
   'v': { completions: {
     'u': { handler: 'videoUrl',     desc: 'Switch to YouTube video via URL' },
