@@ -415,8 +415,8 @@ v2/
     `y`/`vu` binding.
 
 9b. Video picker and edit-video-modal: video-picker (list of known
-    videos, filter by name/title) and edit-video-modal (URL, name,
-    title, start, end, delete button). Wire `vv` and `ve` bindings.
+    videos, filter by name) and edit-video-modal (URL, name,
+    start, end, delete button). Wire `vv` and `ve` bindings.
 
 9c. Loop modals: save-loop-modal (name + start/end, defaults to
     scratch-loop) and loops-picker (load a saved loop). Wire `ls` and
@@ -503,8 +503,6 @@ v2/
     modal, or picker. Mark unimplemented items (Undo, Options,
     Export/Import, Help modals) as disabled stubs.
 
-### TODO
-
 15. Persistence: export all data as JSON (full dump and per-video scope).
     Import via file picker. URL loop sharing (encode video ID + start +
     end as query params). Moving this early to support safe testing: set
@@ -512,7 +510,7 @@ v2/
 
 16. Revised Current area: repurpose the existing Messages area component
     into a focused "Current" area displaying top-level info about active
-    entities: video name, video title, active chapter name (if any),
+    entities: video name, active chapter name (if any),
     current section name (if any), active loop name, and loop source
     (name of the saved Loop, Section, or Chapter the scratch loop was
     derived from; empty if manually created). Reactive: updates as app
@@ -557,6 +555,8 @@ v2/
     and Loop-mark zone marks (click = jump to mark time). No click-to-
     edit; edit via keyboard or menus. Verify chapter zoom (Stage 13d)
     correctly scopes all three zones to chapter.start/end when active.
+
+### TODO
 
 19. UI polish: with the full layout in place (video area, timeline,
     controls with menus), dial in sizing and proportions -- YouTube
@@ -788,10 +788,7 @@ Video:
 - time: current time. Useful so that when you return to the video
   later, the app remembers where you were.
 
-- name: short user label for the video (replaces the Favorites concept)
-
-- title:
-    - longer user-editable title
+- name: label/title for the video
     - empty until set my user
     - auto-population from YouTube metadata requires the YouTube Data API
 
@@ -986,7 +983,7 @@ Navigation:
     /       | Activate entity-type dropdown
     .       | Next entity
     <Enter> | Jump: to start (of loop if looping, else video)
-    jj      | Jump: by time
+    jj      | Jump: by time [activates current-time text box]
     js      | Jump: to section via picker
     jl      | Jump: to loop via picker
     jm      | Jump: to mark via picker
@@ -996,27 +993,27 @@ Navigation:
 
 Looping:
 
-    ll | Toggle looping on/off
-    [  | Set scratch-loop start to current time
-    ]  | Set scratch-loop end to current time
-    lo | Open: opens/loads a saved-loop into scratch-loop [loops-picker]
-    ls | Save-new: a new loop [save-loop-modal]
-    lb | Save-back: save scratch-loop endpoints back to source Loop
-    le | Edit: scratch-loop [edit-scratch-loop-mode]
-    \  | Edit: scratch-loop [synonym key binding]
-    ld | Delete loop [via picker]
-
-    [[     | Loop start: set to now
+    ll     | Toggle looping on/off
+    lo     | Open: opens/loads a saved-loop into scratch-loop [loops-picker]
+    ls     | Save-new: a new loop [save-loop-modal]
+    lb     | Save-back: save scratch-loop endpoints back to source Loop
+    le     | Edit: scratch-loop [edit-scratch-loop-mode]
+    \      | Synonym for `le`
+    ld     | Delete loop [via picker]
+    lz     | Toggle timline zoom, using current loop
+    --------------------------------------------------
+    [[     | Loop start: set to current time
     [<bsp> | Loop start: reset to video start
     [-     | Loop start: nudge: decrease
     [=     | Loop start: nudge: increase
-    []     | Loop start: nudge_delta: activate dropdown
-
-    ]]     | Loop end: set to now
+    --------------------------------------------------
+    ]]     | Loop end: set to current time
     ]<bsp> | Loop end: reset to video end
     ]-     | Loop end: nudge: decrease
     ]=     | Loop end: nudge: increase
-    ][     | Loop end: nudge_delta: activate dropdown [synonym key binding]
+    --------------------------------------------------
+    []     | Nudge_delta: activate dropdown
+    ][     | Synonym for `[]`
 
 Chapters:
 
@@ -1024,7 +1021,7 @@ Chapters:
     co | Open chapter [via picker => populate scratch-loop start/end]
     ce | Edit current chapter
     cd | Delete chapter [via picker]
-    cz | Toggle chapter timline zoom status
+    cz | Toggle timline zoom, using current chapter
 
 Sections:
 
@@ -1032,6 +1029,7 @@ Sections:
     se | Edit: edit current section [edit-section-modal]
     sl | Loop: makes current section the scratch-loop source
     sd | Delete section [via picker]
+    sz | Toggle timline zoom, using current section
 
 Marks:
 
@@ -1075,11 +1073,12 @@ URL-input-modal:
 
 Video-picker:
     - Typical picker interface listing the known videos.
-    - Displays name, title, maybe duration, maybe YouTube ID.
-    - Filters on "NAME TITLE".
+    - Displays name, maybe duration, maybe YouTube ID.
+    - Filters on video name.
 
 Jump-time-modal:
     - Simple modal to enter a time.
+    - To be dropped during round 2 of UI revisions.
 
 Standard entity pickers:
     - Used in contexts like jump and open.
@@ -1090,7 +1089,7 @@ Standard entity pickers:
     - jump-history-picker
 
 Edit-video-modal:
-    - Basic modal to edit URL, name, and title.
+    - Basic modal to edit URL, name.
     - Also a delete-video button.
 
 Save-loop-modal:
@@ -1211,7 +1210,7 @@ without forcing the user to scroll or page up/down.
 ### Message area.
 
 This area is used to show various kinds of information:
-    - Current video name and title.
+    - Current video name.
     - Loop source.
     - Contextual keyboard shortcut information:
         - During key pending.
@@ -1324,19 +1323,21 @@ Actions:
         - Open chapter
         - Edit chapter
         - Delete chapter
-        - Zoom chapter
+        - Zoom current chapter
 
     Section:
         - Set section here
         - Edit current section
         - Loop current section
         - Delete section
+        - Zoom current section
 
     Loop:
         - Open loop [currently called "Open saved loop"]
         - Save new loop
         - Save back to loop source [currently called "Save back"]
         - Delete loop
+        - Zoom current loop
         ---------------------------
         - Edit scratch loop
 
@@ -1358,7 +1359,6 @@ Actions:
         - Undo
         - Redo
         ----------------------------
-        - Share: loop via URL
         - Share loop URL
         ----------------------------
         - Export current video [currently "Export this video"]
@@ -1383,7 +1383,6 @@ It reflects decisions made after hands-on evaluation of the v2 app.
 Repurpose the Messages area into a focused "Current" area that shows
 top-level info about the user's active entities:
     - Video name
-    - Video title
     - Chapter name (LL Chapter entity, if any active)
     - Section name (if any current section)
     - Loop name (if any; the scratch loop's name or source name)
@@ -1686,4 +1685,98 @@ have been edited. Refer to these sub-sections, which have been reworked:
 
     ## Key bindings
     ### Controls area
+
+### UI round 2: implementation stages
+
+R2-1. Migration framework + title→name: implement a lightweight migration
+    system in storage.js. On load, compare the stored data version against
+    the app's current schema version constant. If older, run the applicable
+    migration functions in sequence, then save at the new version.
+
+    First migration (v1 → v2): for each video, copy `title` to `name` if
+    `name` is blank or absent, then drop `title`. Bump schema version to 2.
+
+    Downstream updates in the same stage:
+    - edit-video-modal: drop the title field; keep name only.
+    - video-picker: remove title from display and from the filter string.
+    - llama-current: drop the video-title row (name is sufficient).
+
+    Export format: a single-video JSON export wraps its payload in an
+    app-level envelope `{ version, videos: [...] }` so the importing app
+    has the schema version it needs to migrate before inserting.
+
+    Test with actual browser data before proceeding.
+    Goal: existing localStorage data migrates cleanly; no `title` field
+    survives in stored data after migration.
+
+R2-2. Controls area reorganization: restructure llama-controls.js to match
+    the round-2 Controls area spec.
+
+    Play group: play/pause button + time textbox (not a static display).
+    Wire `jj` to focus the time textbox. Enter in the textbox seeks to the
+    entered time and blurs the input; Esc blurs without seeking.
+
+    Speed group: no change.
+
+    Navigate group: seek-back button + seek_delta dropdown + seek-forward
+    button + prev-entity button + entity-type dropdown + next-entity button.
+    Move the seek buttons here from the Play group. The seek_delta dropdown
+    is the primary mouse control; Up/Down keys continue to work.
+
+    Looping group: add loop_nudge_delta dropdown after the end-Now button
+    (same choices as seek_delta, default 5 sec). Wire it as a placeholder
+    only; nudge logic comes in R2-3.
+
+    Also in this stage:
+    - Move video duration to llama-current; remove it from Controls.
+    - Remove seek_delta from llama-current (now lives in Controls).
+    - Update Action menus to match the round-2 spec: remove "Toggle loop"
+      from Loop menu; remove "Jump by time" from Jump menu; add stubbed
+      "Zoom loop" to Loop menu; add stubbed "Zoom section" to Section menu;
+      apply all label wording changes from the Controls area spec.
+
+    Goal: Controls area matches the round-2 layout; menus are updated;
+    `jj` jumps via the time textbox.
+
+R2-3. `[`/`]` prefix conversion + nudge logic: convert `[` and `]` from
+    single-key bindings to prefix keys in keyboardController.js. Remove the
+    old standalone `[` and `]` dispatch entries. Add which-key overlay
+    entries for both prefixes.
+
+    Implement nudge logic in state.js: `nudgeLoopStart(delta, state)` and
+    `nudgeLoopEnd(delta, state)`. Policy: apply regular nudge (delta to
+    self) if the result is a legal loop; otherwise apply relative nudge
+    (delta relative to the other endpoint); fall back to regular if both
+    are illegal. All nudges clamp to [0, video duration].
+
+    Wire all new bindings:
+    - `[[` / `]]`: set start/end to current time
+    - `[<bsp>` / `]<bsp>`: reset start to 0 / end to video duration
+    - `[-` / `[=` / `]-` / `]=`: nudge start/end decrease/increase
+    - `[]` / `][`: focus the loop_nudge_delta dropdown (synonyms)
+
+    Wire `loopNudgeDelta` app state to the dropdown added in R2-2.
+    Goal: all new `[`/`]` bindings work; nudge operations produce legal
+    loops; nudge_delta dropdown is live.
+
+R2-4. Timeline zoom generalization: replace the chapter-specific
+    `chapterZoom` boolean with a general `zoomSource: null | {start, end}`
+    in app state. Pass it to llama-timeline as `scopeStart`/`scopeEnd`.
+    Derive the value from the active entity based on which zoom binding
+    triggered it.
+
+    Wire `lz`: scope = scratch loop start/end. No-op with a footer warning
+    if the scratch loop spans the full video (start === 0 and end ===
+    duration).
+    Wire `sz`: scope = current section start and its derived end. No-op
+    with a footer warning if no current section is defined.
+    Refactor `cz` to use the same zoomSource mechanism.
+
+    All three bindings toggle: a second press of the same binding clears
+    zoom. Loading a new video clears zoom.
+
+    Replace the stubbed "Zoom loop" and "Zoom section" menu items (from
+    R2-2) with live handlers.
+    Goal: `lz`, `sz`, `cz` all scope the timeline correctly; degenerate
+    cases produce footer warnings.
 
