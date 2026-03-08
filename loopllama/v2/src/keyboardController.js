@@ -68,6 +68,7 @@ export const BINDINGS = {
   }},
 
   'j': { completions: {
+    'c': { handler: 'jumpChapter',  desc: 'Jump to chapter' },
     'j': { handler: 'jumpTime',     desc: 'Jump by time' },
     's': { handler: 'jumpSection',  desc: 'Jump to section' },
     'l': { handler: 'jumpLoop',     desc: 'Jump to loop' },

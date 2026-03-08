@@ -8,19 +8,16 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-  - Add `jc` binding: jump to chapter via picker.
+Help-modals: general help (via Menu, `hh`, and `?`) and key binding help (via
+Menu or `hk`).
 
-  - Help-modals: general help (via Menu, `hh`, and `?`) and key binding help
-    (via Menu or `hk`).
+Code refactoring/cleanup: assess; do if needed.
 
-  - Code refactoring/cleanup: assess; do if needed.
+UI polish: messages/labels: edit.
 
-  - UI polish: messages/labels: edit.
+Header sizzle: add quips; maybe add font color.
 
-  - Header sizzle: add quips; maybe add font color.
-
-  - Deploy: update `loopllama/index.html` to route to v2. Verify on GitHub
-    Pages.
+Deploy: update `loopllama/index.html` to route to v2. Verify on GitHub Pages.
 
 URLS:
 

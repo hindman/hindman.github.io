@@ -91,6 +91,7 @@ const MENUS = [
   {
     label: 'Jump',
     items: [
+      { label: 'Jump to Chapter', action: 'jumpChapter' },
       { label: 'Jump to Section', action: 'jumpSection' },
       { label: 'Jump to Loop',    action: 'jumpLoop'    },
       { label: 'Jump to Mark',    action: 'jumpMark'    },

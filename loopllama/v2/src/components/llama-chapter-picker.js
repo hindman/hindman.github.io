@@ -2,12 +2,13 @@
 //
 // Props:
 //   chapters:        Array of Chapter objects ({ id, name, start, end })
-//   mode:            'open' | 'delete'
+//   mode:            'open' | 'delete' | 'jump'
 //   activeChapterId: String | null (highlights the current active chapter)
 //
 // Events fired (composed, bubbling):
-//   ll-open-chapter   { id }  -- mode='open': set as active chapter
-//   ll-delete-chapter { id }  -- mode='delete': delete the chapter
+//   ll-open-chapter   { id }        -- mode='open': set as active chapter
+//   ll-delete-chapter { id }        -- mode='delete': delete the chapter
+//   ll-jump-chapter   { id, time }  -- mode='jump': seek to chapter start
 //
 // API:
 //   show(mode?) / hide()
@@ -20,6 +21,7 @@ import './llama-modal.js';
 const TITLES = {
   open:   'Open Chapter',
   delete: 'Delete Chapter',
+  jump:   'Jump to Chapter',
 };
 
 class LlamaChapterPicker extends LitElement {
@@ -149,6 +151,11 @@ class LlamaChapterPicker extends LitElement {
     } else if (mode === 'delete') {
       this.dispatchEvent(new CustomEvent('ll-delete-chapter', {
         detail: { id: chapter.id },
+        bubbles: true, composed: true,
+      }));
+    } else if (mode === 'jump') {
+      this.dispatchEvent(new CustomEvent('ll-jump-chapter', {
+        detail: { id: chapter.id, time: chapter.start },
         bubbles: true, composed: true,
       }));
     }

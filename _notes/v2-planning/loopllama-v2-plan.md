@@ -985,6 +985,7 @@ Navigation:
     .       | Next entity
     <Enter> | Jump: to start (of loop if looping, else video)
     jj      | Jump: by time [activates current-time text box]
+    jc      | Jump: to chapter via picker
     js      | Jump: to section via picker
     jl      | Jump: to loop via picker
     jm      | Jump: to mark via picker
@@ -1343,6 +1344,7 @@ Actions:
         - Delete mark
 
     Jump:
+        - Jump to Chapter
         - Jump to Section
         - Jump to Loop
         - Jump to Mark

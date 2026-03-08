@@ -593,6 +593,7 @@ class LlamaApp extends LitElement {
       jumpSection:   () => this._openSectionsPicker('jump'),
       jumpLoop:      () => this._openLoopsPicker('jump'),
       jumpMark:      () => this._openMarksPicker('jump'),
+      jumpChapter:   () => this._openChapterPicker('jump'),
       jumpHistory: () => this._jumpHistoryPickerEl?.show(),
       jumpBack: () => {
         if (!this.jumps.length) { this._setWarning('No jump history.'); return; }
@@ -1490,6 +1491,11 @@ class LlamaApp extends LitElement {
     this._chapterPickerEl?.show(mode);
   }
 
+  // Handle ll-jump-chapter from chapter picker (mode='jump').
+  _onJumpChapter(e) {
+    this._jumpTo(e.detail.time);
+  }
+
   // Handle ll-open-chapter from chapter picker (mode='open').
   // Sets activeChapterId, loads chapter's range into scratch loop,
   // and seeks the player to chapter.start.
@@ -1952,6 +1958,7 @@ class LlamaApp extends LitElement {
         .activeChapterId=${this.activeChapterId}
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
+        @ll-jump-chapter=${this._onJumpChapter}
         @ll-open-chapter=${this._onOpenChapter}
         @ll-delete-chapter=${this._onDeleteChapter}
       ></llama-chapter-picker>
