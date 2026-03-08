@@ -2,12 +2,13 @@
 //
 // Props:
 //   sections: Array of Section objects
-//   mode:     'jump' | 'edit' | 'delete'
+//   mode:     'jump' | 'edit' | 'delete' | 'open'
 //
 // Events fired (composed, bubbling):
 //   ll-jump-section       { id, time }  -- mode='jump': seek to section start
 //   ll-pick-section-edit  { id }        -- mode='edit': open edit modal for section
 //   ll-delete-section     { id }        -- mode='delete': delete the section
+//   ll-open-section       { id, time }  -- mode='open': load section into scratch loop
 //
 // API:
 //   show(mode?) / hide()
@@ -21,6 +22,7 @@ const TITLES = {
   jump:   'Jump to Section',
   edit:   'Edit Section',
   delete: 'Delete Section',
+  open:   'Open Section',
 };
 
 class LlamaSectionsPicker extends LitElement {
@@ -146,6 +148,11 @@ class LlamaSectionsPicker extends LitElement {
     } else if (mode === 'delete') {
       this.dispatchEvent(new CustomEvent('ll-delete-section', {
         detail: { id: section.id },
+        bubbles: true, composed: true,
+      }));
+    } else if (mode === 'open') {
+      this.dispatchEvent(new CustomEvent('ll-open-section', {
+        detail: { id: section.id, time: section.time },
         bubbles: true, composed: true,
       }));
     }

@@ -61,6 +61,7 @@ export const BINDINGS = {
   'v': { completions: {
     'u': { handler: 'videoUrl',     desc: 'Switch to YouTube video via URL' },
     'v': { handler: 'videoPicker',  desc: 'Switch to video' },
+    'o': { handler: 'videoPicker',  desc: 'Switch to video' },
     'e': { handler: 'editVideo',    desc: 'Edit video attributes' },
     'i': { handler: 'videoInfo',    desc: 'Video info' },
     'd': { handler: 'deleteVideo',  desc: 'Delete current video' },
@@ -97,6 +98,7 @@ export const BINDINGS = {
   's': { completions: {
     's': { handler: 'setSection',    desc: 'Set section divider here' },
     'e': { handler: 'editSection',   desc: 'Edit current section' },
+    'o': { handler: 'openSection',   desc: 'Open section' },
     'l': { handler: 'loopSection',   desc: 'Loop current section' },
     'd': { handler: 'deleteSection', desc: 'Delete a section' },
     'z': { handler: 'zoomSection',   desc: 'Toggle section zoom' },

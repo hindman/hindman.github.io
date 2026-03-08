@@ -172,7 +172,7 @@ class LlamaVideoPicker extends LitElement {
   render() {
     const filtered  = this._filtered();
     const isDelete  = this.mode === 'delete';
-    const title     = isDelete ? 'Delete Video' : 'Switch Video';
+    const title     = isDelete ? 'Delete Video' : 'Open Video';
     return html`
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="filter-wrap">

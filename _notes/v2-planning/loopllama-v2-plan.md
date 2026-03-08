@@ -960,8 +960,9 @@ added if actual usage creates friction.
 Videos:
 
     vu | Switch to YouTube video via a URL [url-input-modal]
-    y  | YouTube: short synonym for `vu`.
-    vv | Switch to video [video-picker]
+    vo | Open video [video-picker]
+    y  | Synonym for `vo`.
+    vv | Synonym for `vo`.
     ve | Edit current video [edit-video-modal]
     vd | Delete video [via picker]
     vi | Video info [video-info-modal]
@@ -1030,6 +1031,7 @@ Sections:
     ss | Set: sets a new section divider at current time
     se | Edit: edit current section [edit-section-modal]
     sl | Loop: makes current section the scratch-loop source
+    so | Open section [via picker => populate scratch-loop]
     sd | Delete section [via picker]
     sz | Toggle timline zoom, using current section
 
@@ -1319,6 +1321,7 @@ Actions:
         - Zoom current chapter
 
     Section:
+        - Open section
         - Set section here
         - Edit current section
         - Loop current section

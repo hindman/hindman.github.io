@@ -10,15 +10,8 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 Issues:
 
-  - Menu inconsistency: open-chapter and open-loop (load the boundaries into
-    scratch-loop) vs section-to-loop (does the same thing, but also toggles
-    looping=on). I think we should adopt a consistent framework for "Open".
-    - Open: loads boundaries into scratch-loop (for chapters, loops, sections)
-      or into the overall app (for videos). It's basically a load-boundaries
-      process (plus some extra stuff for videos, which have special needs).
-    - Opening an entity does not automatically toggle looping=on.
-    - Add `vo` as a synonym binding for `vv` (mnemonic: video open).
-    - Reassess other bindings first -- things getting out of hand.
+  - Options: loop_pad_start / loop_pad_end (because they apply to both
+    sections and chapters).
 
   - Picker UI consistency: the current-selection and currently-active are both
     highlighted with blue. The distinction is a bit too subtle. Also, the

@@ -62,9 +62,10 @@ const MENUS = [
     items: [
       { label: 'Set section here',     action: 'setSection'    },
       { label: 'Edit current section', action: 'editSection'   },
+      { label: 'Open section',         action: 'openSection'   },
       { label: 'Loop current section', action: 'loopSection'   },
       { label: 'Delete section',       action: 'deleteSection' },
-      { label: 'Zoom current section', action: 'zoomSection' },
+      { label: 'Zoom current section', action: 'zoomSection'   },
     ],
   },
   {

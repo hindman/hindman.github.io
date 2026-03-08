@@ -704,6 +704,7 @@ class LlamaApp extends LitElement {
         this._saveCurrentState();
       },
       editSection:   () => this._editCurrentSection(),
+      openSection:   () => this._openSectionsPicker('open'),
       loopSection: () => {
         const bounds = getSectionBounds(this.sections, this.currentTime, this.duration);
         if (!bounds || bounds.end == null) {
@@ -1508,6 +1509,28 @@ class LlamaApp extends LitElement {
     this.statusMsg = `Chapter: ${chapter.name || `${_fmtTimePlain(chapter.start)} → ${_fmtTimePlain(chapter.end)}`}`;
   }
 
+  // Handle ll-open-section from sections picker (mode='open').
+  // Loads section's range into scratch loop and seeks to section start.
+  _onOpenSection(e) {
+    const section = this.sections.find(s => s.id === e.detail.id);
+    if (!section) return;
+    const bounds = getSectionBounds(this.sections, section.time, this.duration);
+    if (!bounds || bounds.end == null) {
+      this._setWarning('Section has no end boundary.');
+      return;
+    }
+    this._clearZoomIfOutside(bounds.start, bounds.end);
+    this.loopStart       = bounds.start;
+    this.loopEnd         = bounds.end;
+    this.loopSource      = null;
+    this.loopSourceLabel = section.name || null;
+    this.loopSourceType  = 'section';
+    this._autoDisableLoopIfInvalid();
+    this._maybePushJump(this._vc?.getCurrentTime() ?? 0, bounds.start);
+    this._vc?.seekTo(bounds.start);
+    this.statusMsg = `Section: ${section.name || _fmtTimePlain(section.time)}`;
+  }
+
   // Handle ll-create-chapter from edit-chapter-modal (create mode).
   _onCreateChapter(e) {
     this._pushUndoSnapshot('Chapter created');
@@ -1908,6 +1931,7 @@ class LlamaApp extends LitElement {
         @ll-jump-section=${this._onJumpSection}
         @ll-pick-section-edit=${this._onPickSectionEdit}
         @ll-delete-section=${this._onDeleteSection}
+        @ll-open-section=${this._onOpenSection}
       ></llama-sections-picker>
 
       <llama-edit-section-modal
