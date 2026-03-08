@@ -110,7 +110,7 @@ const MENUS = [
       { label: 'Export current video', action: 'shareVideo' },
       { label: 'Export all data',      action: 'exportAll'  },
       { label: 'Import data',          action: 'importData' },
-      { label: 'Inspect JSON',         action: 'inspectData', disabled: true },
+      { label: 'Inspect JSON',         action: 'inspectData' },
       { type: 'divider' },
       { label: 'Bulk data delete', action: 'deleteData' },
       { label: 'Options',          action: 'options' },

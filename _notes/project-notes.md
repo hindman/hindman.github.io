@@ -22,10 +22,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
     GitHub Pages.
 
 Bugs/issues:
-  x Don't create new mark if one at same time already exists.
-  x Several menu items are greyed out even though I think we have implemented
-    their functionality.
-  . Implement Delete video.
   - Implement inspect JSON.
   - Entity navigation dropdown: drop video; grey out chapter if the video has
     no chapters yet.

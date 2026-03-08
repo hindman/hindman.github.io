@@ -175,6 +175,9 @@ export function createKeyboardController(handlers, { onPendingKey } = {}) {
 
     if (pendingPrefix !== null) {
       // Awaiting second key of a two-key binding.
+      // Ignore bare modifier keydowns so pressing Shift before an uppercase
+      // completion (e.g. dI) doesn't clear the pending prefix.
+      if (key === 'Shift' || key === 'Control' || key === 'Alt' || key === 'Meta') return;
       event.preventDefault();
       const completions = BINDINGS[pendingPrefix]?.completions;
       const binding = completions?.[key];

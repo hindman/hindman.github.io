@@ -6,6 +6,11 @@
 //     <div slot="footer">...buttons...</div>
 //   </llama-modal>
 //
+// Props:
+//   label: String  -- dialog title
+//   width: String  -- optional CSS width for the panel (e.g. "60vw", "40rem");
+//                     overrides Shoelace's default of 31rem
+//
 // Events fired (composed, bubbling):
 //   ll-modal-open          -- when dialog begins to open (sl-show)
 //   ll-modal-close         -- when dialog finishes closing (sl-after-hide)
@@ -21,6 +26,7 @@ import '@shoelace-style/shoelace/dist/components/dialog/dialog.js';
 class LlamaModal extends LitElement {
   static properties = {
     label: { type: String },
+    width: { type: String },
   };
 
   _emit(name) {
@@ -39,6 +45,7 @@ class LlamaModal extends LitElement {
     return html`
       <sl-dialog
         label=${this.label ?? ''}
+        style=${this.width ? `--width: ${this.width}` : ''}
         @sl-show=${this._onShow}
         @sl-after-hide=${this._onAfterHide}
         @sl-initial-focus=${this._onInitialFocus}

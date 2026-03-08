@@ -34,6 +34,7 @@ import './llama-video-info-modal.js';
 import './llama-jump-history-picker.js';
 import './llama-options-modal.js';
 import './llama-delete-data-modal.js';
+import './llama-inspect-modal.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
@@ -786,7 +787,7 @@ class LlamaApp extends LitElement {
       },
       exportAll:     () => this._exportAll(),
       importData:    () => this._fileInputEl?.click(),
-      inspectData:   stub('inspectData'),
+      inspectData:   () => this._inspectModalEl?.show(this._appState),
       shareVideo:    () => this._shareVideo(),
       shareLoop:     () => this._shareLoop(),
     };
@@ -839,6 +840,7 @@ class LlamaApp extends LitElement {
     this._jumpHistoryPickerEl = this.renderRoot.querySelector('llama-jump-history-picker');
     this._optionsModalEl      = this.renderRoot.querySelector('llama-options-modal');
     this._deleteDataModalEl   = this.renderRoot.querySelector('llama-delete-data-modal');
+    this._inspectModalEl      = this.renderRoot.querySelector('llama-inspect-modal');
     this._fileInputEl         = this.renderRoot.querySelector('#import-file-input');
 
     // Sync delta values from persisted options (may differ from compile-time defaults).
@@ -1952,6 +1954,11 @@ class LlamaApp extends LitElement {
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-delete-data=${this._onDeleteData}
       ></llama-delete-data-modal>
+
+      <llama-inspect-modal
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+      ></llama-inspect-modal>
 
       <llama-whichkey
         .prefix=${this.wkPrefix}
