@@ -452,7 +452,7 @@ class LlamaApp extends LitElement {
         this.duration = null;
       } else {
         // Restoring to a no-video state.
-        this._vc?.stop();
+        this._vc?.pause();
         this.sections        = [];
         this.marks           = [];
         this.namedLoops      = [];
@@ -1126,8 +1126,10 @@ class LlamaApp extends LitElement {
     const { id } = e.detail;
     const idx = this._appState?.videos.findIndex(v => v.id === id);
     if (idx == null || idx === -1) return;
+    this._pushUndoSnapshot('Video deleted');
     this._appState.videos.splice(idx, 1);
     if (this.currentVideoId === id) {
+      this._vc?.pause();
       this._appState.currentVideoId = null;
       this.currentVideoId = null;
       this.sections   = [];
@@ -1712,7 +1714,7 @@ class LlamaApp extends LitElement {
       this._pushUndoSnapshot(`Video${videoIds.length !== 1 ? 's' : ''} deleted`);
       this._appState.videos = this._appState.videos.filter(v => !videoIds.includes(v.id));
       if (videoIds.includes(this.currentVideoId)) {
-        this._vc?.stop();
+        this._vc?.pause();
         this._appState.currentVideoId = null;
         this.currentVideoId      = null;
         this.sections            = [];

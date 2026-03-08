@@ -8,10 +8,11 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-Help-modals: general help (via Menu, `hh`, and `?`) and key binding help (via
-Menu or `hk`).
-
 Code refactoring/cleanup: assess; do if needed.
+
+Help-text: draft.
+
+Help-text bindings and menu items: implement.
 
 UI polish: messages/labels: edit.
 

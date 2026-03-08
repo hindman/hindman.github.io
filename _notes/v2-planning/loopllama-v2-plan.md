@@ -581,7 +581,7 @@ v2/
 
 25. Convert my v1 data to v2?
 
-26. Help-modals: general help (via Menu, `hh`, and `?`) and
+26. Help-text: general help (via Menu, `hh`, and `?`) and
     key binding help (via Menu or `hk`).
 
 27. Code refactoring/cleanup: assess; do if needed.
@@ -1123,8 +1123,10 @@ Edit-section-modal:
 Edit-mark-modal:
     - Basic modal to edit mark attributes.
 
-Help-modals:
+Help-text:
+    - Static web page in The Fifth Fret.
     - Access via the `hh` and `hk` bindings or via Action menu.
+    - Bindings might change after we draft the text.
     - General help (hh): explains the basics:
         - What LoopLlama is.
         - Getting started.
