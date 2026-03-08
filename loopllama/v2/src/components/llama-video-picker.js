@@ -3,12 +3,14 @@
 // Props:
 //   videos:         Array of Video objects
 //   currentVideoId: string | null  -- highlights the active video
+//   mode:           'switch' | 'delete'  (default: 'switch')
 //
 // Events fired (composed, bubbling):
-//   ll-pick-video  { videoId: string }  -- user selected a video
+//   ll-pick-video    { videoId: string }  -- mode='switch': user selected a video
+//   ll-delete-video  { id: string }       -- mode='delete': user selected a video to delete
 //
 // API:
-//   show() / hide()
+//   show(mode?) / hide()
 
 import { LitElement, html, css } from 'lit';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
@@ -48,6 +50,10 @@ class LlamaVideoPicker extends LitElement {
       border-color: var(--ll-accent, #7ec8e3);
       outline: none;
     }
+    .video-row.mode-delete:hover,
+    .video-row.mode-delete.selected {
+      border-color: var(--sl-color-danger-600, #c0392b);
+    }
     .video-primary {
       font-size: var(--ll-text-base, 1.05rem);
     }
@@ -66,6 +72,7 @@ class LlamaVideoPicker extends LitElement {
   static properties = {
     videos:         { type: Array },
     currentVideoId: { type: String },
+    mode:           { type: String },
     _filter:        { state: true },
     _selIdx:        { state: true },
   };
@@ -74,11 +81,13 @@ class LlamaVideoPicker extends LitElement {
     super();
     this.videos         = [];
     this.currentVideoId = null;
+    this.mode           = 'switch';
     this._filter        = '';
     this._selIdx        = 0;
   }
 
-  show() {
+  show(mode) {
+    if (mode) this.mode = mode;
     this._filter = '';
     this._selIdx = 0;
     this.renderRoot.querySelector('llama-modal')?.show();
@@ -125,11 +134,19 @@ class LlamaVideoPicker extends LitElement {
   }
 
   _select(video) {
-    this.dispatchEvent(new CustomEvent('ll-pick-video', {
-      detail: { videoId: video.id },
-      bubbles: true,
-      composed: true,
-    }));
+    if (this.mode === 'delete') {
+      this.dispatchEvent(new CustomEvent('ll-delete-video', {
+        detail: { id: video.id },
+        bubbles: true,
+        composed: true,
+      }));
+    } else {
+      this.dispatchEvent(new CustomEvent('ll-pick-video', {
+        detail: { videoId: video.id },
+        bubbles: true,
+        composed: true,
+      }));
+    }
     this.hide();
   }
 
@@ -153,9 +170,11 @@ class LlamaVideoPicker extends LitElement {
   }
 
   render() {
-    const filtered = this._filtered();
+    const filtered  = this._filtered();
+    const isDelete  = this.mode === 'delete';
+    const title     = isDelete ? 'Delete Video' : 'Switch Video';
     return html`
-      <llama-modal label="Switch Video" @ll-modal-initial-focus=${this._onInitialFocus}>
+      <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="filter-wrap">
           <sl-input
             placeholder="Filter by name…"
@@ -170,6 +189,7 @@ class LlamaVideoPicker extends LitElement {
             ? filtered.map((v, i) => html`
                 <div
                   class="video-row
+                    ${isDelete ? 'mode-delete' : ''}
                     ${v.id === this.currentVideoId ? 'current' : ''}
                     ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(v)}

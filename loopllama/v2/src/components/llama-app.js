@@ -586,19 +586,8 @@ class LlamaApp extends LitElement {
       videoPicker:   () => this._videoPickerEl?.show(),
       editVideo:     () => this._editVideoModalEl?.show(),
       deleteVideo: () => {
-        if (!this.currentVideoId) { this._setWarning('No video loaded.'); return; }
-        const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
-        this._deleteDataModalEl?.show({
-          videos:           this._appState?.videos ?? [],
-          currentVideoId:   this.currentVideoId,
-          currentVideoName: video?.name || video?.id || null,
-          sections:         this.sections,
-          namedLoops:       this.namedLoops,
-          marks:            this.marks,
-          chapters:         this.chapters,
-          initialMode:      'videos',
-          preCheckedVideoId: this.currentVideoId,
-        });
+        if (!this._appState?.videos.length) { this._setWarning('No videos saved.'); return; }
+        this._videoPickerEl?.show('delete');
       },
       jumpTime:      () => { this.renderRoot.querySelector('llama-controls')?.focusTimeInput(); this._flash('time', 'until-blur'); },
       jumpSection:   () => this._openSectionsPicker('jump'),
@@ -1130,7 +1119,7 @@ class LlamaApp extends LitElement {
     save(this._appState);
   }
 
-  // Handle ll-delete-video from the edit-video-modal.
+  // Handle ll-delete-video from the edit-video-modal or video picker (delete mode).
   _onDeleteVideo(e) {
     const { id } = e.detail;
     const idx = this._appState?.videos.findIndex(v => v.id === id);
@@ -1868,6 +1857,7 @@ class LlamaApp extends LitElement {
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-pick-video=${this._onPickVideo}
+        @ll-delete-video=${this._onDeleteVideo}
       ></llama-video-picker>
 
       <llama-edit-video-modal

@@ -8,19 +8,42 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-25. Convert v1 data to v2: export data from LL v1; then import favs to v2.
+Issues:
 
-26. Help-modals: general help (via Menu, `hh`, and `?`) and
-    key binding help (via Menu or `hk`).
+  - Menu inconsistency: open-chapter and open-loop (load the boundaries into
+    scratch-loop) vs section-to-loop (does the same thing, but also toggles
+    looping=on). I think we should adopt a consistent framework for "Open".
+    - Open: loads boundaries into scratch-loop (for chapters, loops, sections)
+      or into the overall app (for videos). It's basically a load-boundaries
+      process (plus some extra stuff for videos, which have special needs).
+    - Opening an entity does not automatically toggle looping=on.
+    - Add `vo` as a synonym binding for `vv` (mnemonic: video open).
+    - Reassess other bindings first -- things getting out of hand.
 
-27. Code refactoring/cleanup: assess; do if needed.
+  - Picker UI consistency: the current-selection and currently-active are both
+    highlighted with blue. The distinction is a bit too subtle. Also, the
+    pickers vary in how they do this:
 
-28. UI polish: messages/labels: edit.
+    Current       | Video | Chapter | Section | Loop   | Mark
+    --------------------------------------------------------------
+    Active entity | T B F | W B  L  | .       | T Y F  | n/a
+    Selection     | T B F | T BR F  | .       | T BR F | T B F
 
-29. Header sizzle: add quips; maybe add font color.
+    T = thin   W = wide
+    B = blue   Y = yellow   R = red (for delete)
+    F = full   L = left-edge-only
 
-30. Deploy: update `loopllama/index.html` to route to v2. Verify on
-    GitHub Pages.
+  - Help-modals: general help (via Menu, `hh`, and `?`) and key binding help
+    (via Menu or `hk`).
+
+  - Code refactoring/cleanup: assess; do if needed.
+
+  - UI polish: messages/labels: edit.
+
+  - Header sizzle: add quips; maybe add font color.
+
+  - Deploy: update `loopllama/index.html` to route to v2. Verify on GitHub
+    Pages.
 
 URLS:
 
