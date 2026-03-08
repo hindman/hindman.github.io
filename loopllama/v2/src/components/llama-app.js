@@ -403,6 +403,11 @@ class LlamaApp extends LitElement {
     this.speed = clamped;
   }
 
+  // Flash a yellow border on the affected control after a keyboard action.
+  _flash(target, mode = 'timed') {
+    this.renderRoot.querySelector('llama-controls')?.flash(target, mode);
+  }
+
   // --- Undo / Redo ---
 
   // Snapshot the full video registry and current video ID.
@@ -511,61 +516,68 @@ class LlamaApp extends LitElement {
     };
     return {
       playPause:     () => { if (noVideo()) return; this._onPlayPause(); },
-      speedDown:     () => this._speedChange(-this.speedDelta),
-      speedUp:       () => this._speedChange(this.speedDelta),
-      speedReset:    () => { this._vc?.setPlaybackRate(1.0); this.speed = 1.0; },
-      seekForward:   () => { if (noVideo()) return; this._onSeekForward(); },
-      seekBack:      () => { if (noVideo()) return; this._onSeekBack(); },
+      speedDown:     () => { this._speedChange(-this.speedDelta); this._flash('speed'); },
+      speedUp:       () => { this._speedChange(this.speedDelta); this._flash('speed'); },
+      speedReset:    () => { this._vc?.setPlaybackRate(1.0); this.speed = 1.0; this._flash('speed'); },
+      seekForward:   () => { if (noVideo()) return; this._onSeekForward(); this._flash('time'); },
+      seekBack:      () => { if (noVideo()) return; this._onSeekBack(); this._flash('time'); },
       seekDeltaDown: () => {
         const choices = this._appState?.options.seek_delta_choices ?? DEFAULT_OPTIONS.seek_delta_choices;
         const idx = choices.indexOf(this.seekDelta);
         this.seekDelta = choices[Math.max(idx - 1, 0)];
+        this._flash('seekDelta');
       },
       seekDeltaUp: () => {
         const choices = this._appState?.options.seek_delta_choices ?? DEFAULT_OPTIONS.seek_delta_choices;
         const idx = choices.indexOf(this.seekDelta);
         this.seekDelta = choices[Math.min(idx + 1, choices.length - 1)];
+        this._flash('seekDelta');
       },
       prevEntity:    () => this._navigateEntity('prev'),
-      entityType:    () => this.renderRoot.querySelector('llama-controls')?.focusEntitySelect(),
+      entityType:    () => { this.renderRoot.querySelector('llama-controls')?.focusEntitySelect(); this._flash('entitySelect', 'until-blur'); },
       nextEntity:    () => this._navigateEntity('next'),
       jumpToStart:   () => {
         if (noVideo()) return;
         const target = this.looping ? this.loopStart : 0;
         this._maybePushJump(this._vc?.getCurrentTime() ?? 0, target);
         this._vc?.seekTo(target);
+        this._flash('time');
       },
-      setLoopStart:  () => { if (noVideo()) return; this.loopStart = this._vc?.getCurrentTime() ?? 0; this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this._autoDisableLoopIfInvalid(); },
-      setLoopEnd:    () => { if (noVideo()) return; this.loopEnd   = this._vc?.getCurrentTime() ?? 0; this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this._autoDisableLoopIfInvalid(); },
-      resetLoopStart: () => { if (noVideo()) return; this.loopStart = 0; this._autoDisableLoopIfInvalid(); },
-      resetLoopEnd:   () => { if (noVideo()) return; this.loopEnd = this.duration ?? 0; this._autoDisableLoopIfInvalid(); },
+      setLoopStart:  () => { if (noVideo()) return; this.loopStart = this._vc?.getCurrentTime() ?? 0; this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this._autoDisableLoopIfInvalid(); this._flash('loopStart'); },
+      setLoopEnd:    () => { if (noVideo()) return; this.loopEnd   = this._vc?.getCurrentTime() ?? 0; this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this._autoDisableLoopIfInvalid(); this._flash('loopEnd'); },
+      resetLoopStart: () => { if (noVideo()) return; this.loopStart = 0; this._autoDisableLoopIfInvalid(); this._flash('loopStart'); },
+      resetLoopEnd:   () => { if (noVideo()) return; this.loopEnd = this.duration ?? 0; this._autoDisableLoopIfInvalid(); this._flash('loopEnd'); },
       nudgeStartDown: () => {
         if (noVideo()) return;
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
         this.loopStart = nudgeLoopStart(-this.loopNudgeDelta, state);
         this._autoDisableLoopIfInvalid();
+        this._flash('loopStart');
       },
       nudgeStartUp: () => {
         if (noVideo()) return;
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
         this.loopStart = nudgeLoopStart(+this.loopNudgeDelta, state);
         this._autoDisableLoopIfInvalid();
+        this._flash('loopStart');
       },
       nudgeEndDown: () => {
         if (noVideo()) return;
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
         this.loopEnd = nudgeLoopEnd(-this.loopNudgeDelta, state);
         this._autoDisableLoopIfInvalid();
+        this._flash('loopEnd');
       },
       nudgeEndUp: () => {
         if (noVideo()) return;
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
         this.loopEnd = nudgeLoopEnd(+this.loopNudgeDelta, state);
         this._autoDisableLoopIfInvalid();
+        this._flash('loopEnd');
       },
-      focusLoopNudgeDelta: () => this.renderRoot.querySelector('llama-controls')?.focusNudgeDeltaSelect(),
-      focusLoopStart:     () => this.renderRoot.querySelector('llama-controls')?.focusStartInput(),
-      focusLoopEnd:       () => this.renderRoot.querySelector('llama-controls')?.focusEndInput(),
+      focusLoopNudgeDelta: () => { this.renderRoot.querySelector('llama-controls')?.focusNudgeDeltaSelect(); this._flash('nudgeDelta', 'until-blur'); },
+      focusLoopStart:     () => { this.renderRoot.querySelector('llama-controls')?.focusStartInput(); this._flash('loopStart', 'until-blur'); },
+      focusLoopEnd:       () => { this.renderRoot.querySelector('llama-controls')?.focusEndInput(); this._flash('loopEnd', 'until-blur'); },
       undo:          () => this._undo(),
       redo:          () => this._redo(),
       helpKeys:      stub('helpKeys'),
@@ -588,7 +600,7 @@ class LlamaApp extends LitElement {
           preCheckedVideoId: this.currentVideoId,
         });
       },
-      jumpTime:      () => this.renderRoot.querySelector('llama-controls')?.focusTimeInput(),
+      jumpTime:      () => { this.renderRoot.querySelector('llama-controls')?.focusTimeInput(); this._flash('time', 'until-blur'); },
       jumpSection:   () => this._openSectionsPicker('jump'),
       jumpLoop:      () => this._openLoopsPicker('jump'),
       jumpMark:      () => this._openMarksPicker('jump'),
@@ -609,6 +621,7 @@ class LlamaApp extends LitElement {
         this._vc?.seekTo(t);
         this._suppressJumpPush = false;
         this.statusMsg = `Jump back: ${_fmtTimePlain(t)}`;
+        this._flash('time');
       },
       jumpForward: () => {
         if (this._jumpIdx === -1) { this._setWarning('At current position.'); return; }
@@ -619,6 +632,7 @@ class LlamaApp extends LitElement {
           this._vc?.seekTo(t);
           this._suppressJumpPush = false;
           this.statusMsg = `Jump forward: ${_fmtTimePlain(t)}`;
+          this._flash('time');
         } else {
           // At most recent entry; jump forward to where jb was first invoked.
           this._jumpIdx = -1;
@@ -628,6 +642,7 @@ class LlamaApp extends LitElement {
           this._vc?.seekTo(t);
           this._suppressJumpPush = false;
           this.statusMsg = 'Returned to current position.';
+          this._flash('time');
         }
       },
       toggleLoop: () => {
@@ -1809,6 +1824,7 @@ class LlamaApp extends LitElement {
 
         <llama-current
           .videoName=${currentVideo?.name ?? ''}
+          .videoId=${currentVideo?.id ?? null}
           .chapterName=${activeChapter?.name ?? null}
           .sectionName=${currentSection?.name ?? null}
           .loopName=${loopName}

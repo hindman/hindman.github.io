@@ -385,6 +385,14 @@ class LlamaControls extends LitElement {
     .controls-wrap.edit-scratch-active .menus-row {
       opacity: 0.35;
     }
+
+    /* Temporary highlight when a keyboard binding modifies a control. */
+    .kb-flash {
+      border-color: var(--ll-accent-warm, #f0c040) !important;
+      box-shadow: 0 0 0 1px var(--ll-accent-warm, #f0c040) !important;
+      position: relative;
+      z-index: 1;
+    }
   `;
 
   static properties = {
@@ -426,6 +434,7 @@ class LlamaControls extends LitElement {
     this._endRef          = createRef();
     this._speedRef        = createRef();
     this._entitySelectRef   = createRef();
+    this._seekDeltaRef      = createRef();
     this._nudgeDeltaRef     = createRef();
   }
 
@@ -562,6 +571,44 @@ class LlamaControls extends LitElement {
     this._nudgeDeltaRef.value?.focus();
   }
 
+  // Public: highlight a control with a yellow border when a keyboard binding
+  // modifies it. Repeated calls cancel any pending timer or blur listener.
+  // target: 'time'|'speed'|'seekDelta'|'loopStart'|'loopEnd'|'nudgeDelta'|'entitySelect'
+  // mode:   'timed' (default) -- remove after 1.5s
+  //         'until-blur'      -- remove when the element loses focus
+  flash(target, mode = 'timed') {
+    const refs = {
+      time:         this._timeRef,
+      speed:        this._speedRef,
+      seekDelta:    this._seekDeltaRef,
+      loopStart:    this._startRef,
+      loopEnd:      this._endRef,
+      nudgeDelta:   this._nudgeDeltaRef,
+      entitySelect: this._entitySelectRef,
+    };
+    const el = refs[target]?.value;
+    if (!el) return;
+    this._flashTimers    ??= {};
+    this._flashListeners ??= {};
+    // Cancel any previous flash for this target.
+    clearTimeout(this._flashTimers[target]);
+    if (this._flashListeners[target]) {
+      el.removeEventListener('blur', this._flashListeners[target]);
+      this._flashListeners[target] = null;
+    }
+    el.classList.add('kb-flash');
+    if (mode === 'until-blur') {
+      const handler = () => {
+        el.classList.remove('kb-flash');
+        this._flashListeners[target] = null;
+      };
+      this._flashListeners[target] = handler;
+      el.addEventListener('blur', handler, { once: true });
+    } else {
+      this._flashTimers[target] = setTimeout(() => el.classList.remove('kb-flash'), 1500);
+    }
+  }
+
   render() {
     return html`
       <div class="controls-wrap ${this.editScratchActive ? 'edit-scratch-active' : ''}">
@@ -604,6 +651,7 @@ class LlamaControls extends LitElement {
               <div class="btn-group">
                 <button class="btn-accent" @click=${() => this._emit('ll-seek-back')}>◀</button>
                 <select
+                  ${ref(this._seekDeltaRef)}
                   class="delta-select"
                   @change=${(e) => { this._emit('ll-seek-delta-change', { value: Number(e.target.value) }); e.target.blur(); }}
                 >

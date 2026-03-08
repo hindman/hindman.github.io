@@ -64,6 +64,7 @@ class LlamaCurrent extends LitElement {
 
   static properties = {
     videoName:         { type: String },
+    videoId:           { type: String },
     chapterName:       { type: String },
     sectionName:       { type: String },
     loopName:          { type: String },
@@ -76,6 +77,7 @@ class LlamaCurrent extends LitElement {
   constructor() {
     super();
     this.videoName         = '';
+    this.videoId           = null;
     this.chapterName       = null;
     this.sectionName       = null;
     this.loopName          = null;
@@ -111,6 +113,7 @@ class LlamaCurrent extends LitElement {
         <div class="panel-title">Current</div>
         <div class="current-rows">
           ${this._row('Name',        this.videoName)}
+          ${this._row('Video ID',    this.videoId)}
           ${this._row('Chapter',     this.chapterName)}
           ${this._row('Section',     this.sectionName)}
           ${this._row('Loop',        this.loopName)}

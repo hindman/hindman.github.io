@@ -21,31 +21,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 30. Deploy: update `loopllama/index.html` to route to v2. Verify on
     GitHub Pages.
 
-Bugs/issues:
-  - Implement inspect JSON.
-  - Entity navigation dropdown: drop video; grey out chapter if the video has
-    no chapters yet.
-  - Current area: add video ID (YouTube ID) after Name.
-  - Timeline experiment: if the video has none of sections/marks/loops show a
-    subtle label in the applicable timeline zone: "Sections", "Marks",
-    "Loops". Turn off the label as soon as one or more entities of a given
-    type are created.
-  - UI experiment.
-    - Edit-mode uses a yellow border around the loop start/end text box that
-      is being modified at the moment.
-    - Let's try to extend that metaphor to other editing scenarios.
-    - Whenever the user changes something via key binding, style the affected
-      control with a temporary yellow border (maybe 2 sec).
-    - I don't think mouse interactions require this sort of visual cue -- but
-      maybe maintaining that distinctions makes the coding a lot harder?
-
-        Action                     | Control with yellow border
-        -----------------------------------------------------------
-        seek or jump               | current time box
-        change speed               | speed box
-        change/activate a dropdown | applicable dropdown
-        set loop boundary          | start/end box
-
 URLS:
 
     https://www.youtube.com/watch?v=2iFn6ursFaE
