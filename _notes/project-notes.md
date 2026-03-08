@@ -7,11 +7,10 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-23. Options-modal: seek delta, speed delta, and section padding
-    settings. Wire `o` binding.
-
 24. Delete-data-modal: checkboxes for selective data clearing.
     Wire `dd` binding.
+
+25. Convert my v1 data to v2?
 
 URLS:
 

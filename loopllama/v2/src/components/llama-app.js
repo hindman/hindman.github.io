@@ -32,6 +32,7 @@ import './llama-edit-chapter-modal.js';
 import './llama-current.js';
 import './llama-video-info-modal.js';
 import './llama-jump-history-picker.js';
+import './llama-options-modal.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
@@ -246,6 +247,7 @@ class LlamaApp extends LitElement {
     this._editChapterModalEl   = null;
     this._videoInfoModalEl     = null;
     this._jumpHistoryPickerEl  = null;
+    this._optionsModalEl       = null;
     this._fileInputEl          = null;
     this._jumpIdx              = -1;   // -1 = at current/live position
     this._jumpFromTime         = null; // saved position when jb first invoked
@@ -254,7 +256,7 @@ class LlamaApp extends LitElement {
     this._redoStack              = [];
     this.seekDelta        = DEFAULT_OPTIONS.seek_delta_default;
     this.speedDelta       = DEFAULT_OPTIONS.speed_delta;
-    this.loopNudgeDelta   = 5;
+    this.loopNudgeDelta   = DEFAULT_OPTIONS.loop_nudge_delta_default;
   }
 
   // Auto-clear transient messages after 4s whenever they are set.
@@ -333,6 +335,35 @@ class LlamaApp extends LitElement {
     scratch.end   = this.loopEnd;
     video.loops = [scratch, ...this.namedLoops];
     save(this._appState);
+  }
+
+  // Apply an options object: update reactive delta props. If the current
+  // seekDelta or loopNudgeDelta is not in the new choices, reset to default.
+  // Also backfills any keys missing from older saved states.
+  _applyOptions(options) {
+    if (!options) return;
+    // Backfill keys added after the initial schema (older saved states won't
+    // have loop_nudge_delta_* until the user opens Options and saves).
+    if (options.loop_nudge_delta_default == null)
+      options.loop_nudge_delta_default = DEFAULT_OPTIONS.loop_nudge_delta_default;
+    if (options.loop_nudge_delta_choices == null)
+      options.loop_nudge_delta_choices = DEFAULT_OPTIONS.loop_nudge_delta_choices;
+    const seekChoices  = options.seek_delta_choices;
+    const nudgeChoices = options.loop_nudge_delta_choices;
+    if (!seekChoices.includes(this.seekDelta))
+      this.seekDelta = options.seek_delta_default;
+    if (!nudgeChoices.includes(this.loopNudgeDelta))
+      this.loopNudgeDelta = options.loop_nudge_delta_default;
+    this.speedDelta = options.speed_delta;
+  }
+
+  // Handle ll-options-saved from the options modal.
+  _onOptionsSaved(e) {
+    const { options } = e.detail;
+    this._appState.options = options;
+    this._applyOptions(options);
+    save(this._appState);
+    this.statusMsg = 'Options saved.';
   }
 
   // Load a Video object: save current state, switch to new video, restore state.
@@ -431,12 +462,12 @@ class LlamaApp extends LitElement {
       seekForward:   () => this._onSeekForward(),
       seekBack:      () => this._onSeekBack(),
       seekDeltaDown: () => {
-        const choices = DEFAULT_OPTIONS.seek_delta_choices;
+        const choices = this._appState?.options.seek_delta_choices ?? DEFAULT_OPTIONS.seek_delta_choices;
         const idx = choices.indexOf(this.seekDelta);
         this.seekDelta = choices[Math.max(idx - 1, 0)];
       },
       seekDeltaUp: () => {
-        const choices = DEFAULT_OPTIONS.seek_delta_choices;
+        const choices = this._appState?.options.seek_delta_choices ?? DEFAULT_OPTIONS.seek_delta_choices;
         const idx = choices.indexOf(this.seekDelta);
         this.seekDelta = choices[Math.min(idx + 1, choices.length - 1)];
       },
@@ -478,7 +509,7 @@ class LlamaApp extends LitElement {
       undo:          () => this._undo(),
       redo:          () => this._redo(),
       helpKeys:      stub('helpKeys'),
-      options:       stub('options'),
+      options:       () => this._optionsModalEl?.show(this._appState?.options),
       videoUrl:      () => this._urlInputModalEl?.show(),
       videoPicker:   () => this._videoPickerEl?.show(),
       editVideo:     () => this._editVideoModalEl?.show(),
@@ -601,8 +632,8 @@ class LlamaApp extends LitElement {
           return;
         }
         const section    = nearestSectionLeft(this.sections, this.currentTime);
-        const padStart   = DEFAULT_OPTIONS.section_loop_pad_start;
-        const padEnd     = DEFAULT_OPTIONS.section_loop_pad_end;
+        const padStart   = this._appState?.options.section_loop_pad_start ?? DEFAULT_OPTIONS.section_loop_pad_start;
+        const padEnd     = this._appState?.options.section_loop_pad_end   ?? DEFAULT_OPTIONS.section_loop_pad_end;
         this.loopStart       = Math.max(0, bounds.start - padStart);
         this.loopEnd         = bounds.end + padEnd;
         this.looping         = true;
@@ -719,7 +750,11 @@ class LlamaApp extends LitElement {
     this._editChapterModalEl = this.renderRoot.querySelector('llama-edit-chapter-modal');
     this._videoInfoModalEl    = this.renderRoot.querySelector('llama-video-info-modal');
     this._jumpHistoryPickerEl = this.renderRoot.querySelector('llama-jump-history-picker');
+    this._optionsModalEl      = this.renderRoot.querySelector('llama-options-modal');
     this._fileInputEl         = this.renderRoot.querySelector('#import-file-input');
+
+    // Sync delta values from persisted options (may differ from compile-time defaults).
+    this._applyOptions(this._appState.options);
 
     window.addEventListener('blur',  () => { this.windowFocused = false; });
     window.addEventListener('focus', () => { this.windowFocused = true; });
@@ -1593,7 +1628,9 @@ class LlamaApp extends LitElement {
           .loopStart=${this.loopStart}
           .loopEnd=${this.loopEnd}
           .seekDelta=${this.seekDelta}
+          .seekDeltaChoices=${this._appState?.options.seek_delta_choices ?? DEFAULT_OPTIONS.seek_delta_choices}
           .loopNudgeDelta=${this.loopNudgeDelta}
+          .loopNudgeDeltaChoices=${this._appState?.options.loop_nudge_delta_choices ?? DEFAULT_OPTIONS.loop_nudge_delta_choices}
           .editScratchActive=${this.editScratchActive}
           .editScratchFocus=${this.editScratchFocus}
           .editScratchDelta=${this.editScratchDelta}
@@ -1752,6 +1789,12 @@ class LlamaApp extends LitElement {
         style="display:none"
         @change=${this._onFileImport}
       >
+
+      <llama-options-modal
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+        @ll-options-saved=${this._onOptionsSaved}
+      ></llama-options-modal>
 
       <llama-whichkey
         .prefix=${this.wkPrefix}

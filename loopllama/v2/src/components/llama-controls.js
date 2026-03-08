@@ -1,15 +1,17 @@
 // llama-controls.js -- playback controls display.
 //
 // Receives:
-//   currentTime:      Number   -- current playback position (seconds)
-//   speed:            Number   -- playback speed (e.g. 1.0 = 100%)
-//   isPlaying:        Boolean  -- true while the video is playing
-//   looping:          Boolean  -- true when looping is active
-//   loopStart:        Number   -- scratch-loop start (seconds)
-//   loopEnd:          Number   -- scratch-loop end (seconds)
-//   seekDelta:        Number   -- current seek delta (seconds)
-//   loopNudgeDelta:   Number   -- current loop nudge delta (seconds)
-//   activeEntityType: String   -- 'any'|'section'|'loop'|'mark'|'chapter'|'video'
+//   currentTime:          Number   -- current playback position (seconds)
+//   speed:                Number   -- playback speed (e.g. 1.0 = 100%)
+//   isPlaying:            Boolean  -- true while the video is playing
+//   looping:              Boolean  -- true when looping is active
+//   loopStart:            Number   -- scratch-loop start (seconds)
+//   loopEnd:              Number   -- scratch-loop end (seconds)
+//   seekDelta:            Number   -- current seek delta (seconds)
+//   seekDeltaChoices:     Array    -- available seek delta values
+//   loopNudgeDelta:       Number   -- current loop nudge delta (seconds)
+//   loopNudgeDeltaChoices: Array   -- available loop nudge delta values
+//   activeEntityType:     String   -- 'any'|'section'|'loop'|'mark'|'chapter'|'video'
 //
 // Fires (bubbles + composed):
 //   ll-play-pause             -- toggle play/pause
@@ -111,7 +113,7 @@ const MENUS = [
       { label: 'Inspect JSON',         action: 'inspectData', disabled: true },
       { type: 'divider' },
       { label: 'Bulk data delete', action: 'deleteData', disabled: true },
-      { label: 'Options',          action: 'options',    disabled: true },
+      { label: 'Options',          action: 'options' },
     ],
   },
   {
@@ -386,30 +388,34 @@ class LlamaControls extends LitElement {
   `;
 
   static properties = {
-    currentTime:      { type: Number },
-    speed:            { type: Number },
-    isPlaying:        { type: Boolean },
-    looping:          { type: Boolean },
-    loopStart:        { type: Number },
-    loopEnd:          { type: Number },
-    seekDelta:        { type: Number },
-    loopNudgeDelta:   { type: Number },
-    editScratchActive:  { type: Boolean },
-    editScratchFocus:   { type: String },
-    editScratchDelta:   { type: Number },
-    activeEntityType:   { type: String },
+    currentTime:         { type: Number },
+    speed:               { type: Number },
+    isPlaying:           { type: Boolean },
+    looping:             { type: Boolean },
+    loopStart:           { type: Number },
+    loopEnd:             { type: Number },
+    seekDelta:           { type: Number },
+    seekDeltaChoices:    { type: Array },
+    loopNudgeDelta:      { type: Number },
+    loopNudgeDeltaChoices: { type: Array },
+    editScratchActive:   { type: Boolean },
+    editScratchFocus:    { type: String },
+    editScratchDelta:    { type: Number },
+    activeEntityType:    { type: String },
   };
 
   constructor() {
     super();
-    this.currentTime      = 0;
-    this.speed            = 1;
-    this.isPlaying        = false;
-    this.looping          = false;
-    this.loopStart        = 0;
-    this.loopEnd          = 0;
-    this.seekDelta        = DEFAULT_OPTIONS.seek_delta_default;
-    this.loopNudgeDelta   = 5;
+    this.currentTime          = 0;
+    this.speed                = 1;
+    this.isPlaying            = false;
+    this.looping              = false;
+    this.loopStart            = 0;
+    this.loopEnd              = 0;
+    this.seekDelta            = DEFAULT_OPTIONS.seek_delta_default;
+    this.seekDeltaChoices     = DEFAULT_OPTIONS.seek_delta_choices;
+    this.loopNudgeDelta       = DEFAULT_OPTIONS.loop_nudge_delta_default;
+    this.loopNudgeDeltaChoices = DEFAULT_OPTIONS.loop_nudge_delta_choices;
     this.editScratchActive = false;
     this.editScratchFocus  = 'start';
     this.editScratchDelta  = 1;
@@ -601,7 +607,7 @@ class LlamaControls extends LitElement {
                   class="delta-select"
                   @change=${(e) => { this._emit('ll-seek-delta-change', { value: Number(e.target.value) }); e.target.blur(); }}
                 >
-                  ${DEFAULT_OPTIONS.seek_delta_choices.map(n => html`
+                  ${this.seekDeltaChoices.map(n => html`
                     <option value=${n} ?selected=${this.seekDelta === n}>${this._fmtDelta(n)}</option>
                   `)}
                 </select>
@@ -654,7 +660,7 @@ class LlamaControls extends LitElement {
                 @change=${(e) => { this._emit('ll-loop-nudge-delta-change', { value: Number(e.target.value) }); e.target.blur(); }}
                 @keydown=${(e) => { if (e.key === 'Enter' || e.key === 'Escape') e.target.blur(); }}
               >
-                ${DEFAULT_OPTIONS.seek_delta_choices.map(n => html`
+                ${this.loopNudgeDeltaChoices.map(n => html`
                   <option value=${n} ?selected=${this.loopNudgeDelta === n}>${this._fmtDelta(n)}</option>
                 `)}
               </select>

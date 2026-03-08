@@ -581,16 +581,18 @@ v2/
 24. Delete-data-modal: checkboxes for selective data clearing.
     Wire `dd` binding.
 
-25. Help-modals: general help (via Menu, `hh`, and `?`) and
+25. Convert my v1 data to v2?
+
+26. Help-modals: general help (via Menu, `hh`, and `?`) and
     key binding help (via Menu or `hk`).
 
-26. Code refactoring/cleanup: assess; do if needed.
+27. Code refactoring/cleanup: assess; do if needed.
 
-27. UI polish: messages/labels: edit.
+28. UI polish: messages/labels: edit.
 
-28. Header sizzle: add quips; maybe add font color.
+29. Header sizzle: add quips; maybe add font color.
 
-29. Deploy: update `loopllama/index.html` to route to v2. Verify on
+30. Deploy: update `loopllama/index.html` to route to v2. Verify on
     GitHub Pages.
 
 ---
@@ -770,6 +772,8 @@ Options:
 
 - seek_delta_default: N
 - seek_delta_choices: [N1, N2, ...]
+- loop_nudge_delta_default: N
+- loop_nudge_delta_choices: [N1, N2, ...]
 - speed_delta: N
 - section_loop_pad_start: N
 - section_loop_pad_end: N
