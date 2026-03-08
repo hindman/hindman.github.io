@@ -119,9 +119,11 @@ class LlamaDeleteDataModal extends LitElement {
     this._currentVideoName = null;
   }
 
-  show({ videos, currentVideoId, currentVideoName, sections, namedLoops, marks, chapters }) {
-    this._mode             = 'current';
-    this._checked          = {};
+  // initialMode: 'current' (default) or 'videos'.
+  // preCheckedVideoId: if set, that video is pre-checked when opening in 'videos' mode.
+  show({ videos, currentVideoId, currentVideoName, sections, namedLoops, marks, chapters,
+         initialMode = 'current', preCheckedVideoId = null }) {
+    this._mode             = initialMode;
     this._sections         = sections   ?? [];
     this._loops            = namedLoops ?? [];
     this._marks            = marks      ?? [];
@@ -129,6 +131,7 @@ class LlamaDeleteDataModal extends LitElement {
     this._videos           = videos     ?? [];
     this._currentVideoId   = currentVideoId   ?? null;
     this._currentVideoName = currentVideoName ?? null;
+    this._checked          = preCheckedVideoId ? { [preCheckedVideoId]: true } : {};
     this.renderRoot.querySelector('llama-modal')?.show();
   }
 

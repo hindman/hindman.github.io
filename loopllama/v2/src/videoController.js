@@ -71,6 +71,7 @@ export function createVideoController({ onReady, onStateChange } = {}) {
 
   function play()  { player.playVideo(); }
   function pause() { player.pauseVideo(); }
+  function stop()  { player.stopVideo(); }
 
   // allowSeekAhead=true lets the player seek into un-buffered regions.
   function seekTo(seconds) { player.seekTo(seconds, true); }
@@ -95,6 +96,7 @@ export function createVideoController({ onReady, onStateChange } = {}) {
     cueVideo,
     play,
     pause,
+    stop,
     seekTo,
     getCurrentTime,
     getDuration,

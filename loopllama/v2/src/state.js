@@ -114,8 +114,10 @@ export function updateChapter(chapters, id, fields) {
 }
 
 // Add a mark at the given time to the marks array (sorted by time).
-// Returns the new mark.
+// Returns the new mark, or null if a mark at the same second already exists.
 export function addMark(marks, time, name = '') {
+  const rounded = Math.round(time);
+  if (marks.some(m => Math.round(m.time) === rounded)) return null;
   const mark = createMark(time, name);
   marks.push(mark);
   marks.sort((a, b) => a.time - b.time);
