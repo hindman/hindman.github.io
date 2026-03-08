@@ -7,10 +7,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-21. Undo: snapshot-based undo/redo. Push a video state snapshot before
-    each destructive or modifying operation. Implement `u`/`U` bindings.
-    Session-only; no persistence needed.
-
 22. Navigation safety: persist the jump list (video.jumps). Push
     user-initiated seeks above the threshold. Implement `jb`/`jf`
     bindings.

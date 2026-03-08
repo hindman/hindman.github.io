@@ -143,6 +143,18 @@ class LlamaApp extends LitElement {
       llama-current  { grid-area: current; }
     }
 
+    /* --- Message footer --- */
+    .app-footer {
+      padding: 0.3rem var(--ll-pad-lg, 1rem);
+      min-height: 1.6rem;
+      font-size: var(--ll-text-sm, 0.85rem);
+      border-top: 1px solid var(--ll-border, #444);
+      color: var(--ll-text-dim, #aaa);
+    }
+
+    .app-footer.is-warning { color: var(--ll-warn,  #f0c040); }
+    .app-footer.is-error   { color: var(--ll-error, #e87070); }
+
   `;
 
   static properties = {
@@ -209,6 +221,8 @@ class LlamaApp extends LitElement {
     this.warningMsg          = null;
     this.errorMsg            = null;
     this._warnTimeout        = null;
+    this._statusTimeout      = null;
+    this._errorTimeout       = null;
     this._vc                 = null;
     this._kb                 = null;
     this._pollId             = null;
@@ -228,9 +242,27 @@ class LlamaApp extends LitElement {
     this._editChapterModalEl   = null;
     this._videoInfoModalEl     = null;
     this._fileInputEl          = null;
+    this._undoStack              = [];
+    this._redoStack              = [];
     this.seekDelta        = DEFAULT_OPTIONS.seek_delta_default;
     this.speedDelta       = DEFAULT_OPTIONS.speed_delta;
     this.loopNudgeDelta   = 5;
+  }
+
+  // Auto-clear transient messages after 4s whenever they are set.
+  updated(changedProps) {
+    if (changedProps.has('statusMsg') && this.statusMsg) {
+      clearTimeout(this._statusTimeout);
+      this._statusTimeout = setTimeout(() => { this.statusMsg = null; }, 4000);
+    }
+    if (changedProps.has('warningMsg') && this.warningMsg) {
+      clearTimeout(this._warnTimeout);
+      this._warnTimeout = setTimeout(() => { this.warningMsg = null; }, 4000);
+    }
+    if (changedProps.has('errorMsg') && this.errorMsg) {
+      clearTimeout(this._errorTimeout);
+      this._errorTimeout = setTimeout(() => { this.errorMsg = null; }, 4000);
+    }
   }
 
   // Sync per-video state from a Video object into reactive props.
@@ -277,6 +309,8 @@ class LlamaApp extends LitElement {
   // Load a Video object: save current state, switch to new video, restore state.
   _loadVideoObject(video, startTime = null) {
     this._saveCurrentState();
+    this._undoStack = [];
+    this._redoStack = [];
     this._appState.currentVideoId = video.id;
     this.currentVideoId = video.id;
     this._syncFromVideo(video);
@@ -293,6 +327,68 @@ class LlamaApp extends LitElement {
     const clamped = Math.max(0.25, Math.min(2.0, next));
     this._vc?.setPlaybackRate(clamped);
     this.speed = clamped;
+  }
+
+  // --- Undo / Redo ---
+
+  // Snapshot the current metadata state (sections, marks, namedLoops, chapters).
+  // Playback state (speed, looping, scratch loop) is not included.
+  _pushUndoSnapshot(desc = '') {
+    const snap = {
+      sections:   JSON.parse(JSON.stringify(this.sections)),
+      marks:      JSON.parse(JSON.stringify(this.marks)),
+      namedLoops: JSON.parse(JSON.stringify(this.namedLoops)),
+      chapters:   JSON.parse(JSON.stringify(this.chapters)),
+      desc,
+    };
+    this._undoStack.push(snap);
+    if (this._undoStack.length > 20) this._undoStack.shift();
+    this._redoStack = [];
+  }
+
+  _currentSnapshot() {
+    return {
+      sections:   JSON.parse(JSON.stringify(this.sections)),
+      marks:      JSON.parse(JSON.stringify(this.marks)),
+      namedLoops: JSON.parse(JSON.stringify(this.namedLoops)),
+      chapters:   JSON.parse(JSON.stringify(this.chapters)),
+    };
+  }
+
+  _applySnapshot(snap) {
+    this.sections   = snap.sections;
+    this.marks      = snap.marks;
+    this.namedLoops = snap.namedLoops;
+    this.chapters   = snap.chapters;
+    // Clear stale loop source if the named loop it pointed to was removed.
+    if (this.loopSource && !this.namedLoops.find(l => l.id === this.loopSource)) {
+      this.loopSource      = null;
+      this.loopSourceLabel = null;
+      this.loopSourceType  = null;
+    }
+    this._saveCurrentState();
+  }
+
+  _undo() {
+    if (!this._undoStack.length) {
+      this._setWarning('Nothing to undo.');
+      return;
+    }
+    const snap = this._undoStack.pop();
+    this._redoStack.push({ ...this._currentSnapshot(), desc: snap.desc });
+    this._applySnapshot(snap);
+    this.statusMsg = `Undone: ${snap.desc}`;
+  }
+
+  _redo() {
+    if (!this._redoStack.length) {
+      this._setWarning('Nothing to redo.');
+      return;
+    }
+    const snap = this._redoStack.pop();
+    this._undoStack.push({ ...this._currentSnapshot(), desc: snap.desc });
+    this._applySnapshot(snap);
+    this.statusMsg = `Redone: ${snap.desc}`;
   }
 
   // Handlers for Stage 5+. Core playback handlers implemented in Stage 6e.
@@ -346,8 +442,8 @@ class LlamaApp extends LitElement {
       focusLoopNudgeDelta: () => this.renderRoot.querySelector('llama-controls')?.focusNudgeDeltaSelect(),
       focusLoopStart:     () => this.renderRoot.querySelector('llama-controls')?.focusStartInput(),
       focusLoopEnd:       () => this.renderRoot.querySelector('llama-controls')?.focusEndInput(),
-      undo:          stub('undo'),
-      redo:          stub('redo'),
+      undo:          () => this._undo(),
+      redo:          () => this._redo(),
       helpKeys:      stub('helpKeys'),
       options:       stub('options'),
       videoUrl:      () => this._urlInputModalEl?.show(),
@@ -381,10 +477,11 @@ class LlamaApp extends LitElement {
           this._setWarning('Source loop not found.');
           return;
         }
+        this._pushUndoSnapshot('Loop updated');
         this.namedLoops[idx].start = this.loopStart;
         this.namedLoops[idx].end   = this.loopEnd;
         this.namedLoops = [...this.namedLoops];
-        this.statusMsg  = 'Saved back to source loop.';
+        this.statusMsg  = 'Loop updated';
         this._saveCurrentState();
       },
       editScratch: () => this._enterEditScratch(),
@@ -422,8 +519,10 @@ class LlamaApp extends LitElement {
         this.statusMsg  = 'Section zoom on.';
       },
       setSection: () => {
+        this._pushUndoSnapshot('Section created');
         addSection(this.sections, this._vc?.getCurrentTime() ?? 0);
         this.sections = [...this.sections];
+        this.statusMsg = 'Section created';
         this._saveCurrentState();
       },
       editSection:   () => this._editCurrentSection(),
@@ -446,8 +545,10 @@ class LlamaApp extends LitElement {
       },
       deleteSection: () => this._openSectionsPicker('delete'),
       setMark: () => {
+        this._pushUndoSnapshot('Mark created');
         addMark(this.marks, this._vc?.getCurrentTime() ?? 0);
         this.marks = [...this.marks];
+        this.statusMsg = 'Mark created';
         this._saveCurrentState();
       },
       editMark:   () => this._openMarksPicker('edit'),
@@ -516,11 +617,11 @@ class LlamaApp extends LitElement {
         this.statusMsg = 'Player ready. Enter a YouTube URL or video ID above.';
       },
       onStateChange: (state) => {
-        const labels = {
-          '-1': 'Unstarted', 0: 'Ended', 1: 'Playing',
-          2: 'Paused', 3: 'Buffering', 5: 'Cued',
-        };
-        this.statusMsg = labels[state] ?? `State: ${state}`;
+        // Playing (1), Paused (2), Buffering (3) are omitted: user can
+        // see/hear the video. Only surface less-frequent states.
+        const labels = { '-1': 'Unstarted', 0: 'Ended', 5: 'Cued' };
+        const msg = labels[state];
+        if (msg) this.statusMsg = msg;
       },
     });
     await this._vc.initialize(container);
@@ -711,6 +812,8 @@ class LlamaApp extends LitElement {
     super.disconnectedCallback();
     clearInterval(this._pollId);
     clearTimeout(this._warnTimeout);
+    clearTimeout(this._statusTimeout);
+    clearTimeout(this._errorTimeout);
     this._kb?.destroy();
     if (this._editScratchHandler) {
       document.removeEventListener('keydown', this._editScratchHandler);
@@ -839,11 +942,9 @@ class LlamaApp extends LitElement {
     save(this._appState);
   }
 
-  // Show a transient warning in the footer; auto-clears after 4 seconds.
+  // Show a transient warning; auto-clears after 4 seconds (via updated()).
   _setWarning(msg) {
-    clearTimeout(this._warnTimeout);
-    this.warningMsg  = msg;
-    this._warnTimeout = setTimeout(() => { this.warningMsg = null; }, 4000);
+    this.warningMsg = msg;
   }
 
   _flashLoopViolation() {
@@ -1002,35 +1103,44 @@ class LlamaApp extends LitElement {
   }
 
   _onSetSection() {
+    this._pushUndoSnapshot('Section created');
     addSection(this.sections, this._vc?.getCurrentTime() ?? 0);
     this.sections = [...this.sections];
+    this.statusMsg = 'Section created';
     this._saveCurrentState();
   }
 
   _onDeleteSection(e) {
+    this._pushUndoSnapshot('Section deleted');
     deleteSectionById(this.sections, e.detail.id);
     this.sections = [...this.sections];
+    this.statusMsg = 'Section deleted';
     this._saveCurrentState();
   }
 
   _onSetMark() {
+    this._pushUndoSnapshot('Mark created');
     addMark(this.marks, this._vc?.getCurrentTime() ?? 0);
     this.marks = [...this.marks];
+    this.statusMsg = 'Mark created';
     this._saveCurrentState();
   }
 
   _onDeleteMark(e) {
+    this._pushUndoSnapshot('Mark deleted');
     deleteMarkById(this.marks, e.detail.id);
     this.marks = [...this.marks];
+    this.statusMsg = 'Mark deleted';
     this._saveCurrentState();
   }
 
   _onSaveLoop(e) {
+    this._pushUndoSnapshot('Loop saved');
     const start = e.detail.start ?? this.loopStart;
     const end   = e.detail.end   ?? this.loopEnd;
     addLoop(this.namedLoops, start, end, e.detail.name);
     this.namedLoops = [...this.namedLoops];
-    this.statusMsg  = `Loop saved: ${e.detail.name || 'unnamed'}`;
+    this.statusMsg  = 'Loop saved';
     this._saveCurrentState();
   }
 
@@ -1070,9 +1180,11 @@ class LlamaApp extends LitElement {
   }
 
   _onDeleteLoop(e) {
+    this._pushUndoSnapshot('Loop deleted');
     deleteLoopById(this.namedLoops, e.detail.id);
     this.namedLoops = [...this.namedLoops];
     if (this.loopSource === e.detail.id) { this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; }
+    this.statusMsg = 'Loop deleted';
     this._saveCurrentState();
   }
 
@@ -1109,13 +1221,14 @@ class LlamaApp extends LitElement {
 
   // Handle ll-update-mark from edit-mark-modal.
   _onUpdateMark(e) {
+    this._pushUndoSnapshot('Mark updated');
     const { id, name, time } = e.detail;
     const mark = this.marks.find(m => m.id === id);
     if (!mark) return;
     mark.name = name;
     mark.time = time;
     this.marks = [...this.marks].sort((a, b) => a.time - b.time);
-    this.statusMsg = `Mark updated: ${name || _fmtTimePlain(time)}`;
+    this.statusMsg = 'Mark updated';
     this._saveCurrentState();
   }
 
@@ -1167,31 +1280,34 @@ class LlamaApp extends LitElement {
 
   // Handle ll-create-chapter from edit-chapter-modal (create mode).
   _onCreateChapter(e) {
+    this._pushUndoSnapshot('Chapter created');
     const { name, start, end } = e.detail;
     addChapter(this.chapters, name, start, end);
     this.chapters  = [...this.chapters];
-    this.statusMsg = `Chapter created: ${name || _fmtTimePlain(start)}`;
+    this.statusMsg = 'Chapter created';
     this._saveCurrentState();
   }
 
   // Handle ll-update-chapter from edit-chapter-modal (edit mode).
   _onUpdateChapter(e) {
+    this._pushUndoSnapshot('Chapter updated');
     const { id, name, start, end } = e.detail;
     updateChapter(this.chapters, id, { name, start, end });
     this.chapters  = [...this.chapters];
-    this.statusMsg = `Chapter updated: ${name || _fmtTimePlain(start)}`;
+    this.statusMsg = 'Chapter updated';
     this._saveCurrentState();
   }
 
   // Handle ll-delete-chapter from chapter picker (mode='delete').
   _onDeleteChapter(e) {
+    this._pushUndoSnapshot('Chapter deleted');
     deleteChapterById(this.chapters, e.detail.id);
     this.chapters = [...this.chapters];
+    this.statusMsg = 'Chapter deleted';
     if (this.activeChapterId === e.detail.id) {
       this.activeChapterId = null;
       if (this.zoomSource?.trigger === 'chapter') {
         this.zoomSource = null;
-        this.statusMsg  = 'Chapter zoom cleared.';
       }
     }
     this._saveCurrentState();
@@ -1312,13 +1428,14 @@ class LlamaApp extends LitElement {
 
   // Handle ll-update-section from edit-section-modal.
   _onUpdateSection(e) {
+    this._pushUndoSnapshot('Section updated');
     const { id, name, time } = e.detail;
     const section = this.sections.find(s => s.id === id);
     if (!section) return;
     section.name = name;
     section.time = time;
     this.sections = [...this.sections].sort((a, b) => a.time - b.time);
-    this.statusMsg = `Section updated: ${name || _fmtTimePlain(time)}`;
+    this.statusMsg = 'Section updated';
     this._saveCurrentState();
   }
 
@@ -1431,6 +1548,12 @@ class LlamaApp extends LitElement {
           .zoomLabel=${zoomLabel}
         ></llama-current>
       </div>
+
+      ${(() => {
+        const msg  = this.errorMsg ?? this.warningMsg ?? this.statusMsg ?? '';
+        const type = this.errorMsg ? 'is-error' : this.warningMsg ? 'is-warning' : '';
+        return html`<div class="app-footer ${type}">${msg}</div>`;
+      })()}
 
       <llama-url-input-modal
         @ll-modal-open=${() => this._kb?.disable()}

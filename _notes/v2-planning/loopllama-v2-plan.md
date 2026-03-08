@@ -1879,6 +1879,25 @@ Error messages:
   - importData (di) — file picker
   - Note: red, persistent (no auto-dismiss). Only current error message.
 
+Info messages:
+
+  - Show a message for:
+    - All CRUD edits: marks, sections, loops, chapters (create/update/delete)
+    - Undo / redo
+    - Significant one-off operations: delete video, import, export, copy loop URL
+    - Non-obvious state changes: zoom on/off, loop loaded, chapter opened,
+      looping section, video cued/loaded
+    - Infrequent YouTube player states: Unstarted, Ended, Cued
+
+  - Do not show a message for:
+    - Playing, Paused -- user can see and hear the video
+    - Buffering -- obvious from the frozen playhead
+    - Any other routine, high-frequency event
+
+  - General rule: if the video or UI already gives clear feedback, skip the
+    message. If the operation has no other visible confirmation, show it.
+
+
 ---
 
 #### B. Footer bar: which-key and edit-scratch overlays
