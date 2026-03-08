@@ -579,8 +579,6 @@ v2/
 24. Delete-data-modal: checkboxes for selective data clearing.
     Wire `dd` binding.
 
-### TODO
-
 25. Convert my v1 data to v2?
 
 26. Help-modals: general help (via Menu, `hh`, and `?`) and

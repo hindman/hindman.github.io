@@ -724,8 +724,11 @@ class LlamaApp extends LitElement {
         const section    = nearestSectionLeft(this.sections, this.currentTime);
         const padStart   = this._appState?.options.section_loop_pad_start ?? DEFAULT_OPTIONS.section_loop_pad_start;
         const padEnd     = this._appState?.options.section_loop_pad_end   ?? DEFAULT_OPTIONS.section_loop_pad_end;
-        this.loopStart       = Math.max(0, bounds.start - padStart);
-        this.loopEnd         = bounds.end + padEnd;
+        const newStart   = Math.max(0, bounds.start - padStart);
+        const newEnd     = bounds.end + padEnd;
+        this._clearZoomIfOutside(newStart, newEnd);
+        this.loopStart       = newStart;
+        this.loopEnd         = newEnd;
         this.looping         = true;
         this.loopSource      = null;
         this.loopSourceLabel = section?.name || null;
@@ -1216,6 +1219,15 @@ class LlamaApp extends LitElement {
     if (this.looping && !this._isLoopValid()) this.looping = false;
   }
 
+  // Clear zoomSource if the given range doesn't fit within it.
+  // Called before any operation that sets new scratch-loop bounds.
+  _clearZoomIfOutside(start, end) {
+    if (!this.zoomSource) return;
+    if (start < this.zoomSource.start || end > this.zoomSource.end) {
+      this.zoomSource = null;
+    }
+  }
+
   // If playhead is outside the active zoom range, seek to the zoom start.
   _seekIntoZoomIfNeeded() {
     if (!this.zoomSource) return;
@@ -1368,6 +1380,7 @@ class LlamaApp extends LitElement {
   _onLoadLoop(e) {
     const loop = this.namedLoops.find(l => l.id === e.detail.id);
     if (!loop) return;
+    this._clearZoomIfOutside(loop.start, loop.end);
     this.loopStart       = loop.start;
     this.loopEnd         = loop.end;
     this.loopSource      = loop.id;
@@ -1385,6 +1398,7 @@ class LlamaApp extends LitElement {
   _onActivateLoop(e) {
     const loop = this.namedLoops.find(l => l.id === e.detail.id);
     if (!loop) return;
+    this._clearZoomIfOutside(loop.start, loop.end);
     this.loopStart       = loop.start;
     this.loopEnd         = loop.end;
     this.loopSource      = loop.id;
@@ -1492,6 +1506,7 @@ class LlamaApp extends LitElement {
   _onOpenChapter(e) {
     const chapter = this.chapters.find(c => c.id === e.detail.id);
     if (!chapter) return;
+    this._clearZoomIfOutside(chapter.start, chapter.end);
     this.activeChapterId = chapter.id;
     this.loopStart       = chapter.start;
     this.loopEnd         = chapter.end;

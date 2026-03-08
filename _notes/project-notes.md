@@ -1,4 +1,5 @@
 
+
 ## CURRENT SESSION
 
 Current stage to implement:
@@ -7,7 +8,7 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-25. Convert my v1 data to v2?
+25. Convert v1 data to v2: export data from LL v1; then import favs to v2.
 
 26. Help-modals: general help (via Menu, `hh`, and `?`) and
     key binding help (via Menu or `hk`).
