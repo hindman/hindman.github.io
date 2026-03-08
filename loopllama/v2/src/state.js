@@ -6,6 +6,9 @@
 
 export const SCHEMA_VERSION = 2;
 
+export const JUMP_HISTORY_MAX = 40;   // max persisted jump entries per video
+export const JUMP_THRESHOLD   = 15;   // seconds; smaller moves are not stored
+
 function createId() {
   return Math.random().toString(36).slice(2, 9);
 }

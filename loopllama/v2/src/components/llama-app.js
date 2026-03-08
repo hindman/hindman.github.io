@@ -5,6 +5,7 @@ import { createVideoController }    from '../videoController.js';
 import { createKeyboardController } from '../keyboardController.js';
 import {
   DEFAULT_OPTIONS,
+  JUMP_HISTORY_MAX, JUMP_THRESHOLD,
   createVideo, createAppState, createScratchLoop,
   addMark, deleteMarkById,
   addSection, deleteSectionById, getSectionBounds, nearestSectionLeft,
@@ -30,6 +31,7 @@ import './llama-chapter-picker.js';
 import './llama-edit-chapter-modal.js';
 import './llama-current.js';
 import './llama-video-info-modal.js';
+import './llama-jump-history-picker.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
@@ -168,6 +170,7 @@ class LlamaApp extends LitElement {
     sections:        { type: Array },
     marks:           { type: Array },
     namedLoops:      { type: Array },
+    jumps:           { type: Array },
     loopSource:      { type: String },
     statusMsg:       { type: String },
     wkPrefix:        { type: String },
@@ -202,6 +205,7 @@ class LlamaApp extends LitElement {
     this.sections      = [];
     this.marks         = [];
     this.namedLoops    = [];
+    this.jumps         = [];
     this.loopSource    = null;
     this.statusMsg     = 'Initializing...';
     this.wkPrefix            = null;
@@ -241,7 +245,11 @@ class LlamaApp extends LitElement {
     this._chapterPickerEl      = null;
     this._editChapterModalEl   = null;
     this._videoInfoModalEl     = null;
+    this._jumpHistoryPickerEl  = null;
     this._fileInputEl          = null;
+    this._jumpIdx              = -1;   // -1 = at current/live position
+    this._jumpFromTime         = null; // saved position when jb first invoked
+    this._suppressJumpPush     = false;
     this._undoStack              = [];
     this._redoStack              = [];
     this.seekDelta        = DEFAULT_OPTIONS.seek_delta_default;
@@ -271,6 +279,9 @@ class LlamaApp extends LitElement {
     this.sections   = [...(video.sections ?? [])];
     this.marks      = [...(video.marks    ?? [])];
     this.namedLoops = (video.loops ?? []).filter(l => !l.is_scratch);
+    this.jumps      = [...(video.jumps    ?? [])];
+    this._jumpIdx       = -1;
+    this._jumpFromTime  = null;
     const scratch   = (video.loops ?? []).find(l => l.is_scratch);
     this.loopStart  = scratch?.start ?? 0;
     this.loopEnd    = scratch?.end   ?? 0;
@@ -286,6 +297,23 @@ class LlamaApp extends LitElement {
     }
   }
 
+  // Push a jump-history entry if the move is large enough.
+  // fromTime: where the user was; toTime: where they're going.
+  // Skipped when _suppressJumpPush is true (jb/jf navigation).
+  // Resets the jb/jf cursor so any subsequent jb starts from the newest entry.
+  _maybePushJump(fromTime, toTime) {
+    if (this._suppressJumpPush) return;
+    if (Math.abs(toTime - fromTime) <= JUMP_THRESHOLD) return;
+    const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
+    if (!video) return;
+    video.jumps.push(fromTime);
+    if (video.jumps.length > JUMP_HISTORY_MAX) video.jumps.shift();
+    this.jumps         = [...video.jumps];
+    this._jumpIdx      = -1;
+    this._jumpFromTime = null;
+    save(this._appState);
+  }
+
   // Persist current reactive state back to the current video and save to
   // localStorage. Call after any mutation to sections, marks, or namedLoops.
   _saveCurrentState() {
@@ -294,6 +322,7 @@ class LlamaApp extends LitElement {
     video.chapters = this.chapters;
     video.sections = this.sections;
     video.marks    = this.marks;
+    video.jumps    = this.jumps;
     video.time     = this.currentTime;
     // Update scratch loop endpoints.
     let scratch = video.loops?.find(l => l.is_scratch);
@@ -414,7 +443,11 @@ class LlamaApp extends LitElement {
       prevEntity:    () => this._navigateEntity('prev'),
       entityType:    () => this.renderRoot.querySelector('llama-controls')?.focusEntitySelect(),
       nextEntity:    () => this._navigateEntity('next'),
-      jumpToStart:   () => this._vc?.seekTo(this.looping ? this.loopStart : 0),
+      jumpToStart:   () => {
+        const target = this.looping ? this.loopStart : 0;
+        this._maybePushJump(this._vc?.getCurrentTime() ?? 0, target);
+        this._vc?.seekTo(target);
+      },
       setLoopStart:  () => { this.loopStart = this._vc?.getCurrentTime() ?? 0; this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this._autoDisableLoopIfInvalid(); },
       setLoopEnd:    () => { this.loopEnd   = this._vc?.getCurrentTime() ?? 0; this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this._autoDisableLoopIfInvalid(); },
       resetLoopStart: () => { this.loopStart = 0; this._autoDisableLoopIfInvalid(); },
@@ -454,9 +487,44 @@ class LlamaApp extends LitElement {
       jumpSection:   () => this._openSectionsPicker('jump'),
       jumpLoop:      () => this._openLoopsPicker('jump'),
       jumpMark:      () => this._openMarksPicker('jump'),
-      jumpHistory:   stub('jumpHistory'),
-      jumpBack:      stub('jumpBack'),
-      jumpForward:   stub('jumpForward'),
+      jumpHistory: () => this._jumpHistoryPickerEl?.show(),
+      jumpBack: () => {
+        if (!this.jumps.length) { this._setWarning('No jump history.'); return; }
+        if (this._jumpIdx === -1) {
+          // First jb: save current position, go to most recent entry.
+          this._jumpFromTime = this._vc?.getCurrentTime() ?? 0;
+          this._jumpIdx      = this.jumps.length - 1;
+        } else if (this._jumpIdx > 0) {
+          this._jumpIdx--;
+        } else {
+          this._setWarning('At oldest jump.'); return;
+        }
+        const t = this.jumps[this._jumpIdx];
+        this._suppressJumpPush = true;
+        this._vc?.seekTo(t);
+        this._suppressJumpPush = false;
+        this.statusMsg = `Jump back: ${_fmtTimePlain(t)}`;
+      },
+      jumpForward: () => {
+        if (this._jumpIdx === -1) { this._setWarning('At current position.'); return; }
+        if (this._jumpIdx < this.jumps.length - 1) {
+          this._jumpIdx++;
+          const t = this.jumps[this._jumpIdx];
+          this._suppressJumpPush = true;
+          this._vc?.seekTo(t);
+          this._suppressJumpPush = false;
+          this.statusMsg = `Jump forward: ${_fmtTimePlain(t)}`;
+        } else {
+          // At most recent entry; jump forward to where jb was first invoked.
+          this._jumpIdx = -1;
+          const t = this._jumpFromTime ?? 0;
+          this._jumpFromTime = null;
+          this._suppressJumpPush = true;
+          this._vc?.seekTo(t);
+          this._suppressJumpPush = false;
+          this.statusMsg = 'Returned to current position.';
+        }
+      },
       toggleLoop: () => {
         if (!this.looping && !this._isLoopValid()) {
           this._setWarning('Invalid loop range: start must be before end.');
@@ -649,8 +717,9 @@ class LlamaApp extends LitElement {
     this._jumpTimeModalEl    = this.renderRoot.querySelector('llama-jump-time-modal');
     this._chapterPickerEl    = this.renderRoot.querySelector('llama-chapter-picker');
     this._editChapterModalEl = this.renderRoot.querySelector('llama-edit-chapter-modal');
-    this._videoInfoModalEl   = this.renderRoot.querySelector('llama-video-info-modal');
-    this._fileInputEl        = this.renderRoot.querySelector('#import-file-input');
+    this._videoInfoModalEl    = this.renderRoot.querySelector('llama-video-info-modal');
+    this._jumpHistoryPickerEl = this.renderRoot.querySelector('llama-jump-history-picker');
+    this._fileInputEl         = this.renderRoot.querySelector('#import-file-input');
 
     window.addEventListener('blur',  () => { this.windowFocused = false; });
     window.addEventListener('focus', () => { this.windowFocused = true; });
@@ -963,6 +1032,7 @@ class LlamaApp extends LitElement {
       this._flashLoopViolation();
       return;
     }
+    this._maybePushJump(this._vc?.getCurrentTime() ?? 0, t);
     this._vc?.seekTo(t);
   }
 
@@ -1153,7 +1223,10 @@ class LlamaApp extends LitElement {
     this.loopSourceLabel = loop.name || null;
     this.loopSourceType  = 'loop';
     this.statusMsg       = `Loop loaded: ${loop.name || 'unnamed'}`;
-    if (this.looping) this._vc?.seekTo(loop.start);
+    if (this.looping) {
+      this._maybePushJump(this._vc?.getCurrentTime() ?? 0, loop.start);
+      this._vc?.seekTo(loop.start);
+    }
   }
 
   // Handle ll-activate-loop from timeline zone click: activate named loop as
@@ -1167,6 +1240,7 @@ class LlamaApp extends LitElement {
     this.loopSourceLabel = loop.name || null;
     this.loopSourceType  = 'loop';
     this.statusMsg       = `Loop loaded: ${loop.name || 'unnamed'}`;
+    this._maybePushJump(this._vc?.getCurrentTime() ?? 0, loop.start);
     this._vc?.seekTo(loop.start);
   }
 
@@ -1274,6 +1348,7 @@ class LlamaApp extends LitElement {
     this.loopSourceLabel = chapter.name || null;
     this.loopSourceType  = 'chapter';
     this._autoDisableLoopIfInvalid();
+    this._maybePushJump(this._vc?.getCurrentTime() ?? 0, chapter.start);
     this._vc?.seekTo(chapter.start);
     this.statusMsg = `Chapter: ${chapter.name || `${_fmtTimePlain(chapter.start)} → ${_fmtTimePlain(chapter.end)}`}`;
   }
@@ -1315,6 +1390,11 @@ class LlamaApp extends LitElement {
 
   // Handle ll-jump-time from jump-time-modal.
   _onJumpTime(e) {
+    this._jumpTo(e.detail.time);
+  }
+
+  // Handle ll-jump-history from jump-history-picker.
+  _onJumpHistory(e) {
     this._jumpTo(e.detail.time);
   }
 
@@ -1657,6 +1737,13 @@ class LlamaApp extends LitElement {
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
       ></llama-video-info-modal>
+
+      <llama-jump-history-picker
+        .jumps=${this.jumps}
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+        @ll-jump-history=${this._onJumpHistory}
+      ></llama-jump-history-picker>
 
       <input
         id="import-file-input"

@@ -7,10 +7,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-22. Navigation safety: persist the jump list (video.jumps). Push
-    user-initiated seeks above the threshold. Implement `jb`/`jf`
-    bindings.
-
 23. Options-modal: seek delta, speed delta, and section padding
     settings. Wire `o` binding.
 

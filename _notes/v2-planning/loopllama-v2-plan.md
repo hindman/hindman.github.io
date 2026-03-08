@@ -185,7 +185,7 @@ where to draw the line. No other sharing variants are planned for v2.
   video, a jump-back function returns to the prior position. The jump list is
   persisted per video (stored in video.jumps); see Data Schema.
 - Selective push: Only push on user-initiated seeks (not loop re-entry). Use a
-  threshold (e.g., >5 seconds) to avoid clutter.
+  threshold (e.g., >15 seconds) to avoid clutter.
 - Session persistence: Current playback position is saved per video to
   localStorage (stored in video.time) so the user can resume where they left
   off.
@@ -813,7 +813,7 @@ Video:
       navigation.
     - Persisted across sessions.
     - Stored on the video object.
-    - Jump history max size: 20 entries.
+    - Jump history max size: 40 entries.
 
 - version: version number of current metadata scheme
 
