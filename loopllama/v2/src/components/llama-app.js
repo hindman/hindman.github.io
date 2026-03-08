@@ -846,8 +846,10 @@ class LlamaApp extends LitElement {
     this._setWarning('Outside active loop range.');
   }
 
-  _seek(delta) {
-    let t = (this._vc?.getCurrentTime() ?? 0) + delta;
+  // Clamp to zoom, enforce loop boundaries, then seek. Used by all
+  // user-initiated jumps (seek delta, entity navigation, picker jumps,
+  // timeline clicks, jump-by-time).
+  _jumpTo(t) {
     if (this.zoomSource) {
       t = Math.max(this.zoomSource.start, Math.min(this.zoomSource.end, t));
     }
@@ -857,6 +859,10 @@ class LlamaApp extends LitElement {
       return;
     }
     this._vc?.seekTo(t);
+  }
+
+  _seek(delta) {
+    this._jumpTo((this._vc?.getCurrentTime() ?? 0) + delta);
   }
 
   _onPlayPause() {
@@ -984,7 +990,7 @@ class LlamaApp extends LitElement {
     } else {
       target = times.find(t => t > time + EPS) ?? null;
     }
-    if (target != null) this._vc?.seekTo(target);
+    if (target != null) this._jumpTo(target);
   }
 
   _onEntityTypeChange(e) {
@@ -1052,20 +1058,11 @@ class LlamaApp extends LitElement {
 
   // Handle ll-jump-loop from loop picker (mode='jump').
   _onJumpLoop(e) {
-    this._vc?.seekTo(e.detail.start);
+    this._jumpTo(e.detail.start);
   }
 
   _onSeekTo(e) {
-    let t = e.detail.time;
-    if (this.zoomSource) {
-      t = Math.max(this.zoomSource.start, Math.min(this.zoomSource.end, t));
-    }
-    if (this.looping && this.loopStart < this.loopEnd
-        && (t < this.loopStart || t > this.loopEnd)) {
-      this._flashLoopViolation();
-      return;
-    }
-    this._vc?.seekTo(t);
+    this._jumpTo(e.detail.time);
   }
 
   _onDeleteLoop(e) {
@@ -1095,7 +1092,7 @@ class LlamaApp extends LitElement {
 
   // Handle ll-jump-mark from marks picker (mode='jump').
   _onJumpMark(e) {
-    this._vc?.seekTo(e.detail.time);
+    this._jumpTo(e.detail.time);
   }
 
   // Handle ll-pick-mark-edit from marks picker (mode='edit').
@@ -1198,7 +1195,7 @@ class LlamaApp extends LitElement {
 
   // Handle ll-jump-time from jump-time-modal.
   _onJumpTime(e) {
-    this._vc?.seekTo(e.detail.time);
+    this._jumpTo(e.detail.time);
   }
 
   // Export all app data as a downloadable JSON file.
@@ -1299,7 +1296,7 @@ class LlamaApp extends LitElement {
 
   // Handle ll-jump-section from sections picker (mode='jump').
   _onJumpSection(e) {
-    this._vc?.seekTo(e.detail.time);
+    this._jumpTo(e.detail.time);
   }
 
   // Handle ll-pick-section-edit from sections picker (mode='edit').
@@ -1401,7 +1398,7 @@ class LlamaApp extends LitElement {
           .editScratchDelta=${this.editScratchDelta}
           .activeEntityType=${this.activeEntityType}
           @ll-play-pause=${this._onPlayPause}
-          @ll-seek-to=${(e) => this._vc?.seekTo(e.detail.value)}
+          @ll-seek-to=${(e) => this._jumpTo(e.detail.value)}
           @ll-seek-forward=${this._onSeekForward}
           @ll-seek-back=${this._onSeekBack}
           @ll-seek-delta-change=${(e) => { this.seekDelta = e.detail.value; }}

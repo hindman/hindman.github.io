@@ -558,37 +558,39 @@ v2/
 
 ### TODO
 
-19. UI polish: with the full layout in place (video area, timeline,
-    controls with menus), dial in sizing and proportions -- YouTube
-    frame dimensions, spacing between page regions, visual hierarchy
-    in the controls area, typography, and any remaining rough edges.
+19. Bug fix: looping enforcement: jumps. The app allows you to jump beyond the
+    loop boundaries (jump by time or to specific entities).
 
-20. Header sizzle: add quips; maybe add font color.
-
-21. Video-info modal: build llama-video-info-modal -- a generously
+20. Video-info modal: build llama-video-info-modal -- a generously
     sized, scrollable, formatted display of the current video and all
     its child entities (chapters, sections, loops, marks). Organized by
     entity type; read-only (editing goes through existing modals). Wire
     `vi` key binding. Add "Video info" item to the Video dropdown menu.
 
-22. Undo: snapshot-based undo/redo. Push a video state snapshot before
+21. Undo: snapshot-based undo/redo. Push a video state snapshot before
     each destructive or modifying operation. Implement `u`/`U` bindings.
     Session-only; no persistence needed.
 
-23. Navigation safety: persist the jump list (video.jumps). Push
+22. Navigation safety: persist the jump list (video.jumps). Push
     user-initiated seeks above the threshold. Implement `jb`/`jf`
     bindings.
 
-24. Options-modal: seek delta, speed delta, and section padding
+23. Options-modal: seek delta, speed delta, and section padding
     settings. Wire `o` binding.
+
+24. Delete-data-modal: checkboxes for selective data clearing.
+    Wire `dd` binding.
 
 25. Help-modals: general help (via Menu, `hh`, and `?`) and
     key binding help (via Menu or `hk`).
 
-26. Delete-data-modal: checkboxes for selective data clearing.
-    Wire `dd` binding.
+26. Code refactoring/cleanup: assess; do if needed.
 
-27. Deploy: update `loopllama/index.html` to route to v2. Verify on
+27. UI polish: messages/labels: edit.
+
+28. Header sizzle: add quips; maybe add font color.
+
+29. Deploy: update `loopllama/index.html` to route to v2. Verify on
     GitHub Pages.
 
 ---

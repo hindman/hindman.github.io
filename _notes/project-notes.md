@@ -7,26 +7,30 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-19. UI polish.
+20. Video-info modal: build llama-video-info-modal -- a generously
+    sized, scrollable, formatted display of the current video and all
+    its child entities (chapters, sections, loops, marks). Organized by
+    entity type; read-only (editing goes through existing modals). Wire
+    `vi` key binding. Add "Video info" item to the Video dropdown menu.
 
-    x Loop lanes: switch to 3: current plus 2 for saved loops.
+21. Undo: snapshot-based undo/redo. Push a video state snapshot before
+    each destructive or modifying operation. Implement `u`/`U` bindings.
+    Session-only; no persistence needed.
 
-    - Messages/labels: edit.
+22. Navigation safety: persist the jump list (video.jumps). Push
+    user-initiated seeks above the threshold. Implement `jb`/`jf`
+    bindings.
 
-    - Bug: looping enforcement: jumps. The app allows you to jump beyond the
-      loop boundaries (jump by time or to specific entities).
+23. Options-modal: seek delta, speed delta, and section padding
+    settings. Wire `o` binding.
 
-20. Header sizzle: add quips; maybe add font color.
+24. Delete-data-modal: checkboxes for selective data clearing.
+    Wire `dd` binding.
 
 URLS:
 
     https://www.youtube.com/watch?v=2iFn6ursFaE
     https://www.youtube.com/watch?v=zP4lYpsfL8c
-
-DEFERRED:
-    - Sub-group label positioning (above vs inline): revisit once all controls
-      are on the page and the full layout is visible.
-    - "Now" vs "Set here" language inconsistency.
 
 Posts:
     x RH rudiments #1: alternating bass
