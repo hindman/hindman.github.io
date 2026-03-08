@@ -55,6 +55,13 @@ class LlamaSectionsPicker extends LitElement {
       border-color: var(--ll-accent, #7ec8e3);
       outline: none;
     }
+    .section-row.active {
+      border-color: var(--ll-accent-warm, #e3a857);
+    }
+    .section-row.active.selected {
+      border-color: var(--ll-accent-warm, #e3a857);
+      box-shadow: 0 0 0 1px var(--ll-accent, #7ec8e3);
+    }
     .section-row.mode-delete:hover,
     .section-row.mode-delete.selected {
       border-color: var(--sl-color-danger-600, #c0392b);
@@ -75,18 +82,20 @@ class LlamaSectionsPicker extends LitElement {
   `;
 
   static properties = {
-    sections: { type: Array },
-    mode:     { type: String },
-    _filter:  { state: true },
-    _selIdx:  { state: true },
+    sections:        { type: Array },
+    mode:            { type: String },
+    activeSectionId: { type: String },
+    _filter:         { state: true },
+    _selIdx:         { state: true },
   };
 
   constructor() {
     super();
-    this.sections = [];
-    this.mode     = 'jump';
-    this._filter  = '';
-    this._selIdx  = 0;
+    this.sections        = [];
+    this.mode            = 'jump';
+    this.activeSectionId = null;
+    this._filter         = '';
+    this._selIdx         = 0;
   }
 
   show(mode) {
@@ -187,7 +196,10 @@ class LlamaSectionsPicker extends LitElement {
           ${filtered.length
             ? filtered.map((s, i) => html`
                 <div
-                  class="section-row ${isDelete ? 'mode-delete' : ''} ${i === this._selIdx ? 'selected' : ''}"
+                  class="section-row
+                    ${isDelete ? 'mode-delete' : ''}
+                    ${s.id === this.activeSectionId ? 'active' : ''}
+                    ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(s)}
                 >
                   <div class="section-primary">${s.name || _fmtTime(s.time)}</div>

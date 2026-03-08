@@ -53,7 +53,11 @@ class LlamaChapterPicker extends LitElement {
       outline: none;
     }
     .chapter-row.active-chapter {
-      border-left: 3px solid var(--ll-accent, #7ec8e3);
+      border-color: var(--ll-accent-warm, #e3a857);
+    }
+    .chapter-row.active-chapter.selected {
+      border-color: var(--ll-accent-warm, #e3a857);
+      box-shadow: 0 0 0 1px var(--ll-accent, #7ec8e3);
     }
     .chapter-row.mode-delete:hover,
     .chapter-row.mode-delete.selected {

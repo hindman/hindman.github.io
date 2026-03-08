@@ -8,20 +8,7 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-Issues:
-
-  - Picker UI consistency: the current-selection and currently-active are both
-    highlighted with blue. The distinction is a bit too subtle. Also, the
-    pickers vary in how they do this:
-
-    Current       | Video | Chapter | Section | Loop   | Mark
-    --------------------------------------------------------------
-    Active entity | T BR F | W B  L  | .       | T Y F  | n/a
-    Selection     | T BR F | T BR F  | .       | T BR F | T B F
-
-    T = thin   W = wide
-    BR = blue (red for delete)   Y = yellow 
-    F = full   L = left-edge-only
+  - Add `jc` binding: jump to chapter via picker.
 
   - Help-modals: general help (via Menu, `hh`, and `?`) and key binding help
     (via Menu or `hk`).

@@ -1926,6 +1926,7 @@ class LlamaApp extends LitElement {
 
       <llama-sections-picker
         .sections=${this.sections}
+        .activeSectionId=${nearestSectionLeft(this.sections, this.currentTime)?.id ?? null}
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-jump-section=${this._onJumpSection}

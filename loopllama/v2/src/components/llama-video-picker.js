@@ -43,7 +43,11 @@ class LlamaVideoPicker extends LitElement {
       border-color: var(--ll-accent, #7ec8e3);
     }
     .video-row.current {
-      border-color: var(--ll-accent, #7ec8e3);
+      border-color: var(--ll-accent-warm, #e3a857);
+    }
+    .video-row.current.selected {
+      border-color: var(--ll-accent-warm, #e3a857);
+      box-shadow: 0 0 0 1px var(--ll-accent, #7ec8e3);
     }
     .video-row.selected {
       background: var(--ll-surface-raised, #2a2a2a);
@@ -98,6 +102,7 @@ class LlamaVideoPicker extends LitElement {
   }
 
   _onInitialFocus() {
+    this.renderRoot.querySelector('.video-list')?.scrollTo(0, 0);
     this.renderRoot.querySelector('sl-input')?.focus();
   }
 
@@ -150,10 +155,27 @@ class LlamaVideoPicker extends LitElement {
     this.hide();
   }
 
+  // Sort order: current video first, then named videos alphabetically,
+  // then unnamed videos in original arrival order.
+  _sorted() {
+    const currentId = this.currentVideoId;
+    return [...this.videos].sort((a, b) => {
+      if (a.id === currentId) return -1;
+      if (b.id === currentId) return 1;
+      const aName = a.name;
+      const bName = b.name;
+      if (aName && !bName) return -1;
+      if (!aName && bName) return 1;
+      if (aName && bName) return aName.toLowerCase().localeCompare(bName.toLowerCase());
+      return 0; // both unnamed: preserve arrival order (stable sort)
+    });
+  }
+
   _filtered() {
     const q = this._filter.trim().toLowerCase();
-    if (!q) return this.videos;
-    return this.videos.filter(v =>
+    const sorted = this._sorted();
+    if (!q) return sorted;
+    return sorted.filter(v =>
       (v.name || '').toLowerCase().includes(q) ||
       v.id.toLowerCase().includes(q)
     );
