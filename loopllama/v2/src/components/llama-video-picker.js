@@ -87,7 +87,7 @@ class LlamaVideoPicker extends LitElement {
   }
 
   show(mode) {
-    if (mode) this.mode = mode;
+    this.mode = mode || 'switch';
     this._filter = '';
     this._selIdx = 0;
     this.renderRoot.querySelector('llama-modal')?.show();
