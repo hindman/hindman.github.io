@@ -81,8 +81,8 @@ class LlamaOptionsModal extends LitElement {
     this._nudgeDefault = String(o.loop_nudge_delta_default);
     this._nudgeChoices = o.loop_nudge_delta_choices.join(' ');
     this._speedDelta   = String(Math.round(o.speed_delta * 100));
-    this._padStart     = String(o.section_loop_pad_start);
-    this._padEnd       = String(o.section_loop_pad_end);
+    this._padStart     = String(o.loop_pad_start);
+    this._padEnd       = String(o.loop_pad_end);
     this._error        = '';
     this.renderRoot.querySelector('llama-modal')?.show();
   }
@@ -161,12 +161,12 @@ class LlamaOptionsModal extends LitElement {
 
     const padStart = this._parseNonNeg(this._padStart);
     if (padStart === null) {
-      this._error = 'Section pad start: must be a non-negative number.';
+      this._error = 'Pad start: must be a non-negative number.';
       return;
     }
     const padEnd = this._parseNonNeg(this._padEnd);
     if (padEnd === null) {
-      this._error = 'Section pad end: must be a non-negative number.';
+      this._error = 'Pad end: must be a non-negative number.';
       return;
     }
 
@@ -176,8 +176,8 @@ class LlamaOptionsModal extends LitElement {
       loop_nudge_delta_default: nudgeDefault,
       loop_nudge_delta_choices: nudgeChoices,
       speed_delta:              speedDelta,
-      section_loop_pad_start:   padStart,
-      section_loop_pad_end:     padEnd,
+      loop_pad_start:           padStart,
+      loop_pad_end:             padEnd,
     };
     this.dispatchEvent(new CustomEvent('ll-options-saved', {
       detail: { options },
@@ -256,8 +256,8 @@ class LlamaOptionsModal extends LitElement {
         </div>
 
         <div class="section-heading">
-          Section loop pad
-          <sl-tooltip content="Extra seconds added before and after a section when you loop it.">
+          Loop pad
+          <sl-tooltip content="Extra seconds added before and after a section or chapter when you loop it.">
             <span class="help-icon">ⓘ</span>
           </sl-tooltip>
         </div>

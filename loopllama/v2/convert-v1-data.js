@@ -7,15 +7,15 @@
 
 import { readFileSync, writeFileSync } from 'fs';
 
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 3;
 const DEFAULT_OPTIONS = {
   seek_delta_default:       5,
   seek_delta_choices:       [0.1, 1, 5, 10, 30, 60, 300, 1800],
   loop_nudge_delta_default: 5,
   loop_nudge_delta_choices: [0.1, 1, 5, 10, 30, 60, 300, 1800],
   speed_delta:              0.05,
-  section_loop_pad_start:   2,
-  section_loop_pad_end:     2,
+  loop_pad_start:           2,
+  loop_pad_end:             2,
 };
 
 function makeId() {

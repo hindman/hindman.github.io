@@ -712,8 +712,8 @@ class LlamaApp extends LitElement {
           return;
         }
         const section    = nearestSectionLeft(this.sections, this.currentTime);
-        const padStart   = this._appState?.options.section_loop_pad_start ?? DEFAULT_OPTIONS.section_loop_pad_start;
-        const padEnd     = this._appState?.options.section_loop_pad_end   ?? DEFAULT_OPTIONS.section_loop_pad_end;
+        const padStart   = this._appState?.options.loop_pad_start ?? DEFAULT_OPTIONS.loop_pad_start;
+        const padEnd     = this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end;
         const newStart   = Math.max(0, bounds.start - padStart);
         const newEnd     = bounds.end + padEnd;
         this._clearZoomIfOutside(newStart, newEnd);

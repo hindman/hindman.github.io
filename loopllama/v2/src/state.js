@@ -4,7 +4,7 @@
 // These factories produce plain objects matching the v2 data schema.
 // Mutation functions will be added in later stages as needed.
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 export const JUMP_HISTORY_MAX = 40;   // max persisted jump entries per video
 export const JUMP_THRESHOLD   = 15;   // seconds; smaller moves are not stored
@@ -20,8 +20,8 @@ export const DEFAULT_OPTIONS = {
   loop_nudge_delta_default: 5,
   loop_nudge_delta_choices: [0.1, 1, 5, 10, 30, 60, 300, 1800],
   speed_delta:              0.05,
-  section_loop_pad_start:   2,
-  section_loop_pad_end:     2,
+  loop_pad_start:           2,
+  loop_pad_end:             2,
 };
 
 // Top-level app state (persisted to localStorage as one object).

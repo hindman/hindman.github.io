@@ -10,8 +10,19 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 Issues:
 
-  - Options: loop_pad_start / loop_pad_end (because they apply to both
-    sections and chapters).
+Here's the next item to address. Let's assess it before coding, especially
+the implications for data migration.
+
+  - Options: switch to loop_pad_start/loop_pad_end. Do this because we
+    realized this padding applies to both sections and chapters when they are
+    opened (and loaded into the scratch-loop). Changes needed:
+    - Options modal: change the blue heading from "Section loop pad" to "Loop
+      pad".
+    - Options modal: change the tool tip text: "... section or chapter ..."
+    - Change the option name itself in the code and data model. This is a
+      bigger change, but I sort of favor it because it would give us another
+      shot at exercising our data-migration machinery on my data before
+      we deploy the code officially.
 
   - Picker UI consistency: the current-selection and currently-active are both
     highlighted with blue. The distinction is a bit too subtle. Also, the

@@ -28,6 +28,13 @@ function _migrateAppState(state) {
     for (const video of state.videos ?? []) _migrateVideo(video);
     state.version = 2;
   }
+  if (state.version < 3) {
+    // v2 → v3: rename section_loop_pad_* → loop_pad_* in options.
+    const o = state.options ?? {};
+    if ('section_loop_pad_start' in o) { o.loop_pad_start = o.section_loop_pad_start; delete o.section_loop_pad_start; }
+    if ('section_loop_pad_end'   in o) { o.loop_pad_end   = o.section_loop_pad_end;   delete o.section_loop_pad_end;   }
+    state.version = 3;
+  }
   return state;
 }
 
