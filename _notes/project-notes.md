@@ -7,10 +7,19 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-24. Delete-data-modal: checkboxes for selective data clearing.
-    Wire `dd` binding.
-
 25. Convert my v1 data to v2?
+
+26. Help-modals: general help (via Menu, `hh`, and `?`) and
+    key binding help (via Menu or `hk`).
+
+27. Code refactoring/cleanup: assess; do if needed.
+
+28. UI polish: messages/labels: edit.
+
+29. Header sizzle: add quips; maybe add font color.
+
+30. Deploy: update `loopllama/index.html` to route to v2. Verify on
+    GitHub Pages.
 
 URLS:
 

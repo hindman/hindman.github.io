@@ -33,6 +33,7 @@ import './llama-current.js';
 import './llama-video-info-modal.js';
 import './llama-jump-history-picker.js';
 import './llama-options-modal.js';
+import './llama-delete-data-modal.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
@@ -248,6 +249,7 @@ class LlamaApp extends LitElement {
     this._videoInfoModalEl     = null;
     this._jumpHistoryPickerEl  = null;
     this._optionsModalEl       = null;
+    this._deleteDataModalEl    = null;
     this._fileInputEl          = null;
     this._jumpIdx              = -1;   // -1 = at current/live position
     this._jumpFromTime         = null; // saved position when jb first invoked
@@ -694,7 +696,18 @@ class LlamaApp extends LitElement {
       },
       videoInfo:     () => this._videoInfoModalEl?.show(),
       helpGeneral:   stub('helpGeneral'),
-      deleteData:    stub('deleteData'),
+      deleteData: () => {
+        const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
+        this._deleteDataModalEl?.show({
+          videos:           this._appState?.videos ?? [],
+          currentVideoId:   this.currentVideoId,
+          currentVideoName: video?.name || video?.id || null,
+          sections:         this.sections,
+          namedLoops:       this.namedLoops,
+          marks:            this.marks,
+          chapters:         this.chapters,
+        });
+      },
       exportAll:     () => this._exportAll(),
       importData:    () => this._fileInputEl?.click(),
       inspectData:   stub('inspectData'),
@@ -751,6 +764,7 @@ class LlamaApp extends LitElement {
     this._videoInfoModalEl    = this.renderRoot.querySelector('llama-video-info-modal');
     this._jumpHistoryPickerEl = this.renderRoot.querySelector('llama-jump-history-picker');
     this._optionsModalEl      = this.renderRoot.querySelector('llama-options-modal');
+    this._deleteDataModalEl   = this.renderRoot.querySelector('llama-delete-data-modal');
     this._fileInputEl         = this.renderRoot.querySelector('#import-file-input');
 
     // Sync delta values from persisted options (may differ from compile-time defaults).
@@ -1554,6 +1568,53 @@ class LlamaApp extends LitElement {
     this._saveCurrentState();
   }
 
+  // Handle ll-delete-data from the delete-data-modal.
+  _onDeleteData(e) {
+    const { mode } = e.detail;
+
+    if (mode === 'videos') {
+      const { videoIds } = e.detail;
+      this._appState.videos = this._appState.videos.filter(v => !videoIds.includes(v.id));
+      if (videoIds.includes(this.currentVideoId)) {
+        this._appState.currentVideoId = null;
+        this.currentVideoId      = null;
+        this.sections            = [];
+        this.marks               = [];
+        this.namedLoops          = [];
+        this.chapters            = [];
+        this.loopStart           = 0;
+        this.loopEnd             = 0;
+        this.looping             = false;
+        this.loopSource          = null;
+        this.loopSourceLabel     = null;
+        this.loopSourceType      = null;
+        this.duration            = null;
+      }
+      this.videos = [...this._appState.videos];
+      save(this._appState);
+      const n = videoIds.length;
+      this.statusMsg = `Deleted ${n} video${n !== 1 ? 's' : ''}.`;
+
+    } else {
+      // mode === 'current'
+      const { sections, loops, marks, chapters } = e.detail;
+      this._pushUndoSnapshot('Data deleted');
+      this.sections   = this.sections.filter(s => !sections.includes(s.id));
+      this.namedLoops = this.namedLoops.filter(l => !loops.includes(l.id));
+      this.marks      = this.marks.filter(m => !marks.includes(m.id));
+      this.chapters   = this.chapters.filter(c => !chapters.includes(c.id));
+      // Clear stale loop source if the named loop it pointed to was removed.
+      if (this.loopSource && !this.namedLoops.find(l => l.id === this.loopSource)) {
+        this.loopSource      = null;
+        this.loopSourceLabel = null;
+        this.loopSourceType  = null;
+      }
+      this._saveCurrentState();
+      const total = sections.length + loops.length + marks.length + chapters.length;
+      this.statusMsg = `Deleted ${total} item${total !== 1 ? 's' : ''}.`;
+    }
+  }
+
   // Handle ll-menu-select from llama-controls menus.
   // Dispatches to the same handlers used by keyboard bindings.
   _onMenuSelect(e) {
@@ -1795,6 +1856,12 @@ class LlamaApp extends LitElement {
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-options-saved=${this._onOptionsSaved}
       ></llama-options-modal>
+
+      <llama-delete-data-modal
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+        @ll-delete-data=${this._onDeleteData}
+      ></llama-delete-data-modal>
 
       <llama-whichkey
         .prefix=${this.wkPrefix}

@@ -556,8 +556,6 @@ v2/
     edit; edit via keyboard or menus. Verify chapter zoom (Stage 13d)
     correctly scopes all three zones to chapter.start/end when active.
 
-### TODO
-
 19. Bug fix: looping enforcement: jumps. The app allows you to jump beyond the
     loop boundaries (jump by time or to specific entities).
 
@@ -580,6 +578,8 @@ v2/
 
 24. Delete-data-modal: checkboxes for selective data clearing.
     Wire `dd` binding.
+
+### TODO
 
 25. Convert my v1 data to v2?
 
@@ -1143,19 +1143,35 @@ Options-modal:
             - end
 
 Delete-data-modal:
-    - Modal with checkboxes to select subsets of the data to clear.
-        - current entities:
-            - video
-            - section
-            - loop
-            - mark
-        - individual entities:
-            - videos
-            - sections
-            - loops
-            - marks
-        - maybe uber-checkboxes for "all" variants of the entities
-        - all data
+
+    Modal title: Delete video data
+
+    Toggle switch:
+        - Videos: current/all
+
+    If "current" the form has a basic hierarchy of child entities:
+
+        [] All sections
+            [] Section 1
+            [] Section 2
+            ...
+
+        [] All loops
+            [] Loop 1
+            [] Loop 2
+            ...
+
+        [] All marks
+            [] Mark 1
+            [] Mark 2
+            ...
+
+    If "all" the form has a hierarchy of only videos:
+
+        [] All videos
+            [] Video 1
+            [] Video 2
+            ...
 
 Modal, mode, and picker exit keys:
     <Esc>   | Exit and take no action
