@@ -7,12 +7,6 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
-20. Video-info modal: build llama-video-info-modal -- a generously
-    sized, scrollable, formatted display of the current video and all
-    its child entities (chapters, sections, loops, marks). Organized by
-    entity type; read-only (editing goes through existing modals). Wire
-    `vi` key binding. Add "Video info" item to the Video dropdown menu.
-
 21. Undo: snapshot-based undo/redo. Push a video state snapshot before
     each destructive or modifying operation. Implement `u`/`U` bindings.
     Session-only; no persistence needed.

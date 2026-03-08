@@ -29,6 +29,7 @@ import './llama-jump-time-modal.js';
 import './llama-chapter-picker.js';
 import './llama-edit-chapter-modal.js';
 import './llama-current.js';
+import './llama-video-info-modal.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
@@ -225,6 +226,7 @@ class LlamaApp extends LitElement {
     this._jumpTimeModalEl    = null;
     this._chapterPickerEl      = null;
     this._editChapterModalEl   = null;
+    this._videoInfoModalEl     = null;
     this._fileInputEl          = null;
     this.seekDelta        = DEFAULT_OPTIONS.seek_delta_default;
     this.speedDelta       = DEFAULT_OPTIONS.speed_delta;
@@ -490,6 +492,7 @@ class LlamaApp extends LitElement {
         this.statusMsg  = 'Chapter zoom on.';
         this._seekIntoZoomIfNeeded();
       },
+      videoInfo:     () => this._videoInfoModalEl?.show(),
       helpGeneral:   stub('helpGeneral'),
       deleteData:    stub('deleteData'),
       exportAll:     () => this._exportAll(),
@@ -545,6 +548,7 @@ class LlamaApp extends LitElement {
     this._jumpTimeModalEl    = this.renderRoot.querySelector('llama-jump-time-modal');
     this._chapterPickerEl    = this.renderRoot.querySelector('llama-chapter-picker');
     this._editChapterModalEl = this.renderRoot.querySelector('llama-edit-chapter-modal');
+    this._videoInfoModalEl   = this.renderRoot.querySelector('llama-video-info-modal');
     this._fileInputEl        = this.renderRoot.querySelector('#import-file-input');
 
     window.addEventListener('blur',  () => { this.windowFocused = false; });
@@ -1519,6 +1523,17 @@ class LlamaApp extends LitElement {
         @ll-create-chapter=${this._onCreateChapter}
         @ll-update-chapter=${this._onUpdateChapter}
       ></llama-edit-chapter-modal>
+
+      <llama-video-info-modal
+        .video=${currentVideo}
+        .chapters=${this.chapters}
+        .sections=${this.sections}
+        .namedLoops=${this.namedLoops}
+        .marks=${this.marks}
+        .duration=${this.duration}
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+      ></llama-video-info-modal>
 
       <input
         id="import-file-input"

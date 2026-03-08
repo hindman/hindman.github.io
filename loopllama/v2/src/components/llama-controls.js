@@ -45,6 +45,7 @@ const MENUS = [
       { label: 'Load URL',     action: 'videoUrl'    },
       { label: 'Open video',   action: 'videoPicker' },
       { label: 'Edit current', action: 'editVideo'   },
+      { label: 'Video info',   action: 'videoInfo'   },
       { label: 'Delete video', action: 'deleteVideo', disabled: true },
       { type: 'divider' },
       { label: 'Create chapter',       action: 'setChapter'    },

@@ -62,6 +62,7 @@ export const BINDINGS = {
     'u': { handler: 'videoUrl',     desc: 'Switch to YouTube video via URL' },
     'v': { handler: 'videoPicker',  desc: 'Switch to video' },
     'e': { handler: 'editVideo',    desc: 'Edit video attributes' },
+    'i': { handler: 'videoInfo',    desc: 'Video info' },
     'd': { handler: 'deleteVideo',  desc: 'Delete current video' },
   }},
 
