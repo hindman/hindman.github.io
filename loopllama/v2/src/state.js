@@ -142,8 +142,11 @@ export function nearestMarkLeft(marks, time) {
 }
 
 // Add a section divider at the given time (sorted by start).
-// Returns the new section.
+// Rejects if the time falls inside a fixed section (one with an explicit end).
+// Returns the new section, or null if rejected.
 export function addSection(sections, time, name = '') {
+  const containing = nearestSectionLeft(sections, time);
+  if (containing && containing.end != null && time <= containing.end) return null;
   const section = createSection(time, name);
   sections.push(section);
   sections.sort((a, b) => a.start - b.start);
@@ -232,4 +235,69 @@ export function getSectionBounds(sections, time, videoDuration) {
   if (left.end != null && time > left.end) return null;
 
   return { start: left.start, end: sectionEnd };
+}
+
+// Find the chapter divider with the largest start at or before the given time.
+// Returns the chapter or null. Assumes chapters are sorted by start.
+export function nearestChapterLeft(chapters, time) {
+  let result = null;
+  for (const c of chapters) {
+    if (c.start <= time) result = c;
+    else break;
+  }
+  return result;
+}
+
+// Get the effective start/end bounds of the chapter containing the given time.
+// Same divider logic as getSectionBounds.
+export function getChapterBounds(chapters, time, videoDuration) {
+  if (!chapters.length) return null;
+
+  let left  = null;
+  let right = null;
+  for (const c of chapters) {
+    if (c.start <= time) left = c;
+    else { right = c; break; }
+  }
+
+  if (!left) return null;   // before first divider
+
+  const derivedEnd  = right ? right.start : (videoDuration ?? null);
+  const chapterEnd  = (left.end != null) ? left.end : derivedEnd;
+
+  if (left.end != null && time > left.end) return null;
+
+  return { start: left.start, end: chapterEnd };
+}
+
+// Set a section's end to its derived end (next section's start, or videoDuration).
+// Returns true if found and updated, false if not found.
+export function fixSectionEnd(sections, id, videoDuration) {
+  const idx = sections.findIndex(s => s.id === id);
+  if (idx === -1) return false;
+  const next = sections[idx + 1];
+  sections[idx].end = next ? next.start : (videoDuration ?? null);
+  return true;
+}
+
+// Set a chapter's end to its derived end (next chapter's start, or videoDuration).
+// Returns true if found and updated, false if not found.
+export function fixChapterEnd(chapters, id, videoDuration) {
+  const idx = chapters.findIndex(c => c.id === id);
+  if (idx === -1) return false;
+  const next = chapters[idx + 1];
+  chapters[idx].end = next ? next.start : (videoDuration ?? null);
+  return true;
+}
+
+// Add a chapter divider at the given time (sorted by start).
+// Rejects if the time falls inside a fixed chapter (one with an explicit end).
+// Returns the new chapter, or null if rejected.
+export function addChapterDivider(chapters, time, name = '') {
+  const containing = nearestChapterLeft(chapters, time);
+  if (containing && containing.end != null && time <= containing.end) return null;
+  const chapter = createChapter(name, time, null);
+  chapters.push(chapter);
+  chapters.sort((a, b) => a.start - b.start);
+  return chapter;
 }
