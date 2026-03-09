@@ -1973,6 +1973,8 @@ class LlamaApp extends LitElement {
               .currentTime=${this.currentTime}
               .duration=${this.duration}
               .sections=${this.sections}
+              .chapters=${this.chapters}
+              .zone2Mode=${this.zone2Mode}
               .marks=${this.marks}
               .namedLoops=${this.namedLoops}
               .loopStart=${this.loopStart}

@@ -2,7 +2,7 @@
 //
 // Zones (top to bottom):
 //   Play zone    (24px) -- thick track + dot playhead; click to seek.
-//   Section zone (18px) -- section regions; click = seek to section start.
+//   Zone 2       (18px) -- sections or chapters (controlled by zone2Mode prop).
 //   Mark zone    (12px) -- mark dots (yellow circles); click = seek to mark time.
 //   Loop zone    (18px) -- loop bars; named: click = activate + seek; scratch: seek.
 //
@@ -10,7 +10,9 @@
 //   videoId:     String   -- current video ID, or null if none loaded
 //   currentTime: Number   -- current playback position (seconds)
 //   duration:    Number   -- total video duration (seconds), or null
-//   sections:    Array    -- Section objects { id, time, name, end? }
+//   sections:    Array    -- Section objects { id, start, name, end? }
+//   chapters:    Array    -- Chapter objects { id, start, name, end? }
+//   zone2Mode:   String   -- 'sections' (default) | 'chapters'
 //   marks:       Array    -- Mark objects { id, time, name }
 //   namedLoops:  Array    -- Loop objects { id, start, end, name }
 //   loopStart:   Number   -- scratch-loop start (seconds)
@@ -19,7 +21,7 @@
 //   scopeEnd:    Number   -- visible range end (seconds); null = duration
 //
 // Fires (bubbles + composed):
-//   ll-seek-to       -- play zone, section, mark, or scratch-loop click; detail.time
+//   ll-seek-to       -- play zone, zone-2 region, mark, or scratch-loop click; detail.time
 //   ll-activate-loop -- named loop bar click; detail.id = loop id
 
 import { LitElement, html, css } from 'lit';
@@ -211,6 +213,8 @@ class LlamaTimeline extends LitElement {
     currentTime: { type: Number },
     duration:    { type: Number },
     sections:    { type: Array },
+    chapters:    { type: Array },
+    zone2Mode:   { type: String },
     marks:       { type: Array },
     namedLoops:  { type: Array },
     loopStart:   { type: Number },
@@ -227,6 +231,8 @@ class LlamaTimeline extends LitElement {
     this.currentTime = 0;
     this.duration    = null;
     this.sections    = [];
+    this.chapters    = [];
+    this.zone2Mode   = 'sections';
     this.marks       = [];
     this.namedLoops  = [];
     this.loopStart   = 0;
@@ -268,11 +274,11 @@ class LlamaTimeline extends LitElement {
     return `${m}:${s}`;
   }
 
-  // Build displayable region objects from the sorted sections array.
-  // Used in Stage 18b; kept here to avoid churn.
-  _computeRegions() {
-    return this.sections.map((s, i) => {
-      const next = this.sections[i + 1];
+  // Build displayable region objects from a sorted divider-based entity array
+  // (sections or chapters — same shape: { start, end?, name }).
+  _computeRegions(entities) {
+    return entities.map((s, i) => {
+      const next = entities[i + 1];
       const end  = s.end != null ? s.end : (next ? next.start : this.duration);
       return {
         start:     s.start,
@@ -283,12 +289,13 @@ class LlamaTimeline extends LitElement {
     });
   }
 
-  // Returns Lit template for section region divs.
-  // Hides the label entirely if the section is too narrow to fit it
+  // Returns Lit template for zone-2 region divs (sections or chapters).
+  // Hides the label entirely if the region is too narrow to fit it
   // (avoids truncation/ellipsis). Heuristic: ~7px per character + 8px padding.
   _renderSections() {
-    if (!this.sections?.length) return '';
-    const regions = this._computeRegions();
+    const entities = this.zone2Mode === 'chapters' ? this.chapters : this.sections;
+    if (!entities?.length) return '';
+    const regions = this._computeRegions(entities);
     return regions.map((r, i) => {
       const leftPct  = this._pct(r.start);
       const endPct   = r.end != null ? this._pct(r.end) : 100;

@@ -1,20 +1,13 @@
 
 ## CURRENT SESSION
 
-Let's implement section-chapter overhaul Stage 1.
-
-The plan and relevant sections:
+The plan:
   _notes/v2-planning/loopllama-v2-plan.md
-  ## Section-chapter overhaul
-  ### Section-chapter overhaul: implementation stages
-
-Stage 1:
 
 ## TODO
 
 Section/chapter overhaul:
-
-    git commit -am v2-section-chapter-overhaul-stage-1
+  - test/check
 
 Code refactoring/cleanup: assess; do if needed.
 
