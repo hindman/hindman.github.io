@@ -2263,3 +2263,68 @@ Notes:
 - Speed-related actions (speed up/down/reset) are probably not worth
   messaging; the Speed input already reflects the new value immediately.
 
+## Section-chapter overhaul
+
+Problems:
+  - Chapters are not shown on the timline.
+  - But we don't have spare vertical real estate to make the timeline thicker.
+  - Sections have some edge case bugs: for example, overlapping sections can
+    be created under some scenarios.
+  - Sections and chapters are conceptually similar and should behave in
+    parallel ways, but they don't.
+
+A consistent model for sections/chapters:
+  - Sections/chapters are exclusive:
+    - They cannot overlap their own kind.
+
+  - Sections/chapters need not be exhaustive:
+    - They need not have ends, but they can.
+    - If a user never sets ends, the sections/chapters will exhaust all of the
+      video starting from the first section/chapter.
+    - But the user can create non-section/non-chapter regions by setting end
+      points explicitly.
+
+  - Users should be able to create section/chapter boundaries quickly (`ss`
+    and `cc`) without having to declare endpoints, names, etc.
+
+  - Existing sections/chapters are "splittable" only if their end is not set.
+    - A section with an explit end is "fixed" in the terminology here.
+
+  - Users have two ways to set section/chapter end points:
+    - Quickly via new key bindings: `sf` and `cf` (`f` for "fix").
+      - Code sets the end of the current entity based on the end derived from
+        the next-entity's start.
+    - Manual fine tuning:
+      - Open the section/chapter into the scratch-loop.
+      - Edit the loop end points.
+      - Save-back to source.
+
+  - Sections/chapters generally behave the same way.
+    - There might be exceptions to this, but I don't know what they are.
+    - So the scenario below would work the same way for chapters.
+
+  - Sections/chapters are viewable in the timeline, in zone 2.
+    - Sections are shown by default in that zone.
+    - The user can toggle the display via a new binding `tt`.
+
+  - A scenario to illustrate some of the principles:
+    - Notation used:
+      - Sections: S1, S2, etc
+      - Current time: t
+      - Key binding: `xx`
+      - Undefined: _
+    - Video duration = 100.
+    - Divide video into 4 sections:
+      - t=0  `ss` => new section: S1(start=0, end=_)
+      - t=25 `ss` => new section: S2(start=25, end=_)  # S1 was splittable
+      - t=50 `ss` => new section: S3(start=50, end=_)
+      - t=75 `ss` => new section: S4(start=75, end=_)
+    - Fix their end points:
+      - User visits S1 through S4, running `sf` for each.
+        - S1(start=0,  end=25)
+        - S2(start=25, end=50)
+        - S3(start=50, end=75)
+        - S4(start=75, end=100)
+    - User tries to create a new section:
+      - t=30 `ss` => invalid: cannot split S2
+

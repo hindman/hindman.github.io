@@ -8,6 +8,9 @@ The plan: _notes/v2-planning/loopllama-v2-plan.md. Speak up if things are unclea
 
 ## TODO
 
+Section/chapter overhaul:
+    - Update notes based on recent CC chat.
+
 Code refactoring/cleanup: assess; do if needed.
 
 Help-text: draft.
