@@ -2024,6 +2024,8 @@ class LlamaApp extends LitElement {
           .loopName=${loopName}
           .loopSourceLabel=${this.loopSourceLabel}
           .loopSourceType=${this.loopSourceType}
+          .loopSourceStart=${this.loopSourceStart}
+          .loopSourceEnd=${this.loopSourceEnd}
           .duration=${this.duration}
           .zoomLabel=${zoomLabel}
         ></llama-current>

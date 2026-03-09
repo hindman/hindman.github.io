@@ -2,6 +2,14 @@
 //
 // Displays top-level state: video name, active chapter, current
 // section, active loop name, and loop source.
+//
+// Props:
+//   videoName, videoId, chapterName, sectionName, loopName  -- strings
+//   loopSourceLabel   -- e.g. "Verse A"
+//   loopSourceType    -- 'loop' | 'section' | 'chapter' | null
+//   loopSourceStart   -- unpadded start of source entity (seconds) | null
+//   loopSourceEnd     -- unpadded end of source entity (seconds) | null
+//   duration, zoomLabel
 
 import { LitElement, html, css } from 'lit';
 
@@ -70,6 +78,8 @@ class LlamaCurrent extends LitElement {
     loopName:          { type: String },
     loopSourceLabel:   { type: String },
     loopSourceType:    { type: String },
+    loopSourceStart:   { type: Number },
+    loopSourceEnd:     { type: Number },
     duration:          { type: Number },
     zoomLabel:         { type: String },
   };
@@ -83,6 +93,8 @@ class LlamaCurrent extends LitElement {
     this.loopName          = null;
     this.loopSourceLabel   = null;
     this.loopSourceType    = null;
+    this.loopSourceStart   = null;
+    this.loopSourceEnd     = null;
     this.duration          = null;
     this.zoomLabel         = null;
   }
@@ -108,6 +120,13 @@ class LlamaCurrent extends LitElement {
       ? this.loopSourceType[0].toUpperCase() + this.loopSourceType.slice(1)
       : null;
 
+    // For section/chapter sources, append the unpadded bounds to the label.
+    const showBounds = (this.loopSourceType === 'section' || this.loopSourceType === 'chapter')
+      && this.loopSourceStart != null && this.loopSourceEnd != null;
+    const sourceValue = showBounds
+      ? `${this.loopSourceLabel || '—'}  [${this._fmtDuration(this.loopSourceStart)} – ${this._fmtDuration(this.loopSourceEnd)}]`
+      : this.loopSourceLabel;
+
     return html`
       <div class="current-panel">
         <div class="panel-title">Current</div>
@@ -117,7 +136,7 @@ class LlamaCurrent extends LitElement {
           ${this._row('Chapter',     this.chapterName)}
           ${this._row('Section',     this.sectionName)}
           ${this._row('Loop',        this.loopName)}
-          ${this._row('Source',      this.loopSourceLabel)}
+          ${this._row('Source',      sourceValue)}
           ${this._row('Source type', sourceTypeDisplay)}
           ${this._row('Duration',    this.duration != null ? this._fmtDuration(this.duration) : null)}
           ${this.zoomLabel ? html`
