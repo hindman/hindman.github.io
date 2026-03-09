@@ -12,7 +12,7 @@ import {
   fixSectionEnd,
   addLoop, deleteLoopById,
   addChapter, deleteChapterById, updateChapter,
-  addChapterDivider, nearestChapterLeft, fixChapterEnd,
+  addChapterDivider, nearestChapterLeft, getChapterBounds, fixChapterEnd,
   nudgeLoopStart, nudgeLoopEnd,
 } from '../state.js';
 import { load, save, exportAll, exportVideo, importData as mergeImport } from '../storage.js';
@@ -210,6 +210,8 @@ class LlamaApp extends LitElement {
     loopNudgeDelta:     { type: Number },
     seekDelta:          { type: Number },
     zone2Mode:          { type: String },
+    loopSourceStart:    { type: Number },
+    loopSourceEnd:      { type: Number },
   };
 
   constructor() {
@@ -244,6 +246,8 @@ class LlamaApp extends LitElement {
     this.warningMsg          = null;
     this.errorMsg            = null;
     this.zone2Mode           = 'sections';
+    this.loopSourceStart     = null;
+    this.loopSourceEnd       = null;
     this._warnTimeout        = null;
     this._statusTimeout      = null;
     this._errorTimeout       = null;
@@ -311,6 +315,8 @@ class LlamaApp extends LitElement {
     this.loopSource      = null;
     this.loopSourceLabel = null;
     this.loopSourceType  = null;
+    this.loopSourceStart = null;
+    this.loopSourceEnd   = null;
     this.speed           = video.speed ?? 1.0;
     this._vc?.setPlaybackRate(this.speed);
     this.zoomSource = null;
@@ -467,6 +473,8 @@ class LlamaApp extends LitElement {
         this.loopSource      = null;
         this.loopSourceLabel = null;
         this.loopSourceType  = null;
+        this.loopSourceStart = null;
+        this.loopSourceEnd   = null;
         this.duration        = null;
       }
     } else if (restoredVideo) {
@@ -476,10 +484,12 @@ class LlamaApp extends LitElement {
       this.namedLoops = (restoredVideo.loops ?? []).filter(l => !l.is_scratch);
       this.chapters   = [...(restoredVideo.chapters ?? [])];
       // Clear stale loop source if the named loop it pointed to was removed.
-      if (this.loopSource && !this.namedLoops.find(l => l.id === this.loopSource)) {
+      if (this.loopSource && this.loopSourceType === 'loop' && !this.namedLoops.find(l => l.id === this.loopSource)) {
         this.loopSource      = null;
         this.loopSourceLabel = null;
         this.loopSourceType  = null;
+        this.loopSourceStart = null;
+        this.loopSourceEnd   = null;
       }
     }
 
@@ -547,8 +557,8 @@ class LlamaApp extends LitElement {
         this._vc?.seekTo(target);
         this._flash('time');
       },
-      setLoopStart:  () => { if (noVideo()) return; this.loopStart = this._vc?.getCurrentTime() ?? 0; this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this._autoDisableLoopIfInvalid(); this._flash('loopStart'); },
-      setLoopEnd:    () => { if (noVideo()) return; this.loopEnd   = this._vc?.getCurrentTime() ?? 0; this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this._autoDisableLoopIfInvalid(); this._flash('loopEnd'); },
+      setLoopStart:  () => { if (noVideo()) return; this.loopStart = this._vc?.getCurrentTime() ?? 0; this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this.loopSourceStart = null; this.loopSourceEnd = null; this._autoDisableLoopIfInvalid(); this._flash('loopStart'); },
+      setLoopEnd:    () => { if (noVideo()) return; this.loopEnd   = this._vc?.getCurrentTime() ?? 0; this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this.loopSourceStart = null; this.loopSourceEnd = null; this._autoDisableLoopIfInvalid(); this._flash('loopEnd'); },
       resetLoopStart: () => { if (noVideo()) return; this.loopStart = 0; this._autoDisableLoopIfInvalid(); this._flash('loopStart'); },
       resetLoopEnd:   () => { if (noVideo()) return; this.loopEnd = this.duration ?? 0; this._autoDisableLoopIfInvalid(); this._flash('loopEnd'); },
       nudgeStartDown: () => {
@@ -731,9 +741,11 @@ class LlamaApp extends LitElement {
         this.loopStart       = newStart;
         this.loopEnd         = newEnd;
         this.looping         = true;
-        this.loopSource      = null;
+        this.loopSource      = section?.id ?? null;
         this.loopSourceLabel = section?.name || null;
         this.loopSourceType  = 'section';
+        this.loopSourceStart = bounds.start;
+        this.loopSourceEnd   = bounds.end;
         this.statusMsg       = 'Looping section.';
       },
       deleteSection: () => this._openSectionsPicker('delete'),
@@ -1193,6 +1205,8 @@ class LlamaApp extends LitElement {
       this.loopSource      = null;
       this.loopSourceLabel = null;
       this.loopSourceType  = null;
+      this.loopSourceStart = null;
+      this.loopSourceEnd   = null;
       this.duration        = null;
       this.statusMsg       = 'Video deleted.';
     }
@@ -1313,6 +1327,8 @@ class LlamaApp extends LitElement {
     this.loopSource      = null;
     this.loopSourceLabel = null;
     this.loopSourceType  = null;
+    this.loopSourceStart = null;
+    this.loopSourceEnd   = null;
     this._autoDisableLoopIfInvalid();
   }
 
@@ -1322,6 +1338,8 @@ class LlamaApp extends LitElement {
     this.loopSource      = null;
     this.loopSourceLabel = null;
     this.loopSourceType  = null;
+    this.loopSourceStart = null;
+    this.loopSourceEnd   = null;
     this._autoDisableLoopIfInvalid();
   }
 
@@ -1478,7 +1496,7 @@ class LlamaApp extends LitElement {
     this._pushUndoSnapshot('Loop deleted');
     deleteLoopById(this.namedLoops, e.detail.id);
     this.namedLoops = [...this.namedLoops];
-    if (this.loopSource === e.detail.id) { this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; }
+    if (this.loopSource === e.detail.id) { this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this.loopSourceStart = null; this.loopSourceEnd = null; }
     this.statusMsg = 'Loop deleted';
     this._saveCurrentState();
   }
@@ -1567,17 +1585,28 @@ class LlamaApp extends LitElement {
   _onOpenChapter(e) {
     const chapter = this.chapters.find(c => c.id === e.detail.id);
     if (!chapter) return;
-    this._clearZoomIfOutside(chapter.start, chapter.end);
+    const bounds = getChapterBounds(this.chapters, chapter.start, this.duration);
+    if (!bounds || bounds.end == null) {
+      this._setWarning('Chapter has no end boundary.');
+      return;
+    }
+    const padStart = this._appState?.options.loop_pad_start ?? DEFAULT_OPTIONS.loop_pad_start;
+    const padEnd   = this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end;
+    const newStart = Math.max(0, bounds.start - padStart);
+    const newEnd   = bounds.end + padEnd;
+    this._clearZoomIfOutside(newStart, newEnd);
     this.activeChapterId = chapter.id;
-    this.loopStart       = chapter.start;
-    this.loopEnd         = chapter.end;
-    this.loopSource      = null;
+    this.loopStart       = newStart;
+    this.loopEnd         = newEnd;
+    this.loopSource      = chapter.id;
     this.loopSourceLabel = chapter.name || null;
     this.loopSourceType  = 'chapter';
+    this.loopSourceStart = bounds.start;
+    this.loopSourceEnd   = bounds.end;
     this._autoDisableLoopIfInvalid();
-    this._maybePushJump(this._vc?.getCurrentTime() ?? 0, chapter.start);
-    this._vc?.seekTo(chapter.start);
-    this.statusMsg = `Chapter: ${chapter.name || `${_fmtTimePlain(chapter.start)} → ${_fmtTimePlain(chapter.end)}`}`;
+    this._maybePushJump(this._vc?.getCurrentTime() ?? 0, bounds.start);
+    this._vc?.seekTo(bounds.start);
+    this.statusMsg = `Chapter: ${chapter.name || `${_fmtTimePlain(bounds.start)} → ${_fmtTimePlain(bounds.end)}`}`;
   }
 
   // Handle ll-open-section from sections picker (mode='open').
@@ -1590,12 +1619,18 @@ class LlamaApp extends LitElement {
       this._setWarning('Section has no end boundary.');
       return;
     }
-    this._clearZoomIfOutside(bounds.start, bounds.end);
-    this.loopStart       = bounds.start;
-    this.loopEnd         = bounds.end;
-    this.loopSource      = null;
+    const padStart = this._appState?.options.loop_pad_start ?? DEFAULT_OPTIONS.loop_pad_start;
+    const padEnd   = this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end;
+    const newStart = Math.max(0, bounds.start - padStart);
+    const newEnd   = bounds.end + padEnd;
+    this._clearZoomIfOutside(newStart, newEnd);
+    this.loopStart       = newStart;
+    this.loopEnd         = newEnd;
+    this.loopSource      = section.id;
     this.loopSourceLabel = section.name || null;
     this.loopSourceType  = 'section';
+    this.loopSourceStart = bounds.start;
+    this.loopSourceEnd   = bounds.end;
     this._autoDisableLoopIfInvalid();
     this._maybePushJump(this._vc?.getCurrentTime() ?? 0, bounds.start);
     this._vc?.seekTo(bounds.start);
@@ -1790,6 +1825,8 @@ class LlamaApp extends LitElement {
         this.loopSource          = null;
         this.loopSourceLabel     = null;
         this.loopSourceType      = null;
+        this.loopSourceStart     = null;
+        this.loopSourceEnd       = null;
         this.duration            = null;
       }
       this.videos = [...this._appState.videos];
@@ -1806,10 +1843,12 @@ class LlamaApp extends LitElement {
       this.marks      = this.marks.filter(m => !marks.includes(m.id));
       this.chapters   = this.chapters.filter(c => !chapters.includes(c.id));
       // Clear stale loop source if the named loop it pointed to was removed.
-      if (this.loopSource && !this.namedLoops.find(l => l.id === this.loopSource)) {
+      if (this.loopSource && this.loopSourceType === 'loop' && !this.namedLoops.find(l => l.id === this.loopSource)) {
         this.loopSource      = null;
         this.loopSourceLabel = null;
         this.loopSourceType  = null;
+        this.loopSourceStart = null;
+        this.loopSourceEnd   = null;
       }
       this._saveCurrentState();
       const total = sections.length + loops.length + marks.length + chapters.length;
