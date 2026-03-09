@@ -1,5 +1,4 @@
 
-
 ## CURRENT SESSION
 
 Current stage to implement:

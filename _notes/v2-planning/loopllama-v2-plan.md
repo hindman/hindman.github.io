@@ -2274,6 +2274,7 @@ Problems:
     parallel ways, but they don't.
 
 A consistent model for sections/chapters:
+
   - Sections/chapters are exclusive:
     - They cannot overlap their own kind.
 
@@ -2288,24 +2289,95 @@ A consistent model for sections/chapters:
     and `cc`) without having to declare endpoints, names, etc.
 
   - Existing sections/chapters are "splittable" only if their end is not set.
-    - A section with an explit end is "fixed" in the terminology here.
+    - A section with an explicit end is "fixed" in the terminology here.
+    - The splitting rule:
+        - Situation: a user tries to create a new section/chapter (`ss`/`cc`)
+          inside the bounds of an existing section/chapter.
+        - Existing section/chapter has an undefined end:
+            - The split is allowed:
+                - The new section/chapter is created.
+                - That new start point causes the existing section/chapter to
+                  have a new implicit end.
+        - Existing section/chapter has a defined end:
+            - The split is not allowed.
+            - The new entity is not created.
+            - The current entity's implicit end is unchanged.
 
   - Users have two ways to set section/chapter end points:
+
     - Quickly via new key bindings: `sf` and `cf` (`f` for "fix").
       - Code sets the end of the current entity based on the end derived from
-        the next-entity's start.
+        the next-entity's start (or from the video end if there is no
+        next-entity).
+      - If video end needed for an sf/cf but unknown (an extremely unusual
+        situation), then the operation fails with a red-error message in the
+        footer.
+
     - Manual fine tuning:
       - Open the section/chapter into the scratch-loop.
       - Edit the loop end points.
       - Save-back to source.
 
+  - Section/chapter edits can affect neighbors:
+    - Because they cannot overlap, editing the start/end of self necessarily
+      affects the end/start of any abutting neighbor.
+
+    - More precisely:
+      - Self and neighbor were abutting prior to editing:
+        - In this case, editing self directly affects the neighbor in a
+          one-to-one fashion: eg, if self.start decreases by N, then
+          neighbor.end must also decrease by N.
+      - Self and nearest-neighbor were not abutting prior to editing:
+        - This situation means there is a gap -- a non-section/non-chapter
+          region.
+        - If the edit to self simply enlarges the gap, the edit has zero
+          effect on neighbor.
+        - If the edit to self reduces the gap, the algorithm is implied by the
+          logic above:
+          - First the gaps shrinks until the self and neighbor are abuting.
+          - But if more change is needed to effectuate the edit, the rest of
+            the needed change is applied to both in the same one-to-one
+            fashion.
+          - Example scenario:
+            - The edit requires self.start to decrease by 10.
+            - The gap is 6.
+            - The result:
+              - new gap = 0
+              - self.start = old self.start - 10
+              - neighbor.end = old neighbor.end - 4
+
+  - Sections/chapters can be first-class loop sources:
+
+    - They can be loaded into the start/end of the scratch-loop.
+      - Padding is applied, so the values displayed in the loop start/end text
+        box are padded values, not literal section/chapter boundaries.
+      - The source's true start/end values are displayed in the Current area,
+        along with the other loop source info shown there.
+      - In addition, the start/end text boxes values are color coded:
+        - Normal style: when the playhead is inside the source bounds.
+        - Yellow style: when playhead is in a padding area.
+        - This styling feedback allows the user to assess whether their
+          section boundaries are where they should be.
+
+    - And save-back behavior is supported:
+      - With the understanding, noted above, the operation can affect
+        neighbors.
+      - The values saved-back are unpadded values.
+        - section.time = scratch.start + pad_start
+        - section.end = scratch.end - pad_end
+      - If a user saves-back the font-color styles described above should
+        adjust accordingly.
+        - This allows the user to view the loop; edit start/end; save back;
+          review the loop again to confirm that their changes are correctly
+          pinpointing the section/chapter boundaries.
+
   - Sections/chapters generally behave the same way.
-    - There might be exceptions to this, but I don't know what they are.
     - So the scenario below would work the same way for chapters.
 
   - Sections/chapters are viewable in the timeline, in zone 2.
     - Sections are shown by default in that zone.
-    - The user can toggle the display via a new binding `tt`.
+    - The user can toggle the display between show-sections and shows-chapters
+      via a new binding `tt`.
 
   - A scenario to illustrate some of the principles:
     - Notation used:
@@ -2327,4 +2399,132 @@ A consistent model for sections/chapters:
         - S4(start=75, end=100)
     - User tries to create a new section:
       - t=30 `ss` => invalid: cannot split S2
+
+### Section-chapter overhaul: implementation stages
+
+1. Schema migration — chapters to divider-based model.
+
+   Update `createChapter` in state.js: replace the `start` field with `time`;
+   keep `end` as optional. Update `addChapter` and `updateChapter` to sort and
+   reference `time` instead of `start`. Drop `chapterId` from `createSection`,
+   `createMark`, and `createLoop`. Update all callsites that read
+   `chapter.start` to use `chapter.time`.
+
+   Write a storage migration (v3 → v4) in storage.js: for each stored chapter,
+   rename `start` to `time`; remove `chapterId` from all sections, marks, and
+   loops. Bump `SCHEMA_VERSION`. Test that existing localStorage data migrates
+   cleanly.
+
+2. State helpers for the unified model.
+
+   Add `getSectionBounds`-style helpers for chapters (`getChapterBounds`,
+   `nearestChapterLeft`), using the same divider logic already used for
+   sections. Add `fixSectionEnd(sections, id, videoDuration)`: finds the
+   section by id and sets its `end` to the derived end (next section's `time`,
+   or `videoDuration` if it is the last). Add the equivalent
+   `fixChapterEnd(chapters, id, videoDuration)`.
+
+   Update `addSection` to enforce the splittability check: before inserting,
+   call `getSectionBounds` at the proposed time; if a fixed section (one with a
+   stored `end`) contains that time, return null (rejected) instead of creating.
+   Add the equivalent check to a new `addChapterDivider` function (parallel to
+   `addSection`).
+
+3. New bindings: `ss`/`cc` enforcement, `sf`, `cf`, `tt`.
+
+   Update the `setSection` handler in llama-app.js to use the new checked
+   `addSection`; show a warning if rejected. Update `cc` to work like `ss`:
+   create a chapter divider at the current time (using `addChapterDivider`)
+   rather than opening the edit-chapter-modal pre-filled with scratch-loop
+   endpoints. Show a warning if rejected (inside a fixed chapter).
+
+   Add `sf` binding: calls `fixSectionEnd` on the current section (nearest
+   divider left of playhead). Warn if no current section. Warn with a red error
+   if `videoDuration` is null (edge case when duration is not yet known).
+   Add `cf` binding: same logic for chapters via `fixChapterEnd`.
+
+   Add `zone2Mode` reactive prop to llama-app.js (values: `'sections'` |
+   `'chapters'`; default `'sections'`). Add `tt` binding: toggle between the
+   two values.
+
+4. Sections/chapters as padded loop sources.
+
+   Add `loopSourceStart` and `loopSourceEnd` reactive props to llama-app.js
+   (the unpadded boundaries of the source entity; null when not applicable).
+   Clear them alongside `loopSource` everywhere `loopSource` is nulled out.
+
+   Update `loopSection` (sl): set `loopSource` = section id,
+   `loopSourceStart/End` from `getSectionBounds`, `loopSourceType` =
+   `'section'`. Update `_onOpenSection` (so): same, and apply padding when
+   loading into scratch loop (currently `openSection` does not pad; change it
+   to match `loopSection`).
+
+   Update `_onOpenChapter` (co): compute chapter bounds via `getChapterBounds`,
+   apply padding, set `loopSource` = chapter id, `loopSourceStart/End`,
+   `loopSourceType` = `'chapter'`.
+
+5a. Save-back for sections and chapters — core.
+
+   Extend the `saveBack` handler to handle `loopSourceType === 'section'` and
+   `'chapter'`. Guard: reject with a warning if the scratch loop is invalid
+   (`loopStart >= loopEnd`).
+
+   Compute unpadded values: `entity.time = scratch.start + pad_start`;
+   `entity.end = scratch.end - pad_end`. Write those values back to the entity.
+   If the new values would conflict with a neighbor (overlap), reject with a
+   warning for now — neighbor propagation is deferred to Stage 5b.
+
+   After a successful save-back, update `loopSourceStart` and `loopSourceEnd`
+   to the new boundaries so the color-coding (Stage 6) reflects the change
+   immediately.
+
+   Verify with manual testing before proceeding to 5b.
+
+5b. Neighbor propagation.
+
+   Implement the neighbor-propagation algorithm in state.js as a standalone
+   helper (usable from both save-back and the edit modals in Stage 8). Given a
+   changed entity and the delta applied to its `time` or `end`, the helper
+   finds the affected neighbor, consumes any gap first, then propagates the
+   remainder one-for-one. Replace the temporary overlap-rejection from Stage 5a
+   with this propagation logic. Wire the same helper into `_onUpdateSection`
+   and `_onUpdateChapter` (Stage 8 will call it; stub those callsites now so
+   Stage 8 only needs to add the modal plumbing).
+
+6. Loop text box color-coding.
+
+   Pass `loopSourceStart`, `loopSourceEnd`, and `loopSourceType` as props to
+   llama-controls.js. When `loopSourceType` is `'section'` or `'chapter'`,
+   apply a yellow style to the start text box when `currentTime <
+   loopSourceStart`, and to the end text box when `currentTime >
+   loopSourceEnd`. Normal style when the playhead is inside the source bounds
+   or when `loopSourceType` is not a section/chapter.
+
+7. Current area — source bounds display.
+
+   Pass `loopSourceStart` and `loopSourceEnd` to llama-current.js. When
+   `loopSourceType` is `'section'` or `'chapter'`, display the unpadded
+   boundaries in the Source row (alongside the existing source label), so the
+   user can see the literal entity bounds while the scratch loop plays the
+   padded range.
+
+8. Edit modals — end field for sections and chapters.
+
+   Update edit-section-modal to include an optional `end` field. When `end` is
+   unset on the section being edited, display the derived end as hint text (not
+   a default value) so the user understands what will happen if they leave it
+   blank. Update `_onUpdateSection` in llama-app.js to call the propagation
+   helper from Stage 5b when `time` or `end` changes.
+
+   Update edit-chapter-modal similarly: add an optional `end` field; update
+   `_onUpdateChapter` with the same propagation call.
+
+9. Timeline zone 2 — chapter rendering and `tt` toggle.
+
+   Pass `zone2Mode` as a prop to llama-timeline.js. When `zone2Mode ===
+   'chapters'`, render chapters in zone 2 using the same rendering logic
+   already used for sections (divider lines, labels within spans, current-
+   entity highlight). The models are now identical so no new rendering logic is
+   needed — only a prop branch. Wire the `tt` toggle from Stage 3 to update
+   the prop.
 
