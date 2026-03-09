@@ -11,8 +11,9 @@ import {
   addSection, deleteSectionById, getSectionBounds, nearestSectionLeft,
   fixSectionEnd,
   addLoop, deleteLoopById,
-  addChapter, deleteChapterById, updateChapter,
+  addChapter, deleteChapterById,
   addChapterDivider, nearestChapterLeft, getChapterBounds, fixChapterEnd,
+  propagateEntityChange,
   nudgeLoopStart, nudgeLoopEnd,
 } from '../state.js';
 import { load, save, exportAll, exportVideo, importData as mergeImport } from '../storage.js';
@@ -706,25 +707,13 @@ class LlamaApp extends LitElement {
           }
 
           const prev = entities[idx - 1];
-          const next = entities[idx + 1];
-          if (prev) {
-            if (newStart <= prev.start) {
-              this._setWarning(`Save-back conflicts with the previous ${label}.`);
-              return;
-            }
-            if (prev.end != null && newStart < prev.end) {
-              this._setWarning(`Save-back would overlap a fixed previous ${label}.`);
-              return;
-            }
-          }
-          if (next && newEnd > next.start) {
-            this._setWarning(`Save-back conflicts with the next ${label}.`);
+          if (prev && newStart <= prev.start) {
+            this._setWarning(`Save-back conflicts with the previous ${label}.`);
             return;
           }
 
           this._pushUndoSnapshot(`${isSection ? 'Section' : 'Chapter'} updated`);
-          entities[idx].start = newStart;
-          entities[idx].end   = newEnd;
+          propagateEntityChange(entities, idx, newStart, newEnd);
           if (isSection) {
             this.sections = [...this.sections];
           } else {
@@ -1713,7 +1702,10 @@ class LlamaApp extends LitElement {
   _onUpdateChapter(e) {
     this._pushUndoSnapshot('Chapter updated');
     const { id, name, start, end } = e.detail;
-    updateChapter(this.chapters, id, { name, start, end });
+    const idx = this.chapters.findIndex(c => c.id === id);
+    if (idx === -1) return;
+    this.chapters[idx].name = name;
+    propagateEntityChange(this.chapters, idx, start, end);
     this.chapters  = [...this.chapters];
     this.statusMsg = 'Chapter updated';
     this._saveCurrentState();
@@ -1856,11 +1848,11 @@ class LlamaApp extends LitElement {
   _onUpdateSection(e) {
     this._pushUndoSnapshot('Section updated');
     const { id, name, start } = e.detail;
-    const section = this.sections.find(s => s.id === id);
-    if (!section) return;
-    section.name  = name;
-    section.start = start;
-    this.sections = [...this.sections].sort((a, b) => a.start - b.start);
+    const idx = this.sections.findIndex(s => s.id === id);
+    if (idx === -1) return;
+    this.sections[idx].name = name;
+    propagateEntityChange(this.sections, idx, start, this.sections[idx].end);
+    this.sections = [...this.sections];
     this.statusMsg = 'Section updated';
     this._saveCurrentState();
   }

@@ -290,6 +290,36 @@ export function fixChapterEnd(chapters, id, videoDuration) {
   return true;
 }
 
+// Apply new start/end to entities[idx] and propagate to immediate neighbors
+// to resolve any overlap.
+//
+// Propagation rules:
+//   start moved left past prev.end (prev has explicit end): prev.end = newStart
+//   end moved right past next.start:                        next.start = newEnd
+//
+// Mutates the array in place, re-sorting as needed.
+export function propagateEntityChange(entities, idx, newStart, newEnd) {
+  const entity = entities[idx];
+  const prev   = entities[idx - 1];
+  const next   = entities[idx + 1];
+
+  if (newStart !== entity.start) {
+    if (prev && prev.end != null && newStart < prev.end) {
+      prev.end = newStart;
+    }
+    entity.start = newStart;
+    entities.sort((a, b) => a.start - b.start);
+  }
+
+  if (newEnd !== entity.end) {
+    if (newEnd != null && next && newEnd > next.start) {
+      next.start = newEnd;
+      entities.sort((a, b) => a.start - b.start);
+    }
+    entity.end = newEnd;
+  }
+}
+
 // Add a chapter divider at the given time (sorted by start).
 // Rejects if the time falls inside a fixed chapter (one with an explicit end).
 // Returns the new chapter, or null if rejected.
