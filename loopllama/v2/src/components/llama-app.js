@@ -1986,6 +1986,9 @@ class LlamaApp extends LitElement {
           .looping=${this.looping}
           .loopStart=${this.loopStart}
           .loopEnd=${this.loopEnd}
+          .loopSourceType=${this.loopSourceType}
+          .loopSourceStart=${this.loopSourceStart}
+          .loopSourceEnd=${this.loopSourceEnd}
           .seekDelta=${this.seekDelta}
           .seekDeltaChoices=${this._appState?.options.seek_delta_choices ?? DEFAULT_OPTIONS.seek_delta_choices}
           .loopNudgeDelta=${this.loopNudgeDelta}

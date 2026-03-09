@@ -7,6 +7,9 @@
 //   looping:              Boolean  -- true when looping is active
 //   loopStart:            Number   -- scratch-loop start (seconds)
 //   loopEnd:              Number   -- scratch-loop end (seconds)
+//   loopSourceType:       String   -- 'section'|'chapter'|'loop'|null
+//   loopSourceStart:      Number   -- unpadded source start (seconds); null if n/a
+//   loopSourceEnd:        Number   -- unpadded source end (seconds); null if n/a
 //   seekDelta:            Number   -- current seek delta (seconds)
 //   seekDeltaChoices:     Array    -- available seek delta values
 //   loopNudgeDelta:       Number   -- current loop nudge delta (seconds)
@@ -344,6 +347,10 @@ class LlamaControls extends LitElement {
       color: var(--ll-danger, #e05a5a);
     }
 
+    .time-input.source-outside {
+      color: var(--ll-accent-warm, #e3a857);
+    }
+
     .speed-input {
       font-family: var(--ll-font-mono, monospace);
       font-size: var(--ll-text-sm, 0.85rem);
@@ -408,6 +415,9 @@ class LlamaControls extends LitElement {
     looping:             { type: Boolean },
     loopStart:           { type: Number },
     loopEnd:             { type: Number },
+    loopSourceType:      { type: String },
+    loopSourceStart:     { type: Number },
+    loopSourceEnd:       { type: Number },
     seekDelta:           { type: Number },
     seekDeltaChoices:    { type: Array },
     loopNudgeDelta:      { type: Number },
@@ -426,6 +436,9 @@ class LlamaControls extends LitElement {
     this.looping              = false;
     this.loopStart            = 0;
     this.loopEnd              = 0;
+    this.loopSourceType       = null;
+    this.loopSourceStart      = null;
+    this.loopSourceEnd        = null;
     this.seekDelta            = DEFAULT_OPTIONS.seek_delta_default;
     this.seekDeltaChoices     = DEFAULT_OPTIONS.seek_delta_choices;
     this.loopNudgeDelta       = DEFAULT_OPTIONS.loop_nudge_delta_default;
@@ -702,7 +715,7 @@ class LlamaControls extends LitElement {
                 >Now</button>
                 <input
                   ${ref(this._startRef)}
-                  class="time-input align-left ${this.editScratchActive && this.editScratchFocus === 'start' ? 'loop-edit-focus' : ''} ${this.loopStart >= this.loopEnd ? 'loop-invalid' : ''}"
+                  class="time-input align-left ${this.editScratchActive && this.editScratchFocus === 'start' ? 'loop-edit-focus' : ''} ${this.loopStart >= this.loopEnd ? 'loop-invalid' : ''} ${(this.loopSourceType === 'section' || this.loopSourceType === 'chapter') && this.currentTime < this.loopSourceStart ? 'source-outside' : ''}"
                   type="text"
                   @keydown=${(e) => { if (e.key === 'Enter') { this._submitStart(); e.target.blur(); } else if (e.key === 'Escape') { e.target.value = this._fmtLoop(this.loopStart); e.target.blur(); } }}
                   @blur=${() => this._submitStart()}
@@ -721,7 +734,7 @@ class LlamaControls extends LitElement {
               <div class="btn-group">
                 <input
                   ${ref(this._endRef)}
-                  class="time-input ${this.editScratchActive && this.editScratchFocus === 'end' ? 'loop-edit-focus' : ''} ${this.loopStart >= this.loopEnd ? 'loop-invalid' : ''}"
+                  class="time-input ${this.editScratchActive && this.editScratchFocus === 'end' ? 'loop-edit-focus' : ''} ${this.loopStart >= this.loopEnd ? 'loop-invalid' : ''} ${(this.loopSourceType === 'section' || this.loopSourceType === 'chapter') && this.currentTime > this.loopSourceEnd ? 'source-outside' : ''}"
                   type="text"
                   @keydown=${(e) => { if (e.key === 'Enter') { this._submitEnd(); e.target.blur(); } else if (e.key === 'Escape') { e.target.value = this._fmtLoop(this.loopEnd); e.target.blur(); } }}
                   @blur=${() => this._submitEnd()}
