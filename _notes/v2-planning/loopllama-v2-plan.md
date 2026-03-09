@@ -966,6 +966,7 @@ Videos:
     ve | Edit current video [edit-video-modal]
     vd | Delete video [via picker]
     vi | Video info [video-info-modal]
+    vl | Loop: makes current video the scratch-loop source
 
 Playing:
 
@@ -997,10 +998,13 @@ Looping:
 
     ll     | Toggle looping on/off
     lo     | Open: opens/loads a saved-loop into scratch-loop [loops-picker]
-    ls     | Save-new: a new loop [save-loop-modal]
+    ln     | Save-new: a new loop [save-loop-modal]
     lb     | Save-back: save scratch-loop endpoints back to source Loop
     le     | Edit: scratch-loop [edit-scratch-loop-mode]
     \      | Synonym for `le`
+    lv     | Loop current video (synonym for `vl`)
+    lc     | Loop current chapter (synonym for `cl`)
+    ls     | Loop current section (synonym for `sl`)
     ld     | Delete loop [via picker]
     lz     | Toggle timline zoom, using current loop
     --------------------------------------------------
@@ -1024,6 +1028,8 @@ Chapters:
     cc | Create new chapter [new-chapter-modal, using scratch-loop start/end]
     co | Open chapter [via picker => populate scratch-loop start/end]
     ce | Edit current chapter
+    cf | Fix: toggle chapter-fixed status.
+    cl | Loop: makes current chapter the scratch-loop source
     cd | Delete chapter [via picker]
     cz | Toggle timline zoom, using current chapter
 
@@ -1032,6 +1038,7 @@ Sections:
     ss | Set: sets a new section divider at current time
     se | Edit: edit current section [edit-section-modal]
     sl | Loop: makes current section the scratch-loop source
+    sf | Fix: toggle section-fixed status.
     so | Open section [via picker => populate scratch-loop]
     sd | Delete section [via picker]
     sz | Toggle timline zoom, using current section
@@ -1041,6 +1048,10 @@ Marks:
     mm   | Set mark at current time
     me   | Edit mark [via picker]
     md   | Delete mark [via picker]
+
+Timeline:
+
+    tt | Toggle timline to show sections or chapters
 
 Undo and help:
 
@@ -1532,7 +1543,7 @@ speak for themselves to anyone who recognizes them.
 
 ## Revised UI plan: round 2
 
-### Issue: video name vs title is confusing
+### Issue: video name versus title is confusing
 
 v1 had a primitive UI:
     - Short, code-like names/labels were used as primary keys.
@@ -2312,6 +2323,8 @@ A consistent model for sections/chapters:
       - If video end needed for an sf/cf but unknown (an extremely unusual
         situation), then the operation fails with a red-error message in the
         footer.
+      - The bindings act as a toggle: if a chapter/section already has a fixed
+        end, sf/cf unfix it.
 
     - Manual fine tuning:
       - Open the section/chapter into the scratch-loop.
@@ -2345,6 +2358,10 @@ A consistent model for sections/chapters:
               - new gap = 0
               - self.start = old self.start - 10
               - neighbor.end = old neighbor.end - 4
+      - Editing self can shrink/enlarge neighbors, but it cannot destroy them.
+        - If the edit to start/end would eliminate another entity, it will be
+          rejected.
+      - Edits do not affect any neighbors other than immediate ones.
 
   - Sections/chapters can be first-class loop sources:
 

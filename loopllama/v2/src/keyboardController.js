@@ -65,6 +65,7 @@ export const BINDINGS = {
     'e': { handler: 'editVideo',    desc: 'Edit video attributes' },
     'i': { handler: 'videoInfo',    desc: 'Video info' },
     'd': { handler: 'deleteVideo',  desc: 'Delete current video' },
+    'l': { handler: 'loopVideo',    desc: 'Loop: full video as scratch loop' },
   }},
 
   'j': { completions: {
@@ -81,17 +82,21 @@ export const BINDINGS = {
   'l': { completions: {
     'l': { handler: 'toggleLoop',    desc: 'Toggle looping' },
     'o': { handler: 'openLoop',      desc: 'Open saved loop' },
-    's': { handler: 'saveLoop',      desc: 'Save new loop' },
+    'n': { handler: 'saveLoop',      desc: 'Save new loop' },
     'b': { handler: 'saveBack',      desc: 'Save back to source loop' },
     'e': { handler: 'editScratch',   desc: 'Edit scratch loop' },
     'd': { handler: 'deleteLoop',    desc: 'Delete a loop' },
     'z': { handler: 'zoomLoop',      desc: 'Toggle loop zoom' },
+    's': { handler: 'loopSection',   desc: 'Loop current section (synonym: sl)' },
+    'c': { handler: 'loopChapter',   desc: 'Loop current chapter (synonym: cl)' },
+    'v': { handler: 'loopVideo',     desc: 'Loop full video (synonym: vl)' },
   }},
 
   'c': { completions: {
     'c': { handler: 'setChapter',    desc: 'Create chapter divider here' },
     'o': { handler: 'openChapter',   desc: 'Open chapter' },
     'e': { handler: 'editChapter',   desc: 'Edit current chapter' },
+    'l': { handler: 'loopChapter',   desc: 'Loop: current chapter as scratch loop' },
     'd': { handler: 'deleteChapter', desc: 'Delete a chapter' },
     'z': { handler: 'zoomChapter',   desc: 'Toggle chapter zoom' },
     'f': { handler: 'fixChapter',    desc: 'Fix chapter end to derived boundary' },

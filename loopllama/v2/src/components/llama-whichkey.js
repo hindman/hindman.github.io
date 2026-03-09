@@ -62,6 +62,9 @@ class LlamaWhichkey extends LitElement {
       color: #e3a857;
       font-weight: bold;
     }
+    .status {
+      color: var(--ll-text-dim, #aaa);
+    }
   `;
 
   static properties = {
@@ -73,6 +76,7 @@ class LlamaWhichkey extends LitElement {
     editScratchDelta:  { type: Number },
     warningMsg:        { type: String },
     errorMsg:          { type: String },
+    statusMsg:         { type: String },
   };
 
   constructor() {
@@ -85,6 +89,7 @@ class LlamaWhichkey extends LitElement {
     this.editScratchDelta  = 5;
     this.warningMsg        = null;
     this.errorMsg          = null;
+    this.statusMsg         = null;
   }
 
   _kbItem(key, desc) {
@@ -97,7 +102,16 @@ class LlamaWhichkey extends LitElement {
   }
 
   render() {
-    // Priority 1: keyboard inactive (overrides everything).
+    // Priority 1: error (overrides everything).
+    if (this.errorMsg) {
+      return html`
+        <div class="bar">
+          <div class="row"><span class="error">${this.errorMsg}</span></div>
+        </div>
+      `;
+    }
+
+    // Priority 2: keyboard inactive.
     if (!this.windowFocused) {
       return html`
         <div class="bar">
@@ -110,7 +124,9 @@ class LlamaWhichkey extends LitElement {
       `;
     }
 
-    // Priority 2: edit-scratch mode cheatsheet.
+    // Priority 3+4: warning, and/or edit-scratch cheatsheet.
+    // When edit-scratch is active, always show the cheatsheet; a simultaneous
+    // warning appears above it on a second row.
     if (this.editScratchActive) {
       const focusLabel = this.editScratchFocus === 'start' ? 'Start' : 'End';
       const cheatRow = html`
@@ -144,7 +160,15 @@ class LlamaWhichkey extends LitElement {
       return html`<div class="bar">${cheatRow}</div>`;
     }
 
-    // Priority 3: which-key completions.
+    if (this.warningMsg) {
+      return html`
+        <div class="bar">
+          <div class="row"><span class="warning">${this.warningMsg}</span></div>
+        </div>
+      `;
+    }
+
+    // Priority 5: which-key completions.
     if (this.prefix && this.completions) {
       const items = Object.entries(this.completions).map(([key, { desc }]) => html`
         <span class="item">
@@ -155,20 +179,11 @@ class LlamaWhichkey extends LitElement {
       return html`<div class="bar"><div class="row">${items}</div></div>`;
     }
 
-    // Priority 4: warning.
-    if (this.warningMsg) {
+    // Priority 6: status.
+    if (this.statusMsg) {
       return html`
         <div class="bar">
-          <div class="row"><span class="warning">${this.warningMsg}</span></div>
-        </div>
-      `;
-    }
-
-    // Priority 5: error.
-    if (this.errorMsg) {
-      return html`
-        <div class="bar">
-          <div class="row"><span class="error">${this.errorMsg}</span></div>
+          <div class="row"><span class="status">${this.statusMsg}</span></div>
         </div>
       `;
     }

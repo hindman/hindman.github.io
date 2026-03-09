@@ -290,14 +290,39 @@ export function fixChapterEnd(chapters, id, videoDuration) {
   return true;
 }
 
+// Validate a proposed start/end change for entities[idx].
+// Returns false if the change would eliminate an immediate neighbor:
+//   newStart <= prev.start  (prev would reach zero or negative width)
+//   newEnd   >= nextDerivedEnd  (next would reach zero or negative width)
+// duration is needed to compute a derived end for the last entity.
+export function validateEntityChange(entities, idx, newStart, newEnd, duration) {
+  const entity = entities[idx];
+  const prev   = entities[idx - 1];
+  const next   = entities[idx + 1];
+
+  if (newStart !== entity.start && prev && newStart <= prev.start) {
+    return false;
+  }
+
+  if (newEnd != null && newEnd !== entity.end && next) {
+    const nextDerivedEnd = next.end != null
+      ? next.end
+      : (entities[idx + 2]?.start ?? duration ?? null);
+    if (nextDerivedEnd != null && newEnd >= nextDerivedEnd) return false;
+  }
+
+  return true;
+}
+
 // Apply new start/end to entities[idx] and propagate to immediate neighbors
 // to resolve any overlap.
 //
 // Propagation rules:
+//   start moved left past prev.start (any prev): entity.start = newStart, prev shrinks
 //   start moved left past prev.end (prev has explicit end): prev.end = newStart
-//   end moved right past next.start:                        next.start = newEnd
+//   end moved right past next.start: next.start = newEnd
 //
-// Mutates the array in place, re-sorting as needed.
+// Assumes validateEntityChange passed. Mutates the array in place, re-sorting as needed.
 export function propagateEntityChange(entities, idx, newStart, newEnd) {
   const entity = entities[idx];
   const prev   = entities[idx - 1];

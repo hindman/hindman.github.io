@@ -13,7 +13,7 @@ import {
   addLoop, deleteLoopById,
   addChapter, deleteChapterById,
   addChapterDivider, nearestChapterLeft, getChapterBounds, fixChapterEnd,
-  propagateEntityChange,
+  propagateEntityChange, validateEntityChange,
   nudgeLoopStart, nudgeLoopEnd,
 } from '../state.js';
 import { load, save, exportAll, exportVideo, importData as mergeImport } from '../storage.js';
@@ -163,18 +163,6 @@ class LlamaApp extends LitElement {
       llama-controls { grid-area: controls; }
       llama-current  { grid-area: current; }
     }
-
-    /* --- Message footer --- */
-    .app-footer {
-      padding: 0.3rem var(--ll-pad-lg, 1rem);
-      min-height: 1.6rem;
-      font-size: var(--ll-text-sm, 0.85rem);
-      border-top: 1px solid var(--ll-border, #444);
-      color: var(--ll-text-dim, #aaa);
-    }
-
-    .app-footer.is-warning { color: var(--ll-warn,  #f0c040); }
-    .app-footer.is-error   { color: var(--ll-error, #e87070); }
 
   `;
 
@@ -600,6 +588,22 @@ class LlamaApp extends LitElement {
       videoUrl:      () => this._urlInputModalEl?.show(),
       videoPicker:   () => this._videoPickerEl?.show(),
       editVideo:     () => this._editVideoModalEl?.show(),
+      loopVideo: () => {
+        if (this.duration == null) {
+          this._setError('Video duration not yet known.');
+          return;
+        }
+        this._clearZoomIfOutside(0, this.duration);
+        this.loopStart       = 0;
+        this.loopEnd         = this.duration;
+        this.looping         = true;
+        this.loopSource      = null;
+        this.loopSourceLabel = null;
+        this.loopSourceType  = null;
+        this.loopSourceStart = 0;
+        this.loopSourceEnd   = this.duration;
+        this.statusMsg       = 'Looping full video.';
+      },
       deleteVideo: () => {
         if (!this._appState?.videos.length) { this._setWarning('No videos saved.'); return; }
         this._videoPickerEl?.show('delete');
@@ -706,9 +710,8 @@ class LlamaApp extends LitElement {
             return;
           }
 
-          const prev = entities[idx - 1];
-          if (prev && newStart <= prev.start) {
-            this._setWarning(`Save-back conflicts with the previous ${label}.`);
+          if (!validateEntityChange(entities, idx, newStart, newEnd, this.duration)) {
+            this._setWarning(`Save-back would eliminate a neighbor ${label}.`);
             return;
           }
 
@@ -801,19 +804,25 @@ class LlamaApp extends LitElement {
       },
       deleteSection: () => this._openSectionsPicker('delete'),
       fixSection: () => {
-        if (this.duration == null) {
-          this._setError('Video duration not yet known.');
-          return;
-        }
         const section = nearestSectionLeft(this.sections, this.currentTime);
         if (!section) {
           this._setWarning('No section at current position.');
           return;
         }
-        this._pushUndoSnapshot('Section end fixed');
-        fixSectionEnd(this.sections, section.id, this.duration);
+        if (section.end != null) {
+          this._pushUndoSnapshot('Section end unfixed');
+          section.end = null;
+          this.statusMsg = 'Section end unfixed.';
+        } else {
+          if (this.duration == null) {
+            this._setError('Video duration not yet known.');
+            return;
+          }
+          this._pushUndoSnapshot('Section end fixed');
+          fixSectionEnd(this.sections, section.id, this.duration);
+          this.statusMsg = 'Section end fixed.';
+        }
         this.sections = [...this.sections];
-        this.statusMsg = 'Section end fixed.';
         this._saveCurrentState();
       },
       setMark: () => {
@@ -843,35 +852,50 @@ class LlamaApp extends LitElement {
         this._saveCurrentState();
       },
       openChapter:   () => this._openChapterPicker('open'),
-      editChapter: () => {
-        if (!this.activeChapterId) {
-          this._setWarning('No active chapter. Open one first (co).');
+      editChapter:   () => this._editCurrentChapter(),
+      loopChapter: () => {
+        const bounds = getChapterBounds(this.chapters, this.currentTime, this.duration);
+        if (!bounds || bounds.end == null) {
+          this._setWarning('No chapter at current position.');
           return;
         }
-        const chapter = this.chapters.find(c => c.id === this.activeChapterId);
-        if (!chapter) {
-          this._setWarning('Active chapter not found.');
-          return;
-        }
-        const bounds     = getChapterBounds(this.chapters, chapter.start, this.duration);
-        const derivedEnd = (chapter.end == null) ? (bounds?.end ?? null) : null;
-        this._editChapterModalEl?.showEdit(chapter, derivedEnd);
+        const chapter    = nearestChapterLeft(this.chapters, this.currentTime);
+        const padStart   = this._appState?.options.loop_pad_start ?? DEFAULT_OPTIONS.loop_pad_start;
+        const padEnd     = this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end;
+        const newStart   = Math.max(0, bounds.start - padStart);
+        const newEnd     = bounds.end + padEnd;
+        this._clearZoomIfOutside(newStart, newEnd);
+        this.loopStart       = newStart;
+        this.loopEnd         = newEnd;
+        this.looping         = true;
+        this.loopSource      = chapter?.id ?? null;
+        this.loopSourceLabel = chapter?.name || null;
+        this.loopSourceType  = 'chapter';
+        this.loopSourceStart = bounds.start;
+        this.loopSourceEnd   = bounds.end;
+        this.statusMsg       = 'Looping chapter.';
       },
       deleteChapter: () => this._openChapterPicker('delete'),
       fixChapter: () => {
-        if (this.duration == null) {
-          this._setError('Video duration not yet known.');
-          return;
-        }
         const chapter = nearestChapterLeft(this.chapters, this.currentTime);
         if (!chapter) {
           this._setWarning('No chapter at current position.');
           return;
         }
-        this._pushUndoSnapshot('Chapter end fixed');
-        fixChapterEnd(this.chapters, chapter.id, this.duration);
+        if (chapter.end != null) {
+          this._pushUndoSnapshot('Chapter end unfixed');
+          chapter.end = null;
+          this.statusMsg = 'Chapter end unfixed.';
+        } else {
+          if (this.duration == null) {
+            this._setError('Video duration not yet known.');
+            return;
+          }
+          this._pushUndoSnapshot('Chapter end fixed');
+          fixChapterEnd(this.chapters, chapter.id, this.duration);
+          this.statusMsg = 'Chapter end fixed.';
+        }
         this.chapters = [...this.chapters];
-        this.statusMsg = 'Chapter end fixed.';
         this._saveCurrentState();
       },
       toggleZone2: () => {
@@ -1620,6 +1644,17 @@ class LlamaApp extends LitElement {
     this._editSectionModalEl?.show(section, derivedEnd);
   }
 
+  _editCurrentChapter() {
+    const chapter = nearestChapterLeft(this.chapters, this.currentTime);
+    if (!chapter) {
+      this._setWarning('No chapter at current position.');
+      return;
+    }
+    const bounds     = getChapterBounds(this.chapters, chapter.start, this.duration);
+    const derivedEnd = (chapter.end == null) ? (bounds?.end ?? null) : null;
+    this._editChapterModalEl?.showEdit(chapter, derivedEnd);
+  }
+
   // Open the chapter picker in the given mode, with a guard for empty list.
   _openChapterPicker(mode) {
     if (!this.chapters.length) {
@@ -1704,10 +1739,14 @@ class LlamaApp extends LitElement {
 
   // Handle ll-update-chapter from edit-chapter-modal (edit mode).
   _onUpdateChapter(e) {
-    this._pushUndoSnapshot('Chapter updated');
     const { id, name, start, end } = e.detail;
     const idx = this.chapters.findIndex(c => c.id === id);
     if (idx === -1) return;
+    if (!validateEntityChange(this.chapters, idx, start, end, this.duration)) {
+      this._setWarning('Edit would eliminate a neighbor chapter.');
+      return;
+    }
+    this._pushUndoSnapshot('Chapter updated');
     this.chapters[idx].name = name;
     propagateEntityChange(this.chapters, idx, start, end);
     this.chapters  = [...this.chapters];
@@ -1852,10 +1891,14 @@ class LlamaApp extends LitElement {
 
   // Handle ll-update-section from edit-section-modal.
   _onUpdateSection(e) {
-    this._pushUndoSnapshot('Section updated');
     const { id, name, start, end } = e.detail;
     const idx = this.sections.findIndex(s => s.id === id);
     if (idx === -1) return;
+    if (!validateEntityChange(this.sections, idx, start, end, this.duration)) {
+      this._setWarning('Edit would eliminate a neighbor section.');
+      return;
+    }
+    this._pushUndoSnapshot('Section updated');
     this.sections[idx].name = name;
     propagateEntityChange(this.sections, idx, start, end);
     this.sections = [...this.sections];
@@ -2039,11 +2082,6 @@ class LlamaApp extends LitElement {
         ></llama-current>
       </div>
 
-      ${(() => {
-        const msg  = this.errorMsg ?? this.warningMsg ?? this.statusMsg ?? '';
-        const type = this.errorMsg ? 'is-error' : this.warningMsg ? 'is-warning' : '';
-        return html`<div class="app-footer ${type}">${msg}</div>`;
-      })()}
 
       <llama-url-input-modal
         @ll-modal-open=${() => this._kb?.disable()}
@@ -2193,6 +2231,7 @@ class LlamaApp extends LitElement {
         .editScratchDelta=${this.editScratchDelta}
         .warningMsg=${this.warningMsg}
         .errorMsg=${this.errorMsg}
+        .statusMsg=${this.statusMsg}
       ></llama-whichkey>
     `;
   }

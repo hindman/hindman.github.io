@@ -156,6 +156,19 @@ class LlamaTimeline extends LitElement {
       color: var(--ll-accent, #7ec8e3);
     }
 
+    /* Chapter mode overrides: amber dividers + warm current-region tint */
+    .zone--section.mode--chapters .section-region {
+      border-left-color: #7a5010;
+    }
+
+    .zone--section.mode--chapters .section-region--current {
+      background: rgba(220, 140, 40, 0.28);
+    }
+
+    .zone--section.mode--chapters .section-region--current .section-label {
+      color: #e8a050;
+    }
+
     /* Mark zone */
     .zone--mark {
       height: 12px;
@@ -463,7 +476,7 @@ class LlamaTimeline extends LitElement {
           <div class="play-dot" style="left: ${phPct}%"></div>
         </div>
 
-        <div class="zone--section">${this._renderSections()}</div>
+        <div class="zone--section mode--${this.zone2Mode}">${this._renderSections()}</div>
 
         <div class="zone--mark">${this._renderMarks()}</div>
 

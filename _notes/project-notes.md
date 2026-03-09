@@ -4,27 +4,41 @@
 The plan:
   _notes/v2-planning/loopllama-v2-plan.md
 
-## TODO
+## TODO: LoopLlama v2
 
-Section/chapter overhaul:
-  - test/check
+Edits:
+    - Menus:
+        - Edit
+        - Add: Chapter, Data
+    - Messages:
+        - status/info
+        - warning
+        - error
+        - which key
+    - Modals:
+        - titles, labels
+        - messages
+    - Pickers:
+        - titles
+    - Timeline:
+        - Hovers
+    - Current panel
 
-Code refactoring/cleanup: assess; do if needed.
+Code refactoring/cleanup:
+    - Assess.
+    - Do if needed.
 
-Help-text: draft.
+Help-text:
+    - draft
+    - implement: bindings and menu items
 
-Help-text bindings and menu items: implement.
-
-UI polish: messages/labels: edit.
-
-Header sizzle: add quips; maybe add font color.
+Header sizzle:
+    - quips
+    - font color?
 
 Deploy: update `loopllama/index.html` to route to v2. Verify on GitHub Pages.
 
-URLS:
-
-    https://www.youtube.com/watch?v=2iFn6ursFaE
-    https://www.youtube.com/watch?v=zP4lYpsfL8c
+## TODO: The Fifth Fret
 
 Posts:
     x RH rudiments #1: alternating bass
