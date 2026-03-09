@@ -2402,16 +2402,19 @@ A consistent model for sections/chapters:
 
 ### Section-chapter overhaul: implementation stages
 
-1. Schema migration — chapters to divider-based model.
+1. Schema migration — sections to start/end model.
 
-   Update `createChapter` in state.js: replace the `start` field with `time`;
-   keep `end` as optional. Update `addChapter` and `updateChapter` to sort and
-   reference `time` instead of `start`. Drop `chapterId` from `createSection`,
-   `createMark`, and `createLoop`. Update all callsites that read
-   `chapter.start` to use `chapter.time`.
+   Schema convention: ranges (chapters, sections, loops) use `start`/`end`;
+   point entities (marks, video current position) use `time`.
 
-   Write a storage migration (v3 → v4) in storage.js: for each stored chapter,
-   rename `start` to `time`; remove `chapterId` from all sections, marks, and
+   Update `createSection` in state.js: rename `time` to `start`. Update
+   `addSection`, `deleteSectionById`, `getSectionAt`, `getSectionBounds`, and
+   any other helpers that reference `section.time` to use `section.start`.
+   Drop `chapterId` from `createSection`, `createMark`, and `createLoop`.
+   Update all callsites accordingly.
+
+   Write a storage migration (v3 → v4) in storage.js: for each stored section,
+   rename `time` to `start`; remove `chapterId` from all sections, marks, and
    loops. Bump `SCHEMA_VERSION`. Test that existing localStorage data migrates
    cleanly.
 
@@ -2420,7 +2423,7 @@ A consistent model for sections/chapters:
    Add `getSectionBounds`-style helpers for chapters (`getChapterBounds`,
    `nearestChapterLeft`), using the same divider logic already used for
    sections. Add `fixSectionEnd(sections, id, videoDuration)`: finds the
-   section by id and sets its `end` to the derived end (next section's `time`,
+   section by id and sets its `end` to the derived end (next section's `start`,
    or `videoDuration` if it is the last). Add the equivalent
    `fixChapterEnd(chapters, id, videoDuration)`.
 
@@ -2469,7 +2472,7 @@ A consistent model for sections/chapters:
    `'chapter'`. Guard: reject with a warning if the scratch loop is invalid
    (`loopStart >= loopEnd`).
 
-   Compute unpadded values: `entity.time = scratch.start + pad_start`;
+   Compute unpadded values: `entity.start = scratch.start + pad_start`;
    `entity.end = scratch.end - pad_end`. Write those values back to the entity.
    If the new values would conflict with a neighbor (overlap), reject with a
    warning for now — neighbor propagation is deferred to Stage 5b.
@@ -2514,7 +2517,7 @@ A consistent model for sections/chapters:
    unset on the section being edited, display the derived end as hint text (not
    a default value) so the user understands what will happen if they leave it
    blank. Update `_onUpdateSection` in llama-app.js to call the propagation
-   helper from Stage 5b when `time` or `end` changes.
+   helper from Stage 5b when `start` or `end` changes.
 
    Update edit-chapter-modal similarly: add an optional `end` field; update
    `_onUpdateChapter` with the same propagation call.

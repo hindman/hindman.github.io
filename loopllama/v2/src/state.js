@@ -4,7 +4,7 @@
 // These factories produce plain objects matching the v2 data schema.
 // Mutation functions will be added in later stages as needed.
 
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 
 export const JUMP_HISTORY_MAX = 40;   // max persisted jump entries per video
 export const JUMP_THRESHOLD   = 15;   // seconds; smaller moves are not stored
@@ -66,17 +66,17 @@ export function createChapter(name, start, end) {
 }
 
 // Create a Section divider.
-// time: the divider point in seconds (required).
+// start: the divider point in seconds (required).
 // name: optional user label (e.g., "Verse", "Solo").
 // end is not included here; it is either derived at runtime or set later
 // via direct property assignment when the user explicitly limits the section.
-export function createSection(time, name = '') {
-  return { id: createId(), chapterId: null, time, name };
+export function createSection(start, name = '') {
+  return { id: createId(), start, end: null, name };
 }
 
 // Create a named Loop.
 export function createLoop(start, end, name = '') {
-  return { id: createId(), chapterId: null, name, start, end, source: null, is_scratch: false };
+  return { id: createId(), name, start, end, source: null, is_scratch: false };
 }
 
 // Create the scratch loop. One exists per video at all times.
@@ -88,7 +88,7 @@ export function createScratchLoop() {
 
 // Create a Mark.
 export function createMark(time, name = '') {
-  return { id: createId(), chapterId: null, time, name };
+  return { id: createId(), time, name };
 }
 
 // Add a chapter (sorted by start time). Returns the new chapter.
@@ -141,12 +141,12 @@ export function nearestMarkLeft(marks, time) {
   return result;
 }
 
-// Add a section divider at the given time (sorted by time).
+// Add a section divider at the given time (sorted by start).
 // Returns the new section.
 export function addSection(sections, time, name = '') {
   const section = createSection(time, name);
   sections.push(section);
-  sections.sort((a, b) => a.time - b.time);
+  sections.sort((a, b) => a.start - b.start);
   return section;
 }
 
@@ -156,12 +156,12 @@ export function deleteSectionById(sections, sectionId) {
   if (idx !== -1) sections.splice(idx, 1);
 }
 
-// Find the section divider with the largest time at or before the given time.
-// Returns the section or null. Assumes sections are sorted by time.
+// Find the section divider with the largest start at or before the given time.
+// Returns the section or null. Assumes sections are sorted by start.
 export function nearestSectionLeft(sections, time) {
   let result = null;
   for (const s of sections) {
-    if (s.time <= time) result = s;
+    if (s.start <= time) result = s;
     else break;
   }
   return result;
@@ -217,19 +217,19 @@ export function getSectionBounds(sections, time, videoDuration) {
   let left  = null;
   let right = null;
   for (const s of sections) {
-    if (s.time <= time) left = s;
+    if (s.start <= time) left = s;
     else { right = s; break; }
   }
 
   if (!left) return null;   // before first divider
 
   // Compute end: stored explicit end overrides derived end.
-  const derivedEnd  = right ? right.time : (videoDuration ?? null);
+  const derivedEnd  = right ? right.start : (videoDuration ?? null);
   const sectionEnd  = (left.end != null) ? left.end : derivedEnd;
 
   // If time is in a gap zone (past the section's explicit end, before the
   // next divider), there is no current section.
   if (left.end != null && time > left.end) return null;
 
-  return { start: left.time, end: sectionEnd };
+  return { start: left.start, end: sectionEnd };
 }

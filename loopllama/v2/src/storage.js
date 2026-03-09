@@ -35,6 +35,23 @@ function _migrateAppState(state) {
     if ('section_loop_pad_end'   in o) { o.loop_pad_end   = o.section_loop_pad_end;   delete o.section_loop_pad_end;   }
     state.version = 3;
   }
+  if (state.version < 4) {
+    // v3 → v4: rename section.time → section.start; drop chapterId from
+    // sections, marks, and loops.
+    for (const video of state.videos ?? []) {
+      for (const s of video.sections ?? []) {
+        if ('time' in s) { s.start = s.time; delete s.time; }
+        delete s.chapterId;
+      }
+      for (const m of video.marks ?? []) {
+        delete m.chapterId;
+      }
+      for (const l of video.loops ?? []) {
+        delete l.chapterId;
+      }
+    }
+    state.version = 4;
+  }
   return state;
 }
 

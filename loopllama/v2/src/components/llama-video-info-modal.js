@@ -222,7 +222,7 @@ class LlamaVideoInfoModal extends LitElement {
         ${this.sections.map(s => html`
           <div class="entity-row">
             <span class="entity-name ${s.name ? '' : 'dim'}">${s.name || '—'}</span>
-            <span class="entity-time">${this._fmt(s.time)}</span>
+            <span class="entity-time">${this._fmt(s.start)}</span>
           </div>
         `)}
       </div>

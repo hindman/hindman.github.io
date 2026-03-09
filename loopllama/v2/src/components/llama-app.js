@@ -1283,7 +1283,7 @@ class LlamaApp extends LitElement {
   _getEntityTimes(type) {
     const times = new Set();
     const add = (t) => { if (t != null && isFinite(t)) times.add(t); };
-    if (type === 'any' || type === 'section') this.sections.forEach(s => add(s.time));
+    if (type === 'any' || type === 'section') this.sections.forEach(s => add(s.start));
     if (type === 'any' || type === 'loop')    this.namedLoops.forEach(l => add(l.start));
     if (type === 'any' || type === 'mark')    this.marks.forEach(m => add(m.time));
     if (type === 'any' || type === 'chapter') this.chapters.forEach(c => add(c.start));
@@ -1522,7 +1522,7 @@ class LlamaApp extends LitElement {
   _onOpenSection(e) {
     const section = this.sections.find(s => s.id === e.detail.id);
     if (!section) return;
-    const bounds = getSectionBounds(this.sections, section.time, this.duration);
+    const bounds = getSectionBounds(this.sections, section.start, this.duration);
     if (!bounds || bounds.end == null) {
       this._setWarning('Section has no end boundary.');
       return;
@@ -1536,7 +1536,7 @@ class LlamaApp extends LitElement {
     this._autoDisableLoopIfInvalid();
     this._maybePushJump(this._vc?.getCurrentTime() ?? 0, bounds.start);
     this._vc?.seekTo(bounds.start);
-    this.statusMsg = `Section: ${section.name || _fmtTimePlain(section.time)}`;
+    this.statusMsg = `Section: ${section.name || _fmtTimePlain(section.start)}`;
   }
 
   // Handle ll-create-chapter from edit-chapter-modal (create mode).
@@ -1682,7 +1682,7 @@ class LlamaApp extends LitElement {
 
   // Handle ll-jump-section from sections picker (mode='jump').
   _onJumpSection(e) {
-    this._jumpTo(e.detail.time);
+    this._jumpTo(e.detail.start);
   }
 
   // Handle ll-pick-section-edit from sections picker (mode='edit').
@@ -1695,12 +1695,12 @@ class LlamaApp extends LitElement {
   // Handle ll-update-section from edit-section-modal.
   _onUpdateSection(e) {
     this._pushUndoSnapshot('Section updated');
-    const { id, name, time } = e.detail;
+    const { id, name, start } = e.detail;
     const section = this.sections.find(s => s.id === id);
     if (!section) return;
-    section.name = name;
-    section.time = time;
-    this.sections = [...this.sections].sort((a, b) => a.time - b.time);
+    section.name  = name;
+    section.start = start;
+    this.sections = [...this.sections].sort((a, b) => a.start - b.start);
     this.statusMsg = 'Section updated';
     this._saveCurrentState();
   }

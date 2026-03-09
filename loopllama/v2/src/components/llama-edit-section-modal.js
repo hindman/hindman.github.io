@@ -4,7 +4,7 @@
 //   section: Section object | null  -- the section being edited
 //
 // Events fired (composed, bubbling):
-//   ll-update-section  { id, name, time }
+//   ll-update-section  { id, name, start }
 //
 // API:
 //   show(section?) / hide()
@@ -48,7 +48,7 @@ class LlamaEditSectionModal extends LitElement {
     if (s) {
       this.section = s;
       this._name   = s.name || '';
-      this._time   = _fmtTime(s.time);
+      this._time   = _fmtTime(s.start);
     }
     this.renderRoot.querySelector('llama-modal')?.show();
   }
@@ -69,7 +69,7 @@ class LlamaEditSectionModal extends LitElement {
       return;
     }
     this.dispatchEvent(new CustomEvent('ll-update-section', {
-      detail: { id: this.section.id, name: this._name.trim(), time },
+      detail: { id: this.section.id, name: this._name.trim(), start: time },
       bubbles: true, composed: true,
     }));
     this.hide();

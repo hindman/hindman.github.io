@@ -146,7 +146,7 @@ class LlamaSectionsPicker extends LitElement {
     const mode = this.mode;
     if (mode === 'jump') {
       this.dispatchEvent(new CustomEvent('ll-jump-section', {
-        detail: { id: section.id, time: section.time },
+        detail: { id: section.id, start: section.start },
         bubbles: true, composed: true,
       }));
     } else if (mode === 'edit') {
@@ -161,7 +161,7 @@ class LlamaSectionsPicker extends LitElement {
       }));
     } else if (mode === 'open') {
       this.dispatchEvent(new CustomEvent('ll-open-section', {
-        detail: { id: section.id, time: section.time },
+        detail: { id: section.id, start: section.start },
         bubbles: true, composed: true,
       }));
     }
@@ -173,7 +173,7 @@ class LlamaSectionsPicker extends LitElement {
     if (!q) return this.sections;
     return this.sections.filter(s =>
       (s.name || '').toLowerCase().includes(q) ||
-      _fmtTime(s.time).includes(q)
+      _fmtTime(s.start).includes(q)
     );
   }
 
@@ -202,9 +202,9 @@ class LlamaSectionsPicker extends LitElement {
                     ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(s)}
                 >
-                  <div class="section-primary">${s.name || _fmtTime(s.time)}</div>
+                  <div class="section-primary">${s.name || _fmtTime(s.start)}</div>
                   ${s.name
-                    ? html`<div class="section-sub">${_fmtTime(s.time)}</div>`
+                    ? html`<div class="section-sub">${_fmtTime(s.start)}</div>`
                     : ''}
                 </div>
               `)

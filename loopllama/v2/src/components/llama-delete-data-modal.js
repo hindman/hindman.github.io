@@ -211,7 +211,7 @@ class LlamaDeleteDataModal extends LitElement {
       </div>
       ${this._renderGroup('Sections', this._sections,
           s => html`<span class="item-label">${s.name || ''}</span>
-                    <span class="item-sub">@${_fmtTime(s.time)}</span>`)}
+                    <span class="item-sub">@${_fmtTime(s.start)}</span>`)}
       ${this._renderGroup('Loops', this._loops,
           l => html`<span class="item-label">${l.name || ''}</span>
                     <span class="item-sub">${_fmtTime(l.start)} – ${_fmtTime(l.end)}</span>`)}

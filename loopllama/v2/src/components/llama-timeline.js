@@ -273,12 +273,12 @@ class LlamaTimeline extends LitElement {
   _computeRegions() {
     return this.sections.map((s, i) => {
       const next = this.sections[i + 1];
-      const end  = s.end != null ? s.end : (next ? next.time : this.duration);
+      const end  = s.end != null ? s.end : (next ? next.start : this.duration);
       return {
-        start:     s.time,
+        start:     s.start,
         end,
         name:      s.name,
-        isCurrent: this.currentTime >= s.time && this.currentTime < end,
+        isCurrent: this.currentTime >= s.start && this.currentTime < end,
       };
     });
   }
