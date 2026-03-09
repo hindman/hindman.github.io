@@ -662,20 +662,82 @@ class LlamaApp extends LitElement {
       openLoop: () => this._openLoopsPicker('load'),
       saveBack: () => {
         if (!this.loopSource) {
-          this._setWarning('No source loop to save back to.');
+          this._setWarning('No source to save back to.');
           return;
         }
-        const idx = this.namedLoops.findIndex(l => l.id === this.loopSource);
-        if (idx === -1) {
-          this._setWarning('Source loop not found.');
+        if (this.loopStart >= this.loopEnd) {
+          this._setWarning('Scratch loop is invalid (start must be before end).');
           return;
         }
-        this._pushUndoSnapshot('Loop updated');
-        this.namedLoops[idx].start = this.loopStart;
-        this.namedLoops[idx].end   = this.loopEnd;
-        this.namedLoops = [...this.namedLoops];
-        this.statusMsg  = 'Loop updated';
-        this._saveCurrentState();
+
+        if (this.loopSourceType === 'loop') {
+          const idx = this.namedLoops.findIndex(l => l.id === this.loopSource);
+          if (idx === -1) {
+            this._setWarning('Source loop not found.');
+            return;
+          }
+          this._pushUndoSnapshot('Loop updated');
+          this.namedLoops[idx].start = this.loopStart;
+          this.namedLoops[idx].end   = this.loopEnd;
+          this.namedLoops = [...this.namedLoops];
+          this.statusMsg  = 'Loop updated';
+          this._saveCurrentState();
+          return;
+        }
+
+        if (this.loopSourceType === 'section' || this.loopSourceType === 'chapter') {
+          const isSection = this.loopSourceType === 'section';
+          const label     = isSection ? 'section' : 'chapter';
+          const entities  = isSection ? this.sections : this.chapters;
+          const idx       = entities.findIndex(e => e.id === this.loopSource);
+          if (idx === -1) {
+            this._setWarning(`Source ${label} not found.`);
+            return;
+          }
+
+          const padStart = this._appState?.options.loop_pad_start ?? DEFAULT_OPTIONS.loop_pad_start;
+          const padEnd   = this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end;
+          const newStart = this.loopStart + padStart;
+          const newEnd   = this.loopEnd   - padEnd;
+
+          if (newStart >= newEnd) {
+            this._setWarning('Padded range too small — cannot compute valid entity bounds.');
+            return;
+          }
+
+          const prev = entities[idx - 1];
+          const next = entities[idx + 1];
+          if (prev) {
+            if (newStart <= prev.start) {
+              this._setWarning(`Save-back conflicts with the previous ${label}.`);
+              return;
+            }
+            if (prev.end != null && newStart < prev.end) {
+              this._setWarning(`Save-back would overlap a fixed previous ${label}.`);
+              return;
+            }
+          }
+          if (next && newEnd > next.start) {
+            this._setWarning(`Save-back conflicts with the next ${label}.`);
+            return;
+          }
+
+          this._pushUndoSnapshot(`${isSection ? 'Section' : 'Chapter'} updated`);
+          entities[idx].start = newStart;
+          entities[idx].end   = newEnd;
+          if (isSection) {
+            this.sections = [...this.sections];
+          } else {
+            this.chapters = [...this.chapters];
+          }
+          this.loopSourceStart = newStart;
+          this.loopSourceEnd   = newEnd;
+          this.statusMsg = `${isSection ? 'Section' : 'Chapter'} saved back.`;
+          this._saveCurrentState();
+          return;
+        }
+
+        this._setWarning('No source to save back to.');
       },
       editScratch: () => this._enterEditScratch(),
       deleteLoop: () => this._openLoopsPicker('delete'),
