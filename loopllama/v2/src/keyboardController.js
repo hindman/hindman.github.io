@@ -89,11 +89,12 @@ export const BINDINGS = {
   }},
 
   'c': { completions: {
-    'c': { handler: 'setChapter',    desc: 'Create chapter from scratch loop' },
+    'c': { handler: 'setChapter',    desc: 'Create chapter divider here' },
     'o': { handler: 'openChapter',   desc: 'Open chapter' },
     'e': { handler: 'editChapter',   desc: 'Edit current chapter' },
     'd': { handler: 'deleteChapter', desc: 'Delete a chapter' },
     'z': { handler: 'zoomChapter',   desc: 'Toggle chapter zoom' },
+    'f': { handler: 'fixChapter',    desc: 'Fix chapter end to derived boundary' },
   }},
 
   's': { completions: {
@@ -103,6 +104,11 @@ export const BINDINGS = {
     'l': { handler: 'loopSection',   desc: 'Loop current section' },
     'd': { handler: 'deleteSection', desc: 'Delete a section' },
     'z': { handler: 'zoomSection',   desc: 'Toggle section zoom' },
+    'f': { handler: 'fixSection',    desc: 'Fix section end to derived boundary' },
+  }},
+
+  't': { completions: {
+    't': { handler: 'toggleZone2',   desc: 'Toggle zone 2: sections / chapters' },
   }},
 
   'm': { completions: {

@@ -9,8 +9,10 @@ import {
   createVideo, createAppState, createScratchLoop,
   addMark, deleteMarkById,
   addSection, deleteSectionById, getSectionBounds, nearestSectionLeft,
+  fixSectionEnd,
   addLoop, deleteLoopById,
   addChapter, deleteChapterById, updateChapter,
+  addChapterDivider, nearestChapterLeft, fixChapterEnd,
   nudgeLoopStart, nudgeLoopEnd,
 } from '../state.js';
 import { load, save, exportAll, exportVideo, importData as mergeImport } from '../storage.js';
@@ -207,6 +209,7 @@ class LlamaApp extends LitElement {
     errorMsg:           { type: String },
     loopNudgeDelta:     { type: Number },
     seekDelta:          { type: Number },
+    zone2Mode:          { type: String },
   };
 
   constructor() {
@@ -240,6 +243,7 @@ class LlamaApp extends LitElement {
     this.loopSourceType      = null;
     this.warningMsg          = null;
     this.errorMsg            = null;
+    this.zone2Mode           = 'sections';
     this._warnTimeout        = null;
     this._statusTimeout      = null;
     this._errorTimeout       = null;
@@ -698,8 +702,14 @@ class LlamaApp extends LitElement {
         this.statusMsg  = 'Section zoom on.';
       },
       setSection: () => {
+        const time = this._vc?.getCurrentTime() ?? 0;
+        const containing = nearestSectionLeft(this.sections, time);
+        if (containing && containing.end != null && time <= containing.end) {
+          this._setWarning('Cannot set section inside a fixed section.');
+          return;
+        }
         this._pushUndoSnapshot('Section created');
-        addSection(this.sections, this._vc?.getCurrentTime() ?? 0);
+        addSection(this.sections, time);
         this.sections = [...this.sections];
         this.statusMsg = 'Section created';
         this._saveCurrentState();
@@ -727,6 +737,22 @@ class LlamaApp extends LitElement {
         this.statusMsg       = 'Looping section.';
       },
       deleteSection: () => this._openSectionsPicker('delete'),
+      fixSection: () => {
+        if (this.duration == null) {
+          this._setError('Video duration not yet known.');
+          return;
+        }
+        const section = nearestSectionLeft(this.sections, this.currentTime);
+        if (!section) {
+          this._setWarning('No section at current position.');
+          return;
+        }
+        this._pushUndoSnapshot('Section end fixed');
+        fixSectionEnd(this.sections, section.id, this.duration);
+        this.sections = [...this.sections];
+        this.statusMsg = 'Section end fixed.';
+        this._saveCurrentState();
+      },
       setMark: () => {
         const time = this._vc?.getCurrentTime() ?? 0;
         if (!addMark(this.marks, time)) {
@@ -741,11 +767,17 @@ class LlamaApp extends LitElement {
       editMark:   () => this._openMarksPicker('edit'),
       deleteMark: () => this._openMarksPicker('delete'),
       setChapter: () => {
-        if (!this._isLoopValid()) {
-          this._setWarning('Set a valid scratch loop first (start must be before end).');
+        const time = this._vc?.getCurrentTime() ?? 0;
+        const containing = nearestChapterLeft(this.chapters, time);
+        if (containing && containing.end != null && time <= containing.end) {
+          this._setWarning('Cannot set chapter inside a fixed chapter.');
           return;
         }
-        this._editChapterModalEl?.showCreate(this.loopStart, this.loopEnd);
+        this._pushUndoSnapshot('Chapter created');
+        addChapterDivider(this.chapters, time);
+        this.chapters = [...this.chapters];
+        this.statusMsg = 'Chapter created';
+        this._saveCurrentState();
       },
       openChapter:   () => this._openChapterPicker('open'),
       editChapter: () => {
@@ -761,6 +793,26 @@ class LlamaApp extends LitElement {
         this._editChapterModalEl?.showEdit(chapter);
       },
       deleteChapter: () => this._openChapterPicker('delete'),
+      fixChapter: () => {
+        if (this.duration == null) {
+          this._setError('Video duration not yet known.');
+          return;
+        }
+        const chapter = nearestChapterLeft(this.chapters, this.currentTime);
+        if (!chapter) {
+          this._setWarning('No chapter at current position.');
+          return;
+        }
+        this._pushUndoSnapshot('Chapter end fixed');
+        fixChapterEnd(this.chapters, chapter.id, this.duration);
+        this.chapters = [...this.chapters];
+        this.statusMsg = 'Chapter end fixed.';
+        this._saveCurrentState();
+      },
+      toggleZone2: () => {
+        this.zone2Mode = this.zone2Mode === 'sections' ? 'chapters' : 'sections';
+        this.statusMsg = `Zone 2: ${this.zone2Mode}.`;
+      },
       zoomChapter: () => {
         if (this.zoomSource?.trigger === 'chapter') {
           this.zoomSource = null;
@@ -1153,6 +1205,11 @@ class LlamaApp extends LitElement {
     this.warningMsg = msg;
   }
 
+  // Show a transient error; auto-clears after 4 seconds (via updated()).
+  _setError(msg) {
+    this.errorMsg = msg;
+  }
+
   _flashLoopViolation() {
     this._setWarning('Outside active loop range.');
   }
@@ -1325,8 +1382,14 @@ class LlamaApp extends LitElement {
   }
 
   _onSetSection() {
+    const time = this._vc?.getCurrentTime() ?? 0;
+    const containing = nearestSectionLeft(this.sections, time);
+    if (containing && containing.end != null && time <= containing.end) {
+      this._setWarning('Cannot set section inside a fixed section.');
+      return;
+    }
     this._pushUndoSnapshot('Section created');
-    addSection(this.sections, this._vc?.getCurrentTime() ?? 0);
+    addSection(this.sections, time);
     this.sections = [...this.sections];
     this.statusMsg = 'Section created';
     this._saveCurrentState();
