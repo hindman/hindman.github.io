@@ -853,7 +853,9 @@ class LlamaApp extends LitElement {
           this._setWarning('Active chapter not found.');
           return;
         }
-        this._editChapterModalEl?.showEdit(chapter);
+        const bounds     = getChapterBounds(this.chapters, chapter.start, this.duration);
+        const derivedEnd = (chapter.end == null) ? (bounds?.end ?? null) : null;
+        this._editChapterModalEl?.showEdit(chapter, derivedEnd);
       },
       deleteChapter: () => this._openChapterPicker('delete'),
       fixChapter: () => {
@@ -1613,7 +1615,9 @@ class LlamaApp extends LitElement {
       this._setWarning('No section at current position.');
       return;
     }
-    this._editSectionModalEl?.show(section);
+    const bounds     = getSectionBounds(this.sections, section.start, this.duration);
+    const derivedEnd = (section.end == null) ? (bounds?.end ?? null) : null;
+    this._editSectionModalEl?.show(section, derivedEnd);
   }
 
   // Open the chapter picker in the given mode, with a guard for empty list.
@@ -1841,17 +1845,19 @@ class LlamaApp extends LitElement {
   _onPickSectionEdit(e) {
     const section = this.sections.find(s => s.id === e.detail.id);
     if (!section) return;
-    this._editSectionModalEl?.show(section);
+    const bounds     = getSectionBounds(this.sections, section.start, this.duration);
+    const derivedEnd = (section.end == null) ? (bounds?.end ?? null) : null;
+    this._editSectionModalEl?.show(section, derivedEnd);
   }
 
   // Handle ll-update-section from edit-section-modal.
   _onUpdateSection(e) {
     this._pushUndoSnapshot('Section updated');
-    const { id, name, start } = e.detail;
+    const { id, name, start, end } = e.detail;
     const idx = this.sections.findIndex(s => s.id === id);
     if (idx === -1) return;
     this.sections[idx].name = name;
-    propagateEntityChange(this.sections, idx, start, this.sections[idx].end);
+    propagateEntityChange(this.sections, idx, start, end);
     this.sections = [...this.sections];
     this.statusMsg = 'Section updated';
     this._saveCurrentState();

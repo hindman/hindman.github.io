@@ -35,22 +35,24 @@ class LlamaEditChapterModal extends LitElement {
   `;
 
   static properties = {
-    _mode:    { state: true },  // 'create' | 'edit'
-    _id:      { state: true },  // chapter id when editing
-    _name:    { state: true },
-    _start:   { state: true },
-    _end:     { state: true },
-    _error:   { state: true },
+    _mode:        { state: true },  // 'create' | 'edit'
+    _id:          { state: true },  // chapter id when editing
+    _name:        { state: true },
+    _start:       { state: true },
+    _end:         { state: true },
+    _derivedEnd:  { state: true },
+    _error:       { state: true },
   };
 
   constructor() {
     super();
-    this._mode  = 'create';
-    this._id    = null;
-    this._name  = '';
-    this._start = '';
-    this._end   = '';
-    this._error = '';
+    this._mode       = 'create';
+    this._id         = null;
+    this._name       = '';
+    this._start      = '';
+    this._end        = '';
+    this._derivedEnd = null;
+    this._error      = '';
   }
 
   showCreate(start, end) {
@@ -63,13 +65,16 @@ class LlamaEditChapterModal extends LitElement {
     this.renderRoot.querySelector('llama-modal')?.show();
   }
 
-  showEdit(chapter) {
-    this._mode  = 'edit';
-    this._id    = chapter.id;
-    this._name  = chapter.name || '';
-    this._start = _fmtTime(chapter.start);
-    this._end   = _fmtTime(chapter.end);
-    this._error = '';
+  // derivedEnd: the end that would be used if chapter.end stays null
+  // (i.e. next chapter's start, or video duration). Used for placeholder hint.
+  showEdit(chapter, derivedEnd = null) {
+    this._mode       = 'edit';
+    this._id         = chapter.id;
+    this._name       = chapter.name || '';
+    this._start      = _fmtTime(chapter.start);
+    this._end        = _fmtTime(chapter.end);
+    this._derivedEnd = derivedEnd;
+    this._error      = '';
     this.renderRoot.querySelector('llama-modal')?.show();
   }
 
@@ -83,14 +88,21 @@ class LlamaEditChapterModal extends LitElement {
 
   _save() {
     const start = _parseTime(this._start);
-    const end   = _parseTime(this._end);
-    if (start === null || end === null) {
-      this._error = 'Start and end are required.';
+    if (start === null) {
+      this._error = 'Start is required.';
       return;
     }
-    if (end <= start) {
-      this._error = 'End must be after start.';
-      return;
+    let end = null;
+    if (this._end.trim()) {
+      end = _parseTime(this._end);
+      if (end === null) {
+        this._error = 'Invalid end time.';
+        return;
+      }
+      if (end <= start) {
+        this._error = 'End must be after start.';
+        return;
+      }
     }
     this._error = '';
     if (this._mode === 'create') {
@@ -131,6 +143,9 @@ class LlamaEditChapterModal extends LitElement {
 
   render() {
     const title = this._mode === 'create' ? 'Create Chapter' : 'Edit Chapter';
+    const endPlaceholder = (this._mode === 'edit' && this._derivedEnd != null)
+      ? `${_fmtTime(this._derivedEnd)} (derived — leave blank to keep open-ended)`
+      : 'Leave blank to derive from next chapter';
     return html`
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
         ${this._renderField('Name (optional)', 'name', this._name,
@@ -139,8 +154,8 @@ class LlamaEditChapterModal extends LitElement {
         ${this._renderField('Start', 'start', this._start,
             'm:ss',
             e => { this._start = e.target.value; })}
-        ${this._renderField('End', 'end', this._end,
-            'm:ss',
+        ${this._renderField('End — optional', 'end', this._end,
+            endPlaceholder,
             e => { this._end = e.target.value; })}
         ${this._error ? html`<div class="error">${this._error}</div>` : ''}
         <div slot="footer">
