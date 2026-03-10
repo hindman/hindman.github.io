@@ -149,6 +149,8 @@ LoopLlama: building the site:
     cd loopllama/v2
 
     npm run build
+    git add assets/index-XXXXXXXX.js assets/index-YYYYYYYY.css  # See index.html
+    git commit/push
 
 LoopLlama: where the built site lives:
 
