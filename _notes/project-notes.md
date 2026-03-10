@@ -2,38 +2,43 @@
 ## CURRENT SESSION
 
 
-An example to explain. I'll focus on nudging the loop-end, but the concepts
-apply in an analogous fashion to loop-start nudges.
-
-    Initial state:
-        start = 10
-        end = 2
-        nudge-delta = 5
-
-    User does a loop-end nudge-increase:
-        SELF = loop-end
-        OTHER = loop-start
-
-        Step 1: try a regular nudge:
-            regular means apply delta directly to SELF.
-            resulting loop: (10, 2 + 5)
-            illegal => go to Step 2
-
-        Step 2: try a relative nudge:
-            relative means apply delta relative to OTHER
-            resulting loop: (10, 10 + 5)
-            legal => apply this edit and stop here
-    
-        Step 3:
-            fallback to the result from Step 1
-            Not reached in our example.
-
-The plan:
-  _notes/v2-planning/loopllama-v2-plan.md
-
 ## TODO: LoopLlama v2
 
-Edits:
+Remaining tasks:
+
+    . Beta launch:
+        - Deploy to a v2 URL.
+        - Leave v1 as the official version for now.
+
+    - Try on other devices:
+        - iPad
+        - phone?
+
+    - Real-world usage and testing.
+        - Find bugs.
+        - Find usage problems or needed improvements.
+
+    - Code review:
+        - Review code.
+        - Refactor if the review thinks changes are warranted.
+
+    - Editing/organizing:
+        - Prune the planning doc to what's still needed.
+        - Final edits on all text elements, labels, names, messages.
+        - Some menu reorganization.
+
+    - Help text:
+        - Draft, edit.
+        - Implement bindings and menu links.
+
+    - Header sizzle:
+        - Add random quips on hover.
+        - Try font color.
+
+    - Launch:
+        - Make v2 the offial version.
+
+Editing/organizing details:
     - Menus:
         - Edit
         - Add: Chapter, Data
@@ -51,19 +56,11 @@ Edits:
         - Hovers
     - Current panel
 
-Code refactoring/cleanup:
-    - Assess.
-    - Do if needed.
+URLs:
 
-Help-text:
-    - draft
-    - implement: bindings and menu items
-
-Header sizzle:
-    - quips
-    - font color?
-
-Deploy: update `loopllama/index.html` to route to v2. Verify on GitHub Pages.
+    https://hindman.github.io/loopllama/    | v1
+    https://hindman.github.io/loopllama/v1/ | v1
+    https://hindman.github.io/loopllama/v2/ | v2
 
 ## TODO: The Fifth Fret
 
@@ -141,6 +138,8 @@ TOC icons:
 
 LoopLlama: running tests:
 
+    cd loopllama/v2
+
     # Basic.
     npm tests
 
@@ -149,6 +148,12 @@ LoopLlama: running tests:
 
     # Output in browser with lots of details.
     npx vitest --ui
+
+LoopLlama: building the site:
+
+    cd loopllama/v2
+
+    npm run build
 
 ## Two repo setup
 

@@ -1994,9 +1994,9 @@ class LlamaApp extends LitElement {
     return html`
       <header class="app-header">
         <span class="app-title">LoopLlama</span>
-        <img src="/llama-mascot.png" class="header-llama" alt="">
+        <img src="${import.meta.env.BASE_URL}llama-mascot.png" class="header-llama" alt="">
         <nav class="header-nav">
-          <img src="/flag.svg" class="header-flag" alt="">
+          <img src="${import.meta.env.BASE_URL}flag.svg" class="header-flag" alt="">
           <span class="nav-sep">|</span>
           <a class="nav-link" href="https://hindman.github.io/" target="_blank" rel="noopener">The Fifth Fret</a>
           <span class="nav-sep">|</span>
