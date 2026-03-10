@@ -8,6 +8,9 @@ Remaining tasks:
 
     - Dev track:
 
+        - invoke:
+            - script the deployment and assets/ dir management.
+
         - Real-world usage and testing: phase 2:
             - Find bugs.
             - Find usage problems or needed improvements.

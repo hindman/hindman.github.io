@@ -968,7 +968,7 @@ class LlamaApp extends LitElement {
       },
       exportAll:     () => this._exportAll(),
       importData:    () => this._fileInputEl?.click(),
-      inspectData:   () => this._inspectModalEl?.show(this._appState),
+      inspectData:   () => this._inspectModalEl?.show(JSON.parse(exportAll(this._appState))),
       shareVideo:    () => this._shareVideo(),
       shareLoop:     () => this._shareLoop(),
     };

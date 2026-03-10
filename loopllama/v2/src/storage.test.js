@@ -10,13 +10,13 @@ import { importData } from './storage.js';
 
 // Minimal valid app state to merge into.
 function makeState(videos = []) {
-  return { version: 4, options: {}, videos, currentVideoId: null };
+  return { schema_version: 5, options: {}, videos, currentVideoId: null };
 }
 
 describe('importData', () => {
-  it('imports videos from full app state format ({ version, videos: [...] })', () => {
+  it('imports videos from full app state format ({ schema_version, videos: [...] })', () => {
     const state = makeState();
-    const json = JSON.stringify({ version: 4, videos: [{ id: 'abc', name: 'Test' }] });
+    const json = JSON.stringify({ schema_version: 5, videos: [{ id: 'abc', name: 'Test' }] });
     const result = importData(json, state);
     expect(result).toEqual({ added: 1, updated: 0 });
     expect(state.videos).toHaveLength(1);
@@ -33,7 +33,7 @@ describe('importData', () => {
 
   it('overwrites an existing video when ids match', () => {
     const state = makeState([{ id: 'abc', name: 'Old' }]);
-    const json = JSON.stringify({ version: 4, videos: [{ id: 'abc', name: 'New' }] });
+    const json = JSON.stringify({ schema_version: 5, videos: [{ id: 'abc', name: 'New' }] });
     const result = importData(json, state);
     expect(result).toEqual({ added: 0, updated: 1 });
     expect(state.videos).toHaveLength(1);
@@ -43,7 +43,7 @@ describe('importData', () => {
   it('handles a mix of new and existing videos', () => {
     const state = makeState([{ id: 'existing', name: 'Old' }]);
     const json = JSON.stringify({
-      version: 4,
+      schema_version: 5,
       videos: [
         { id: 'existing', name: 'Updated' },
         { id: 'brandnew', name: 'New' },
@@ -56,7 +56,7 @@ describe('importData', () => {
 
   it('skips videos with no id field', () => {
     const state = makeState();
-    const json = JSON.stringify({ version: 4, videos: [{ name: 'No ID here' }] });
+    const json = JSON.stringify({ schema_version: 5, videos: [{ name: 'No ID here' }] });
     const result = importData(json, state);
     expect(result).toEqual({ added: 0, updated: 0 });
     expect(state.videos).toHaveLength(0);
@@ -74,7 +74,7 @@ describe('importData', () => {
   it('migrates a v1 video (title → name) on import', () => {
     const state = makeState();
     const json = JSON.stringify({
-      version: 4,
+      schema_version: 5,
       videos: [{ id: 'v1vid', title: 'Old Title', version: 1 }],
     });
     importData(json, state);
@@ -82,10 +82,10 @@ describe('importData', () => {
     expect(state.videos[0].title).toBeUndefined();
   });
 
-  it('leaves already-migrated videos (version >= 2) unchanged on title field', () => {
+  it('leaves already-migrated videos (schema_version >= 2) unchanged on title field', () => {
     const state = makeState();
     const json = JSON.stringify({
-      version: 4,
+      schema_version: 5,
       videos: [{ id: 'v2vid', name: 'Current Name', version: 2 }],
     });
     importData(json, state);

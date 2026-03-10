@@ -4,7 +4,8 @@
 // These factories produce plain objects matching the v2 data schema.
 // Mutation functions will be added in later stages as needed.
 
-export const SCHEMA_VERSION = 4;
+export const APP_VERSION    = 2;
+export const SCHEMA_VERSION = 5;
 
 export const JUMP_HISTORY_MAX = 40;   // max persisted jump entries per video
 export const JUMP_THRESHOLD   = 15;   // seconds; smaller moves are not stored
@@ -27,7 +28,7 @@ export const DEFAULT_OPTIONS = {
 // Top-level app state (persisted to localStorage as one object).
 export function createAppState() {
   return {
-    version:        SCHEMA_VERSION,
+    schema_version: SCHEMA_VERSION,
     options:        { ...DEFAULT_OPTIONS },
     videos:         [],
     currentVideoId: null,
@@ -55,7 +56,7 @@ export function createVideo(url, youtubeId) {
     loops:       [createScratchLoop()],  // always one scratch loop
     marks:       [],
     jumps:       [],
-    version:     SCHEMA_VERSION,
+    schema_version: SCHEMA_VERSION,
   };
 }
 
