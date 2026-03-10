@@ -142,11 +142,13 @@ export function nearestMarkLeft(marks, time) {
 }
 
 // Add a section divider at the given time (sorted by start).
-// Rejects if the time falls inside a fixed section (one with an explicit end).
+// Rejects if the time falls inside a fixed section (one with an explicit end),
+// or if any existing divider starts within 2 seconds of the new time.
 // Returns the new section, or null if rejected.
 export function addSection(sections, time, name = '') {
   const containing = nearestSectionLeft(sections, time);
   if (containing && containing.end != null && time <= containing.end) return null;
+  if (sections.some(s => Math.abs(s.start - time) < 2)) return null;
   const section = createSection(time, name);
   sections.push(section);
   sections.sort((a, b) => a.start - b.start);
@@ -185,11 +187,23 @@ export function deleteLoopById(loops, id) {
 }
 
 // Nudge the loop start point by delta seconds.
-// state: { loopStart, loopEnd, duration }
-// Policy: try regular nudge (start + delta); if the result is a legal loop
-// (newStart < end), apply it. Otherwise try relative nudge (end + delta);
-// if that is legal, apply it. Fall back to regular if both are illegal.
-// All results are clamped to [0, duration].
+// Returns the new start value; does not mutate state.
+// All results are clamped to [0, duration ?? Infinity].
+//
+// Goal: support a 2-action loop-setting workflow -- user places one endpoint,
+// then nudges the other into position to produce a legal loop (start < end).
+// The relative nudge handles the common case where the loop is currently
+// inverted (start >= end) and the nudge direction would fix it, but the
+// regular nudge does not reach far enough to clear the other endpoint.
+//
+// Decision rules (SELF = start, OTHER = end):
+//   Step 1 -- regular nudge: SELF + delta. If legal (result < end), use it.
+//   Step 2 -- relative nudge: OTHER + delta. If legal (result < end), use it.
+//   Step 3 -- fallback: return the Step 1 result even though it is illegal.
+//             Caller is responsible for the looping guard:
+//               looping=on  -> refuse the edit entirely.
+//               looping=off -> apply it; the loop remains broken but harmless
+//                              until the user completes the intended edit.
 export function nudgeLoopStart(delta, { loopStart, loopEnd, duration }) {
   const maxT = duration ?? Infinity;
   const regular = Math.max(0, Math.min(loopStart + delta, maxT));
@@ -200,7 +214,17 @@ export function nudgeLoopStart(delta, { loopStart, loopEnd, duration }) {
 }
 
 // Nudge the loop end point by delta seconds.
-// Same policy as nudgeLoopStart, mirrored: legal means start < newEnd.
+// Returns the new end value; does not mutate state.
+// All results are clamped to [0, duration ?? Infinity].
+//
+// Goal and decision rules mirror nudgeLoopStart (SELF = end, OTHER = start):
+//   Step 1 -- regular nudge: SELF + delta. If legal (start < result), use it.
+//   Step 2 -- relative nudge: OTHER + delta. If legal (start < result), use it.
+//   Step 3 -- fallback: return the Step 1 result even though it is illegal.
+//             Caller is responsible for the looping guard:
+//               looping=on  -> refuse the edit entirely.
+//               looping=off -> apply it; the loop remains broken but harmless
+//                              until the user completes the intended edit.
 export function nudgeLoopEnd(delta, { loopStart, loopEnd, duration }) {
   const maxT = duration ?? Infinity;
   const regular = Math.max(0, Math.min(loopEnd + delta, maxT));
@@ -346,11 +370,13 @@ export function propagateEntityChange(entities, idx, newStart, newEnd) {
 }
 
 // Add a chapter divider at the given time (sorted by start).
-// Rejects if the time falls inside a fixed chapter (one with an explicit end).
+// Rejects if the time falls inside a fixed chapter (one with an explicit end),
+// or if any existing divider starts within 2 seconds of the new time.
 // Returns the new chapter, or null if rejected.
 export function addChapterDivider(chapters, time, name = '') {
   const containing = nearestChapterLeft(chapters, time);
   if (containing && containing.end != null && time <= containing.end) return null;
+  if (chapters.some(c => Math.abs(c.start - time) < 2)) return null;
   const chapter = createChapter(name, time, null);
   chapters.push(chapter);
   chapters.sort((a, b) => a.start - b.start);

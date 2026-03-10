@@ -5,13 +5,16 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "dependencies": {
     "@shoelace-style/shoelace": "^2.20.1",
     "lit": "^3.0.0"
   },
   "devDependencies": {
-    "vite": "^6.0.0"
+    "@vitest/ui": "^4.0.18",
+    "vite": "^6.0.0",
+    "vitest": "^4.0.18"
   }
 }

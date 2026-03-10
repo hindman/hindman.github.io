@@ -1688,6 +1688,43 @@ Solution:
             ----------------------------------------
             \      | Edit: scratch-loop [synonym key binding]
 
+An example to explain nudges. I'll focus on nudging the loop-end, but the concepts
+apply in an analogous fashion to loop-start nudges.
+
+    Initial state:
+        start = 10
+        end = 2
+        nudge-delta = 5
+
+    User does a loop-end nudge-increase:
+        SELF = loop-end
+        OTHER = loop-start
+
+        Step 1: try a regular nudge:
+            regular means apply delta directly to SELF.
+            resulting loop: (10, 2 + 5)
+            illegal => go to Step 2
+
+        Step 2: try a relative nudge:
+            relative means apply delta relative to OTHER
+            resulting loop: (10, 10 + 5)
+            legal => apply this edit and stop here
+    
+        Step 3:
+            fallback to the result from Step 1
+            if looping=on:
+                refuse the edit
+                cannot make an illegal loop while looping is on
+            else:
+                apply the edit even though the loop is still illegal
+                causes no harm yet; maybe user knows what they ultimately want
+
+In a sense, the whole purpose of nudge is to support a speedy workflow like this:
+
+    - User sets a loop start or end (but loop is currently illegal).
+    - User does the needed nudge on the other boundary.
+    - Thus, in 2 actions the user has a legal loop.
+
 ### Issue: controls and menus need fine tuning
 
 To support the needs discussed above and to make general improvements, the

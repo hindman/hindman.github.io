@@ -1,6 +1,33 @@
 
 ## CURRENT SESSION
 
+
+An example to explain. I'll focus on nudging the loop-end, but the concepts
+apply in an analogous fashion to loop-start nudges.
+
+    Initial state:
+        start = 10
+        end = 2
+        nudge-delta = 5
+
+    User does a loop-end nudge-increase:
+        SELF = loop-end
+        OTHER = loop-start
+
+        Step 1: try a regular nudge:
+            regular means apply delta directly to SELF.
+            resulting loop: (10, 2 + 5)
+            illegal => go to Step 2
+
+        Step 2: try a relative nudge:
+            relative means apply delta relative to OTHER
+            resulting loop: (10, 10 + 5)
+            legal => apply this edit and stop here
+    
+        Step 3:
+            fallback to the result from Step 1
+            Not reached in our example.
+
 The plan:
   _notes/v2-planning/loopllama-v2-plan.md
 
@@ -111,6 +138,17 @@ TOC icons:
     sun
     water
     droplet
+
+LoopLlama: running tests:
+
+    # Basic.
+    npm tests
+
+    # Detailed output.
+    npm test -- --reporter=verbose
+
+    # Output in browser with lots of details.
+    npx vitest --ui
 
 ## Two repo setup
 
