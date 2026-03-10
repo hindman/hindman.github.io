@@ -41,12 +41,26 @@ import './llama-inspect-modal.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
+const QUIP_INTERVAL_MS = 3000;
+
+const QUIPS = [
+  "Freedom isn't free — but looping is",
+  "Freedom to loop",
+  "How about a little something, you know, for the effort",
+  "I have two speeds: loop and nap",
+  "It's loops all the way down",
+  "Keep on loopin' in the free world!",
+  "Loop the good stuff",
+  "Time is a flat circle — so a loop",
+];
+
 class LlamaApp extends LitElement {
   static styles = css`
     :host {
       display: block;
       font-family: var(--ll-font-sans, sans-serif);
       color: var(--ll-text, #e0e0e0);
+      --ll-header-font: #a0a0e8;
     }
 
     /* --- Header --- */
@@ -64,6 +78,7 @@ class LlamaApp extends LitElement {
       width: auto;
       margin-left: 0.5rem;
       filter: invert(1);
+      cursor: pointer;
     }
 
     .header-flag {
@@ -74,8 +89,21 @@ class LlamaApp extends LitElement {
     .app-title {
       font-size: var(--ll-text-xl, 1.4rem);
       font-weight: bold;
-      color: var(--ll-text, #e0e0e0);
+      color: var(--ll-header-font);
       white-space: nowrap;
+    }
+
+    .header-quip {
+      font-size: var(--ll-text-sm, 0.85rem);
+      font-style: italic;
+      color: var(--ll-text-dim, #aaa);
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .header-quip.visible {
+      opacity: 1;
     }
 
     .header-nav {
@@ -87,7 +115,7 @@ class LlamaApp extends LitElement {
     }
 
     .nav-link {
-      color: var(--ll-text-dim, #aaa);
+      color: var(--ll-header-font);
       text-decoration: none;
     }
 
@@ -237,6 +265,9 @@ class LlamaApp extends LitElement {
     this.zone2Mode           = 'sections';
     this.loopSourceStart     = null;
     this.loopSourceEnd       = null;
+    this._quip               = '';
+    this._quipIndex          = -1;
+    this._quipInterval       = null;
     this._warnTimeout        = null;
     this._statusTimeout      = null;
     this._errorTimeout       = null;
@@ -1966,6 +1997,26 @@ class LlamaApp extends LitElement {
     if (handler) handler();
   }
 
+  _nextQuip() {
+    let idx;
+    do { idx = Math.floor(Math.random() * QUIPS.length); } while (idx === this._quipIndex && QUIPS.length > 1);
+    this._quipIndex = idx;
+    this._quip = QUIPS[idx];
+    this.requestUpdate();
+  }
+
+  _onQuipEnter() {
+    this._nextQuip();
+    this._quipInterval = setInterval(() => this._nextQuip(), QUIP_INTERVAL_MS);
+  }
+
+  _onQuipLeave() {
+    clearInterval(this._quipInterval);
+    this._quipInterval = null;
+    this._quip = '';
+    this.requestUpdate();
+  }
+
   render() {
     const currentVideo   = this._appState?.videos.find(v => v.id === this.currentVideoId) ?? null;
     const activeChapter  = this.activeChapterId
@@ -1994,7 +2045,11 @@ class LlamaApp extends LitElement {
     return html`
       <header class="app-header">
         <span class="app-title">LoopLlama</span>
-        <img src="${import.meta.env.BASE_URL}llama-mascot.png" class="header-llama" alt="">
+        <img src="${import.meta.env.BASE_URL}llama-mascot.png" class="header-llama" alt=""
+          @mouseenter=${this._onQuipEnter}
+          @mouseleave=${this._onQuipLeave}
+        >
+        <span class="header-quip ${this._quip ? 'visible' : ''}">${this._quip}</span>
         <nav class="header-nav">
           <img src="${import.meta.env.BASE_URL}flag.svg" class="header-flag" alt="">
           <span class="nav-sep">|</span>

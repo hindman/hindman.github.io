@@ -6,34 +6,29 @@
 
 Remaining tasks:
 
-    . Beta launch:
-        - Deploy to a v2 URL.
-        - Leave v1 as the official version for now.
+    - Dev track:
 
-    - Try on other devices:
-        - iPad
-        - phone?
+        - Real-world usage and testing: phase 2:
+            - Find bugs.
+            - Find usage problems or needed improvements.
+            - Try on other devices:
+                - iPad
+                - phone?
 
-    - Real-world usage and testing.
-        - Find bugs.
-        - Find usage problems or needed improvements.
+        - Code review:
+            - Review code.
+            - Refactor if the review thinks changes are warranted.
 
-    - Code review:
-        - Review code.
-        - Refactor if the review thinks changes are warranted.
+        - Real-world usage and testing: phase 3:
 
-    - Editing/organizing:
-        - Prune the planning doc to what's still needed.
-        - Final edits on all text elements, labels, names, messages.
-        - Some menu reorganization.
+        - Editing/organizing:
+            - Prune the planning doc to what's still needed.
+            - Final edits on all text elements, labels, names, messages.
+            - Some menu reorganization.
 
-    - Help text:
+    - Help text track:
         - Draft, edit.
         - Implement bindings and menu links.
-
-    - Header sizzle:
-        - Add random quips on hover.
-        - Try font color.
 
     - Launch:
         - Make v2 the offial version.
@@ -154,6 +149,38 @@ LoopLlama: building the site:
     cd loopllama/v2
 
     npm run build
+
+LoopLlama: where the built site lives:
+
+    Dev:
+
+        $ npm run dev
+
+        Vite runs a local HTTP server. When your browser requests a file, Vite
+        reads the source, transforms it on the fly (bundling imports, compiling
+        etc.), and serves it. Nothing is written to disk. The `outDir` setting is
+        irrelevant. The `dist/` value in the config is just a placeholder to
+        suppress the warning.
+
+    Deployed:
+
+        $ npm run build     # Then git commit/push
+
+        Vite reads the source, bundles everything into a small set of files,
+        and writes them to disk at loopllama/v2/.
+
+        loopllama/v2/index.html            | Entry point, with corrected asset paths
+        loopllama/v2/assets/index-XYZ.js   | JS bundled and minified
+        loopllama/v2/assets/index-XYZ.css  | CSS bundled
+        loopllama/v2/llama-mascot.png etc. | Copied from public/
+
+        Those files get committed to git and GitHub Pages serves them as
+        static files. No Node, no Vite, no build step happens on GitHub's end
+        — it just serves what's in the repo.
+
+        The hash in the asset filenames (`index-D8aSR4kO.js`) is a
+        cache-buster: it changes whenever the file contents change, so
+        browsers always fetch the latest version.
 
 ## Two repo setup
 
