@@ -134,8 +134,8 @@ const MENUS = [
   {
     label: 'Help',
     items: [
-      { label: 'General help', action: 'helpGeneral', disabled: true },
-      { label: 'Key bindings', action: 'helpKeys',    disabled: true },
+      { label: 'General help', action: 'helpGeneral' },
+      { label: 'Key bindings', action: 'helpKeys' },
     ],
   },
 ];

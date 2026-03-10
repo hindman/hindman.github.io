@@ -1059,7 +1059,7 @@ Undo and help:
     U  | Redo: reverses an Undo
     hh | Help: general
     hk | Help: key bindings
-    ?  | Synonym for `hk`
+    ?  | Synonym for `hk`      [should this point to general help instead?]
     o  | Options-modal
 
 Data:

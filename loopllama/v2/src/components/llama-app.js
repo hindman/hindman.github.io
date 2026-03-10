@@ -614,7 +614,7 @@ class LlamaApp extends LitElement {
       focusLoopEnd:       () => { this.renderRoot.querySelector('llama-controls')?.focusEndInput(); this._flash('loopEnd', 'until-blur'); },
       undo:          () => this._undo(),
       redo:          () => this._redo(),
-      helpKeys:      stub('helpKeys'),
+      helpKeys:      () => window.open(`${_siteOrigin()}/loopllama/v2/keybindings/`, '_blank'),
       options:       () => this._optionsModalEl?.show(this._appState?.options),
       videoUrl:      () => this._urlInputModalEl?.show(),
       videoPicker:   () => this._videoPickerEl?.show(),
@@ -953,7 +953,7 @@ class LlamaApp extends LitElement {
         this._seekIntoZoomIfNeeded();
       },
       videoInfo:     () => this._videoInfoModalEl?.show(),
-      helpGeneral:   stub('helpGeneral'),
+      helpGeneral:   () => window.open(`${_siteOrigin()}/loopllama/v2/help/`, '_blank'),
       deleteData: () => {
         const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
         this._deleteDataModalEl?.show({
@@ -2297,6 +2297,14 @@ function _fmtTimePlain(secs) {
   if (secs == null || isNaN(secs)) return '?';
   const s = Math.floor(secs);
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+}
+
+// Return the base URL for The Fifth Fret site. When running under the Vite
+// dev server (port 5173), the Jekyll site is on port 4000 instead.
+function _siteOrigin() {
+  return window.location.port === '5173'
+    ? 'http://127.0.0.1:4000'
+    : window.location.origin;
 }
 
 // Trigger a JSON file download in the browser.

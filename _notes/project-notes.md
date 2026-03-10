@@ -4,39 +4,20 @@
 
 ## TODO: LoopLlama v2
 
-Remaining tasks:
+Current tasks:
+    - Help text: draft
+    - Planning doc: prune/organize
+    - invoke: script the deployment and assets/ dir management.
+    - Real-world usage and testing: phase 2.
+    - Try on other devices: iPad, phone, JK machines
 
-    - Dev track:
+Pending tasks:
+    - Text elements: edit/organize [see below].
+    - Code review and refactor.
+    - Real-world usage and testing: phase 3.
+    - Launch: Make v2 the offial version.
 
-        - invoke:
-            - script the deployment and assets/ dir management.
-
-        - Real-world usage and testing: phase 2:
-            - Find bugs.
-            - Find usage problems or needed improvements.
-            - Try on other devices:
-                - iPad
-                - phone?
-
-        - Code review:
-            - Review code.
-            - Refactor if the review thinks changes are warranted.
-
-        - Real-world usage and testing: phase 3:
-
-        - Editing/organizing:
-            - Prune the planning doc to what's still needed.
-            - Final edits on all text elements, labels, names, messages.
-            - Some menu reorganization.
-
-    - Help text track:
-        - Draft, edit.
-        - Implement bindings and menu links.
-
-    - Launch:
-        - Make v2 the offial version.
-
-Editing/organizing details:
+Text elements: edit/organize: DETAILS:
     - Menus:
         - Edit
         - Add: Chapter, Data
@@ -53,12 +34,6 @@ Editing/organizing details:
     - Timeline:
         - Hovers
     - Current panel
-
-URLs:
-
-    https://hindman.github.io/loopllama/    | v1
-    https://hindman.github.io/loopllama/v1/ | v1
-    https://hindman.github.io/loopllama/v2/ | v2
 
 ## TODO: The Fifth Fret
 
@@ -122,6 +97,9 @@ Serving the website locally:
 
     bundle exec jekyll serve
     open http://127.0.0.1:4000/
+
+    # To see draft post and/or unpublished pages.
+    bundle exec jekyll serve --drafts --unpublished
 
 TOC icons:
 

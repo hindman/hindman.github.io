@@ -41,6 +41,10 @@ exclude:
   - _notes/
   - tmp/
 
+# Disable jekyll-relative-links (pulled in by theme; incompatible with Ruby 3.4).
+relative_links:
+  enabled: false
+
 # Plugins.
 plugins:
   - jekyll-paginate
