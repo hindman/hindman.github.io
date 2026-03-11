@@ -4,10 +4,6 @@
 
 ## TODO: LoopLlama v2
 
-The Fifth Fret:
-    - Narrow browswer window: my view-2
-    - Image becomes huge, pushing all content down.
-
 Current tasks:
     - Help text: draft
     - Planning doc: prune/organize

@@ -10,7 +10,7 @@
 /* Author image: remove oval frame and allow full width. */
 .sidebar .author__avatar {
   width: 80% !important;
-  max-width: none !important;
+  max-width: 280px !important;
   margin: 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.25);
   padding-bottom: 0.75em;
@@ -33,5 +33,35 @@
   padding: 0 !important;
   border: 0 !important;
   box-shadow: none !important;
+}
+
+/* At collapsed layout: show landscape image centered, hide other sidebar content. */
+@media (max-width: 1024px) {
+  /* Hide everything in the sidebar except the avatar. */
+  .sidebar .author__content,
+  .sidebar .author__urls-wrapper {
+    display: none !important;
+  }
+
+  /* Override the theme's table-cell/36px defaults; center the avatar block. */
+  .sidebar .author__avatar {
+    display: flex !important;
+    justify-content: center;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-bottom: none !important;
+    padding-bottom: 0.5em !important;
+  }
+
+  /* Swap in the landscape image and constrain its width. */
+  .sidebar .author__avatar img,
+  .sidebar .author__avatar a img {
+    content: url('/assets/images/juan-gris-guitar-color-landscape.jpg');
+    max-width: 300px !important;
+    width: 100% !important;
+    height: auto !important;
+  }
 }
 
