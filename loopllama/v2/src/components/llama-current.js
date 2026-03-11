@@ -1,14 +1,15 @@
 // llama-current.js -- "Current" panel showing active entity info.
 //
 // Displays top-level state: video name, active chapter, current
-// section, active loop name, and loop source.
+// section, and loop source.
 //
 // Props:
-//   videoName, videoId, chapterName, sectionName, loopName  -- strings
+//   videoName, videoId, chapterName, sectionName  -- strings
 //   loopSourceLabel   -- e.g. "Verse A"
 //   loopSourceType    -- 'loop' | 'section' | 'chapter' | null
 //   loopSourceStart   -- unpadded start of source entity (seconds) | null
 //   loopSourceEnd     -- unpadded end of source entity (seconds) | null
+//   loopDirty         -- true when scratch-loop bounds differ from source
 //   duration, zoomLabel
 
 import { LitElement, html, css } from 'lit';
@@ -68,6 +69,10 @@ class LlamaCurrent extends LitElement {
       color: var(--ll-warn, #f0c040);
     }
 
+    .dirty-range {
+      color: var(--ll-warn, #f0c040);
+    }
+
   `;
 
   static properties = {
@@ -75,11 +80,11 @@ class LlamaCurrent extends LitElement {
     videoId:           { type: String },
     chapterName:       { type: String },
     sectionName:       { type: String },
-    loopName:          { type: String },
     loopSourceLabel:   { type: String },
     loopSourceType:    { type: String },
     loopSourceStart:   { type: Number },
     loopSourceEnd:     { type: Number },
+    loopDirty:         { type: Boolean },
     duration:          { type: Number },
     zoomLabel:         { type: String },
   };
@@ -90,11 +95,11 @@ class LlamaCurrent extends LitElement {
     this.videoId           = null;
     this.chapterName       = null;
     this.sectionName       = null;
-    this.loopName          = null;
     this.loopSourceLabel   = null;
     this.loopSourceType    = null;
     this.loopSourceStart   = null;
     this.loopSourceEnd     = null;
+    this.loopDirty         = false;
     this.duration          = null;
     this.zoomLabel         = null;
   }
@@ -115,18 +120,18 @@ class LlamaCurrent extends LitElement {
     `;
   }
 
+  _loopSourceValue() {
+    if (!this.loopSourceType) return null;
+    const typeLabel = this.loopSourceType[0].toUpperCase() + this.loopSourceType.slice(1);
+    const nameStr   = this.loopSourceLabel ? `: ${this.loopSourceLabel}` : '';
+    if (this.loopSourceStart == null || this.loopSourceEnd == null) {
+      return html`${typeLabel}${nameStr}`;
+    }
+    const range = ` [${this._fmtDuration(this.loopSourceStart)} \u2013 ${this._fmtDuration(this.loopSourceEnd)}]`;
+    return html`${typeLabel}${nameStr}<span class="${this.loopDirty ? 'dirty-range' : ''}">${range}</span>`;
+  }
+
   render() {
-    const sourceTypeDisplay = this.loopSourceType
-      ? this.loopSourceType[0].toUpperCase() + this.loopSourceType.slice(1)
-      : null;
-
-    // For section/chapter sources, append the unpadded bounds to the label.
-    const showBounds = (this.loopSourceType === 'section' || this.loopSourceType === 'chapter')
-      && this.loopSourceStart != null && this.loopSourceEnd != null;
-    const sourceValue = showBounds
-      ? `${this.loopSourceLabel || '—'}  [${this._fmtDuration(this.loopSourceStart)} – ${this._fmtDuration(this.loopSourceEnd)}]`
-      : this.loopSourceLabel;
-
     return html`
       <div class="current-panel">
         <div class="panel-title">Current</div>
@@ -135,9 +140,10 @@ class LlamaCurrent extends LitElement {
           ${this._row('Video ID',    this.videoId)}
           ${this._row('Chapter',     this.chapterName)}
           ${this._row('Section',     this.sectionName)}
-          ${this._row('Loop',        this.loopName)}
-          ${this._row('Source',      sourceValue)}
-          ${this._row('Source type', sourceTypeDisplay)}
+          <div class="current-row">
+            <div class="row-label">Loop Source</div>
+            <div class="row-value ${!this.loopSourceType ? 'dim' : ''}">${this._loopSourceValue() ?? '—'}</div>
+          </div>
           ${this._row('Duration',    this.duration != null ? this._fmtDuration(this.duration) : null)}
           ${this.zoomLabel ? html`
             <div class="current-row">

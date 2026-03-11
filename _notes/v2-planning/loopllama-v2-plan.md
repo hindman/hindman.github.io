@@ -432,6 +432,8 @@ Actions:
         - Open loop
         - Save new loop
         - Save back to loop source
+        - Reset loop to source
+        - Unlink loop source
         - Delete loop
         - Zoom current loop
         ---------------------------

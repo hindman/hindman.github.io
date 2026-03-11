@@ -56,7 +56,8 @@ toc_icon: 'guitar'
         lv     | Loop current video (synonym for `vl`)
         lc     | Loop current chapter (synonym for `cl`)
         ls     | Loop current section (synonym for `sl`)
-        l<bsp> | Clear loop source [severs connection to source; does not alter start/end]
+        l<bsp> | Unlink loop source [severs connection to source]
+        l=     | Reset loop to equal source
         ld     | Delete loop [via picker]
         lz     | Toggle timline zoom, using current loop
         --------------------------------------------------

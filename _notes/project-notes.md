@@ -1,60 +1,8 @@
 
 ## CURRENT SESSION
 
-Here are my latest thoughts on source loops. Help me assess and improve this
-plan (or reject it if there's a better idea).
-
-Problems:
-
-    - Loop-related headings in the current area are not well organized.
-        - We have two headings for loop source info.
-        - And we have a "Loop" heading but isn't that also merely
-          conveying when a Loop entity is serving as the source?
-
-    - We lack a loop-dirty indicator, an idea that was in our plans.
-
-    - Our policy regarding loop sources seems inconsistent:
-        - Various edits do not sever the scratch-loop and its source:
-            - Nudges.
-            - Operations via loop-edit mode.
-            - Direct edits via the start/end text boxes.
-        - But `[[` and `]]` edits do sever the connection.
-
-Tentative solutions:
-
-    - Consolidate loop info in Current panel:
-        - Drop "Loop", "Source", and "Source type" headings.
-        - Add a "Loop Source" heading.
-        - Not sure how we should organize the details, but one approach
-          might be something like this:
-
-            # Schematic mockup
-
-            SOURCE_TYPE: NAME [START - END] DIRTY_SYMBOL
-
-            # Example
-
-            Section: Verse 2 [1:33-1:51]**
-
-        - Maybe the dirty indicator could be our warning-yellow.
-        - Or maybe there's a more effective way to convey dirty status
-          than merely using an opaque symbol.
-
-    - New policy:
-        - Edits to the scratch-loop never sever it from the source.
-        - That can happen only via explicit user action:
-            - Open a different entity as the source.
-            - User explicitly severs the connection via clear-loop-source:
-                - This severs the connection to the source.
-                - It does not alter scratch-loop start/end.
-        - New binding:
-            l<bsp> | Clear loop source
-        - New item on Loop menu:
-            Clear loop source
 
 ## TODO: LoopLlama v2
-
-Current panel: loop source: rework.
 
 Assess persistence again:
     - what's involved?

@@ -577,8 +577,8 @@ class LlamaApp extends LitElement {
         this._vc?.seekTo(target);
         this._flash('time');
       },
-      setLoopStart:  () => { if (noVideo()) return; this.loopStart = this._vc?.getCurrentTime() ?? 0; this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this.loopSourceStart = null; this.loopSourceEnd = null; this._autoDisableLoopIfInvalid(); this._flash('loopStart'); },
-      setLoopEnd:    () => { if (noVideo()) return; this.loopEnd   = this._vc?.getCurrentTime() ?? 0; this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this.loopSourceStart = null; this.loopSourceEnd = null; this._autoDisableLoopIfInvalid(); this._flash('loopEnd'); },
+      setLoopStart:  () => { if (noVideo()) return; this.loopStart = this._vc?.getCurrentTime() ?? 0; this._autoDisableLoopIfInvalid(); this._flash('loopStart'); },
+      setLoopEnd:    () => { if (noVideo()) return; this.loopEnd   = this._vc?.getCurrentTime() ?? 0; this._autoDisableLoopIfInvalid(); this._flash('loopEnd'); },
       resetLoopStart: () => { if (noVideo()) return; this.loopStart = 0; this._autoDisableLoopIfInvalid(); this._flash('loopStart'); },
       resetLoopEnd:   () => { if (noVideo()) return; this.loopEnd = this.duration ?? 0; this._autoDisableLoopIfInvalid(); this._flash('loopEnd'); },
       nudgeStartDown: () => {
@@ -715,8 +715,10 @@ class LlamaApp extends LitElement {
           this._pushUndoSnapshot('Loop updated');
           this.namedLoops[idx].start = this.loopStart;
           this.namedLoops[idx].end   = this.loopEnd;
-          this.namedLoops = [...this.namedLoops];
-          this.statusMsg  = 'Loop updated';
+          this.namedLoops        = [...this.namedLoops];
+          this.loopSourceStart   = this.loopStart;
+          this.loopSourceEnd     = this.loopEnd;
+          this.statusMsg         = 'Loop updated';
           this._saveCurrentState();
           return;
         }
@@ -761,6 +763,33 @@ class LlamaApp extends LitElement {
         }
 
         this._setWarning('No source to save back to.');
+      },
+      resetLoopToSource: () => {
+        if (!this.loopSource) {
+          this._setWarning('No source to reset to.');
+          return;
+        }
+        const padStart = (this.loopSourceType !== 'loop')
+          ? (this._appState?.options.loop_pad_start ?? DEFAULT_OPTIONS.loop_pad_start) : 0;
+        const padEnd = (this.loopSourceType !== 'loop')
+          ? (this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end)   : 0;
+        this.loopStart = Math.max(0, this.loopSourceStart - padStart);
+        this.loopEnd   = this.loopSourceEnd + padEnd;
+        this._clearZoomIfOutside(this.loopStart, this.loopEnd);
+        this._autoDisableLoopIfInvalid();
+        this.statusMsg = 'Loop reset to source.';
+      },
+      unlinkLoopSource: () => {
+        if (!this.loopSource) {
+          this._setWarning('No source to unlink.');
+          return;
+        }
+        this.loopSource      = null;
+        this.loopSourceLabel = null;
+        this.loopSourceType  = null;
+        this.loopSourceStart = null;
+        this.loopSourceEnd   = null;
+        this.statusMsg = 'Loop source unlinked.';
       },
       editScratch: () => this._enterEditScratch(),
       deleteLoop: () => this._openLoopsPicker('delete'),
@@ -1445,23 +1474,13 @@ class LlamaApp extends LitElement {
 
   _onSetLoopStartNow() {
     if (!this.currentVideoId) return;
-    this.loopStart       = this.currentTime;
-    this.loopSource      = null;
-    this.loopSourceLabel = null;
-    this.loopSourceType  = null;
-    this.loopSourceStart = null;
-    this.loopSourceEnd   = null;
+    this.loopStart = this.currentTime;
     this._autoDisableLoopIfInvalid();
   }
 
   _onSetLoopEndNow() {
     if (!this.currentVideoId) return;
-    this.loopEnd         = this.currentTime;
-    this.loopSource      = null;
-    this.loopSourceLabel = null;
-    this.loopSourceType  = null;
-    this.loopSourceStart = null;
-    this.loopSourceEnd   = null;
+    this.loopEnd = this.currentTime;
     this._autoDisableLoopIfInvalid();
   }
 
@@ -1582,6 +1601,8 @@ class LlamaApp extends LitElement {
     this.loopSource      = loop.id;
     this.loopSourceLabel = loop.name || null;
     this.loopSourceType  = 'loop';
+    this.loopSourceStart = loop.start;
+    this.loopSourceEnd   = loop.end;
     this.statusMsg       = `Loop loaded: ${loop.name || 'unnamed'}`;
     if (this.looping) {
       this._maybePushJump(this._vc?.getCurrentTime() ?? 0, loop.start);
@@ -1600,6 +1621,8 @@ class LlamaApp extends LitElement {
     this.loopSource      = loop.id;
     this.loopSourceLabel = loop.name || null;
     this.loopSourceType  = 'loop';
+    this.loopSourceStart = loop.start;
+    this.loopSourceEnd   = loop.end;
     this.statusMsg       = `Loop loaded: ${loop.name || 'unnamed'}`;
     this._maybePushJump(this._vc?.getCurrentTime() ?? 0, loop.start);
     this._vc?.seekTo(loop.start);
@@ -2031,15 +2054,23 @@ class LlamaApp extends LitElement {
     this.requestUpdate();
   }
 
+  _isLoopDirty() {
+    if (!this.loopSource || this.loopSourceStart == null || this.loopSourceEnd == null) return false;
+    const padStart = (this.loopSourceType !== 'loop')
+      ? (this._appState?.options.loop_pad_start ?? DEFAULT_OPTIONS.loop_pad_start) : 0;
+    const padEnd = (this.loopSourceType !== 'loop')
+      ? (this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end)   : 0;
+    return this.loopStart !== (this.loopSourceStart - padStart)
+        || this.loopEnd   !== (this.loopSourceEnd   + padEnd);
+  }
+
   render() {
     const currentVideo   = this._appState?.videos.find(v => v.id === this.currentVideoId) ?? null;
     const activeChapter  = this.activeChapterId
       ? this.chapters.find(c => c.id === this.activeChapterId) ?? null
       : null;
     const currentSection = nearestSectionLeft(this.sections, this.currentTime);
-    const loopName       = this.loopSource
-      ? (this.namedLoops.find(l => l.id === this.loopSource)?.name ?? null)
-      : null;
+    const loopDirty      = this._isLoopDirty();
     const zoomLabel = (() => {
       if (!this.zoomSource) return null;
       const { trigger, start, end } = this.zoomSource;
@@ -2141,11 +2172,11 @@ class LlamaApp extends LitElement {
           .videoId=${currentVideo?.id ?? null}
           .chapterName=${activeChapter?.name ?? null}
           .sectionName=${currentSection?.name ?? null}
-          .loopName=${loopName}
           .loopSourceLabel=${this.loopSourceLabel}
           .loopSourceType=${this.loopSourceType}
           .loopSourceStart=${this.loopSourceStart}
           .loopSourceEnd=${this.loopSourceEnd}
+          .loopDirty=${loopDirty}
           .duration=${this.duration}
           .zoomLabel=${zoomLabel}
         ></llama-current>

@@ -80,16 +80,18 @@ export const BINDINGS = {
   }},
 
   'l': { completions: {
-    'l': { handler: 'toggleLoop',    desc: 'Toggle looping' },
-    'o': { handler: 'openLoop',      desc: 'Open saved loop' },
-    'n': { handler: 'saveLoop',      desc: 'Save new loop' },
-    'b': { handler: 'saveBack',      desc: 'Save back to source loop' },
-    'e': { handler: 'editScratch',   desc: 'Edit scratch loop' },
-    'd': { handler: 'deleteLoop',    desc: 'Delete a loop' },
-    'z': { handler: 'zoomLoop',      desc: 'Toggle loop zoom' },
-    's': { handler: 'loopSection',   desc: 'Loop current section (synonym: sl)' },
-    'c': { handler: 'loopChapter',   desc: 'Loop current chapter (synonym: cl)' },
-    'v': { handler: 'loopVideo',     desc: 'Loop full video (synonym: vl)' },
+    'l': { handler: 'toggleLoop',        desc: 'Toggle looping' },
+    'o': { handler: 'openLoop',          desc: 'Open saved loop' },
+    'n': { handler: 'saveLoop',          desc: 'Save new loop' },
+    'b': { handler: 'saveBack',          desc: 'Save back to loop source' },
+    '=': { handler: 'resetLoopToSource', desc: 'Reset loop to source' },
+    'Backspace': { handler: 'unlinkLoopSource', desc: 'Unlink loop source' },
+    'e': { handler: 'editScratch',       desc: 'Edit scratch loop' },
+    'd': { handler: 'deleteLoop',        desc: 'Delete a loop' },
+    'z': { handler: 'zoomLoop',          desc: 'Toggle loop zoom' },
+    's': { handler: 'loopSection',       desc: 'Loop current section (synonym: sl)' },
+    'c': { handler: 'loopChapter',       desc: 'Loop current chapter (synonym: cl)' },
+    'v': { handler: 'loopVideo',         desc: 'Loop full video (synonym: vl)' },
   }},
 
   'c': { completions: {
