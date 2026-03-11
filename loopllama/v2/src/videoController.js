@@ -90,6 +90,12 @@ export function createVideoController({ onReady, onStateChange } = {}) {
   function setPlaybackRate(rate) { player.setPlaybackRate(rate); }
   function getPlaybackRate()     { return player.getPlaybackRate(); }
 
+  // Returns the video title from the IFrame API's getVideoData(), or null
+  // if the player is not ready or the data is unavailable.
+  function getVideoTitle() {
+    return player?.getVideoData()?.title ?? null;
+  }
+
   return {
     initialize,
     loadVideo,
@@ -103,5 +109,6 @@ export function createVideoController({ onReady, onStateChange } = {}) {
     isPlaying,
     setPlaybackRate,
     getPlaybackRate,
+    getVideoTitle,
   };
 }

@@ -4,10 +4,20 @@
 
 ## TODO: LoopLlama v2
 
+The Fifth Fret:
+    - Narrow browswer window: my view-2
+    - Image becomes huge, pushing all content down.
+
 Current tasks:
     - Help text: draft
     - Planning doc: prune/organize
-    - invoke: script the deployment and assets/ dir management.
+    - invoke:
+        - deployment and assets/ dir management.
+        - bundle exec jekyll serve --drafts --unpublished
+        - other tasks?
+        - one command to spin up LL and F5 locally, with output to logs that I
+          can follow if needed.
+        - another to shut them down
     - Real-world usage and testing: phase 2.
     - Try on other devices: iPad, phone, JK machines
 

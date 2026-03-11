@@ -990,6 +990,20 @@ class LlamaApp extends LitElement {
         // Only surface the Ended state; all others are visible/audible
         // to the user or are internal transitions not worth reporting.
         if (state === 0) this.statusMsg = 'Ended';
+
+        // Auto-name: on the first PLAYING or CUED event after a video loads,
+        // grab the YT title and store it if the video has no name yet.
+        if (state === 1 || state === 5) {
+          const video = this._appState.videos.find(v => v.id === this.currentVideoId);
+          if (video && !video.name) {
+            const title = this._vc.getVideoTitle();
+            if (title) {
+              video.name = title;
+              this.videos = [...this._appState.videos];
+              save(this._appState);
+            }
+          }
+        }
       },
     });
     await this._vc.initialize(container);
