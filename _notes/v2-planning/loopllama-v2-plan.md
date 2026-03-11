@@ -17,6 +17,7 @@
 ## Page layout
 ## Controls area
 ## The LoopLlama banner
+## Backend Persistence (Future: v2 or v3)
 
 -->
 
@@ -621,4 +622,68 @@ Polish Solidarity (band 4): One of the cleanest symbols in the set. The
 Soviet-aligned authoritarianism. Post-1989 political fragmentation of the
 Solidarity coalition (including eventual connection to nationalist and
 PiS-adjacent politics) is largely irrelevant to what the symbol evokes.
+
+---
+
+## Backend Persistence (Future: v2 or v3)
+
+### Current state
+
+v2 uses localStorage only. App state (videos, sections, loops, marks) is
+stored in the browser. Cross-browser sync requires manual export/import
+of a JSON file.
+
+### Planned approach: Supabase
+
+If and when backend persistence is added, the plan is to use Supabase.
+
+Supabase is a hosted backend-as-a-service with a generous free tier.
+It provides a database, authentication, and a REST API. No server to
+host or maintain. The free tier is almost certainly sufficient for LL's
+scale; exceeding it would be a welcome problem.
+
+### How it works for users
+
+Users authenticate through LoopLlama using a "Sign in with X" button
+(e.g., Google). Supabase orchestrates the OAuth handshake with the
+chosen identity provider. Users never create a Supabase account --
+Supabase is invisible to them. They just need an account with whatever
+provider LL offers (Google is the obvious default due to near-universal
+coverage).
+
+Once signed in, a user's LL data is stored in the Supabase database
+and tied to their identity. It is accessible from any browser or device
+they sign into.
+
+### How it works for LL
+
+LL (i.e., the developer) holds the Supabase project. The app is
+initialized with a project URL and an anon key -- both embeddable in
+client-side code, as this is the standard Supabase pattern. The anon key
+is intentionally public; what controls data access is Row Level Security
+(RLS) configured in Supabase, which ensures each user can only read and
+write their own data.
+
+### What changes in the app
+
+The storage layer (storage.js) would gain a server-aware mode: if the
+user is authenticated, reads and writes go to Supabase; otherwise the
+app falls back to localStorage (so unauthenticated / guest use still
+works). The rest of the app is unaffected -- the data schema is already
+well-suited to this model. A small login/logout UI element would be
+added to the app shell.
+
+A decision is needed for the first-login experience: when a user signs
+in for the first time on a device that already has localStorage data,
+should that local data be migrated to their account, discarded, or
+merged?
+
+### Identity providers
+
+Multiple sign-in options can be offered simultaneously (e.g., Google and
+GitHub). Each is configured in the Supabase dashboard. The tradeoff: a
+user who signs in with Google and later tries GitHub will have two
+separate accounts with separate data, unless account-linking is
+implemented (an advanced feature). Safest to start with one provider
+(Google) and add more later if needed.
 
