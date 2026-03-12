@@ -18,6 +18,9 @@
 ## Controls area
 ## The LoopLlama banner
 ## Backend Persistence (Future: v2 or v3)
+##   Phase 1: Metrics
+##   Phase 2: Shareable setups
+##   Phase 3: Per-user persistence
 
 -->
 
@@ -686,4 +689,72 @@ user who signs in with Google and later tries GitHub will have two
 separate accounts with separate data, unless account-linking is
 implemented (an advanced feature). Safest to start with one provider
 (Google) and add more later if needed.
+
+### Potential benefits and features
+
+Three categories of value, in rough order of implementation complexity:
+
+1. Metrics and telemetry (no user auth required)
+   - Total users, active users, retention
+   - Which videos are being loaded
+   - Which features are used (loops vs. marks vs. sections vs. chapters)
+   - Informs future development priorities based on actual usage
+   - Supabase's built-in dashboard handles basic reporting without
+     any additional reporting code
+
+2. Shareable setups (no user auth required)
+   - A user can share a video setup (sections, loops, marks) via a URL
+   - Recipient clicks the link and LL loads that setup directly --
+     no JSON file exchange
+   - Setups can be stored as public anonymous records in Supabase
+   - Enables a community library over time: users contribute setups
+     for songs, others discover and load them
+
+3. Per-user data backup and sync (requires auth)
+   - User's LL data stored in Supabase, tied to their identity
+   - Accessible from any browser or device after signing in
+   - Eliminates the risk of data loss from clearing browser storage
+   - Cross-device sync happens automatically, no manual export/import
+
+### Implementation plan (rough sketch)
+
+The three categories above map naturally to three phases. Each phase
+is independently useful and can ship without the next one.
+
+Phase 1 -- Metrics (foundation work)
+- Create the Supabase project; add the JS client to the LL app
+- Design and create an `events` table (event type, video ID,
+  timestamp, anonymous session ID)
+- Add event logging calls at key points in the app: video loaded,
+  loop created, section created, mark created, speed changed, etc.
+- No UI changes; no auth; no RLS complexity beyond insert-only policy
+
+Phase 2 -- Shareable setups (builds on Phase 1 infrastructure)
+- Design a `shared_setups` table: video metadata plus the full
+  sections/loops/marks payload as JSON, plus a generated share ID
+- Add a Share button to the UI; on click, write setup to Supabase
+  and surface a shareable URL to the user
+- Add URL-based load path: if LL is opened with a share ID in the
+  URL, fetch that setup and load it into the app
+- Decide scope: share a single loop? A full video setup? Both?
+- No user auth required; anonymous writes with a rate-limit policy
+
+Phase 3 -- Per-user persistence (most complex)
+- Configure Supabase Auth with Google as the identity provider
+- Add login/logout UI to the app shell
+- Rewrite storage.js to be server-aware: authenticated users read
+  and write to Supabase; unauthenticated users fall back to
+  localStorage
+- Set up RLS policies so each user can only access their own data
+- Design a `user_data` table: one row per user, full app state as
+  a JSON blob (matches the existing localStorage structure)
+- Decide and implement the first-login migration strategy: when a
+  user signs in on a device with existing localStorage data, offer
+  to upload it to their account
+
+Sequencing note: Phase 1 is the prerequisite for everything -- it
+creates the Supabase project and adds the client library. Phase 2
+and Phase 3 are largely independent after that and could be done in
+either order, though Phase 2 is smaller and delivers visible user
+value quickly.
 
