@@ -64,7 +64,7 @@ def deploy(c, push = False):
     write_json(PATHS.ll_deployments, ds)
 
     # Add the deployments record, the generated index.html, and assets to git.
-    args = ['git', 'add', PATHS.ll_deployments, PATHS.ll_index, *assets]
+    args = ['git', 'add', '-f', PATHS.ll_deployments, PATHS.ll_index, *assets]
     c.run(' '.join(args))
 
     # Commit and optionally push.
