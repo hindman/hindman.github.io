@@ -17,6 +17,7 @@ import {
   nudgeLoopStart, nudgeLoopEnd,
 } from '../state.js';
 import { load, save, exportAll, exportVideo, importData as mergeImport } from '../storage.js';
+import { logSessionStart, logVideoLoad } from '../analytics.js';
 import './llama-whichkey.js';
 import './llama-controls.js';
 import './llama-timeline.js';
@@ -424,6 +425,7 @@ class LlamaApp extends LitElement {
     this.duration  = null;
     this.statusMsg = `Loading: ${video.id}`;
     save(this._appState);
+    logVideoLoad(video.id);
   }
 
   // Clamp speed to [0.25, 2.0] and set it. Rounds to avoid float drift.
@@ -1006,6 +1008,8 @@ class LlamaApp extends LitElement {
   }
 
   async firstUpdated() {
+    logSessionStart();
+
     // Load persistent state.
     this._appState      = load() ?? createAppState();
     this.videos         = this._appState.videos;

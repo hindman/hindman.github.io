@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 export default defineConfig(({ command }) => ({
   root: 'src',
   base: '/loopllama/v2/',
+  envDir: '..',
   publicDir: '../public',
   build: {
     outDir: command === 'build' ? '..' : 'dist',

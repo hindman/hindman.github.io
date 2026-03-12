@@ -18,7 +18,7 @@
 ## Controls area
 ## The LoopLlama banner
 ## Backend Persistence (Future: v2 or v3)
-##   Phase 1: Metrics
+##   Phase 1: Metrics (schema included)
 ##   Phase 2: Shareable setups
 ##   Phase 3: Per-user persistence
 
@@ -628,7 +628,7 @@ PiS-adjacent politics) is largely irrelevant to what the symbol evokes.
 
 ---
 
-## Backend Persistence (Future: v2 or v3)
+## Backend Persistence
 
 ### Current state
 
@@ -757,4 +757,51 @@ creates the Supabase project and adds the client library. Phase 2
 and Phase 3 are largely independent after that and could be done in
 either order, though Phase 2 is smaller and delivers visible user
 value quickly.
+
+### Phase 1 schema: events table
+
+One table covers all Phase 1 metrics. Feature-usage tracking is
+intentionally excluded -- development roadmap is driven by vision,
+not usage counts.
+
+Table: `events`
+
+| column       | type        | notes                                      |
+|--------------|-------------|--------------------------------------------|
+| id           | uuid        | primary key, auto-generated                |
+| created_at   | timestamptz | auto-generated                             |
+| event_type   | text        | 'session_start' or 'video_load'            |
+| client_id    | text        | UUID in localStorage; present on           |
+|              |             | session_start only (see privacy note)      |
+| session_id   | text        | UUID in sessionStorage; groups events      |
+|              |             | within one visit                           |
+| video_id     | text        | YouTube video ID; present on               |
+|              |             | video_load only; no client_id attached     |
+
+Event types:
+
+- session_start: fired when the app loads. Carries client_id and
+  session_id. Enables approximate unique-user and session counts.
+
+- video_load: fired when a video is loaded. Carries session_id and
+  video_id, but NOT client_id. Enables per-video load counts without
+  creating a per-user watch history.
+
+Privacy note: video_id and client_id are deliberately never stored
+together. A per-user watch history -- even pseudonymous -- is contrary
+to the intent of this data collection. Counts per video are sufficient
+for the "popular videos" use case; linking them to device identities
+is not needed and is avoided.
+
+RLS policy: anon role can INSERT only. No SELECT, UPDATE, or DELETE
+for app clients. Supabase dashboard (service role) is used for all
+reporting queries.
+
+client_id lifecycle: generated once as a UUID, stored in localStorage.
+Survives across sessions on the same device/browser. Does not survive
+clearing browser storage. Is not connected to any real-world identity
+unless the user later creates an account (Phase 3).
+
+session_id lifecycle: generated once per page load, stored in
+sessionStorage. Cleared when the tab is closed.
 

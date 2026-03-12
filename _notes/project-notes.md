@@ -5,7 +5,11 @@
 ## TODO: LoopLlama v2
 
 Persistence:
-    - decide
+    - phase 1: metrics
+        x dev
+        - prod
+    - phase 2: __
+    - phase 3: __
 
 Current tasks:
 
