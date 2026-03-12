@@ -150,9 +150,14 @@ export const BINDINGS = {
 //   the completions object). Called with (null, null) when clearing.
 //   Fires after a ~300ms delay so fast typists who know the binding never
 //   see the overlay.
-export function createKeyboardController(handlers, { onPendingKey } = {}) {
+//
+// onCountChange: (n) => void
+//   Called when the pending count changes. n is a positive integer, or null
+//   when the count is cleared.
+export function createKeyboardController(handlers, { onPendingKey, onCountChange } = {}) {
   let enabled       = true;
   let pendingPrefix = null;
+  let pendingCount  = '';   // accumulated digit string; '' means no count
   let overlayTimer  = null;
 
   function clearPending() {
@@ -162,10 +167,15 @@ export function createKeyboardController(handlers, { onPendingKey } = {}) {
     onPendingKey?.(null, null);
   }
 
-  function dispatch(handlerName) {
+  function clearCount() {
+    pendingCount = '';
+    onCountChange?.(null);
+  }
+
+  function dispatch(handlerName, count) {
     const fn = handlers[handlerName];
     if (fn) {
-      fn();
+      fn(count);
     } else {
       console.log(`[kb] no handler: ${handlerName}`);
     }
@@ -197,8 +207,26 @@ export function createKeyboardController(handlers, { onPendingKey } = {}) {
       event.preventDefault();
       const completions = BINDINGS[pendingPrefix]?.completions;
       const binding = completions?.[key];
+      const count = pendingCount ? parseInt(pendingCount, 10) : 1;
       clearPending();
-      if (key !== 'Escape' && binding) dispatch(binding.handler);
+      clearCount();
+      if (key !== 'Escape' && binding) dispatch(binding.handler, count);
+      return;
+    }
+
+    // Escape clears any pending count and returns to idle.
+    if (key === 'Escape') {
+      if (pendingCount) { event.preventDefault(); clearCount(); }
+      return;
+    }
+
+    // Digit accumulation (Vim-style count prefix).
+    // '0' is only a count digit after at least one other digit has been typed,
+    // so it remains available as a standalone binding if ever needed.
+    if (/^\d$/.test(key) && (key !== '0' || pendingCount !== '')) {
+      event.preventDefault();
+      pendingCount += key;
+      onCountChange?.(parseInt(pendingCount, 10));
       return;
     }
 
@@ -209,12 +237,15 @@ export function createKeyboardController(handlers, { onPendingKey } = {}) {
 
     if (binding.completions) {
       // Enter pending state awaiting a second key.
+      // Count is NOT cleared here -- it carries through to the completion.
       pendingPrefix = key;
       overlayTimer = setTimeout(() => {
         onPendingKey?.(key, binding.completions);
       }, 300);
     } else {
-      dispatch(binding.handler);
+      const count = pendingCount ? parseInt(pendingCount, 10) : 1;
+      clearCount();
+      dispatch(binding.handler, count);
     }
   }
 
@@ -222,12 +253,13 @@ export function createKeyboardController(handlers, { onPendingKey } = {}) {
 
   // enable/disable: modals and modes call these to take/release keyboard focus.
   function enable()  { enabled = true; }
-  function disable() { enabled = false; clearPending(); }
+  function disable() { enabled = false; clearPending(); clearCount(); }
 
   // destroy: call in disconnectedCallback to clean up the listener.
   function destroy() {
     document.removeEventListener('keydown', handleKeyDown);
     clearPending();
+    clearCount();
   }
 
   return { enable, disable, destroy };

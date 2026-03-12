@@ -70,6 +70,7 @@ class LlamaWhichkey extends LitElement {
   static properties = {
     prefix:            { type: String },
     completions:       { type: Object },
+    count:             { type: Number },
     windowFocused:     { type: Boolean },
     editScratchActive: { type: Boolean },
     editScratchFocus:  { type: String },
@@ -83,6 +84,7 @@ class LlamaWhichkey extends LitElement {
     super();
     this.prefix            = null;
     this.completions       = null;
+    this.count             = null;
     this.windowFocused     = true;
     this.editScratchActive = false;
     this.editScratchFocus  = 'start';
@@ -168,18 +170,35 @@ class LlamaWhichkey extends LitElement {
       `;
     }
 
-    // Priority 5: which-key completions.
+    // Priority 5: which-key completions (with optional count prefix).
     if (this.prefix && this.completions) {
+      const countItem = this.count != null
+        ? html`<span class="item"><span class="key">Count:</span><span class="state-val">${this.count}</span></span>`
+        : null;
       const items = Object.entries(this.completions).map(([key, { desc }]) => html`
         <span class="item">
           <span class="key">${this.prefix}${key}</span>
           <span class="desc">${desc}</span>
         </span>
       `);
-      return html`<div class="bar"><div class="row">${items}</div></div>`;
+      return html`<div class="bar"><div class="row">${countItem}${items}</div></div>`;
     }
 
-    // Priority 6: status.
+    // Priority 6: count only (digits typed, awaiting command key).
+    if (this.count != null) {
+      return html`
+        <div class="bar">
+          <div class="row">
+            <span class="item">
+              <span class="key">Count:</span>
+              <span class="state-val">${this.count}</span>
+            </span>
+          </div>
+        </div>
+      `;
+    }
+
+    // Priority 7: status.
     if (this.statusMsg) {
       return html`
         <div class="bar">

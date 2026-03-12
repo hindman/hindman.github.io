@@ -4,8 +4,8 @@
 
 ## TODO: LoopLlama v2
 
-Assess persistence again:
-    - what's involved?
+Persistence:
+    - decide
 
 Current tasks:
 

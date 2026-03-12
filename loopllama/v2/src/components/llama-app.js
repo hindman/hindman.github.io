@@ -210,6 +210,7 @@ class LlamaApp extends LitElement {
     statusMsg:       { type: String },
     wkPrefix:        { type: String },
     wkCompletions:   { type: Object },
+    wkCount:         { type: Number },
     windowFocused:   { type: Boolean },
     editScratchActive:  { type: Boolean },
     editScratchFocus:   { type: String },
@@ -248,6 +249,7 @@ class LlamaApp extends LitElement {
     this.statusMsg     = 'Initializing...';
     this.wkPrefix            = null;
     this.wkCompletions       = null;
+    this.wkCount             = null;
     this.windowFocused       = true;
     this.editScratchActive   = false;
     this.editScratchFocus    = 'start';
@@ -550,11 +552,11 @@ class LlamaApp extends LitElement {
     };
     return {
       playPause:     () => { if (noVideo()) return; this._onPlayPause(); },
-      speedDown:     () => { this._speedChange(-this.speedDelta); this._flash('speed'); },
-      speedUp:       () => { this._speedChange(this.speedDelta); this._flash('speed'); },
+      speedDown:     (count = 1) => { this._speedChange(-this.speedDelta * count); this._flash('speed'); },
+      speedUp:       (count = 1) => { this._speedChange(this.speedDelta * count); this._flash('speed'); },
       speedReset:    () => { this._vc?.setPlaybackRate(1.0); this.speed = 1.0; this._flash('speed'); },
-      seekForward:   () => { if (noVideo()) return; this._onSeekForward(); this._flash('time'); },
-      seekBack:      () => { if (noVideo()) return; this._onSeekBack(); this._flash('time'); },
+      seekForward:   (count = 1) => { if (noVideo()) return; this._seek(this.seekDelta * count); this._flash('time'); },
+      seekBack:      (count = 1) => { if (noVideo()) return; this._seek(-this.seekDelta * count); this._flash('time'); },
       seekDeltaDown: () => {
         const choices = this._appState?.options.seek_delta_choices ?? DEFAULT_OPTIONS.seek_delta_choices;
         const idx = choices.indexOf(this.seekDelta);
@@ -567,9 +569,9 @@ class LlamaApp extends LitElement {
         this.seekDelta = choices[Math.min(idx + 1, choices.length - 1)];
         this._flash('seekDelta');
       },
-      prevEntity:    () => this._navigateEntity('prev'),
+      prevEntity:    (count = 1) => this._navigateEntity('prev', count),
       entityType:    () => { this.renderRoot.querySelector('llama-controls')?.focusEntitySelect(); this._flash('entitySelect', 'until-blur'); },
-      nextEntity:    () => this._navigateEntity('next'),
+      nextEntity:    (count = 1) => this._navigateEntity('next', count),
       jumpToStart:   () => {
         if (noVideo()) return;
         const target = this.looping ? this.loopStart : 0;
@@ -581,31 +583,31 @@ class LlamaApp extends LitElement {
       setLoopEnd:    () => { if (noVideo()) return; this.loopEnd   = this._vc?.getCurrentTime() ?? 0; this._autoDisableLoopIfInvalid(); this._flash('loopEnd'); },
       resetLoopStart: () => { if (noVideo()) return; this.loopStart = 0; this._autoDisableLoopIfInvalid(); this._flash('loopStart'); },
       resetLoopEnd:   () => { if (noVideo()) return; this.loopEnd = this.duration ?? 0; this._autoDisableLoopIfInvalid(); this._flash('loopEnd'); },
-      nudgeStartDown: () => {
+      nudgeStartDown: (count = 1) => {
         if (noVideo()) return;
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
-        this.loopStart = nudgeLoopStart(-this.loopNudgeDelta, state);
+        this.loopStart = nudgeLoopStart(-this.loopNudgeDelta * count, state);
         this._autoDisableLoopIfInvalid();
         this._flash('loopStart');
       },
-      nudgeStartUp: () => {
+      nudgeStartUp: (count = 1) => {
         if (noVideo()) return;
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
-        this.loopStart = nudgeLoopStart(+this.loopNudgeDelta, state);
+        this.loopStart = nudgeLoopStart(+this.loopNudgeDelta * count, state);
         this._autoDisableLoopIfInvalid();
         this._flash('loopStart');
       },
-      nudgeEndDown: () => {
+      nudgeEndDown: (count = 1) => {
         if (noVideo()) return;
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
-        this.loopEnd = nudgeLoopEnd(-this.loopNudgeDelta, state);
+        this.loopEnd = nudgeLoopEnd(-this.loopNudgeDelta * count, state);
         this._autoDisableLoopIfInvalid();
         this._flash('loopEnd');
       },
-      nudgeEndUp: () => {
+      nudgeEndUp: (count = 1) => {
         if (noVideo()) return;
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
-        this.loopEnd = nudgeLoopEnd(+this.loopNudgeDelta, state);
+        this.loopEnd = nudgeLoopEnd(+this.loopNudgeDelta * count, state);
         this._autoDisableLoopIfInvalid();
         this._flash('loopEnd');
       },
@@ -1044,6 +1046,9 @@ class LlamaApp extends LitElement {
         onPendingKey: (prefix, completions) => {
           this.wkPrefix      = prefix;
           this.wkCompletions = completions;
+        },
+        onCountChange: (n) => {
+          this.wkCount = n;
         },
       }
     );
@@ -1516,7 +1521,7 @@ class LlamaApp extends LitElement {
 
   // Seek to the previous or next entity of the active type.
   // Uses a small epsilon so that being near an entity's time doesn't get stuck.
-  _navigateEntity(direction) {
+  _navigateEntity(direction, count = 1) {
     const time  = this._vc?.getCurrentTime() ?? this.currentTime;
     const times = this._getEntityTimes(this.activeEntityType);
     if (!times.length) return;
@@ -1526,12 +1531,11 @@ class LlamaApp extends LitElement {
     const EPS = direction === 'prev' ? 2.0 : 0.1;
     let target = null;
     if (direction === 'prev') {
-      for (const t of times) {
-        if (t < time - EPS) target = t;
-        else break;
-      }
+      const candidates = times.filter(t => t < time - EPS);
+      if (candidates.length) target = candidates[Math.max(candidates.length - count, 0)];
     } else {
-      target = times.find(t => t > time + EPS) ?? null;
+      const candidates = times.filter(t => t > time + EPS);
+      if (candidates.length) target = candidates[Math.min(count - 1, candidates.length - 1)];
     }
     if (target != null) this._jumpTo(target);
   }
@@ -2325,6 +2329,7 @@ class LlamaApp extends LitElement {
       <llama-whichkey
         .prefix=${this.wkPrefix}
         .completions=${this.wkCompletions}
+        .count=${this.wkCount}
         .windowFocused=${this.windowFocused}
         .editScratchActive=${this.editScratchActive}
         .editScratchFocus=${this.editScratchFocus}
