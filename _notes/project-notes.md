@@ -14,12 +14,15 @@ Persistence:
 Current tasks:
 
     - invoke:
-        - deployment and assets/ dir management.
-        - bundle exec jekyll serve --drafts --unpublished
-        - other tasks?
-        - one command to spin up LL and F5 locally, with output to logs that I
-          can follow if needed.
-        - another to shut them down
+        x build
+        x deploy
+        - serve individually:
+            - bundle exec jekyll serve --drafts --unpublished
+            - npm run dev
+        - serve all to log files:
+            - spin up LL and F5 locally, with output to logs
+            - follow command
+            - kill command
 
     - Help text: draft
     - Banner write up.
@@ -143,11 +146,7 @@ LoopLlama: running tests:
 
 LoopLlama: building the site:
 
-    cd loopllama/v2
-
-    npm run build
-    git add assets/index-XXXXXXXX.js assets/index-YYYYYYYY.css  # See index.html
-    git commit/push
+    inv build [--add]
 
 LoopLlama: where the built site lives:
 

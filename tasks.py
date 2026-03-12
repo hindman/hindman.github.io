@@ -8,144 +8,78 @@
 #   inv --help TASK
 #
 # Tasks:
-#   inv tags
-#   inv test [--cov]
-#   inv dist [--publish] [--test]
-#   inv tox
-#   inv bump [--kind <major|minor|patch>] [--local]
+#   inv build
+#   inv deploy [--push]
 #
 ####
 
-import subprocess
-import sys
+import re
+import json
 
-from glob import glob
-from invoke import task
+from invoke import task, Exit
 from pathlib import Path
+from datetime import datetime
 
 from short_con import cons
 
-LIB = 'hgh'
-
-VERSION = '2'
+LL2_DIR = 'loopllama/v2'
 
 PATHS = cons(
-    ll = cons(
-        root = f'loopllama/v{VERSION}',
-    ),
+    ll_root = LL2_DIR,
+    ll_index = f'{LL2_DIR}/index.html',
+    ll_asset_patt = rf'{LL2_DIR}/assets/index-\w+.(?:js|css)',
+    ll_deployments = f'{LL2_DIR}/deployments.json',
 )
 
 @task
 def build(c):
     '''
-    Build LoopLlama v2
+    Builds LoopLlama v2
     '''
-    with c.cd('/var/www'):
-        c.run('ls') # cd /var/www && ls
-        with c.cd('website1'):
-            c.run('ls')  # cd /var/www/website1 && ls
-
-    return # __DISABLED__
-    c.run('mtags --recipe .argpy --write w')
-    c.run('mtags --recipe .argtxt --write u --toc order')
+    with c.cd(PATHS.ll_root):
+        c.run('npm run build')
 
 @task
-def tags(c):
+def deploy(c, push = False):
     '''
-    Run mtags for the project
+    Deploys LoopLlama v2: git add, commit, and optionally push
     '''
-    return # __DISABLED__
-    c.run('mtags --recipe .argpy --write w')
-    c.run('mtags --recipe .argtxt --write u --toc order')
-
-@task
-def test(c, func = None, cov = False):
-    '''
-    Run pytest. optionally opening coverage report.
-    '''
-    return # __DISABLED__
-    # Set the target: the thing to be tested.
-    if func is None:
-        target = 'tests'
-    else:
-        path = path_for_test_func(func)
-        target = f'{path}::{func}'
-    # Build pytest command.
-    cov_args = f'--cov {LIB} --cov-report html' if cov else ''
-    cmd = f'pytest --color yes -s -vv {cov_args} {target}'
-    # Run and cover.
-    c.run(cmd)
-    if cov:
-        c.run('open htmlcov/index.html')
-
-def path_for_test_func(func):
-    # Takes a test function name.
-    # Returns the path to its test file, or exits.
-    tests = glob('tests/test_*.py')
-    args = ['ack', '-l', f'^def {func}'] + tests
-    result = subprocess.run(args, stdout = subprocess.PIPE)
-    out = result.stdout.decode('utf-8').strip()
-    paths = out.split('\n') if out else []
-    n = len(paths)
-    if n == 1:
-        return paths[0]
-    elif n == 0:
-        sys.exit('No matching paths.')
-    else:
-        txt = '\n'.join(paths)
-        sys.exit(f'Too many matching paths.\n{txt}')
-
-@task
-def dist(c, publish = False, test = False, verbose = False):
-    '''
-    Create distribution, optionally publishing to pypi or testpypi.
-    '''
-    return # __DISABLED__
-    repo = 'testpypi' if test else 'pypi'
-    c.run('rm -rf dist')
-    c.run('python -m build')
-    c.run('echo')
-    c.run('twine check dist/*')
-    if publish:
-        vflag = '--verbose' if verbose else ''
-        c.run(f'twine upload -r {repo} dist/* {vflag}')
-
-@task
-def bump(c, kind = 'minor', edit_only = False, push = False, suffix = None):
-    '''
-    Version bump: --kind <minor|major|patch> [--edit-only] [--push] [--suffix <msg>]
-    '''
-    return # __DISABLED__
-    # Validate.
-    assert kind in ('major', 'minor', 'patch')
-
-    # Get current version as a 3-element list.
-    path = f'src/{LIB}/version.py'
-    lines = open(path).readlines()
-    version = lines[0].split("'")[1]
-    major, minor, patch = [int(x) for x in version.split('.')]
-
-    # Compute new version.
-    tup = (
-        (major + 1, 0, 0) if kind == 'major' else
-        (major, minor + 1, 0) if kind == 'minor' else
-        (major, minor, patch + 1)
+    # Get the assets paths from the LL index.html file.
+    assets = re.findall(
+        PATHS.ll_asset_patt,
+        read_file(PATHS.ll_index),
     )
-    version = '.'.join(str(x) for x in tup)
 
-    # Write new version file.
-    if c['run']['dry']:
-        print(f'# Dry run: modify version.py: {version}')
-    else:
-        with open(path, 'w') as fh:
-            fh.write(f"__version__ = '{version}'\n\n")
-        print(f'Bumped to {version}.')
+    # Halt if we did not find exactly one .css and .js asset.
+    exts = sorted(Path(a).suffix for a in assets)
+    if exts != ['.css', '.js']:
+        msg = 'Build failed: did not find expected assets'
+        raise Exit(msg, code = 1)
 
-    # Commit and push.
-    if not edit_only:
-        suffix = '' if suffix is None else f': {suffix}'
-        msg = f'Version {version}{suffix}'
-        c.run(f"git commit {path} -m '{msg}'")
-        if push:
-            c.run('git push origin master')
+    # Add the assets to our deployments record, a simple JSON
+    # file containing triples: [DATETIME, ASSET1, ASSET2].
+    now = datetime.now().strftime('%Y-%m-%d--%H-%M')
+    ds = read_json(PATHS.ll_deployments)
+    ds.append([now, *assets])
+    write_json(PATHS.ll_deployments, ds)
+
+    # Add the deployments record, the generated index.html, and assets to git.
+    args = ['git', 'add', PATHS.ll_deployments, PATHS.ll_index, *assets]
+    c.run(' '.join(args))
+
+    # Commit and optionally push.
+    c.run(f"git commit -m 'v2 deploy {now}'")
+    if push:
+        c.run('git push origin master')
+
+def read_file(path):
+    with open(path) as fh:
+        return fh.read()
+
+def read_json(path):
+    return json.loads(read_file(path))
+
+def write_json(path, d):
+    with open(path, 'w') as fh:
+        json.dump(d, fh, indent = 2)
 
