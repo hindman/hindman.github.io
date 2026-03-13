@@ -255,8 +255,9 @@ class LlamaApp extends LitElement {
     this.editScratchActive   = false;
     this.editScratchFocus    = 'start';
     this.editScratchDelta    = EDIT_SCRATCH_DELTAS[2];
-    this.videos              = [];
-    this.currentVideoId      = null;
+    this._appState           = load() ?? createAppState();
+    this.videos              = this._appState.videos;
+    this.currentVideoId      = this._appState.currentVideoId;
     this.activeEntityType    = 'any';
     this.chapters            = [];
     this.activeChapterId     = null;
@@ -278,7 +279,7 @@ class LlamaApp extends LitElement {
     this._kb                 = null;
     this._pollId             = null;
     this._editScratchHandler = null;
-    this._appState           = null;
+
     this._urlInputModalEl    = null;
     this._videoPickerEl      = null;
     this._editVideoModalEl   = null;
@@ -1009,11 +1010,6 @@ class LlamaApp extends LitElement {
 
   async firstUpdated() {
     logSessionStart();
-
-    // Load persistent state.
-    this._appState      = load() ?? createAppState();
-    this.videos         = this._appState.videos;
-    this.currentVideoId = this._appState.currentVideoId;
 
     const container = this.renderRoot.querySelector('#player-container');
 

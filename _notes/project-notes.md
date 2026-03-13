@@ -4,6 +4,12 @@
 
 ## TODO: LoopLlama v2
 
+llama-app.js:237 Element llama-app scheduled an update (generally because a
+property was set) after an update completed, causing a new update to be
+scheduled. This is inefficient and should be avoided unless the next update
+can only be scheduled as a side effect of the previous update. See
+https://lit.dev/msg/change-in-update for more information.
+
 Persistence:
     - phase 1: metrics
         x dev
