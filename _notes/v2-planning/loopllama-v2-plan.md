@@ -730,7 +730,7 @@ Phase 1 -- Metrics (foundation work)
 - No UI changes; no auth; no RLS complexity beyond insert-only policy
 
 Phase 2 -- Shareable setups (builds on Phase 1 infrastructure)
-- Design a `shared_setups` table: video metadata plus the full
+- Design a `shares` table: video metadata plus the full
   sections/loops/marks payload as JSON, plus a generated share ID
 - Add a Share button to the UI; on click, write setup to Supabase
   and surface a shareable URL to the user

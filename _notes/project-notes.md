@@ -3,11 +3,6 @@
 
 ## TODO: LoopLlama v2
 
-Somewhat narrow browser window:
-    - Long quips cause layout to shift
-        - reduce font a bit; let it wrap and occupy two lines
-    - If window too narrow: no quips?
-
 Persistence:
     x phase 1: metrics
         x dev
@@ -33,6 +28,31 @@ Current tasks:
     - Banner write up.
     - Real-world usage and testing: phase 2.
     - Try on other devices: iPad, phone, JK machines
+
+Persistence details:
+
+    Phase 2 -- Shareable setups (builds on Phase 1 infrastructure)
+    - Design a `shares` table: video metadata plus the full
+      sections/loops/marks payload as JSON, plus a generated share ID
+    - Add a Share button to the UI; on click, write setup to Supabase
+      and surface a shareable URL to the user
+    - Add URL-based load path: if LL is opened with a share ID in the
+      URL, fetch that setup and load it into the app
+    - Decide scope: share a single loop? A full video setup? Both?
+    - No user auth required; anonymous writes with a rate-limit policy
+
+    Phase 3 -- Per-user persistence (most complex)
+    - Configure Supabase Auth with Google as the identity provider
+    - Add login/logout UI to the app shell
+    - Rewrite storage.js to be server-aware: authenticated users read
+      and write to Supabase; unauthenticated users fall back to
+      localStorage
+    - Set up RLS policies so each user can only access their own data
+    - Design a `user_data` table: one row per user, full app state as
+      a JSON blob (matches the existing localStorage structure)
+    - Decide and implement the first-login migration strategy: when a
+      user signs in on a device with existing localStorage data, offer
+      to upload it to their account
 
 Pending tasks:
 

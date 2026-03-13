@@ -94,11 +94,28 @@ class LlamaApp extends LitElement {
       white-space: nowrap;
     }
 
+    .header-llama-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
     .header-quip {
-      font-size: var(--ll-text-sm, 0.85rem);
+      position: absolute;
+      top: calc(100% + 0.3rem);
+      left: 0;
+      font-size: var(--ll-text-xs, 0.78rem);
       font-style: italic;
       color: var(--ll-text-dim, #aaa);
-      white-space: nowrap;
+      width: max-content;
+      max-width: 28rem;
+      text-align: left;
+      background: var(--ll-surface-raised, #2a2a2a);
+      border: 1px solid var(--ll-border, #444);
+      border-radius: 4px;
+      padding: 0.2rem 0.5rem;
+      z-index: 20;
+      pointer-events: none;
       opacity: 0;
       transition: opacity 0.3s ease;
     }
@@ -2094,11 +2111,13 @@ class LlamaApp extends LitElement {
     return html`
       <header class="app-header">
         <span class="app-title">LoopLlama</span>
-        <img src="${import.meta.env.BASE_URL}llama-mascot.png" class="header-llama" alt=""
-          @mouseenter=${this._onQuipEnter}
-          @mouseleave=${this._onQuipLeave}
-        >
-        <span class="header-quip ${this._quip ? 'visible' : ''}">${this._quip}</span>
+        <div class="header-llama-wrap">
+          <img src="${import.meta.env.BASE_URL}llama-mascot.png" class="header-llama" alt=""
+            @mouseenter=${this._onQuipEnter}
+            @mouseleave=${this._onQuipLeave}
+          >
+          <span class="header-quip ${this._quip ? 'visible' : ''}">${this._quip}</span>
+        </div>
         <nav class="header-nav">
           <img src="${import.meta.env.BASE_URL}flag.svg" class="header-flag" alt="">
           <span class="nav-sep">|</span>
