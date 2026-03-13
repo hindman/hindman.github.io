@@ -1,6 +1,7 @@
 // storage.js -- localStorage persistence and JSON export/import.
 
 import { APP_VERSION, SCHEMA_VERSION } from './state.js';
+import { BUILD_NUM } from './version.js';
 
 const STORAGE_KEY = 'loopllama-v2';
 
@@ -105,7 +106,8 @@ export function save(state) {
 // Return a pretty-printed JSON string of all app data.
 // app_version is injected at export time; it is not stored in localStorage.
 export function exportAll(state) {
-  return JSON.stringify({ app_version: APP_VERSION, ...state }, null, 2);
+  const { schema_version, videos, ...rest } = state;
+  return JSON.stringify({ app_version: APP_VERSION, build_num: BUILD_NUM, schema_version, ...rest, videos }, null, 2);
 }
 
 // Return a pretty-printed JSON string for a single video.
@@ -114,7 +116,7 @@ export function exportAll(state) {
 export function exportVideo(state, videoId) {
   const video = state.videos.find(v => v.id === videoId);
   if (!video) throw new Error(`exportVideo: no video with id "${videoId}"`);
-  return JSON.stringify({ app_version: APP_VERSION, schema_version: SCHEMA_VERSION, videos: [video] }, null, 2);
+  return JSON.stringify({ app_version: APP_VERSION, build_num: BUILD_NUM, schema_version: SCHEMA_VERSION, videos: [video] }, null, 2);
 }
 
 // Merge imported JSON into current state. Supports two formats:

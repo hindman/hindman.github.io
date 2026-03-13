@@ -1,8 +1,12 @@
 
 ## CURRENT SESSION
 
-
 ## TODO: LoopLlama v2
+
+Somewhat narrow browser window:
+    - Long quips cause layout to shift
+        - reduce font a bit; let it wrap and occupy two lines
+    - If window too narrow: no quips?
 
 Persistence:
     x phase 1: metrics
@@ -15,7 +19,8 @@ Current tasks:
 
     - invoke:
         x build
-        x deploy
+        - deploy
+            - add build number: srv/version.js
         - serve individually:
             - bundle exec jekyll serve --drafts --unpublished
             - npm run dev
