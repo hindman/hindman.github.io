@@ -8,7 +8,6 @@
 #   inv --help TASK
 #
 # Tasks:
-#   inv build
 #   inv deploy [--push]
 #
 ####
@@ -28,7 +27,7 @@ LL2_DIR = 'loopllama/v2'
 PATHS = cons(
     ll_root = LL2_DIR,
     ll_index = f'{LL2_DIR}/index.html',
-    ll_asset_patt = rf'{LL2_DIR}/assets/index-\w+.(?:js|css)',
+    ll_asset_patt = rf'{LL2_DIR}/assets/index-\w+\.(?:js|css)',
     ll_deployments = f'{LL2_DIR}/deployments.json',
     ll_version_file = f'{LL2_DIR}/src/version.js',
 )
@@ -40,19 +39,23 @@ VERSION_FMT = dedent('''
 ''')
 
 @task
-def build(c):
+def deploy(c, push = False):
     '''
-    Builds LoopLlama v2
+    Builds/deploys LoopLlama, with git commit (and optional --push)
     '''
+
+    # Read the deployments data file to compute the next build number.
+    deployments = read_json(PATHS.ll_deployments)
+    build_num = 1 + max(d['build_num'] for d in deployments)
+
+    # Write version.js with the build number.
+    write_file(PATHS.ll_version_file, VERSION_FMT.format(build_num))
+
+    # Build.
     with c.cd(PATHS.ll_root):
         c.run('npm run build')
 
-@task
-def deploy(c, push = False):
-    '''
-    Deploys LoopLlama v2: build num, git add, commit, and optionally push
-    '''
-    # Get the assets paths from the LL index.html file.
+    # Get the assets paths from the generated LL index.html file.
     assets = re.findall(
         PATHS.ll_asset_patt,
         read_file(PATHS.ll_index),
@@ -63,10 +66,6 @@ def deploy(c, push = False):
     if exts != ['.css', '.js']:
         msg = 'Build failed: did not find expected assets'
         raise Exit(msg, code = 1)
-
-    # Read the deployments data file to compute the next build number.
-    deployments = read_json(PATHS.ll_deployments)
-    build_num = 1 + max(d['build_num'] for d in deployments)
 
     # Initialize a dict for the current deployment info.
     now = datetime.now().strftime('%Y-%m-%d--%H-%M')
@@ -83,14 +82,11 @@ def deploy(c, push = False):
         for a in assets
     )
 
-    # Write version.js with the build number.
-    write_file(PATHS.ll_version_file, VERSION_FMT.format(build_num))
-
     # Write the deployments data file, including the current deployment.
     deployments.append(current)
     write_json(PATHS.ll_deployments, deployments)
 
-    # Add several things to git: deployements data file, the JS version file,
+    # Add several things to git: deployments data file, the JS version file,
     # the generated index.html file, and the assets files. The --force is used
     # because the assets directory is generally git-ignored.
     args = [
