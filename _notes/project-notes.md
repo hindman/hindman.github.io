@@ -7,12 +7,12 @@ Persistence:
     x phase 1: metrics
         x dev
         x prod
-    . phase 2: __
+    . phase 2: sharing
         x dev
-        - prod
-          - create prod table/policies in Supabase [details: see DB_SCHEMA]
+        x prod
+          x create prod table/policies in Supabase [details: see DB_SCHEMA]
           - build/deploy
-    - phase 3: __
+    - phase 3: user data
         - DB: setup [details: see DB_SCHEMA]
         - dev
         - prod

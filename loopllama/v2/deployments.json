@@ -1,17 +1,20 @@
 [
-  [
-    "2026-03-12--14-03",
-    "loopllama/v2/assets/index-BpGNZUnZ.js",
-    "loopllama/v2/assets/index-UZuT5DGV.css"
-  ],
-  [
-    "2026-03-12--16-38",
-    "loopllama/v2/assets/index-Bb_qmmqw.js",
-    "loopllama/v2/assets/index-UZuT5DGV.css"
-  ],
-  [
-    "2026-03-12--16-38",
-    "loopllama/v2/assets/index-Bb_qmmqw.js",
-    "loopllama/v2/assets/index-UZuT5DGV.css"
-  ]
+  {
+    "time": "2026-03-12--14-03",
+    "build_num": 1,
+    "js": "loopllama/v2/assets/index-BpGNZUnZ.js",
+    "css": "loopllama/v2/assets/index-UZuT5DGV.css"
+  },
+  {
+    "time": "2026-03-12--16-38",
+    "build_num": 2,
+    "js": "loopllama/v2/assets/index-Bb_qmmqw.js",
+    "css": "loopllama/v2/assets/index-UZuT5DGV.css"
+  },
+  {
+    "time": "2026-03-12--16-38",
+    "build_num": 3,
+    "js": "loopllama/v2/assets/index-Bb_qmmqw.js",
+    "css": "loopllama/v2/assets/index-UZuT5DGV.css"
+  }
 ]
