@@ -98,8 +98,11 @@ def deploy(c, push = False):
     ]
     c.run(' '.join(args))
 
-    # Commit and optionally push.
+    # Commit and list the added/changed files.
     c.run(f"git commit -m 'v2 deploy {now}'")
+    c.run('git show --stat HEAD')
+
+    # Push.
     if push:
         c.run('git push origin master')
 

@@ -46,8 +46,7 @@ Current tasks:
 
     - invoke:
         x build
-        - deploy
-            - add build number: srv/version.js
+        x deploy
         - serve individually:
             - bundle exec jekyll serve --drafts --unpublished
             - npm run dev
