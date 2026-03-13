@@ -1,2 +1,4 @@
-// version.js -- build number, updated by the inv deploy task before each build.
-export const BUILD_NUM = 0;
+
+// version.js -- build number
+// DO NOT EDIT MANUALLY. Overwritten during `inv deploy` process.
+export const BUILD_NUM = 4;
