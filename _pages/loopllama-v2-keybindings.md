@@ -121,8 +121,8 @@ toc_icon: 'guitar'
         de | Export: app data as JSON
         di | Import: app data from JSON
         dI | Inspect: app data as JSON [bottom of web page]
-        dv | Share: video data as JSON
-        dl | Share: scratch-loop [via URL]
+        dv | Share: video [via share-URL]
+        dl | Share: scratch-loop [via share-URL]
 
     Edit-scratch-loop-mode:
 

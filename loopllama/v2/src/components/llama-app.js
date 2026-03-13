@@ -16,8 +16,11 @@ import {
   propagateEntityChange, validateEntityChange,
   nudgeLoopStart, nudgeLoopEnd,
 } from '../state.js';
-import { load, save, exportAll, exportVideo, importData as mergeImport } from '../storage.js';
+import { load, save, exportAll, importData as mergeImport } from '../storage.js';
 import { logSessionStart, logVideoLoad } from '../analytics.js';
+import { createShare, shareUrl, fetchShare, shareIdFromUrl,
+         buildVideoPayload, buildLoopPayload } from '../sharing.js';
+import './llama-confirm-modal.js';
 import './llama-whichkey.js';
 import './llama-controls.js';
 import './llama-timeline.js';
@@ -352,7 +355,7 @@ class LlamaApp extends LitElement {
     const scratch   = (video.loops ?? []).find(l => l.is_scratch);
     this.loopStart  = scratch?.start ?? 0;
     this.loopEnd    = scratch?.end   ?? 0;
-    this.looping         = false;
+    this.looping         = video.looping ?? false;
     this.loopSource      = null;
     this.loopSourceLabel = null;
     this.loopSourceType  = null;
@@ -398,9 +401,10 @@ class LlamaApp extends LitElement {
     if (!scratch) {
       scratch = createScratchLoop();
     }
-    scratch.start = this.loopStart;
-    scratch.end   = this.loopEnd;
-    video.loops = [scratch, ...this.namedLoops];
+    scratch.start  = this.loopStart;
+    scratch.end    = this.loopEnd;
+    video.looping  = this.looping;
+    video.loops    = [scratch, ...this.namedLoops];
     save(this._appState);
   }
 
@@ -439,7 +443,8 @@ class LlamaApp extends LitElement {
     this._appState.currentVideoId = video.id;
     this.currentVideoId = video.id;
     this._syncFromVideo(video);
-    this._vc.loadVideo(video.id, startTime ?? video.time ?? 0);
+    const _startAt = startTime ?? (this.looping && this.loopStart < this.loopEnd ? this.loopStart : video.time ?? 0);
+    this._vc.loadVideo(video.id, _startAt);
     this.duration  = null;
     this.statusMsg = `Loading: ${video.id}`;
     save(this._appState);
@@ -1020,8 +1025,8 @@ class LlamaApp extends LitElement {
       exportAll:     () => this._exportAll(),
       importData:    () => this._fileInputEl?.click(),
       inspectData:   () => this._inspectModalEl?.show(JSON.parse(exportAll(this._appState))),
-      shareVideo:    () => this._shareVideo(),
-      shareLoop:     () => this._shareLoop(),
+      shareVideo:    () => this._createVideoShare(),
+      shareLoop:     () => this._createLoopShare(),
     };
   }
 
@@ -1087,6 +1092,7 @@ class LlamaApp extends LitElement {
     this._optionsModalEl      = this.renderRoot.querySelector('llama-options-modal');
     this._deleteDataModalEl   = this.renderRoot.querySelector('llama-delete-data-modal');
     this._inspectModalEl      = this.renderRoot.querySelector('llama-inspect-modal');
+    this._confirmModalEl      = this.renderRoot.querySelector('llama-confirm-modal');
     this._fileInputEl         = this.renderRoot.querySelector('#import-file-input');
 
     // Sync delta values from persisted options (may differ from compile-time defaults).
@@ -1095,16 +1101,17 @@ class LlamaApp extends LitElement {
     window.addEventListener('blur',  () => { this.windowFocused = false; });
     window.addEventListener('focus', () => { this.windowFocused = true; });
 
-    // Check for a shared loop URL (?v=id&s=start&e=end). If present,
-    // load that video and set the scratch loop; skip normal restore.
-    const didLoadSharedLoop = this._handleStartupUrlParams();
+    // Check for a share URL (?share=id) or legacy loop URL (?v=id&s=start&e=end).
+    // If present, load the shared content and skip normal restore.
+    const didLoadShare = await this._handleStartupShare();
 
     // Otherwise restore the last-used video on startup -- cue without auto-playing.
-    if (!didLoadSharedLoop && this._appState.currentVideoId) {
+    if (!didLoadShare && this._appState.currentVideoId) {
       const video = this._appState.videos.find(v => v.id === this._appState.currentVideoId);
       if (video) {
         this._syncFromVideo(video);
-        this._vc.cueVideo(video.id, video.time ?? 0);
+        const _startAt = this.looping && this.loopStart < this.loopEnd ? this.loopStart : video.time ?? 0;
+        this._vc.cueVideo(video.id, _startAt);
         this.statusMsg = `Video cued: ${video.name || video.id}`;
       }
     }
@@ -1149,8 +1156,10 @@ class LlamaApp extends LitElement {
 
     // Expose for console testing in dev mode.
     if (import.meta.env.DEV) {
-      window._ll.vc = this._vc;
-      window._ll.kb = this._kb;
+      window._ll.vc               = this._vc;
+      window._ll.kb               = this._kb;
+      window._ll.createVideoShare = () => this._createVideoShare();
+      window._ll.createLoopShare  = () => this._createLoopShare();
     }
   }
 
@@ -1874,38 +1883,40 @@ class LlamaApp extends LitElement {
     this.statusMsg = 'Exported all data.';
   }
 
-  // Export the current video as a downloadable JSON file (single-video share).
-  _shareVideo() {
-    if (!this.currentVideoId) {
-      this._setWarning('No video loaded.');
-      return;
+
+  // Create a Supabase-backed share for the current video and surface the URL.
+  async _createVideoShare() {
+    if (!this.currentVideoId) { this._setWarning('No video loaded.'); return; }
+    this._saveCurrentState();
+    const video   = this._appState.videos.find(v => v.id === this.currentVideoId);
+    const payload = buildVideoPayload(video);
+    try {
+      const id  = await createShare('video', payload, video.url, video.name || null);
+      const url = shareUrl(id);
+      navigator.clipboard.writeText(url)
+        .then(() => { this.statusMsg = 'Video share URL copied to clipboard.'; })
+        .catch(() => { this.statusMsg = 'Video share URL ready (clipboard unavailable).'; });
+    } catch (err) {
+      this.errorMsg = `Share failed: ${err.message}`;
     }
-    const video    = this._appState.videos.find(v => v.id === this.currentVideoId);
-    const safeName = (video?.name || this.currentVideoId)
-      .replace(/[^A-Za-z0-9_-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-    _downloadJson(exportVideo(this._appState, this.currentVideoId), `loopllama-${safeName}.json`);
-    this.statusMsg = 'Exported video data.';
   }
 
-  // Copy a shareable loop URL to the clipboard: ?v=id&s=start&e=end
-  _shareLoop() {
-    if (!this.currentVideoId) {
-      this._setWarning('No video loaded.');
-      return;
+  // Create a Supabase-backed share for the current scratch loop and surface the URL.
+  async _createLoopShare() {
+    if (!this.currentVideoId) { this._setWarning('No video loaded.'); return; }
+    if (!this._isLoopValid()) { this._setWarning('Set a valid scratch loop first.'); return; }
+    this._saveCurrentState();
+    const video   = this._appState.videos.find(v => v.id === this.currentVideoId);
+    const payload = buildLoopPayload(video, this.loopStart, this.loopEnd);
+    try {
+      const id  = await createShare('loop', payload, video.url, video.name || null);
+      const url = shareUrl(id);
+      navigator.clipboard.writeText(url)
+        .then(() => { this.statusMsg = 'Loop share URL copied to clipboard.'; })
+        .catch(() => { this.statusMsg = 'Loop share URL ready (clipboard unavailable).'; });
+    } catch (err) {
+      this.errorMsg = `Share failed: ${err.message}`;
     }
-    if (!this._isLoopValid()) {
-      this._setWarning('Set a valid scratch loop first.');
-      return;
-    }
-    const url = new URL(window.location.href);
-    url.searchParams.set('v', this.currentVideoId);
-    url.searchParams.set('s', Math.round(this.loopStart * 10) / 10);
-    url.searchParams.set('e', Math.round(this.loopEnd   * 10) / 10);
-    navigator.clipboard.writeText(url.toString()).then(() => {
-      this.statusMsg = 'Loop URL copied to clipboard.';
-    }).catch(() => {
-      this.statusMsg = `Loop URL: ${url.toString()}`;
-    });
   }
 
   // Handle file-picker change: read JSON and merge into app state.
@@ -1925,6 +1936,128 @@ class LlamaApp extends LitElement {
     };
     reader.readAsText(file);
     e.target.value = '';   // reset so the same file can be re-imported
+  }
+
+  // Show the confirm modal and return a Promise that resolves to true (confirm)
+  // or false (cancel / dismiss).
+  _showConfirm(info) {
+    return new Promise(resolve => {
+      this._confirmResolve = resolve;
+      this._confirmModalEl?.show(info);
+    });
+  }
+
+  _onConfirmYes() { this._confirmResolve?.(true);  this._confirmResolve = null; }
+  _onConfirmNo()  { this._confirmResolve?.(false); this._confirmResolve = null; }
+
+  // Apply a 'loop' share payload: add the loop to the video's namedLoops and
+  // load it as the active scratch loop.
+  _applyLoopShare(payload) {
+    const { videoUrl, videoTitle, loop, speed } = payload;
+    const parsed = this._parseVideoInput(videoUrl);
+    if (!parsed) { this.errorMsg = 'Shared loop: could not parse video URL.'; return; }
+
+    let video = this._appState.videos.find(v => v.id === parsed.id);
+    if (!video) {
+      video = createVideo(videoUrl, parsed.id);
+      if (videoTitle) video.name = videoTitle;
+      this._appState.videos.push(video);
+      this.videos = [...this._appState.videos];
+    }
+
+    const safeName = _uniqueLoopName(video.loops, loop.name || '');
+    const newLoop  = addLoop(video.loops, loop.start, loop.end, safeName);
+
+    this._appState.currentVideoId = video.id;
+    this.currentVideoId = video.id;
+    this._syncFromVideo(video);
+    this.loopStart       = loop.start;
+    this.loopEnd         = loop.end;
+    this.loopSource      = newLoop.id;
+    this.loopSourceLabel = safeName || null;
+    this.loopSourceType  = 'loop';
+    this.loopSourceStart = loop.start;
+    this.loopSourceEnd   = loop.end;
+    this.looping   = true;
+    video.looping  = true;
+    if (speed) this._vc.setPlaybackRate(speed);
+    this._vc.cueVideo(video.id, loop.start);
+    save(this._appState);
+    this.statusMsg = `Shared loop loaded: ${safeName || _fmtTimePlain(loop.start) + ' → ' + _fmtTimePlain(loop.end)}`;
+  }
+
+  // Apply a 'video' share payload: add to registry (or replace after confirm),
+  // then switch to it.
+  async _applyVideoShare(payload) {
+    const { videoUrl, videoTitle, sections, namedLoops, marks, chapters,
+            speed, start, end } = payload;
+    const parsed = this._parseVideoInput(videoUrl);
+    if (!parsed) { this.errorMsg = 'Shared video: could not parse video URL.'; return; }
+
+    const displayName = videoTitle || parsed.id;
+    let video = this._appState.videos.find(v => v.id === parsed.id);
+
+    if (video) {
+      const replace = await this._showConfirm({
+        lines:         [`"${displayName}" is already in your library.`, 'Replace it with the shared version?'],
+        confirmLabel:  'Replace',
+        cancelLabel:   'Skip',
+        defaultButton: 'cancel',
+      });
+      if (!replace) {
+        this.statusMsg = `Skipped: "${displayName}" already in your library.`;
+        return;
+      }
+    } else {
+      video = createVideo(videoUrl, parsed.id);
+      this._appState.videos.push(video);
+    }
+
+    if (videoTitle) video.name = videoTitle;
+    video.sections  = sections  ?? [];
+    video.marks     = marks     ?? [];
+    video.chapters  = chapters  ?? [];
+    video.speed     = speed     ?? 1.0;
+    video.start     = start     ?? 0;
+    video.end       = end       ?? null;
+    const scratch   = createScratchLoop();
+    if (payload.scratchLoop) { scratch.start = payload.scratchLoop.start; scratch.end = payload.scratchLoop.end; }
+    video.looping   = (payload.looping && scratch.start < scratch.end) ? true : false;
+    video.loops     = [scratch, ...(namedLoops ?? [])];
+    this.videos = [...this._appState.videos];
+    // Don't use _loadVideoObject here: it calls _saveCurrentState() first, which
+    // would overwrite the payload data we just set with empty reactive props.
+    this._appState.currentVideoId = video.id;
+    this.currentVideoId = video.id;
+    this._syncFromVideo(video);
+    const _startAt = this.looping && this.loopStart < this.loopEnd ? this.loopStart : 0;
+    this._vc.loadVideo(video.id, _startAt);
+    this.duration = null;
+    save(this._appState);
+    logVideoLoad(video.id);
+    this.statusMsg = `Shared video loaded: ${displayName}`;
+  }
+
+  // Check for a Supabase share (?share=id) or legacy loop URL (?v=id&s=start&e=end).
+  // Returns true if a share was applied, false otherwise.
+  async _handleStartupShare() {
+    const shareId = shareIdFromUrl();
+    if (shareId) {
+      try {
+        const share = await fetchShare(shareId);
+        if (share.share_type === 'loop')  this._applyLoopShare(share.payload);
+        if (share.share_type === 'video') await this._applyVideoShare(share.payload);
+      } catch (err) {
+        this.errorMsg = `Could not load shared content: ${err.message}`;
+      }
+      const clean = new URL(window.location.href);
+      clean.searchParams.delete('share');
+      history.replaceState(null, '', clean.toString());
+      return true;
+    }
+
+    // Legacy: ?v=id&s=start&e=end
+    return this._handleStartupUrlParams();
   }
 
   // Parse ?v=id&s=start&e=end startup URL params for loop sharing.
@@ -2345,6 +2478,13 @@ class LlamaApp extends LitElement {
         @ll-modal-close=${() => this._kb?.enable()}
       ></llama-inspect-modal>
 
+      <llama-confirm-modal
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-confirm-yes=${this._onConfirmYes}
+        @ll-confirm-no=${this._onConfirmNo}
+        @ll-modal-close=${() => this._kb?.enable()}
+      ></llama-confirm-modal>
+
       <llama-whichkey
         .prefix=${this.wkPrefix}
         .completions=${this.wkCompletions}
@@ -2362,6 +2502,20 @@ class LlamaApp extends LitElement {
 }
 
 // Format seconds as m:ss (for status messages).
+// Return a loop name that doesn't collide with any existing named loop.
+// If the candidate name is taken, appends " (shared)", then " (shared #2)", etc.
+function _uniqueLoopName(loops, name) {
+  const taken = loops.filter(l => !l.is_scratch).map(l => l.name);
+  if (!taken.includes(name)) return name;
+  const base = name ? `${name} (shared)` : '(shared)';
+  if (!taken.includes(base)) return base;
+  for (let n = 2; n <= 99; n++) {
+    const c = name ? `${name} (shared #${n})` : `(shared #${n})`;
+    if (!taken.includes(c)) return c;
+  }
+  return base;
+}
+
 function _fmtTimePlain(secs) {
   if (secs == null || isNaN(secs)) return '?';
   const s = Math.floor(secs);

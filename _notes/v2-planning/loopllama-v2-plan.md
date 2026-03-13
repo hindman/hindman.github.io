@@ -462,7 +462,8 @@ Actions:
         - Undo
         - Redo
         ----------------------------
-        - Share loop URL
+        - Share video
+        - Share loop
         ----------------------------
         - Export current video
         - Export all data

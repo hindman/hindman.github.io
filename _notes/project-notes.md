@@ -7,8 +7,40 @@ Persistence:
     x phase 1: metrics
         x dev
         x prod
-    - phase 2: __
+    . phase 2: __
+        x dev
+        - prod
+          - create prod table/policies in Supabase [details: see DB_SCHEMA]
+          - build/deploy
     - phase 3: __
+        - DB: setup [details: see DB_SCHEMA]
+        - dev
+        - prod
+
+        Phase 3 -- user data
+
+        - Configure Supabase Auth with Google+Github as identity providers.
+        - Add login/logout UI to the app shell.
+        - Rewrite storage.js to be server-aware: authenticated users read
+          and write to Supabase; unauthenticated users fall back to
+          localStorage.
+        - Set up RLS policies so each user can only access their own data.
+        - Design a `users` table: one row per user, full app state as
+          a JSON blob (matches the existing localStorage structure).
+        - Decide and implement the first-login migration strategy: when a
+          user signs in on a device with existing localStorage data, offer
+          to upload it to their account.
+        - UI plan.
+
+          Account
+            ─────────────────
+            user@example.com     ← greyed, non-clickable (logged in only)
+            ─────────────────
+            Sign in with Google  ← logged out only
+            Sign in with GitHub  ← logged out only
+            Sign out             ← logged in only
+            ─────────────────
+            Why sign in?         ← always present, opens help doc
 
 Current tasks:
 
@@ -28,31 +60,6 @@ Current tasks:
     - Banner write up.
     - Real-world usage and testing: phase 2.
     - Try on other devices: iPad, phone, JK machines
-
-Persistence details:
-
-    Phase 2 -- Shareable setups (builds on Phase 1 infrastructure)
-    - Design a `shares` table: video metadata plus the full
-      sections/loops/marks payload as JSON, plus a generated share ID
-    - Add a Share button to the UI; on click, write setup to Supabase
-      and surface a shareable URL to the user
-    - Add URL-based load path: if LL is opened with a share ID in the
-      URL, fetch that setup and load it into the app
-    - Decide scope: share a single loop? A full video setup? Both?
-    - No user auth required; anonymous writes with a rate-limit policy
-
-    Phase 3 -- Per-user persistence (most complex)
-    - Configure Supabase Auth with Google as the identity provider
-    - Add login/logout UI to the app shell
-    - Rewrite storage.js to be server-aware: authenticated users read
-      and write to Supabase; unauthenticated users fall back to
-      localStorage
-    - Set up RLS policies so each user can only access their own data
-    - Design a `user_data` table: one row per user, full app state as
-      a JSON blob (matches the existing localStorage structure)
-    - Decide and implement the first-login migration strategy: when a
-      user signs in on a device with existing localStorage data, offer
-      to upload it to their account
 
 Pending tasks:
 
@@ -339,4 +346,67 @@ deployed artifact is just files.
 Edits requiring an `npm run dev` restart:
     - vite.config.js
     - package.json
+
+
+Schema: DB_SCHEMA
+
+    # events
+
+        create table public.events (
+          id uuid not null default gen_random_uuid (),
+          created_at timestamp with time zone not null default now(),
+          event_type text not null,
+          client_id text null,
+          session_id text not null,
+          video_id text null,
+          constraint events_pkey primary key (id)
+        ) TABLESPACE pg_default;
+
+    # shares
+
+        create table public.shares (
+          id text not null,
+          share_type text not null,
+          video_url text null,
+          video_title text null,
+          payload jsonb not null,
+          created_at timestamp with time zone not null default now(),
+          constraint shares_pkey primary key (id)
+        ) TABLESPACE pg_default;
+
+    # events: allow_anon_insert
+
+        (event_type = ANY (ARRAY['session_start'::text, 'video_load'::text]))
+
+    # shares: allow_anon_insert
+
+        ((share_type = ANY (ARRAY['loop'::text, 'video'::text]))
+        AND (id ~ '^[A-Za-z0-9_-]{8,16}$'::text)
+        AND (length((payload)::text) <= 65536))
+
+    # shares: allow_anon_select
+
+        true
+
+    # users
+
+         create table public.users (
+            id          uuid primary key references auth.users(id) on delete cascade,
+            app_state   jsonb not null default '{}'::jsonb,
+            updated_at  timestamptz not null default now()
+          );
+
+         RLS sketch:
+          alter table public.users enable row level security;
+
+          create policy "select own row"
+            on public.users for select using (auth.uid() = id);
+
+          create policy "insert own row"
+            on public.users for insert with check (auth.uid() = id);
+
+          create policy "update own row"
+            on public.users for update using (auth.uid() = id);
+
+          plus a size limit on payload -- maybe 512k
 
