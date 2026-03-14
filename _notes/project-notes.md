@@ -4,33 +4,34 @@
 ## TODO: LoopLlama v2
 
 Persistence:
-    x phase 1: metrics
-        x dev
-        x prod
-    . phase 2: sharing
-        x dev
-        x prod
-          x create prod table/policies in Supabase [details: see DB_SCHEMA]
-          - build/deploy
+
     - phase 3: user data
-        - DB: setup [details: see DB_SCHEMA]
-        - dev
+        x DB: setup
+        . dev
+            x set up ID providers
+            - planning: details
+            - code
+            - check
         - prod
+            - set up DB table
+            - set up ID providers
+            - deploy
+            - check
 
         Phase 3 -- user data
 
-        - Configure Supabase Auth with Google+Github as identity providers.
-        - Add login/logout UI to the app shell.
-        - Rewrite storage.js to be server-aware: authenticated users read
-          and write to Supabase; unauthenticated users fall back to
-          localStorage.
-        - Set up RLS policies so each user can only access their own data.
-        - Design a `users` table: one row per user, full app state as
-          a JSON blob (matches the existing localStorage structure).
-        - Decide and implement the first-login migration strategy: when a
-          user signs in on a device with existing localStorage data, offer
-          to upload it to their account.
-        - UI plan.
+            x Configure Supabase Auth with Google+Github as identity providers.
+            - Add login/logout UI to the app shell.
+            - Rewrite storage.js to be server-aware: authenticated users read
+              and write to Supabase; unauthenticated users fall back to
+              localStorage.
+            - Set up RLS policies so each user can only access their own data.
+            - Design a `users` table: one row per user, full app state as
+              a JSON blob (matches the existing localStorage structure).
+            - Decide and implement the first-login migration strategy: when a
+              user signs in on a device with existing localStorage data, offer
+              to upload it to their account.
+            - UI plan.
 
           Account
             ─────────────────
@@ -349,63 +350,175 @@ Edits requiring an `npm run dev` restart:
 
 Schema: DB_SCHEMA
 
-    # events
+    -- ============================================================
+    -- events
+    -- ============================================================
 
-        create table public.events (
-          id uuid not null default gen_random_uuid (),
-          created_at timestamp with time zone not null default now(),
-          event_type text not null,
-          client_id text null,
-          session_id text not null,
-          video_id text null,
-          constraint events_pkey primary key (id)
-        ) TABLESPACE pg_default;
+    create table public.events (
+      id         uuid not null default gen_random_uuid(),
+      created_at timestamptz not null default now(),
+      event_type text not null,
+      client_id  text null,
+      session_id text not null,
+      video_id   text null,
+      constraint events_pkey primary key (id)
+    ) tablespace pg_default;
 
-    # shares
+    alter table public.events enable row level security;
 
-        create table public.shares (
-          id text not null,
-          share_type text not null,
-          video_url text null,
-          video_title text null,
-          payload jsonb not null,
-          created_at timestamp with time zone not null default now(),
-          constraint shares_pkey primary key (id)
-        ) TABLESPACE pg_default;
+    create policy "allow_anon_insert"
+      on public.events for insert
+      to anon
+      with check (
+        event_type = any(array['session_start'::text, 'video_load'::text])
+      );
 
-    # events: allow_anon_insert
+    -- ============================================================
+    -- shares
+    -- ============================================================
 
-        (event_type = ANY (ARRAY['session_start'::text, 'video_load'::text]))
+    create table public.shares (
+      id          text not null,
+      share_type  text not null,
+      video_url   text null,
+      video_title text null,
+      payload     jsonb not null,
+      created_at  timestamptz not null default now(),
+      constraint shares_pkey primary key (id)
+    ) tablespace pg_default;
 
-    # shares: allow_anon_insert
+    alter table public.shares enable row level security;
 
-        ((share_type = ANY (ARRAY['loop'::text, 'video'::text]))
-        AND (id ~ '^[A-Za-z0-9_-]{8,16}$'::text)
-        AND (length((payload)::text) <= 65536))
+    create policy "allow_anon_insert"
+      on public.shares for insert
+      to anon
+      with check (
+        share_type = any(array['loop'::text, 'video'::text])
+        and id ~ '^[A-Za-z0-9_-]{8,16}$'
+        and length(payload::text) <= 65536
+      );
 
-    # shares: allow_anon_select
+    create policy "allow_anon_select"
+      on public.shares for select
+      to anon
+      using (true);
 
-        true
+    -- ============================================================
+    -- users
+    -- ============================================================
 
-    # users
+    create table public.users (
+      id         uuid not null,
+      app_state  jsonb not null default '{}'::jsonb,
+      updated_at timestamptz not null default now(),
+      constraint users_pkey primary key (id),
+      constraint users_id_fkey foreign key (id) references auth.users(id) on delete cascade
+    ) tablespace pg_default;
 
-         create table public.users (
-            id          uuid primary key references auth.users(id) on delete cascade,
-            app_state   jsonb not null default '{}'::jsonb,
-            updated_at  timestamptz not null default now()
-          );
+    alter table public.users enable row level security;
 
-         RLS sketch:
-          alter table public.users enable row level security;
+    create policy "select own row"
+      on public.users for select
+      to authenticated
+      using (auth.uid() = id);
 
-          create policy "select own row"
-            on public.users for select using (auth.uid() = id);
+    create policy "insert own row"
+      on public.users for insert
+      to authenticated
+      with check (
+        auth.uid() = id
+        and length(app_state::text) <= 524288
+      );
 
-          create policy "insert own row"
-            on public.users for insert with check (auth.uid() = id);
+    create policy "update own row"
+      on public.users for update
+      to authenticated
+      using (auth.uid() = id)
+      with check (length(app_state::text) <= 524288);
 
-          create policy "update own row"
-            on public.users for update using (auth.uid() = id);
+Identity providers:
 
-          plus a size limit on payload -- maybe 512k
+    LoopLlama Dev:
+
+        GitHub:
+
+            Supabase dashboard => Authentication => Providers
+
+                Select GitHub.
+                    - Enable it.
+                    - Copy the callback URL.
+                    - Leave the panel open for now.
+
+                    # Callback URL.
+                    https://zatiaqhwoxnukhlowyys.supabase.co/auth/v1/callback
+
+            GitHub → Settings → Developer settings → OAuth Apps → New OAuth App
+
+                Application name        | LoopLlama Dev
+                Homepage URL            | http://localhost:5173/loopllama/v2/
+                Application description | LoopLlama: dev environment
+                Callback URL            | <copied from Supabase panel>
+                Enable device flow      | No
+
+                Sumit the form.
+
+                Copy the Client ID:
+                    - Paste it into the Supabase panel.
+
+                Click Generate new client secret:
+                    - GitHub asks for a totp: supply it.
+                    - Copy the secret.
+                    - Paste it into the Supabase panel.
+
+                    Client ID     | <see my pws-file>
+                    Client secret | <see my pws-file>
+
+            Supabase panel:
+                - Use the GitHub Client ID and secret to fill out the form.
+                - Click Save.
+
+        Google:
+
+            Supabase dashboard => Authentication => Providers
+
+                Select Google:
+                    - Same process and callback URL as for the GitHub process.
+
+            Google Cloud Console
+                => APIs & Services
+                    => Credentials
+                    => Create Project => LoopLlama Dev => Create
+                    => Configure consent screen
+
+                    App Name      | LoopLlama Dev
+                    Support email | montyhindman@gmail.com
+                    Audience      | external
+                    Contact email | montyhindman@gmail.com
+
+                => APIs & Services
+                    => Credentials
+                    => Create Credentials
+                    => OAuth client ID
+                    => Web application
+
+                        Name                          | LoopLlama Dev
+                        Authorized JavaScript origins | http://localhost:5173
+                        Authorized redirect URIs      | <supabase callback URL>
+
+                        # Supabase callback URL.
+                        https://zatiaqhwoxnukhlowyys.supabase.co/auth/v1/callback
+
+                    => Create
+                    => Copy the Client ID and secret
+
+                        Client ID     | <see my pws-file>
+                        Client secret | <see my pws-file>
+
+                    => Also download the JSON:
+
+                        <see my pws-file>
+
+            Supabase panel:
+                - Use the Google Client ID and secret to fill out the form.
+                - Click Save.
 
