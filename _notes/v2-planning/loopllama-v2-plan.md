@@ -21,6 +21,8 @@
 ##   Phase 1: Metrics (schema included)
 ##   Phase 2: Shareable setups
 ##   Phase 3: Per-user persistence
+## V3+ Ideas: Other Video Sources
+## Security: Supabase Credentials and RLS Policy
 
 -->
 
@@ -805,4 +807,138 @@ unless the user later creates an account (Phase 3).
 
 session_id lifecycle: generated once per page load, stored in
 sessionStorage. Cleared when the tab is closed.
+
+---
+
+## V3+ Ideas: Other Video Sources
+
+### Vimeo
+
+Vimeo has a well-documented Player API (postMessage-based, similar in
+structure to YouTube's IFrame API). It supports play, pause, seek,
+get/set duration, playback rate, and events -- everything LL needs.
+A meaningful amount of music lesson content lives on Vimeo.
+
+Feasibility: moderate. Would require a second video controller adapter
+(`VimeoController`) alongside the existing `YouTubeController`. The
+current `videoController.js` wrapping pattern would need to become a
+formal adapter interface, with source type detected from the URL.
+
+Verdict: doable, less compelling than local video (below). Deferred.
+
+### Other Online Platforms
+
+Twitch (live-stream focused), Dailymotion, Facebook Video, TikTok,
+Instagram: none have usable programmatic APIs for the kind of
+seek/loop/rate control LL needs. Not worth pursuing.
+
+### Local Video Files (Most Compelling V3 Feature)
+
+Many users -- especially the primary use case -- have guitar lesson
+videos on their computers: purchased downloads, DVD rips, saved
+YouTube videos, etc. These can't use the YouTube IFrame API, but they
+can use the HTML5 `<video>` element, which natively supports
+everything LL needs:
+
+- `play()`, `pause()`, `currentTime` (seek), `duration`,
+  `playbackRate` -- all native, synchronous, no API handshake
+- MP4, WebM, and MOV (macOS) all work
+- Implementation is simpler than YouTube, not harder
+
+Serving local files: run a simple HTTP server from the video
+directory (e.g. `python3 -m http.server 8080`), then point LL at
+`http://localhost:8080/my-lesson.mp4`. This works naturally in the
+Vite dev environment. No new server infrastructure required.
+
+Architecture: `videoController.js` becomes an adapter interface.
+LL detects the source type from the URL (YouTube domain → YouTube
+adapter; `.mp4`/`.webm`/etc. → HTML5 adapter) and instantiates
+the right controller. The rest of the app is unchanged.
+
+This is also the key enabler for a proper open-source release (see
+next section): users who run LL locally get full LL features on their
+own video library without any cloud dependency.
+
+### Open-Source LL Project
+
+Currently LL lives inside the hindman.github.io blog repo: the code
+is public but the project isn't structured for outside contributors
+or users. A proper open-source release would involve:
+
+- Separate repo (e.g. github.com/mhindman/loopllama)
+- README with install steps: clone, `npm install`, configure `.env`,
+  `npm run dev`
+- LICENSE file (MIT is the natural choice)
+- `.env.example` committed as a template showing required variable
+  names without real values -- standard convention for projects using
+  env vars
+
+The local video feature makes this more immediately useful: a user
+who clones LL and runs it locally gets full LL functionality on their
+own video files, with no YouTube dependency, no Supabase account
+needed for basic use (localStorage-only mode already works).
+
+Supabase for contributors: anyone wanting the full persistence and
+sharing features would need their own Supabase project. A setup guide
+would be required. This is a manageable ask for a small community.
+
+---
+
+## Security: Supabase Credentials and RLS Policy
+
+### What is and isn't in the public repo
+
+- `.env.development` and `.env.production` are listed in `.gitignore`
+  and are not tracked by git. They never appear in the public repo.
+- Anyone who clones the repo gets no Supabase credentials and cannot
+  connect to either the dev or prod database.
+
+### The anon key is designed to be public
+
+Vite bakes `import.meta.env.VITE_*` values into the JS bundle at
+build time. The deployed production app therefore contains the
+Supabase URL and anon key in its JavaScript -- readable by anyone
+who opens DevTools or inspects the bundle.
+
+This is correct and expected behavior. Supabase's anon (publishable)
+key is analogous to a Firebase apiKey or a Stripe publishable key:
+explicitly designed to live in browser code. The key is not a secret;
+keeping it out of the bundle is neither possible nor necessary.
+
+### What the anon key does and doesn't allow
+
+The anon key grants access to whatever the RLS policies permit for
+unauthenticated users -- no more. A determined person with the key
+and URL can make Supabase API calls, but they are bounded by policy:
+
+- They can INSERT into the `events` table (session_start,
+  video_load). This is the intended behavior for anonymous app users.
+  Abuse (e.g. flooding the table with fake events) is possible but
+  only degrades analytics quality; it doesn't expose user data.
+- They cannot SELECT, UPDATE, or DELETE events. No read access to
+  other users' data.
+- They cannot access tables with no anon policy at all.
+- They cannot escalate to service-role access from the browser.
+
+The one key that would be a real problem in the bundle is the
+`service_role` key, which bypasses RLS entirely. That key lives
+only in server-side or dashboard contexts and is never put in
+browser code.
+
+### Mitigation if abuse occurs
+
+The current policy is reasonable for a small project. If flooding
+or abuse of the anon INSERT permission became a concern:
+
+- Supabase has configurable rate limiting (requests per second per
+  IP) that can be tightened without any code changes.
+- The events table INSERT policy could be tightened: for example,
+  require a valid session_id format, or reject rows with unusual
+  field values.
+- In an extreme case the anon INSERT permission could be revoked
+  entirely, at the cost of losing the Phase 1 metrics.
+
+For the current scale and audience, none of these measures are
+needed. The architecture is sound; the mitigations exist and are
+tunable if conditions change.
 

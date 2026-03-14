@@ -9,7 +9,7 @@ Persistence:
         x DB: setup
         . dev
             x set up ID providers
-            - planning: details
+            x planning: details
             - code
             - check
         - prod
@@ -20,28 +20,45 @@ Persistence:
 
         Phase 3 -- user data
 
-            x Configure Supabase Auth with Google+Github as identity providers.
-            - Add login/logout UI to the app shell.
-            - Rewrite storage.js to be server-aware: authenticated users read
-              and write to Supabase; unauthenticated users fall back to
-              localStorage.
-            - Set up RLS policies so each user can only access their own data.
-            - Design a `users` table: one row per user, full app state as
-              a JSON blob (matches the existing localStorage structure).
-            - Decide and implement the first-login migration strategy: when a
-              user signs in on a device with existing localStorage data, offer
-              to upload it to their account.
-            - UI plan.
+            x Configure Supabase Auth with Google+Github as identity
+              providers.
+            x Set up RLS policies so each user can only access their own data.
+            x Set up `users` table.
+            x UI plan.
 
-          Account
-            ─────────────────
-            user@example.com     ← greyed, non-clickable (logged in only)
-            ─────────────────
-            Sign in with Google  ← logged out only
-            Sign in with GitHub  ← logged out only
-            Sign out             ← logged in only
-            ─────────────────
-            Why sign in?         ← always present, opens help doc
+                  Account
+                    ─────────────────
+                    user@example.com                ← grey, non-clickable (logged in only)
+                    ─────────────────               
+                    Sign in with Google             ← logged out only
+                    Sign in with GitHub             ← logged out only
+                    Sign out                        ← logged in only
+                    Sign out and remove cloud data  ← logged in only
+                    ─────────────────
+                    Why sign in?                    ← always present, opens help doc
+
+            **Stage 3a — Supabase auth client + auth state**
+            - Add `@supabase/supabase-js` auth methods to a new `auth.js`
+              module: `signInWithGoogle()`, `signInWithGitHub()`, `signOut()`,
+              `getUser()`, `onAuthStateChange()`
+            - Expose current user as observable state in the app
+            - Testable via console before any UI exists
+
+            **Stage 3b — Account menu UI**
+            - Add the Account menu to the header (state-aware: logged in vs. out)
+            - Wire sign-in, sign-out, and "sign out and remove cloud data" actions to `auth.js`
+            - "Why sign in?" link (stub target for now if help doc isn't written)
+            - No storage changes yet; just auth flow working end-to-end
+
+            **Stage 3c — Supabase read/write in storage.js**
+            - Add `loadFromCloud()` and `saveToCloud()` functions
+            - Debounced save: every write calls localStorage immediately, queues Supabase write
+            - `beforeunload` flush for the pending debounce
+
+            **Stage 3d — First-login upload + "remove cloud data"**
+            - On sign-in: detect localStorage data, upload silently to Supabase
+            - On sign-in: if Supabase already has data for this user, load it (they've signed in before)
+            - "Sign out and remove cloud data": export to localStorage, delete Supabase row, sign out
 
 Current tasks:
 
