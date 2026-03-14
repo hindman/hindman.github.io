@@ -11,6 +11,10 @@ Persistence:
             x set up ID providers
             x planning: details
             - code
+
+                - resume chat and check user persistence scenario again: full
+                  life cycle including last_modified in cloud newer.
+
             - check
         - prod
             - set up DB table
@@ -37,30 +41,10 @@ Persistence:
                     ─────────────────
                     Why sign in?                    ← always present, opens help doc
 
-            **Stage 3a — Supabase auth client + auth state**
-            - Add `@supabase/supabase-js` auth methods to a new `auth.js`
-              module: `signInWithGoogle()`, `signInWithGitHub()`, `signOut()`,
-              `getUser()`, `onAuthStateChange()`
-            - Expose current user as observable state in the app
-            - Testable via console before any UI exists
-
-            **Stage 3b — Account menu UI**
-            - Add the Account menu to the header (state-aware: logged in vs. out)
-            - Wire sign-in, sign-out, and "sign out and remove cloud data" actions to `auth.js`
-            - "Why sign in?" link (stub target for now if help doc isn't written)
-            - No storage changes yet; just auth flow working end-to-end
-
-            **Stage 3c — Supabase read/write in storage.js**
-            - Add `loadFromCloud()` and `saveToCloud()` functions
-            - Debounced save: every write calls localStorage immediately, queues Supabase write
-            - `beforeunload` flush for the pending debounce
-
-            **Stage 3d — First-login upload + "remove cloud data"**
-            - On sign-in: detect localStorage data, upload silently to Supabase
-            - On sign-in: if Supabase already has data for this user, load it (they've signed in before)
-            - "Sign out and remove cloud data": export to localStorage, delete Supabase row, sign out
-
 Current tasks:
+
+    - marks
+        - resurrect idea of mc = delete nearest mark
 
     - invoke:
         x build
@@ -390,6 +374,13 @@ Schema: DB_SCHEMA
         event_type = any(array['session_start'::text, 'video_load'::text])
       );
 
+    create policy "allow_authed_insert"
+      on public.events for insert
+      to authenticated
+      with check (
+        event_type = any(array['session_start'::text, 'video_load'::text])
+      );
+
     -- ============================================================
     -- shares
     -- ============================================================
@@ -434,12 +425,24 @@ Schema: DB_SCHEMA
 
     alter table public.users enable row level security;
 
-    create policy "select own row"
+    create or replace function public.set_updated_at()
+    returns trigger language plpgsql as $$
+    begin
+      new.updated_at = now();
+      return new;
+    end;
+    $$;
+
+    create trigger users_set_updated_at
+    before update on public.users
+    for each row execute procedure public.set_updated_at();
+
+    create policy "select_own_row"
       on public.users for select
       to authenticated
       using (auth.uid() = id);
 
-    create policy "insert own row"
+    create policy "insert_own_row"
       on public.users for insert
       to authenticated
       with check (
@@ -447,11 +450,16 @@ Schema: DB_SCHEMA
         and length(app_state::text) <= 524288
       );
 
-    create policy "update own row"
+    create policy "update_own_row"
       on public.users for update
       to authenticated
       using (auth.uid() = id)
       with check (length(app_state::text) <= 524288);
+
+    create policy "delete_own_row"
+        on public.users for delete
+        to authenticated
+        using (auth.uid() = id);
 
 Identity providers:
 

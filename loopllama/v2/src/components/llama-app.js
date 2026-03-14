@@ -16,8 +16,11 @@ import {
   propagateEntityChange, validateEntityChange,
   nudgeLoopStart, nudgeLoopEnd,
 } from '../state.js';
-import { load, save, exportAll, importData as mergeImport } from '../storage.js';
+import { load, save, exportAll, importData as mergeImport,
+         loadFromCloud, saveToCloud, deleteFromCloud,
+         scheduleSaveToCloud, flushCloudSave } from '../storage.js';
 import { logSessionStart, logVideoLoad } from '../analytics.js';
+import { getUser, onAuthStateChange, signInWithGoogle, signInWithGitHub, signOut } from '../auth.js';
 import { createShare, shareUrl, fetchShare, shareIdFromUrl,
          buildVideoPayload, buildLoopPayload } from '../sharing.js';
 import './llama-confirm-modal.js';
@@ -233,6 +236,7 @@ class LlamaApp extends LitElement {
     wkCompletions:   { type: Object },
     wkCount:         { type: Number },
     windowFocused:   { type: Boolean },
+    currentUser:     { type: Object },
     editScratchActive:  { type: Boolean },
     editScratchFocus:   { type: String },
     editScratchDelta:   { type: Number },
@@ -272,6 +276,7 @@ class LlamaApp extends LitElement {
     this.wkCompletions       = null;
     this.wkCount             = null;
     this.windowFocused       = true;
+    this.currentUser         = null;
     this.editScratchActive   = false;
     this.editScratchFocus    = 'start';
     this.editScratchDelta    = EDIT_SCRATCH_DELTAS[2];
@@ -383,7 +388,7 @@ class LlamaApp extends LitElement {
     this.jumps         = [...video.jumps];
     this._jumpIdx      = -1;
     this._jumpFromTime = null;
-    save(this._appState);
+    this._save();
   }
 
   // Persist current reactive state back to the current video and save to
@@ -405,7 +410,7 @@ class LlamaApp extends LitElement {
     scratch.end    = this.loopEnd;
     video.looping  = this.looping;
     video.loops    = [scratch, ...this.namedLoops];
-    save(this._appState);
+    this._save();
   }
 
   // Apply an options object: update reactive delta props. If the current
@@ -433,7 +438,7 @@ class LlamaApp extends LitElement {
     const { options } = e.detail;
     this._appState.options = options;
     this._applyOptions(options);
-    save(this._appState);
+    this._save();
     this.statusMsg = 'Options saved.';
   }
 
@@ -447,7 +452,7 @@ class LlamaApp extends LitElement {
     this._vc.loadVideo(video.id, _startAt);
     this.duration  = null;
     this.statusMsg = `Loading: ${video.id}`;
-    save(this._appState);
+    this._save();
     logVideoLoad(video.id);
   }
 
@@ -540,7 +545,7 @@ class LlamaApp extends LitElement {
       }
     }
 
-    save(this._appState);
+    this._save();
   }
 
   _undo() {
@@ -1030,7 +1035,27 @@ class LlamaApp extends LitElement {
     };
   }
 
+  // Save to localStorage immediately, and schedule a debounced cloud save.
+  _save() {
+    this._appState.last_modified = Date.now();
+    save(this._appState);
+    scheduleSaveToCloud(this._appState, this.currentUser?.id);
+  }
+
+  // Show the confirm modal and return a Promise<boolean> (true = confirmed).
+  _showConfirm({ lines, confirmLabel = 'Yes', cancelLabel = 'No', defaultButton = 'cancel' }) {
+    return new Promise(resolve => {
+      const modal = this._confirmModalEl;
+      const onYes = () => resolve(true);
+      const onNo  = () => resolve(false);
+      modal.addEventListener('ll-confirm-yes', onYes, { once: true });
+      modal.addEventListener('ll-confirm-no',  onNo,  { once: true });
+      modal.show({ lines, confirmLabel, cancelLabel, defaultButton });
+    });
+  }
+
   async firstUpdated() {
+    window.addEventListener('beforeunload', () => flushCloudSave());
     logSessionStart();
 
     const container = this.renderRoot.querySelector('#player-container');
@@ -1053,7 +1078,7 @@ class LlamaApp extends LitElement {
             if (title) {
               video.name = title;
               this.videos = [...this._appState.videos];
-              save(this._appState);
+              this._save();
             }
           }
         }
@@ -1100,6 +1125,15 @@ class LlamaApp extends LitElement {
 
     window.addEventListener('blur',  () => { this.windowFocused = false; });
     window.addEventListener('focus', () => { this.windowFocused = true; });
+
+    // Initialize auth state: get current user, then subscribe to changes.
+    this.currentUser = await getUser();
+    if (this.currentUser) await this._handleSignIn(this.currentUser);
+    this._unsubscribeAuth = onAuthStateChange(async user => {
+      const wasSignedOut = !this.currentUser;
+      this.currentUser = user;
+      if (user && wasSignedOut) await this._handleSignIn(user);
+    });
 
     // Check for a share URL (?share=id) or legacy loop URL (?v=id&s=start&e=end).
     // If present, load the shared content and skip normal restore.
@@ -1160,6 +1194,8 @@ class LlamaApp extends LitElement {
       window._ll.kb               = this._kb;
       window._ll.createVideoShare = () => this._createVideoShare();
       window._ll.createLoopShare  = () => this._createLoopShare();
+      window._ll.auth = { signInWithGoogle, signInWithGitHub, signOut, getUser };
+      window._ll.currentUser = () => this.currentUser;
     }
   }
 
@@ -1267,6 +1303,7 @@ class LlamaApp extends LitElement {
     if (this._editScratchHandler) {
       document.removeEventListener('keydown', this._editScratchHandler);
     }
+    this._unsubscribeAuth?.();
   }
 
   // Parse a YouTube URL or bare video ID.
@@ -1364,7 +1401,7 @@ class LlamaApp extends LitElement {
     video.start = start;
     video.end   = end;
     this.videos = [...this._appState.videos];
-    save(this._appState);
+    this._save();
   }
 
   // Handle ll-delete-video from the edit-video-modal or video picker (delete mode).
@@ -1393,7 +1430,7 @@ class LlamaApp extends LitElement {
       this.statusMsg       = 'Video deleted.';
     }
     this.videos = [...this._appState.videos];
-    save(this._appState);
+    this._save();
   }
 
   // Show a transient warning; auto-clears after 4 seconds (via updated()).
@@ -1928,7 +1965,7 @@ class LlamaApp extends LitElement {
       try {
         const result = mergeImport(evt.target.result, this._appState);
         this.videos = [...this._appState.videos];
-        save(this._appState);
+        this._save();
         this.statusMsg = `Imported: ${result.added} added, ${result.updated} updated.`;
       } catch (err) {
         this.errorMsg = `Import failed: ${err.message}`;
@@ -1982,7 +2019,7 @@ class LlamaApp extends LitElement {
     video.looping  = true;
     if (speed) this._vc.setPlaybackRate(speed);
     this._vc.cueVideo(video.id, loop.start);
-    save(this._appState);
+    this._save();
     this.statusMsg = `Shared loop loaded: ${safeName || _fmtTimePlain(loop.start) + ' → ' + _fmtTimePlain(loop.end)}`;
   }
 
@@ -2033,7 +2070,7 @@ class LlamaApp extends LitElement {
     const _startAt = this.looping && this.loopStart < this.loopEnd ? this.loopStart : 0;
     this._vc.loadVideo(video.id, _startAt);
     this.duration = null;
-    save(this._appState);
+    this._save();
     logVideoLoad(video.id);
     this.statusMsg = `Shared video loaded: ${displayName}`;
   }
@@ -2085,7 +2122,7 @@ class LlamaApp extends LitElement {
     this.loopEnd   = end;
     this._vc.cueVideo(video.id, start);
     this.statusMsg = `Shared loop loaded: ${_fmtTimePlain(start)} → ${_fmtTimePlain(end)}`;
-    save(this._appState);
+    this._save();
 
     // Remove the params from the URL bar without reloading the page.
     const clean = new URL(window.location.href);
@@ -2155,7 +2192,7 @@ class LlamaApp extends LitElement {
         this.duration            = null;
       }
       this.videos = [...this._appState.videos];
-      save(this._appState);
+      this._save();
       const n = videoIds.length;
       this.statusMsg = `Deleted ${n} video${n !== 1 ? 's' : ''}.`;
 
@@ -2186,6 +2223,87 @@ class LlamaApp extends LitElement {
   _onMenuSelect(e) {
     const handler = this._handlers?.[e.detail.action];
     if (handler) handler();
+  }
+
+  // Build the Account dropdown items based on current auth state.
+  _accountMenuItems() {
+    const items = [];
+    if (this.currentUser) {
+      items.push({ label: this.currentUser.email, action: '', disabled: true });
+      items.push({ type: 'divider' });
+      items.push({ label: 'Sign out',                       action: 'signOut'       });
+      items.push({ label: 'Sign out and remove cloud data', action: 'signOutRemove' });
+    } else {
+      items.push({ label: 'Sign in with Google', action: 'signInGoogle' });
+      items.push({ label: 'Sign in with GitHub', action: 'signInGitHub' });
+    }
+    items.push({ type: 'divider' });
+    items.push({ label: 'Why sign in?', action: 'whySignIn' });
+    return items;
+  }
+
+  _onAccountMenuSelect(e) {
+    const { action } = e.detail;
+    if (action === 'signInGoogle')  signInWithGoogle();
+    if (action === 'signInGitHub')  signInWithGitHub();
+    if (action === 'signOut')       signOut();
+    if (action === 'signOutRemove') this._signOutAndRemoveCloudData();
+    if (action === 'whySignIn')     window.open(`${_siteOrigin()}/loopllama/v2/help/#why-sign-in`, '_blank');
+  }
+
+  // Called when a user signs in (either on page load or after OAuth redirect).
+  // Compares last_modified timestamps to decide which copy wins.
+  // Cloud newer: prompt user — Yes loads cloud data, No signs out immediately.
+  // Local newer (or equal, or first login): upload local to cloud silently.
+  async _handleSignIn(user) {
+    const cloudState = await loadFromCloud(user.id);
+    if (!cloudState) {
+      // First login: upload current local data silently.
+      await saveToCloud(this._appState, user.id);
+      return;
+    }
+
+    const localTs = this._appState.last_modified ?? 0;
+    const cloudTs = cloudState.last_modified ?? 0;
+
+    if (cloudTs > localTs) {
+      // Cloud is newer — warn the user and offer an emergency brake.
+      const cloudDate = new Date(cloudTs).toLocaleString();
+      const localDate = localTs ? new Date(localTs).toLocaleString() : 'unknown';
+      const confirmed = await this._showConfirm({
+        lines: [
+          'Your cloud data is newer than your local data.',
+          `Cloud: ${cloudDate}`,
+          `Local: ${localDate}`,
+          'Load the cloud data? Your local changes will be replaced.',
+          'Choose "No" to sign out immediately and keep your local data.',
+        ],
+        confirmLabel:  'Yes, load cloud data',
+        cancelLabel:   'No, sign out',
+        defaultButton: 'cancel',
+      });
+      if (confirmed) {
+        save(cloudState);
+        this._appState = load();   // applies migrations; re-saves if schema changed
+        this.videos = [...this._appState.videos];
+        this.currentVideoId = this._appState.currentVideoId;
+        const video = this._appState.videos.find(v => v.id === this.currentVideoId);
+        if (video) this._syncFromVideo(video);
+        this.statusMsg = 'Cloud data loaded.';
+      } else {
+        await signOut();
+      }
+    } else {
+      // Local is newer or equal: upload local to cloud.
+      await saveToCloud(this._appState, user.id);
+    }
+  }
+
+  // Sign out and remove the user's cloud data.
+  async _signOutAndRemoveCloudData() {
+    const userId = this.currentUser?.id;
+    if (userId) await deleteFromCloud(userId);
+    await signOut();
   }
 
   _nextQuip() {
@@ -2257,6 +2375,12 @@ class LlamaApp extends LitElement {
           <a class="nav-link" href="https://hindman.github.io/" target="_blank" rel="noopener">The Fifth Fret</a>
           <span class="nav-sep">|</span>
           <a class="nav-link" href="https://github.com/hindman/hindman.github.io/tree/master/loopllama" target="_blank" rel="noopener">Code</a>
+          <span class="nav-sep">|</span>
+          <llama-dropdown
+            label="Account"
+            .items=${this._accountMenuItems()}
+            @ll-menu-select=${this._onAccountMenuSelect}
+          ></llama-dropdown>
         </nav>
       </header>
 

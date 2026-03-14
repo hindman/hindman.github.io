@@ -808,6 +808,16 @@ unless the user later creates an account (Phase 3).
 session_id lifecycle: generated once per page load, stored in
 sessionStorage. Cleared when the tab is closed.
 
+### Phase 3 multi-device sync conflicts
+
+App data will have an last_modified attribute. On sign-in, we compare that
+value to the persisted cloud data's value. If local data newer than cloud
+(very common), we write to the cloud. But if cloud is newer we alert the user
+and offer a choice whether to proceed: if yes, cloud overwrites local data; if
+no, log out immediately. Then user can assess the situation, maybe export
+their local data before logging in again, etc. We don't offer a concrete
+solution to their syncing problem, but we do offer a firm emergency brake.
+
 ---
 
 ## V3+ Ideas: Other Video Sources

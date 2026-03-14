@@ -1,7 +1,8 @@
-// storage.js -- localStorage persistence and JSON export/import.
+// storage.js -- localStorage persistence, JSON export/import, and Supabase cloud sync.
 
 import { APP_VERSION, SCHEMA_VERSION } from './state.js';
 import { BUILD_NUM } from './version.js';
+import { supabase } from './supabase.js';
 
 const STORAGE_KEY = 'loopllama-v2';
 
@@ -118,6 +119,89 @@ export function exportVideo(state, videoId) {
   if (!video) throw new Error(`exportVideo: no video with id "${videoId}"`);
   return JSON.stringify({ app_version: APP_VERSION, build_num: BUILD_NUM, schema_version: SCHEMA_VERSION, videos: [video] }, null, 2);
 }
+
+// ---------------------------------------------------------------------------
+// Cloud sync (Supabase)
+// ---------------------------------------------------------------------------
+
+// The `users` table has columns: id (uuid, = auth.uid()), data (jsonb).
+// We upsert on save; we fetch the single row on load.
+
+let _pendingSave = null;           // setTimeout handle
+let _pendingSaveArgs = null;       // { state, userId } for the queued save
+
+// Fetch app state from Supabase for the given user.
+// Returns the stored state object, or null if no row exists or on error.
+export async function loadFromCloud(userId) {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('app_state')
+      .eq('id', userId)
+      .maybeSingle();
+    if (error) throw error;
+    return data?.app_state ?? null;
+  } catch (e) {
+    console.error('LoopLlama: loadFromCloud failed', e);
+    return null;
+  }
+}
+
+// Write app state to Supabase for the given user (upsert).
+// Errors are logged but not re-thrown; localStorage is the source of truth.
+export async function saveToCloud(state, userId) {
+  try {
+    const { error } = await supabase
+      .from('users')
+      .upsert({ id: userId, app_state: state });
+    if (error) throw error;
+  } catch (e) {
+    console.error('LoopLlama: saveToCloud failed', e);
+  }
+}
+
+// Schedule a debounced cloud save (3 s). Cancels any pending save first.
+// No-ops when userId is null (user not signed in).
+export function scheduleSaveToCloud(state, userId) {
+  if (!userId) return;
+  _pendingSaveArgs = { state, userId };
+  if (_pendingSave) clearTimeout(_pendingSave);
+  _pendingSave = setTimeout(() => {
+    _pendingSave     = null;
+    const args       = _pendingSaveArgs;
+    _pendingSaveArgs = null;
+    saveToCloud(args.state, args.userId);
+  }, 3000);
+}
+
+// Delete the user's row from Supabase (used by "sign out and remove cloud data").
+// Errors are logged but not re-thrown.
+export async function deleteFromCloud(userId) {
+  try {
+    const { error } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', userId);
+    if (error) throw error;
+  } catch (e) {
+    console.error('LoopLlama: deleteFromCloud failed', e);
+  }
+}
+
+// Flush the pending cloud save immediately (e.g. on beforeunload).
+// No-ops if nothing is pending.
+export function flushCloudSave() {
+  if (!_pendingSave) return;
+  clearTimeout(_pendingSave);
+  _pendingSave = null;
+  const args = _pendingSaveArgs;
+  _pendingSaveArgs = null;
+  saveToCloud(args.state, args.userId);
+}
+
+// ---------------------------------------------------------------------------
+// Import / export
+// ---------------------------------------------------------------------------
 
 // Merge imported JSON into current state. Supports two formats:
 //   - Full app state: { currentVideoId, videos: [...] }
