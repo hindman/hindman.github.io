@@ -1,6 +1,7 @@
 
 ## CURRENT SESSION
 
+
 ## TODO: LoopLlama v2
 
 Persistence:
@@ -12,12 +13,14 @@ Persistence:
             x planning: details
             - code
 
+                - blast dev DB using sql script
+
                 - resume chat and check user persistence scenario again: full
                   life cycle including last_modified in cloud newer.
 
             - check
         - prod
-            - set up DB table
+            - blast prod DB using sql script
             - set up ID providers
             - deploy
             - check
@@ -348,118 +351,6 @@ Edits requiring an `npm run dev` restart:
     - vite.config.js
     - package.json
 
-
-Schema: DB_SCHEMA
-
-    -- ============================================================
-    -- events
-    -- ============================================================
-
-    create table public.events (
-      id         uuid not null default gen_random_uuid(),
-      created_at timestamptz not null default now(),
-      event_type text not null,
-      client_id  text null,
-      session_id text not null,
-      video_id   text null,
-      constraint events_pkey primary key (id)
-    ) tablespace pg_default;
-
-    alter table public.events enable row level security;
-
-    create policy "allow_anon_insert"
-      on public.events for insert
-      to anon
-      with check (
-        event_type = any(array['session_start'::text, 'video_load'::text])
-      );
-
-    create policy "allow_authed_insert"
-      on public.events for insert
-      to authenticated
-      with check (
-        event_type = any(array['session_start'::text, 'video_load'::text])
-      );
-
-    -- ============================================================
-    -- shares
-    -- ============================================================
-
-    create table public.shares (
-      id          text not null,
-      share_type  text not null,
-      video_url   text null,
-      video_title text null,
-      payload     jsonb not null,
-      created_at  timestamptz not null default now(),
-      constraint shares_pkey primary key (id)
-    ) tablespace pg_default;
-
-    alter table public.shares enable row level security;
-
-    create policy "allow_anon_insert"
-      on public.shares for insert
-      to anon
-      with check (
-        share_type = any(array['loop'::text, 'video'::text])
-        and id ~ '^[A-Za-z0-9_-]{8,16}$'
-        and length(payload::text) <= 65536
-      );
-
-    create policy "allow_anon_select"
-      on public.shares for select
-      to anon
-      using (true);
-
-    -- ============================================================
-    -- users
-    -- ============================================================
-
-    create table public.users (
-      id         uuid not null,
-      app_state  jsonb not null default '{}'::jsonb,
-      updated_at timestamptz not null default now(),
-      constraint users_pkey primary key (id),
-      constraint users_id_fkey foreign key (id) references auth.users(id) on delete cascade
-    ) tablespace pg_default;
-
-    alter table public.users enable row level security;
-
-    create or replace function public.set_updated_at()
-    returns trigger language plpgsql as $$
-    begin
-      new.updated_at = now();
-      return new;
-    end;
-    $$;
-
-    create trigger users_set_updated_at
-    before update on public.users
-    for each row execute procedure public.set_updated_at();
-
-    create policy "select_own_row"
-      on public.users for select
-      to authenticated
-      using (auth.uid() = id);
-
-    create policy "insert_own_row"
-      on public.users for insert
-      to authenticated
-      with check (
-        auth.uid() = id
-        and length(app_state::text) <= 524288
-      );
-
-    create policy "update_own_row"
-      on public.users for update
-      to authenticated
-      using (auth.uid() = id)
-      with check (length(app_state::text) <= 524288);
-
-    create policy "delete_own_row"
-        on public.users for delete
-        to authenticated
-        using (auth.uid() = id);
 
 Identity providers:
 
