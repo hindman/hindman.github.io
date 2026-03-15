@@ -1,31 +1,16 @@
 
+  const s = JSON.parse(localStorage.getItem('loopllama-v2'));
+  s.videos[0].last_modified
+
+  const s = JSON.parse(localStorage.getItem('loopllama-v2'));
+  s.videos[0].last_modified = 1;
+  localStorage.setItem('loopllama-v2', JSON.stringify(s));
+
 ## CURRENT SESSION
-
-Confirm prompt needs editing work:
-
-    Confirm
-
-    Some cloud videos are newer than your local versions:
-
-    • Catfish blues — daddystovepipe
-
-    • 33 video(s) not present locally
-
-    Merge these into your local data?
-
-    Choose "No" to sign out and keep your local data unchanged.
-
-
 
 ## TODO: LoopLlama v2
 
 Persistence:
-
-    - Bug: `vv`: if no videos => no picker, just warning msg
-
-    - Improvement: `de` (data export): change file name:
-        loopllama-all.json
-        loopllama-yy-mm-dd.json
 
     - phase 3: user data
         x DB: setup
@@ -36,12 +21,32 @@ Persistence:
                 x blast dev DB using sql script
                 x resume chat and check user persistence scenario again: full
                   life cycle including last_modified in cloud newer.
-
                 x last_modified as a video-level attribute
 
-                - cloud_backup
-                    - if true and user logged out, prompt to log in
-                - account menu design
+                Stage 3g -- Implement dr (data read, cloud → local)
+                - Add dr handler and key binding (under d prefix)
+                - Fetch current cloud state
+                - Compare per-video last_modified; collect local videos strictly newer
+                  than their cloud counterpart
+                - If conflicts: prompt listing affected video names; user chooses proceed
+                  (cloud versions replace local for all videos) or cancel
+                - If no conflicts: merge cloud into local (replace/add per-video; keep
+                  local-only videos untouched); save to localStorage; update reactive props
+                - On success: reset cloudDirty to 0, show status message
+
+                Stage 3h -- Simplify sign-in
+                - Strip _handleSignIn down to: set cloud_backup = true, save to
+                  localStorage
+                - If local has no videos: show a status message suggesting the user do dr
+                - Remove all auto-merge logic added in earlier stages
+
+                Stage 3i -- Nudge UI and account menu polish
+                - Visual indicator on Account menu when cloud_backup is true but user is
+                  signed out (dot, badge, or color change -- TBD)
+                - Prompt on page load if cloud_backup is true and user is not signed in
+                - Account menu aesthetic polish (deferred from Stage 3b)
+
+                
 
             - check
         - prod
@@ -70,6 +75,17 @@ Persistence:
                     Why sign in?                    ← always present, opens help doc
 
 Current tasks:
+
+    - key bindings: modify `d` prefix:
+        dd = save to cloud
+        dr = read
+        dD = delete
+
+    - Bug: `vv`: if no videos => no picker, just warning msg
+
+    - Improvement: `de` (data export): change file name:
+        loopllama-all.json
+        loopllama-yy-mm-dd.json
 
     - marks
         - resurrect idea of mc = delete nearest mark

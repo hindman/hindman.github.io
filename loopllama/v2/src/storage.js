@@ -187,9 +187,6 @@ export function exportVideo(state, videoId) {
 // The `users` table has columns: id (uuid, = auth.uid()), data (jsonb).
 // We upsert on save; we fetch the single row on load.
 
-let _pendingSave = null;           // setTimeout handle
-let _pendingSaveArgs = null;       // { state, userId } for the queued save
-
 // Fetch app state from Supabase for the given user.
 // Returns the stored state object, or null if no row exists or on error.
 export async function loadFromCloud(userId) {
@@ -208,30 +205,18 @@ export async function loadFromCloud(userId) {
 }
 
 // Write app state to Supabase for the given user (upsert).
-// Errors are logged but not re-thrown; localStorage is the source of truth.
+// Returns true on success, false on error. Errors are also logged to console.
 export async function saveToCloud(state, userId) {
   try {
     const { error } = await supabase
       .from('users')
       .upsert({ id: userId, app_state: state });
     if (error) throw error;
+    return true;
   } catch (e) {
     console.error('LoopLlama: saveToCloud failed', e);
+    return false;
   }
-}
-
-// Schedule a debounced cloud save (3 s). Cancels any pending save first.
-// No-ops when userId is null (user not signed in).
-export function scheduleSaveToCloud(state, userId) {
-  if (!userId) return;
-  _pendingSaveArgs = { state, userId };
-  if (_pendingSave) clearTimeout(_pendingSave);
-  _pendingSave = setTimeout(() => {
-    _pendingSave     = null;
-    const args       = _pendingSaveArgs;
-    _pendingSaveArgs = null;
-    saveToCloud(args.state, args.userId);
-  }, 3000);
 }
 
 // Delete the user's row from Supabase (used by "sign out and remove cloud data").
@@ -246,17 +231,6 @@ export async function deleteFromCloud(userId) {
   } catch (e) {
     console.error('LoopLlama: deleteFromCloud failed', e);
   }
-}
-
-// Flush the pending cloud save immediately (e.g. on beforeunload).
-// No-ops if nothing is pending.
-export function flushCloudSave() {
-  if (!_pendingSave) return;
-  clearTimeout(_pendingSave);
-  _pendingSave = null;
-  const args = _pendingSaveArgs;
-  _pendingSaveArgs = null;
-  saveToCloud(args.state, args.userId);
 }
 
 // ---------------------------------------------------------------------------

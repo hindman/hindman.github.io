@@ -17,8 +17,7 @@ import {
   nudgeLoopStart, nudgeLoopEnd,
 } from '../state.js';
 import { load, save, exportAll, importData as mergeImport,
-         loadFromCloud, saveToCloud, deleteFromCloud,
-         scheduleSaveToCloud, flushCloudSave } from '../storage.js';
+         loadFromCloud, saveToCloud, deleteFromCloud } from '../storage.js';
 import { logSessionStart, logVideoLoad } from '../analytics.js';
 import { getUser, onAuthStateChange, signInWithGoogle, signInWithGitHub, signOut } from '../auth.js';
 import { createShare, shareUrl, fetchShare, shareIdFromUrl,
@@ -151,6 +150,14 @@ class LlamaApp extends LitElement {
       color: var(--ll-text-muted, #666);
     }
 
+    .cloud-dirty {
+      font-size: 0.55rem;
+      color: var(--ll-accent, #7ec8e3);
+      vertical-align: super;
+      margin-left: 0.15rem;
+      user-select: none;
+    }
+
     /* --- Body --- */
     .app-body {
       display: flex;
@@ -255,6 +262,7 @@ class LlamaApp extends LitElement {
     zone2Mode:          { type: String },
     loopSourceStart:    { type: Number },
     loopSourceEnd:      { type: Number },
+    cloudDirty:         { type: Number },
   };
 
   constructor() {
@@ -294,6 +302,7 @@ class LlamaApp extends LitElement {
     this.zone2Mode           = 'sections';
     this.loopSourceStart     = null;
     this.loopSourceEnd       = null;
+    this.cloudDirty          = 0;
     this._quip               = '';
     this._quipIndex          = -1;
     this._quipInterval       = null;
@@ -1033,16 +1042,15 @@ class LlamaApp extends LitElement {
       inspectData:   () => this._inspectModalEl?.show(JSON.parse(exportAll(this._appState))),
       shareVideo:    () => this._createVideoShare(),
       shareLoop:     () => this._createLoopShare(),
+      dataSave:      () => this._dataSave(),
     };
   }
 
-  // Save to localStorage immediately, and schedule a debounced cloud save.
-  // Cloud write is skipped if cloud_backup is off or user is not signed in.
+  // Save to localStorage. When the user is signed in, increment the dirty
+  // counter so the UI can indicate there are unsaved cloud changes.
   _save() {
     save(this._appState);
-    if (this._appState.options.cloud_backup) {
-      scheduleSaveToCloud(this._appState, this.currentUser?.id);
-    }
+    if (this.currentUser) this.cloudDirty++;
   }
 
   // Show the confirm modal and return a Promise<boolean> (true = confirmed).
@@ -1058,7 +1066,9 @@ class LlamaApp extends LitElement {
   }
 
   async firstUpdated() {
-    window.addEventListener('beforeunload', () => flushCloudSave());
+    window.addEventListener('beforeunload', (e) => {
+      if (this.cloudDirty > 0) e.preventDefault();
+    });
     logSessionStart();
 
     const container = this.renderRoot.querySelector('#player-container');
@@ -1193,6 +1203,7 @@ class LlamaApp extends LitElement {
 
     // Expose for console testing in dev mode.
     if (import.meta.env.DEV) {
+      window._ll.state            = this._appState;
       window._ll.vc               = this._vc;
       window._ll.kb               = this._kb;
       window._ll.createVideoShare = () => this._createVideoShare();
@@ -1917,6 +1928,52 @@ class LlamaApp extends LitElement {
     this._jumpTo(e.detail.time);
   }
 
+  // ds: save local state to cloud. Checks for cloud videos strictly newer
+  // than their local counterpart and prompts before overwriting.
+  async _dataSave() {
+    const userId = this.currentUser?.id;
+    if (!userId) {
+      this._setWarning('Sign in to save data to cloud.');
+      return;
+    }
+
+    const cloudState = await loadFromCloud(userId);
+    if (cloudState) {
+      const localMap = new Map(this._appState.videos.map(v => [v.id, v]));
+      const cloudMap = new Map((cloudState.videos ?? []).map(v => [v.id, v]));
+
+      // Cloud videos strictly newer than their local counterpart.
+      const conflicts = [];
+      for (const [id, cv] of cloudMap) {
+        const lv = localMap.get(id);
+        if (lv && (cv.last_modified ?? 0) > (lv.last_modified ?? 0)) {
+          conflicts.push(cv);
+        }
+      }
+
+      if (conflicts.length > 0) {
+        const lines = ['Some cloud videos are newer than your local versions:'];
+        for (const cv of conflicts) lines.push(`  \u2022 ${cv.name || cv.id}`);
+        lines.push('Save local data to cloud anyway? Cloud versions will be overwritten.');
+        const confirmed = await this._showConfirm({
+          lines,
+          confirmLabel:  'Save anyway',
+          cancelLabel:   'Cancel',
+          defaultButton: 'cancel',
+        });
+        if (!confirmed) return;
+      }
+    }
+
+    const ok = await saveToCloud(this._appState, userId);
+    if (ok) {
+      this.cloudDirty = 0;
+      this.statusMsg  = 'Data saved to cloud.';
+    } else {
+      this._setError('Cloud save failed.');
+    }
+  }
+
   // Export all app data as a downloadable JSON file.
   _exportAll() {
     const d = new Date();
@@ -2436,7 +2493,7 @@ class LlamaApp extends LitElement {
             label="Account"
             .items=${this._accountMenuItems()}
             @ll-menu-select=${this._onAccountMenuSelect}
-          ></llama-dropdown>
+          ></llama-dropdown>${this.cloudDirty > 0 ? html`<span class="cloud-dirty" title="Unsaved cloud changes">●</span>` : ''}
         </nav>
       </header>
 
