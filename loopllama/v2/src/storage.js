@@ -11,18 +11,20 @@ const STORAGE_KEY = 'loopllama-v2';
 // ---------------------------------------------------------------------------
 
 // Apply all needed migrations to a single video object in place.
-// Handles both old format (video.version) and new format (video.schema_version).
+// Used when importing videos that may come from older app versions.
+// Videos no longer carry their own schema_version (removed in v8).
 function _migrateVideo(video) {
-  if ('version' in video || !video.schema_version) {
+  if ('version' in video) {
     const v = video.version ?? 1;
     if (v < 2) {
       // v1 → v2: title becomes name (overwriting), then drop title.
       if (video.title) video.name = video.title;
       delete video.title;
     }
-    video.schema_version = SCHEMA_VERSION;
     delete video.version;
   }
+  // Strip any lingering schema_version from the video object.
+  delete video.schema_version;
   return video;
 }
 
@@ -70,8 +72,62 @@ function _migrateAppState(state) {
     state.schema_version = SCHEMA_VERSION;
     delete state.version;
   }
-  // Future schema_version migrations go here.
+  // v5 → v6: add last_modified to each video (0 = unknown, treated as oldest);
+  //           bump video schema_version to 6.
+  if ((state.schema_version ?? 0) < 6) {
+    for (const video of state.videos ?? []) {
+      if (!('last_modified' in video)) video.last_modified = 0;
+      video.schema_version = 6;
+    }
+    state.schema_version = 6;
+  }
+  // v6 → v7: move ever_logged_in → options.cloud_backup; drop ever_logged_in.
+  if ((state.schema_version ?? 0) < 7) {
+    if (!('cloud_backup' in (state.options ?? {}))) {
+      state.options.cloud_backup = state.ever_logged_in === true;
+    }
+    delete state.ever_logged_in;
+    state.schema_version = 7;
+  }
+  // v7 → v8: remove schema_version from individual video objects.
+  if ((state.schema_version ?? 0) < 8) {
+    for (const video of state.videos ?? []) {
+      delete video.schema_version;
+    }
+    state.schema_version = 8;
+  }
   return state;
+}
+
+// ---------------------------------------------------------------------------
+// Canonical ordering for export / inspect
+// ---------------------------------------------------------------------------
+
+// Rebuild a video object with a consistent key order:
+// single-value fields first, then collections.
+function _reorderVideo(v) {
+  const { id, url, name, last_modified, duration, time, start, end,
+          speed, seek_delta, speed_delta, looping,
+          chapters, sections, loops, marks, jumps } = v;
+  // Preserve any unexpected extra keys between scalars and collections.
+  const known = new Set(['id','url','name','last_modified','duration','time',
+    'start','end','speed','seek_delta','speed_delta','looping',
+    'chapters','sections','loops','marks','jumps','schema_version','version']);
+  const extra = Object.fromEntries(Object.entries(v).filter(([k]) => !known.has(k)));
+  return { id, url, name, last_modified, duration, time, start, end,
+           speed, seek_delta, speed_delta, looping,
+           ...extra,
+           chapters, sections, loops, marks, jumps };
+}
+
+// Rebuild the app state object with a consistent key order:
+// single-value fields first, then options, then videos.
+function _reorderState(state) {
+  const { schema_version, currentVideoId, options, videos } = state;
+  const known = new Set(['schema_version','currentVideoId','options','videos']);
+  const extra = Object.fromEntries(Object.entries(state).filter(([k]) => !known.has(k)));
+  return { schema_version, currentVideoId, ...extra, options,
+           videos: (videos ?? []).map(_reorderVideo) };
 }
 
 // ---------------------------------------------------------------------------
@@ -104,20 +160,24 @@ export function save(state) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-// Return a pretty-printed JSON string of all app data.
-// app_version is injected at export time; it is not stored in localStorage.
+// Return a pretty-printed JSON string of all app data, with canonical key
+// ordering. app_version and build_num are injected at export time.
 export function exportAll(state) {
-  const { schema_version, videos, ...rest } = state;
-  return JSON.stringify({ app_version: APP_VERSION, build_num: BUILD_NUM, schema_version, ...rest, videos }, null, 2);
+  const ordered = _reorderState(state);
+  return JSON.stringify({ app_version: APP_VERSION, build_num: BUILD_NUM, ...ordered }, null, 2);
 }
 
 // Return a pretty-printed JSON string for a single video.
 // Wrapped in a versioned envelope so the importer can migrate if needed:
-//   { app_version, schema_version, videos: [video] }
+//   { app_version, build_num, schema_version, videos: [video] }
 export function exportVideo(state, videoId) {
   const video = state.videos.find(v => v.id === videoId);
   if (!video) throw new Error(`exportVideo: no video with id "${videoId}"`);
-  return JSON.stringify({ app_version: APP_VERSION, build_num: BUILD_NUM, schema_version: SCHEMA_VERSION, videos: [video] }, null, 2);
+  return JSON.stringify({
+    app_version: APP_VERSION, build_num: BUILD_NUM,
+    schema_version: SCHEMA_VERSION,
+    videos: [_reorderVideo(video)],
+  }, null, 2);
 }
 
 // ---------------------------------------------------------------------------

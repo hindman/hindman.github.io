@@ -408,8 +408,9 @@ class LlamaApp extends LitElement {
     }
     scratch.start  = this.loopStart;
     scratch.end    = this.loopEnd;
-    video.looping  = this.looping;
-    video.loops    = [scratch, ...this.namedLoops];
+    video.looping       = this.looping;
+    video.loops         = [scratch, ...this.namedLoops];
+    video.last_modified = Date.now();
     this._save();
   }
 
@@ -1036,10 +1037,12 @@ class LlamaApp extends LitElement {
   }
 
   // Save to localStorage immediately, and schedule a debounced cloud save.
+  // Cloud write is skipped if cloud_backup is off or user is not signed in.
   _save() {
-    this._appState.last_modified = Date.now();
     save(this._appState);
-    scheduleSaveToCloud(this._appState, this.currentUser?.id);
+    if (this._appState.options.cloud_backup) {
+      scheduleSaveToCloud(this._appState, this.currentUser?.id);
+    }
   }
 
   // Show the confirm modal and return a Promise<boolean> (true = confirmed).
@@ -2252,10 +2255,17 @@ class LlamaApp extends LitElement {
   }
 
   // Called when a user signs in (either on page load or after OAuth redirect).
-  // Compares last_modified timestamps to decide which copy wins.
-  // Cloud newer: prompt user — Yes loads cloud data, No signs out immediately.
-  // Local newer (or equal, or first login): upload local to cloud silently.
+  // Merges on a per-video basis using last_modified timestamps.
+  // If any cloud videos are strictly newer than their local counterparts,
+  // the user is prompted: Yes merges them in, No signs out immediately.
+  // Local-only or equal videos are kept as-is; the result is uploaded to cloud.
   async _handleSignIn(user) {
+    // Enable cloud backup on first sign-in (one-way ratchet, unless user opts out).
+    if (!this._appState.options.cloud_backup) {
+      this._appState.options.cloud_backup = true;
+      this._save();
+    }
+
     const cloudState = await loadFromCloud(user.id);
     if (!cloudState) {
       // First login: upload current local data silently.
@@ -2263,46 +2273,71 @@ class LlamaApp extends LitElement {
       return;
     }
 
-    const localTs = this._appState.last_modified ?? 0;
-    const cloudTs = cloudState.last_modified ?? 0;
+    // Build per-video maps.
+    const localMap = new Map(this._appState.videos.map(v => [v.id, v]));
+    const cloudMap = new Map((cloudState.videos ?? []).map(v => [v.id, v]));
 
-    if (cloudTs > localTs) {
-      // Cloud is newer — warn the user and offer an emergency brake.
-      const cloudDate = new Date(cloudTs).toLocaleString();
-      const localDate = localTs ? new Date(localTs).toLocaleString() : 'unknown';
-      const confirmed = await this._showConfirm({
-        lines: [
-          'Your cloud data is newer than your local data.',
-          `Cloud: ${cloudDate}`,
-          `Local: ${localDate}`,
-          'Load the cloud data? Your local changes will be replaced.',
-          'Choose "No" to sign out immediately and keep your local data.',
-        ],
-        confirmLabel:  'Yes, load cloud data',
-        cancelLabel:   'No, sign out',
-        defaultButton: 'cancel',
-      });
-      if (confirmed) {
-        save(cloudState);
-        this._appState = load();   // applies migrations; re-saves if schema changed
-        this.videos = [...this._appState.videos];
-        this.currentVideoId = this._appState.currentVideoId;
-        const video = this._appState.videos.find(v => v.id === this.currentVideoId);
-        if (video) this._syncFromVideo(video);
-        this.statusMsg = 'Cloud data loaded.';
-      } else {
-        await signOut();
+    // Cloud videos strictly newer than their local counterpart.
+    const newerInCloud = [];
+    for (const [id, cv] of cloudMap) {
+      const lv = localMap.get(id);
+      if ((cv.last_modified ?? 0) > (lv?.last_modified ?? 0)) {
+        newerInCloud.push(cv);
       }
-    } else {
-      // Local is newer or equal: upload local to cloud.
+    }
+
+    // Cloud videos not present locally at all.
+    const newInCloud = [...cloudMap.values()].filter(v => !localMap.has(v.id));
+
+    if (newerInCloud.length === 0 && newInCloud.length === 0) {
+      // Local is at least as new as cloud for every video: upload local.
       await saveToCloud(this._appState, user.id);
+      return;
+    }
+
+    // Some cloud videos are newer: prompt the user.
+    const lines = ['Some cloud videos are newer than your local versions:'];
+    for (const cv of newerInCloud) {
+      lines.push(`  \u2022 ${cv.name || cv.id}`);
+    }
+    if (newInCloud.length > 0) {
+      lines.push(`  \u2022 ${newInCloud.length} video(s) not present locally`);
+    }
+    lines.push('Merge these into your local data?');
+    lines.push('Choose "No" to sign out and keep your local data unchanged.');
+
+    const confirmed = await this._showConfirm({
+      lines,
+      confirmLabel:  'Yes, merge',
+      cancelLabel:   'No, sign out',
+      defaultButton: 'cancel',
+    });
+
+    if (confirmed) {
+      // Apply cloud videos that are newer or new.
+      for (const cv of newerInCloud) {
+        const idx = this._appState.videos.findIndex(v => v.id === cv.id);
+        if (idx !== -1) this._appState.videos[idx] = cv;
+      }
+      for (const cv of newInCloud) {
+        this._appState.videos.push(cv);
+      }
+      this.videos = [...this._appState.videos];
+      this._save();
+      const total = newerInCloud.length + newInCloud.length;
+      this.statusMsg = `Merged ${total} video(s) from cloud.`;
+    } else {
+      await signOut();
     }
   }
 
   // Sign out and remove the user's cloud data.
+  // Disables cloud_backup so the user is not nudged to sign in again.
   async _signOutAndRemoveCloudData() {
     const userId = this.currentUser?.id;
     if (userId) await deleteFromCloud(userId);
+    this._appState.options.cloud_backup = false;
+    this._save();
     await signOut();
   }
 

@@ -810,13 +810,45 @@ sessionStorage. Cleared when the tab is closed.
 
 ### Phase 3 multi-device sync conflicts
 
-App data will have an last_modified attribute. On sign-in, we compare that
-value to the persisted cloud data's value. If local data newer than cloud
-(very common), we write to the cloud. But if cloud is newer we alert the user
-and offer a choice whether to proceed: if yes, cloud overwrites local data; if
-no, log out immediately. Then user can assess the situation, maybe export
-their local data before logging in again, etc. We don't offer a concrete
-solution to their syncing problem, but we do offer a firm emergency brake.
+LL does not attempt true multi-device sync. Cloud storage is backup/restore.
+Two devices editing different videos independently and then syncing will
+produce silent data loss for the older device's edits. We limit the damage
+and surface the problem rather than pretending to solve it.
+
+Each video object carries a last_modified timestamp (ms since epoch), set
+whenever the video's data is saved. On sign-in, the merge logic operates
+per-video:
+
+- Cloud video strictly newer than local: flagged for merge.
+- Local video strictly newer than cloud, or equal: kept as-is; uploaded.
+- Cloud video not present locally: added.
+- Local video not present in cloud: kept as-is; uploaded.
+
+If any cloud videos are strictly newer, the user sees a prompt listing those
+videos by name. They choose: merge (cloud versions replace local for those
+videos only) or sign out immediately (local data untouched). This is an
+emergency brake, not a merge tool -- the user may still lose some edits, but
+they are warned and can abort.
+
+### Encouraging sign-in / cloud_backup option
+
+Options include a cloud_backup flag (default false). It controls two things:
+whether the app nudges the user to sign in when they are signed out, and
+whether cloud writes are active when signed in. The lifecycle:
+
+- New user, never signed in: cloud_backup is false, no nudging.
+- First sign-in: cloud_backup is set to true automatically.
+- Signed out after normal use: cloud_backup remains true; app nudges the
+  user to sign back in (prompt on load, visual indicator on Account menu).
+- Sign out and remove cloud data (SORCD): cloud_backup is set to false;
+  no more nudging. User has made a deliberate choice to leave the cloud.
+- User unchecks cloud_backup in options while signed in: cloud writes
+  stop immediately (scheduleSaveToCloud no-ops). Data already in Supabase
+  is untouched. Nudging stops. Signing in again re-enables cloud_backup.
+
+Authentication state and cloud_backup are independent. A user can be signed
+in with cloud_backup off (writes silently skipped) or signed out with
+cloud_backup on (nudged to return). The exact nudge UI is TBD.
 
 ---
 

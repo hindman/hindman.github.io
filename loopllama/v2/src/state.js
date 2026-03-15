@@ -5,7 +5,7 @@
 // Mutation functions will be added in later stages as needed.
 
 export const APP_VERSION    = 2;
-export const SCHEMA_VERSION = 5;
+export const SCHEMA_VERSION = 8;
 
 export const JUMP_HISTORY_MAX = 40;   // max persisted jump entries per video
 export const JUMP_THRESHOLD   = 15;   // seconds; smaller moves are not stored
@@ -23,6 +23,7 @@ export const DEFAULT_OPTIONS = {
   speed_delta:              0.05,
   loop_pad_start:           2,
   loop_pad_end:             2,
+  cloud_backup:             false,
 };
 
 // Top-level app state (persisted to localStorage as one object).
@@ -54,9 +55,9 @@ export function createVideo(url, youtubeId) {
     chapters:    [],
     sections:    [],
     loops:       [createScratchLoop()],  // always one scratch loop
-    marks:       [],
-    jumps:       [],
-    schema_version: SCHEMA_VERSION,
+    marks:         [],
+    jumps:         [],
+    last_modified: Date.now(),
   };
 }
 
