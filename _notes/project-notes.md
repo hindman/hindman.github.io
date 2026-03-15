@@ -1,12 +1,31 @@
 
 ## CURRENT SESSION
 
+Confirm prompt needs editing work:
+
+    Confirm
+
+    Some cloud videos are newer than your local versions:
+
+    • Catfish blues — daddystovepipe
+
+    • 33 video(s) not present locally
+
+    Merge these into your local data?
+
+    Choose "No" to sign out and keep your local data unchanged.
+
+
 
 ## TODO: LoopLlama v2
 
 Persistence:
 
     - Bug: `vv`: if no videos => no picker, just warning msg
+
+    - Improvement: `de` (data export): change file name:
+        loopllama-all.json
+        loopllama-yy-mm-dd.json
 
     - phase 3: user data
         x DB: setup
@@ -19,40 +38,6 @@ Persistence:
                   life cycle including last_modified in cloud newer.
 
                 x last_modified as a video-level attribute
-
-                - testing cycle:
-
-                    So I should probably do another round of testing the full
-                    life cycle: export my real data (for safety net); log in
-                    in Safari; make an edit to a couple vids; maybe add a vid;
-                    then return to Brave and check how it all goes? Does that
-                    sound right? Any other testing suggestions before we turn
-                    to the nudging and related UI design changes?
-
-                     That's the right sequence. A few additions:
-
-                      - Before signing in on Brave, make a different edit
-                      there too (to a video that you also edited in Safari).
-                      That exercises the "Safari video is strictly newer"
-                      prompt directly.
-
-                      - Verify the prompt lists the correct video names.
-
-                      - Test the "No, sign out" path at least once — confirm
-                      local data is untouched and you end up signed out.
-
-                      - After a successful merge, check the Inspect modal to
-                      confirm the merged video has the Safari version's data
-                      and the untouched videos still have the Brave version.
-
-                      - Try signing in on Brave with Safari having a brand-new
-                      video that Brave doesn't know about — confirm it gets
-                      added via the newInCloud path.
-
-                      One caution: the Safari session will have stale schema
-                      (v7 or earlier in localStorage). The migration should
-                      handle it, but worth watching the console for migration
-                      log messages.
 
                 - cloud_backup
                     - if true and user logged out, prompt to log in

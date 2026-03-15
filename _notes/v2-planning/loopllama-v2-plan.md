@@ -830,8 +830,6 @@ videos only) or sign out immediately (local data untouched). This is an
 emergency brake, not a merge tool -- the user may still lose some edits, but
 they are warned and can abort.
 
-### Encouraging sign-in / cloud_backup option
-
 Options include a cloud_backup flag (default false). It controls two things:
 whether the app nudges the user to sign in when they are signed out, and
 whether cloud writes are active when signed in. The lifecycle:
@@ -849,6 +847,12 @@ whether cloud writes are active when signed in. The lifecycle:
 Authentication state and cloud_backup are independent. A user can be signed
 in with cloud_backup off (writes silently skipped) or signed out with
 cloud_backup on (nudged to return). The exact nudge UI is TBD.
+
+In addition to encouraging users to be logged in while editing we strongly
+discourage them from being signed in and editing on two browers. Every edit
+triggers a bulk write to the DB, with no checks for newer/older data. If you
+need to operate in two browers: sign it, edit, sign out; switch browser, sign
+in, edit, sign out; etc.
 
 ---
 

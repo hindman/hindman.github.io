@@ -1919,7 +1919,9 @@ class LlamaApp extends LitElement {
 
   // Export all app data as a downloadable JSON file.
   _exportAll() {
-    _downloadJson(exportAll(this._appState), 'loopllama-all.json');
+    const d = new Date();
+    const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    _downloadJson(exportAll(this._appState), `loopllama-${date}.json`);
     this.statusMsg = 'Exported all data.';
   }
 
@@ -2259,17 +2261,24 @@ class LlamaApp extends LitElement {
   // If any cloud videos are strictly newer than their local counterparts,
   // the user is prompted: Yes merges them in, No signs out immediately.
   // Local-only or equal videos are kept as-is; the result is uploaded to cloud.
+  //
+  // IMPORTANT: cloud_backup is only set and saved AFTER the merge decision,
+  // to prevent a premature debounced cloud write from overwriting cloud data
+  // with stale local state while the modal is displayed.
   async _handleSignIn(user) {
-    // Enable cloud backup on first sign-in (one-way ratchet, unless user opts out).
-    if (!this._appState.options.cloud_backup) {
-      this._appState.options.cloud_backup = true;
-      this._save();
-    }
-
     const cloudState = await loadFromCloud(user.id);
+
+    // Helper: finalize a successful sign-in — enable cloud_backup, persist
+    // to localStorage only (no debounce), and upload directly to Supabase.
+    const _commit = async () => {
+      this._appState.options.cloud_backup = true;
+      save(this._appState);
+      await saveToCloud(this._appState, user.id);
+    };
+
     if (!cloudState) {
       // First login: upload current local data silently.
-      await saveToCloud(this._appState, user.id);
+      await _commit();
       return;
     }
 
@@ -2277,11 +2286,11 @@ class LlamaApp extends LitElement {
     const localMap = new Map(this._appState.videos.map(v => [v.id, v]));
     const cloudMap = new Map((cloudState.videos ?? []).map(v => [v.id, v]));
 
-    // Cloud videos strictly newer than their local counterpart.
+    // Cloud videos strictly newer than a video that also exists locally.
     const newerInCloud = [];
     for (const [id, cv] of cloudMap) {
       const lv = localMap.get(id);
-      if ((cv.last_modified ?? 0) > (lv?.last_modified ?? 0)) {
+      if (lv && (cv.last_modified ?? 0) > (lv.last_modified ?? 0)) {
         newerInCloud.push(cv);
       }
     }
@@ -2291,7 +2300,20 @@ class LlamaApp extends LitElement {
 
     if (newerInCloud.length === 0 && newInCloud.length === 0) {
       // Local is at least as new as cloud for every video: upload local.
-      await saveToCloud(this._appState, user.id);
+      await _commit();
+      return;
+    }
+
+    // Local has no videos: take all cloud videos silently, no prompt needed.
+    if (this._appState.videos.length === 0) {
+      this._appState.videos      = cloudState.videos ?? [];
+      this._appState.currentVideoId = cloudState.currentVideoId ?? null;
+      this.videos        = [...this._appState.videos];
+      this.currentVideoId = this._appState.currentVideoId;
+      const video = this._appState.videos.find(v => v.id === this._appState.currentVideoId);
+      if (video) this._syncFromVideo(video);
+      await _commit();
+      this.statusMsg = `Loaded ${this._appState.videos.length} video(s) from cloud.`;
       return;
     }
 
@@ -2314,7 +2336,6 @@ class LlamaApp extends LitElement {
     });
 
     if (confirmed) {
-      // Apply cloud videos that are newer or new.
       for (const cv of newerInCloud) {
         const idx = this._appState.videos.findIndex(v => v.id === cv.id);
         if (idx !== -1) this._appState.videos[idx] = cv;
@@ -2323,7 +2344,7 @@ class LlamaApp extends LitElement {
         this._appState.videos.push(cv);
       }
       this.videos = [...this._appState.videos];
-      this._save();
+      await _commit();
       const total = newerInCloud.length + newInCloud.length;
       this.statusMsg = `Merged ${total} video(s) from cloud.`;
     } else {
