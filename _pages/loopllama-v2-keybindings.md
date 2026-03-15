@@ -123,6 +123,8 @@ toc_icon: 'guitar'
         dI | Inspect: app data as JSON [bottom of web page]
         dv | Share: video [via share-URL]
         dl | Share: scratch-loop [via share-URL]
+        dr | Read: app data from cloud
+        ds | Save: app data to cloud
 
     Edit-scratch-loop-mode:
 

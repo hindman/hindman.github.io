@@ -808,51 +808,108 @@ unless the user later creates an account (Phase 3).
 session_id lifecycle: generated once per page load, stored in
 sessionStorage. Cleared when the tab is closed.
 
-### Phase 3 multi-device sync conflicts
+### Rework of user data persistence: cloud storage, multi-device issues
 
-LL does not attempt true multi-device sync. Cloud storage is backup/restore.
-Two devices editing different videos independently and then syncing will
-produce silent data loss for the older device's edits. We limit the damage
-and surface the problem rather than pretending to solve it.
+LL does not attempt true multi-device sync. Cloud storage is a backup/restore
+facility, not a live sync. The mental model: localStorage is your working
+copy; the cloud is your saved copy, like a hard drive.
 
-Each video object carries a last_modified timestamp (ms since epoch), set
-whenever the video's data is saved. On sign-in, the merge logic operates
-per-video:
+Each video object carries a last_modified timestamp (ms since epoch), updated
+whenever the video's data changes.
 
-- Cloud video strictly newer than local: flagged for merge.
-- Local video strictly newer than cloud, or equal: kept as-is; uploaded.
-- Cloud video not present locally: added.
-- Local video not present in cloud: kept as-is; uploaded.
+Cloud read/write are explicit user operations (`dr` / `ds`), not automatic.
+This keeps the system honest: you control exactly when data moves to or from
+the cloud. A dirty indicator shows unsaved cloud changes; a tab-close prompt
+fires if there are unsaved changes.
 
-If any cloud videos are strictly newer, the user sees a prompt listing those
-videos by name. They choose: merge (cloud versions replace local for those
-videos only) or sign out immediately (local data untouched). This is an
-emergency brake, not a merge tool -- the user may still lose some edits, but
-they are warned and can abort.
+ds (data save, local → cloud):
 
-Options include a cloud_backup flag (default false). It controls two things:
-whether the app nudges the user to sign in when they are signed out, and
-whether cloud writes are active when signed in. The lifecycle:
+- Fetches current cloud state, compares per-video last_modified.
+- Videos where local is newer/equal (or not in cloud): uploaded.
+- Videos where cloud is stricly newer: conflict. User is shown a list of
+  affected videos and prompted: proceed (local overwrites cloud for those
+  videos) or cancel.
+- Videos only in cloud (not local): left untouched in cloud.
 
-- New user, never signed in: cloud_backup is false, no nudging.
-- First sign-in: cloud_backup is set to true automatically.
+dr (data read, cloud → local):
+
+- Fetches current cloud state, compares per-video last_modified.
+- Videos where cloud is newer/equal (or not in local): pulled in.
+- Videos where local is strictly newer: conflict. User is shown a list of
+  affected videos and prompted: proceed (cloud overwrites local for those
+  videos) or cancel.
+- Videos only in local (not in cloud): left untouched in local.
+
+Per-video checkbox selection for conflict resolution is a possible future
+enhancement; for now the prompt is all-or-nothing.
+
+Sign-in: authentication only. No automatic read or write. The user decides
+whether to ds or dr after signing in. Exception: if the user signs in on a
+device with no local videos, the app suggests a dr (but does not force it).
+
+Options include a cloud_backup flag (default false). Controls whether the
+app nudges the user to sign in when signed out. The lifecycle:
+
+- New user, never signed in: cloud_backup false, no nudging.
+- First sign-in: cloud_backup set to true.
 - Signed out after normal use: cloud_backup remains true; app nudges the
   user to sign back in (prompt on load, visual indicator on Account menu).
-- Sign out and remove cloud data (SORCD): cloud_backup is set to false;
-  no more nudging. User has made a deliberate choice to leave the cloud.
-- User unchecks cloud_backup in options while signed in: cloud writes
-  stop immediately (scheduleSaveToCloud no-ops). Data already in Supabase
-  is untouched. Nudging stops. Signing in again re-enables cloud_backup.
+- Sign out and remove cloud data (SORCD): cloud_backup set to false; no
+  more nudging. User has made a deliberate choice to leave the cloud.
+- User unchecks cloud_backup in options: nudging stops. Cloud ops (ds/dr)
+  still available manually; the flag only controls the nudge.
 
-Authentication state and cloud_backup are independent. A user can be signed
-in with cloud_backup off (writes silently skipped) or signed out with
-cloud_backup on (nudged to return). The exact nudge UI is TBD.
+Multi-device advice: ds and dr are safe to use across devices because all
+transfers go through the per-video conflict check. The one scenario to avoid
+is being signed in and using ds on two devices without a dr in between on
+the second device -- you could overwrite the first device's cloud save. Best
+practice: ds before switching devices; dr after switching.
 
-In addition to encouraging users to be logged in while editing we strongly
-discourage them from being signed in and editing on two browers. Every edit
-triggers a bulk write to the DB, with no checks for newer/older data. If you
-need to operate in two browers: sign it, edit, sign out; switch browser, sign
-in, edit, sign out; etc.
+#### Implementation stages
+
+Stage 3e -- Remove auto-save; add dirty tracking.
+- Remove scheduleSaveToCloud, flushCloudSave from storage.js
+- Remove the beforeunload flush listener from llama-app.js
+- _save() reverts to localStorage only; cloud_backup check and schedule
+  call removed
+- Add cloudDirty reactive prop (integer count of saves since last ds/dr);
+  incremented in _save() when user is signed in
+- Add dirty indicator to UI (location TBD; something unobtrusive)
+- beforeunload listener: prompt the browser's native "leave page?" dialog
+  if cloudDirty > 0
+
+Stage 3f -- Implement ds (data save, local → cloud)
+- Add ds handler and key binding (under d prefix)
+- Fetch current cloud state
+- Compare per-video last_modified; collect cloud videos strictly newer
+  than local counterpart
+- If conflicts: prompt listing affected video names; user chooses proceed
+  (full local state replaces cloud) or cancel
+- If no conflicts: upsert full local state to cloud directly
+- On success: reset cloudDirty to 0, show status message
+
+Stage 3g -- Implement dr (data read, cloud → local)
+- Add dr handler and key binding (under d prefix)
+- Fetch current cloud state
+- Compare per-video last_modified; collect local videos strictly newer
+  than their cloud counterpart
+- If conflicts: prompt listing affected video names; user chooses proceed
+  (cloud versions replace local for all videos) or cancel
+- If no conflicts: merge cloud into local (replace/add per-video; keep
+  local-only videos untouched); save to localStorage; update reactive props
+- On success: reset cloudDirty to 0, show status message
+
+Stage 3h -- Simplify sign-in
+- Strip _handleSignIn down to: set cloud_backup = true, save to
+  localStorage
+- If local has no videos: show a status message suggesting the user do dr
+- Remove all auto-merge logic added in earlier stages
+
+Stage 3i -- Nudge UI and account menu polish
+- Visual indicator on Account menu when cloud_backup is true but user is
+  signed out (dot, badge, or color change -- TBD)
+- Prompt on page load if cloud_backup is true and user is not signed in
+- Account menu aesthetic polish (deferred from Stage 3b)
 
 ---
 
