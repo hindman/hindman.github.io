@@ -137,6 +137,7 @@ export const BINDINGS = {
     'v': { handler: 'shareVideo',  desc: 'Share video as JSON' },
     'l': { handler: 'shareLoop',   desc: 'Share loop via URL' },
     's': { handler: 'dataSave',    desc: 'Save local data to cloud' },
+    'r': { handler: 'dataRead',    desc: 'Read cloud data to local' },
   }},
 };
 

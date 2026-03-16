@@ -1,11 +1,4 @@
 
-  const s = JSON.parse(localStorage.getItem('loopllama-v2'));
-  s.videos[0].last_modified
-
-  const s = JSON.parse(localStorage.getItem('loopllama-v2'));
-  s.videos[0].last_modified = 1;
-  localStorage.setItem('loopllama-v2', JSON.stringify(s));
-
 ## CURRENT SESSION
 
 ## TODO: LoopLlama v2
@@ -23,32 +16,13 @@ Persistence:
                   life cycle including last_modified in cloud newer.
                 x last_modified as a video-level attribute
 
-                Stage 3g -- Implement dr (data read, cloud → local)
-                - Add dr handler and key binding (under d prefix)
-                - Fetch current cloud state
-                - Compare per-video last_modified; collect local videos strictly newer
-                  than their cloud counterpart
-                - If conflicts: prompt listing affected video names; user chooses proceed
-                  (cloud versions replace local for all videos) or cancel
-                - If no conflicts: merge cloud into local (replace/add per-video; keep
-                  local-only videos untouched); save to localStorage; update reactive props
-                - On success: reset cloudDirty to 0, show status message
+                - Test the user data scenarios more fully.
 
-                Stage 3h -- Simplify sign-in
-                - Strip _handleSignIn down to: set cloud_backup = true, save to
-                  localStorage
-                - If local has no videos: show a status message suggesting the user do dr
-                - Remove all auto-merge logic added in earlier stages
+                Stage 3i -- UI polish
+                - Account menu aesthetic polish
+                - Visual indicator on Account menu.
+                - Prompts during ds/dr.
 
-                Stage 3i -- Nudge UI and account menu polish
-                - Visual indicator on Account menu when cloud_backup is true but user is
-                  signed out (dot, badge, or color change -- TBD)
-                - Prompt on page load if cloud_backup is true and user is not signed in
-                - Account menu aesthetic polish (deferred from Stage 3b)
-
-                
-
-            - check
         - prod
             - blast prod DB using sql script
             - set up ID providers
