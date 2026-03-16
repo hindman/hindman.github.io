@@ -45,6 +45,7 @@ import './llama-options-modal.js';
 import './llama-delete-data-modal.js';
 import './llama-inspect-modal.js';
 import './llama-cloud-status-modal.js';
+import './llama-data-op-modal.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
@@ -1110,6 +1111,7 @@ class LlamaApp extends LitElement {
     this._inspectModalEl      = this.renderRoot.querySelector('llama-inspect-modal');
     this._cloudStatusModalEl  = this.renderRoot.querySelector('llama-cloud-status-modal');
     this._confirmModalEl      = this.renderRoot.querySelector('llama-confirm-modal');
+    this._dataOpModalEl       = this.renderRoot.querySelector('llama-data-op-modal');
     this._fileInputEl         = this.renderRoot.querySelector('#import-file-input');
 
     // Sync delta values from persisted options (may differ from compile-time defaults).
@@ -1956,40 +1958,53 @@ class LlamaApp extends LitElement {
     }
 
     const cloudState = await loadFromCloud(userId);
-    const cloudMap = new Map((cloudState?.videos ?? []).map(v => [v.id, v]));
+    const cloudMap   = new Map((cloudState?.videos ?? []).map(v => [v.id, v]));
+    const localIds   = new Set(this._appState.videos.map(v => v.id));
 
-    let skipIds = new Set();
-    if (cloudState) {
-      // Cloud videos strictly newer than their local counterpart.
-      const conflicts = [];
-      for (const [id, cv] of cloudMap) {
-        const lv = this._appState.videos.find(v => v.id === id);
-        if (lv && (cv.last_modified ?? 0) > (lv.last_modified ?? 0)) {
-          conflicts.push(cv);
-        }
-      }
-
-      if (conflicts.length > 0) {
-        const lines = ['Some cloud videos are newer than your local versions:'];
-        for (const cv of conflicts) lines.push(`  \u2022 ${cv.name || cv.id}`);
-        lines.push('Save to cloud, or save while keeping the newer cloud versions?');
-        const choice = await this._showConfirm3({
-          lines,
-          confirmLabel:  'Save all',
-          altLabel:      'Skip conflicts',
-          cancelLabel:   'Cancel',
-          defaultButton: 'cancel',
-        });
-        if (choice === 'cancel') return;
-        if (choice === 'skip') skipIds = new Set(conflicts.map(cv => cv.id));
+    // Conflict: cloud video is newer than its local counterpart.
+    const conflicts = [];
+    for (const [id, cv] of cloudMap) {
+      const lv = this._appState.videos.find(v => v.id === id);
+      if (lv && (cv.last_modified ?? 0) > (lv.last_modified ?? 0)) {
+        conflicts.push(cv);
       }
     }
 
-    // Build merged video list: start with cloud-only videos (preserved), then
-    // apply local videos (replace existing or add new). This ensures ds never
-    // deletes cloud-only videos. Skipped videos keep their cloud version.
-    let added = 0, updated = 0, unchanged = 0, skipped = 0;
-    const mergedVideos = [...cloudMap.values()];
+    // Orphan: cloud video has no local counterpart.
+    const orphans = [];
+    for (const [id, cv] of cloudMap) {
+      if (!localIds.has(id)) orphans.push(cv);
+    }
+
+    let conflictChoice = 'skip';
+    let orphanChoice   = 'keep';
+
+    if (conflicts.length > 0 || orphans.length > 0) {
+      const result = await this._showDataOp({
+        conflicts:       conflicts.map(v => v.name || v.id),
+        orphans:         orphans.map(v => v.name || v.id),
+        conflictsHeader: 'Cloud is newer',
+        orphansHeader:   'Cloud only (not in local)',
+      });
+      if (result === null) return;
+      conflictChoice = result.conflictChoice;
+      orphanChoice   = result.orphanChoice;
+    }
+
+    const skipIds   = conflictChoice === 'skip' ? new Set(conflicts.map(v => v.id)) : new Set();
+    const orphanIds = new Set(orphans.map(v => v.id));
+
+    // Build merged video list: start with cloud videos (minus deleted orphans),
+    // then apply local videos. Skipped videos keep their cloud version.
+    let added = 0, updated = 0, unchanged = 0, skipped = 0, deleted = 0;
+    const mergedVideos = [];
+    for (const cv of cloudMap.values()) {
+      if (orphanIds.has(cv.id) && orphanChoice === 'delete') {
+        deleted++;
+      } else {
+        mergedVideos.push(cv);
+      }
+    }
     for (const lv of this._appState.videos) {
       const idx = mergedVideos.findIndex(v => v.id === lv.id);
       if (idx !== -1) {
@@ -2010,15 +2025,17 @@ class LlamaApp extends LitElement {
     const stateToUpload = { ...this._appState, videos: mergedVideos };
     const ok = await saveToCloud(stateToUpload, userId);
     if (ok) {
-      const skipNote = skipped > 0 ? `, ${skipped} skipped` : '';
-      this.statusMsg = `Saved to cloud: ${added} added, ${updated} updated, ${unchanged} unchanged${skipNote}.`;
+      const skipNote    = skipped > 0 ? `, ${skipped} skipped` : '';
+      const deletedNote = deleted > 0 ? `, ${deleted} deleted` : '';
+      this.statusMsg = `Saved to cloud: ${added} added, ${updated} updated, ${unchanged} unchanged${skipNote}${deletedNote}.`;
     } else {
       this._setError('Cloud save failed.');
     }
   }
 
   // dr: read cloud state into local. Checks for local videos strictly newer
-  // than their cloud counterpart and prompts before overwriting.
+  // than their cloud counterpart (conflicts) and local-only videos absent from
+  // cloud (orphans), then prompts when either condition is present.
   async _dataRead() {
     const userId = this.currentUser?.id;
     if (!userId) {
@@ -2032,11 +2049,11 @@ class LlamaApp extends LitElement {
       return;
     }
 
-    const localMap  = new Map(this._appState.videos.map(v => [v.id, v]));
+    const localMap    = new Map(this._appState.videos.map(v => [v.id, v]));
     const cloudVideos = (cloudState.videos ?? []).map(migrateVideo);
-    const cloudMap  = new Map(cloudVideos.map(v => [v.id, v]));
+    const cloudMap    = new Map(cloudVideos.map(v => [v.id, v]));
 
-    // Local videos strictly newer than their cloud counterpart.
+    // Conflict: local video is newer than its cloud counterpart.
     const conflicts = [];
     for (const [id, lv] of localMap) {
       const cv = cloudMap.get(id);
@@ -2045,25 +2062,40 @@ class LlamaApp extends LitElement {
       }
     }
 
-    let skipIds = new Set();
-    if (conflicts.length > 0) {
-      const lines = ['Some local videos are newer than their cloud versions:'];
-      for (const lv of conflicts) lines.push(`  \u2022 ${lv.name || lv.id}`);
-      lines.push('Load cloud data, or load while keeping your newer local versions?');
-      const choice = await this._showConfirm3({
-        lines,
-        confirmLabel:  'Load all',
-        altLabel:      'Skip conflicts',
-        cancelLabel:   'Cancel',
-        defaultButton: 'cancel',
-      });
-      if (choice === 'cancel') return;
-      if (choice === 'skip') skipIds = new Set(conflicts.map(lv => lv.id));
+    // Orphan: local video has no cloud counterpart.
+    const orphans = [];
+    for (const [id, lv] of localMap) {
+      if (!cloudMap.has(id)) orphans.push(lv);
     }
 
-    // Merge: cloud videos replace or add; local-only videos are kept.
-    // Skip overwrite when last_modified matches exactly (nothing changed),
-    // or when the video is in the skip set (user chose to keep local-newer).
+    let conflictChoice = 'skip';
+    let orphanChoice   = 'keep';
+
+    if (conflicts.length > 0 || orphans.length > 0) {
+      const result = await this._showDataOp({
+        conflicts:       conflicts.map(v => v.name || v.id),
+        orphans:         orphans.map(v => v.name || v.id),
+        conflictsHeader: 'Local is newer',
+        orphansHeader:   'Local only (not in cloud)',
+      });
+      if (result === null) return;
+      conflictChoice = result.conflictChoice;
+      orphanChoice   = result.orphanChoice;
+    }
+
+    const skipIds   = conflictChoice === 'skip' ? new Set(conflicts.map(v => v.id)) : new Set();
+    const orphanIds = new Set(orphans.map(v => v.id));
+
+    // Remove local-only videos if user chose to delete orphans.
+    let deleted = 0;
+    if (orphanChoice === 'delete') {
+      const before = this._appState.videos.length;
+      this._appState.videos = this._appState.videos.filter(v => !orphanIds.has(v.id));
+      deleted = before - this._appState.videos.length;
+    }
+
+    // Merge: cloud videos replace or add into local. Skip overwrite when
+    // last_modified matches exactly, or when video is in the skip set.
     let added = 0, updated = 0, unchanged = 0, skipped = 0;
     for (const cv of cloudMap.values()) {
       if (skipIds.has(cv.id)) { skipped++; continue; }
@@ -2087,9 +2119,10 @@ class LlamaApp extends LitElement {
     if (currentVideo) this._syncFromVideo(currentVideo);
 
     save(this._appState);
-    this.videos    = [...this._appState.videos];
-    const skipNote = skipped > 0 ? `, ${skipped} skipped` : '';
-    this.statusMsg = `Read from cloud: ${added} added, ${updated} updated, ${unchanged} unchanged${skipNote}.`;
+    this.videos = [...this._appState.videos];
+    const skipNote    = skipped > 0 ? `, ${skipped} skipped` : '';
+    const deletedNote = deleted > 0 ? `, ${deleted} deleted` : '';
+    this.statusMsg = `Read from cloud: ${added} added, ${updated} updated, ${unchanged} unchanged${skipNote}${deletedNote}.`;
   }
 
   // Export all app data as a downloadable JSON file.
@@ -2156,28 +2189,46 @@ class LlamaApp extends LitElement {
       return;
     }
 
-    // Local videos strictly newer than their imported counterpart.
-    const localMap = new Map(this._appState.videos.map(v => [v.id, v]));
+    const localMap  = new Map(this._appState.videos.map(v => [v.id, v]));
+    const importIds = new Set(incoming.map(v => v.id));
+
+    // Conflict: local video is newer than its imported counterpart.
     const conflicts = [];
     for (const iv of incoming) {
       const lv = localMap.get(iv.id);
       if (lv && (lv.last_modified ?? 0) > (iv.last_modified ?? 0)) conflicts.push(lv);
     }
 
-    let skipIds = new Set();
-    if (conflicts.length > 0) {
-      const lines = ['Some local videos are newer than the imported versions:'];
-      for (const lv of conflicts) lines.push(`  \u2022 ${lv.name || lv.id}`);
-      lines.push('Import anyway, or import while keeping your newer local versions?');
-      const choice = await this._showConfirm3({
-        lines,
-        confirmLabel:  'Import all',
-        altLabel:      'Skip conflicts',
-        cancelLabel:   'Cancel',
-        defaultButton: 'cancel',
+    // Orphan: local video has no counterpart in the import file.
+    const orphans = [];
+    for (const [id, lv] of localMap) {
+      if (!importIds.has(id)) orphans.push(lv);
+    }
+
+    let conflictChoice = 'skip';
+    let orphanChoice   = 'keep';
+
+    if (conflicts.length > 0 || orphans.length > 0) {
+      const result = await this._showDataOp({
+        conflicts:       conflicts.map(v => v.name || v.id),
+        orphans:         orphans.map(v => v.name || v.id),
+        conflictsHeader: 'Local is newer',
+        orphansHeader:   'Local only (not in import file)',
       });
-      if (choice === 'cancel') return;
-      if (choice === 'skip') skipIds = new Set(conflicts.map(lv => lv.id));
+      if (result === null) return;
+      conflictChoice = result.conflictChoice;
+      orphanChoice   = result.orphanChoice;
+    }
+
+    const skipIds   = conflictChoice === 'skip' ? new Set(conflicts.map(v => v.id)) : new Set();
+    const orphanIds = new Set(orphans.map(v => v.id));
+
+    // Remove local-only videos if user chose to delete orphans.
+    let deleted = 0;
+    if (orphanChoice === 'delete') {
+      const before = this._appState.videos.length;
+      this._appState.videos = this._appState.videos.filter(v => !orphanIds.has(v.id));
+      deleted = before - this._appState.videos.length;
     }
 
     let added = 0, updated = 0, unchanged = 0, skipped = 0;
@@ -2201,8 +2252,9 @@ class LlamaApp extends LitElement {
 
     this.videos = [...this._appState.videos];
     this._save();
-    const skipNote = skipped > 0 ? `, ${skipped} skipped` : '';
-    this.statusMsg = `Imported: ${added} added, ${updated} updated, ${unchanged} unchanged${skipNote}.`;
+    const skipNote    = skipped > 0 ? `, ${skipped} skipped` : '';
+    const deletedNote = deleted > 0 ? `, ${deleted} deleted` : '';
+    this.statusMsg = `Imported: ${added} added, ${updated} updated, ${unchanged} unchanged${skipNote}${deletedNote}.`;
   }
 
   // Show the confirm modal and return a Promise that resolves to true (confirm)
@@ -2224,6 +2276,19 @@ class LlamaApp extends LitElement {
       this._confirmResolve = resolve;
       this._confirmModalEl?.show(info);
     });
+  }
+
+  // Data-op modal: resolves to { conflictChoice, orphanChoice } or null.
+  _showDataOp(params) {
+    return new Promise(resolve => {
+      this._dataOpResolve = resolve;
+      this._dataOpModalEl?.show(params);
+    });
+  }
+
+  _onDataOpResult(e) {
+    this._dataOpResolve?.(e.detail);
+    this._dataOpResolve = null;
   }
 
   // Apply a 'loop' share payload: add the loop to the video's namedLoops and
@@ -2820,6 +2885,12 @@ class LlamaApp extends LitElement {
         @ll-confirm-no=${this._onConfirmNo}
         @ll-modal-close=${() => this._kb?.enable()}
       ></llama-confirm-modal>
+
+      <llama-data-op-modal
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-data-op-result=${this._onDataOpResult}
+        @ll-modal-close=${() => this._kb?.enable()}
+      ></llama-data-op-modal>
 
       <llama-whichkey
         .prefix=${this.wkPrefix}

@@ -1,132 +1,29 @@
 
 ## CURRENT SESSION
 
-    **3i-a — New `llama-data-op-modal` component**
-
-    The unified prompt for ds/dr/di. Replaces `_showConfirm3` for data operations.
-    Accepts two independent optional sections:
-
-    - Conflicts section (newer videos in target): "Replace all" vs "Skip"
-    - Orphans section (target-only videos): "Delete" vs "Keep"
-
-    Each section only rendered if its data is non-empty. Single Cancel button plus
-    a "Do it" confirm. Returns `{ conflictChoice: 'replace'|'skip', orphanChoice:
-    'delete'|'keep' }` or `null` on cancel.
-
-    **3i-b — Enhanced ds**
-
-    Add orphan detection (cloud-only videos). Call `llama-data-op-modal` when
-    either condition is present. When `orphanChoice === 'delete'`, exclude
-    cloud-only videos from `mergedVideos`. Add deleted count to tally message.
-
-    **3i-c — Enhanced dr**
-
-    Symmetric to 3i-b. Add local-only detection. When `orphanChoice === 'delete'`,
-    remove those videos from `_appState.videos` before saving. Add deleted count
-    to tally.
-
-    **3i-d — Enhanced di**
-
-    Same logic as dr applied to `_importFromJson`. Detect local-only videos
-    (present locally, absent from import file). Same modal, same delete path, same
-    tally.
-
 ## TODO: LoopLlama v2
 
-Persistence:
+Persistence: user data:
 
-    - phase 3: user data
-        x DB: setup
-        . dev
-            x set up ID providers
-            x planning: details
-            . code
+    - Stage 3i -- UI polish for user data persistence
+        - Account menu aesthetic polish
+        - Prompts during di/ds/dr.
 
-                - Currently we have no way to propagate intended deletes:
-                    - 1. SORCD then ds.
-                    - 2. A mode to have ds (or `dS`) push deletes.
-                    - 3. Expanded dd: 
+        - Set up some export files to use to check the modal.
+            - di uses same modal as ds/dr.
 
-                - Test the user data scenarios more fully.
+    - what happens if Supabase goes down or is very slow
+        - how do we test this scenario?
+              - Block the network request in DevTools: Network tab
+                → right-click a Supabase request → "Block request
+                domain". All subsequent calls to that domain fail
+                immediately.
 
-                    # ds
-
-                    Videos      | Edit in cloud
-                    -------------------------------------
-                    local-only  | Added
-                    local-newer | Replaced
-                    cloud-only  | No change
-                    cloud-newer | Replaced, after prompt
-
-                    # local-only: add in Brave
-                    https://www.youtube.com/watch?v=iZMZ_xk2big
-                    https://www.youtube.com/watch?v=nfGmcUCJ9uI
-
-                    # local-newer: edit in Brave
-                    catfish
-                    hairy
-
-                    # cloud-only: create Safari; ds; Brave for test
-                    https://www.youtube.com/watch?v=AEP7xP4ClTE
-                    https://www.youtube.com/watch?v=PaEXjpIzMhs
-
-                    # cloud-newer: edit Safari; ds; Brave for test
-                    dune
-                    hit road
-
-                    # dr
-
-                    Videos      | Edit locally
-                    -------------------------------------
-                    local-only  | No change
-                    local-newer | Replaced, after prompt
-                    cloud-only  | Added
-                    cloud-newer | Replaced
-
-                    # urls
-
-                    https://www.youtube.com/watch?v=lL9Mabl1Hzo
-
-                Should import JSON follow the same model:
-                    - per video logic
-                    - its analogous to `dr` operation
-
-                Stage 3i -- UI polish
-                - Account menu aesthetic polish
-                - Visual indicator on Account menu.
-                - Prompts during ds/dr.
-
-                - what happens if Supabase goes down or is very slow
-                    - how do we test this scenario?
-                          - Block the network request in DevTools: Network tab
-                            → right-click a Supabase request → "Block request
-                            domain". All subsequent calls to that domain fail
-                            immediately.
-
-        - prod
-            - blast prod DB using sql script
-            - set up ID providers
-            - deploy
-            - check
-
-        Phase 3 -- user data
-
-            x Configure Supabase Auth with Google+Github as identity
-              providers.
-            x Set up RLS policies so each user can only access their own data.
-            x Set up `users` table.
-            x UI plan.
-
-                  Account
-                    ─────────────────
-                    user@example.com                ← grey, non-clickable (logged in only)
-                    ─────────────────
-                    Sign in with Google             ← logged out only
-                    Sign in with GitHub             ← logged out only
-                    Sign out                        ← logged in only
-                    Sign out and remove cloud data  ← logged in only
-                    ─────────────────
-                    Why sign in?                    ← always present, opens help doc
+    - prod
+        - blast prod DB using sql script
+        - set up ID providers
+        - deploy
+        - check
 
 Current tasks:
 
@@ -195,6 +92,57 @@ SQL queries:
     from users u
     join auth.users au on au.id = u.id
     where au.email = 'montyhindman@gmail.com';
+
+Testing scenario for user data persistence:
+
+    - Brave and Safari: synced in known-good-state:
+        - Brave:
+            - de: export
+            - Add a couple of videos you don't care about.
+            - Make a couple of inconsequential edits.
+            - di:
+                - check modal to confirm correctness
+                - do brute-force replacement
+            - ds
+                - check modal to confirm correctness
+                - do brute-force replacement
+        - Safari:
+            - dr
+                - check modal to confirm correctness
+                - do brute-force replacement
+
+    - Safari:
+        - Add two new vids:
+            - https://www.youtube.com/watch?v=AEP7xP4ClTE
+            - https://www.youtube.com/watch?v=PaEXjpIzMhs
+        - Edit 3 existing vids:
+            - dune
+            - hit the road jack
+            - catfish blues dsp
+        - Delete 1 vid:
+            - ??
+
+    - Brave:
+        - Add two new vids:
+            - https://www.youtube.com/watch?v=iZMZ_xk2big
+            - https://www.youtube.com/watch?v=nfGmcUCJ9uI
+        - Edit 2 existing vids:
+            - long cool woman
+            - hairy the dog
+        - Delete 1 vid:
+            - ??
+        - dc: ok
+        - dr: message accurate; chose No
+        - ds: ditto
+        - dr: chose yes-but-skip
+        - ds: ok
+        - dc: Brave and DB now in sync
+
+    - Safari:
+        - Similar process:
+            - First check messages/prompts for dc, dr, ds: chosing No
+            - Then did dr and ds for real.
+            - dc: Safari and DB now in sync
 
 ## TODO: The Fifth Fret
 
