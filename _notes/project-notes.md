@@ -1,6 +1,35 @@
 
 ## CURRENT SESSION
 
+    **3i-a — New `llama-data-op-modal` component**
+
+    The unified prompt for ds/dr/di. Replaces `_showConfirm3` for data operations.
+    Accepts two independent optional sections:
+
+    - Conflicts section (newer videos in target): "Replace all" vs "Skip"
+    - Orphans section (target-only videos): "Delete" vs "Keep"
+
+    Each section only rendered if its data is non-empty. Single Cancel button plus
+    a "Do it" confirm. Returns `{ conflictChoice: 'replace'|'skip', orphanChoice:
+    'delete'|'keep' }` or `null` on cancel.
+
+    **3i-b — Enhanced ds**
+
+    Add orphan detection (cloud-only videos). Call `llama-data-op-modal` when
+    either condition is present. When `orphanChoice === 'delete'`, exclude
+    cloud-only videos from `mergedVideos`. Add deleted count to tally message.
+
+    **3i-c — Enhanced dr**
+
+    Symmetric to 3i-b. Add local-only detection. When `orphanChoice === 'delete'`,
+    remove those videos from `_appState.videos` before saving. Add deleted count
+    to tally.
+
+    **3i-d — Enhanced di**
+
+    Same logic as dr applied to `_importFromJson`. Detect local-only videos
+    (present locally, absent from import file). Same modal, same delete path, same
+    tally.
 
 ## TODO: LoopLlama v2
 
@@ -13,8 +42,10 @@ Persistence:
             x planning: details
             . code
 
-                - I think there's no way to push deletes to the cloud
-                    hmmm...
+                - Currently we have no way to propagate intended deletes:
+                    - 1. SORCD then ds.
+                    - 2. A mode to have ds (or `dS`) push deletes.
+                    - 3. Expanded dd: 
 
                 - Test the user data scenarios more fully.
 

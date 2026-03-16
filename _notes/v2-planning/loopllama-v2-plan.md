@@ -829,36 +829,44 @@ dc (data compare, read-only):
 - Use this to understand the divergence between local and cloud before
   running ds or dr.
 
+ds, dr, di — unified prompt design:
+
+Each operation detects up to two conflict conditions before executing.
+If either or both are present, a single unified prompt is shown with
+the full picture before the user commits. Controls that don't apply
+in the current situation are disabled.
+
+- Conflict condition 1 (newer videos in target): user chooses to
+  replace all, skip those videos, or cancel.
+- Conflict condition 2 (target-only videos absent from source): user
+  chooses to delete them from the target or keep them.
+
+If neither condition is present the operation runs without prompting.
+
 ds (data save, local → cloud):
 
-- Fetches current cloud state, compares per-video last_modified.
-- Videos where cloud is strictly newer than local: conflict. User is
-  shown a list of affected videos and prompted with three choices:
-  "Save all" (local overwrites cloud for those videos too),
-  "Skip conflicts" (cloud-newer videos are left untouched in cloud),
-  or "Cancel".
-- Videos where local is newer/equal (or not in cloud): uploaded.
-- Videos only in cloud (not local): left untouched in cloud.
+- Conflict 1: cloud-newer videos. Prompt: "Replace all" or "Skip".
+- Conflict 2: cloud-only videos. Prompt: "Delete from cloud" or "Keep".
+- local-only and local-newer videos are always uploaded.
+- same videos are always left untouched.
 
 dr (data read, cloud → local):
 
-- Fetches current cloud state, compares per-video last_modified.
-- Videos where local is strictly newer than cloud: conflict. User is
-  shown a list of affected videos and prompted with three choices:
-  "Load all" (cloud overwrites local for those videos too),
-  "Skip conflicts" (local-newer videos are left untouched locally),
-  or "Cancel".
-- Videos where cloud is newer/equal (or not in local): pulled in.
-- Videos only in local (not in cloud): left untouched in local.
+- Conflict 1: local-newer videos. Prompt: "Replace all" or "Skip".
+- Conflict 2: local-only videos. Prompt: "Delete locally" or "Keep".
+- cloud-only and cloud-newer videos are always pulled in.
+- same videos are always left untouched.
 
 di (data import, JSON file → local):
 
-- Same conflict logic as dr. Parses the import file, migrates videos,
-  compares per-video last_modified against local. If any imported video
-  is older than the local version, user gets the same three-choice
-  prompt ("Import all" / "Skip conflicts" / "Cancel").
-- Videos only in the import file: added.
-- Videos only in local: left untouched.
+- Parallel to dr in all respects, with the JSON file playing the role
+  of the cloud. local-only videos absent from the file can be deleted
+  or kept, giving the user a path to restore a known-good state from
+  an export.
+- Conflict 1: local-newer videos. Prompt: "Replace all" or "Skip".
+- Conflict 2: local-only videos. Prompt: "Delete locally" or "Keep".
+- JSON-only and JSON-newer videos are always pulled in.
+- same videos are always left untouched.
 
 Per-video checkbox selection for conflict resolution is a possible future
 enhancement; for now the prompt is all-or-nothing per operation.
@@ -885,27 +893,37 @@ is being signed in and using ds on two devices without a dr in between on
 the second device -- you could overwrite the first device's cloud save. Best
 practice: ds before switching devices; dr after switching.
 
-The ds/dr operations add or update/replace videos, but never simply deletes
-them. In addition, they are one-way operations in terms of data flow, not
-two-way data resolution procedures.
+Decision tables for ds, dr, and di:
 
-    # ds
+    ds (local → cloud)
 
     Videos      | Edit in cloud
-    --------------------------------------------------
+    -----------------------------------------------
     local-only  | Added
     local-newer | Replaced
-    cloud-only  | No change (preserved)
-    cloud-newer | Replaced ("Save all") or No change ("Skip conflicts")
+    same        | No change
+    cloud-newer | Replaced, or skipped — after prompt
+    cloud-only  | Deleted, or kept — after prompt
 
-    # dr
+    dr (cloud → local)
 
     Videos      | Edit locally
-    --------------------------------------------------
-    local-only  | No change (preserved)
-    local-newer | Replaced ("Load all") or No change ("Skip conflicts")
+    -----------------------------------------------
     cloud-only  | Added
     cloud-newer | Replaced
+    same        | No change
+    local-newer | Replaced, or skipped — after prompt
+    local-only  | Deleted, or kept — after prompt
+
+    di (JSON → local): just like dr with JSON=cloud
+
+    Videos      | Edit locally
+    -----------------------------------------------
+    JSON-only   | Added
+    JSON-newer  | Replaced
+    same        | No change
+    local-newer | Replaced, or skipped — after prompt
+    local-only  | Deleted, or kept — after prompt
 
 ---
 
