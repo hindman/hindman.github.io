@@ -13,7 +13,7 @@ const STORAGE_KEY = 'loopllama-v2';
 // Apply all needed migrations to a single video object in place.
 // Used when importing videos that may come from older app versions.
 // Videos no longer carry their own schema_version (removed in v8).
-function _migrateVideo(video) {
+export function migrateVideo(video) {
   if ('version' in video) {
     const v = video.version ?? 1;
     if (v < 2) {
@@ -68,7 +68,7 @@ function _migrateAppState(state) {
       state.version = 4;
     }
     // v4 → v5: rename `version` → `schema_version` on state and all videos.
-    for (const video of state.videos ?? []) _migrateVideo(video);
+    for (const video of state.videos ?? []) migrateVideo(video);
     state.schema_version = SCHEMA_VERSION;
     delete state.version;
   }
@@ -237,15 +237,13 @@ export async function deleteFromCloud(userId) {
 // Import / export
 // ---------------------------------------------------------------------------
 
-// Merge imported JSON into current state. Supports two formats:
+// Parse a LoopLlama JSON string and return a migrated array of video objects.
+// Supports two formats:
 //   - Full app state: { currentVideoId, videos: [...] }
 //   - Single video:   { id, name, ... }
-// Videos are merged by ID: imported video wins (add or overwrite).
-// Returns { added, updated } counts.
 // Throws on parse error or unrecognized format.
-export function importData(jsonStr, state) {
+export function parseImport(jsonStr) {
   const data = JSON.parse(jsonStr);
-
   let incoming;
   if (Array.isArray(data.videos)) {
     incoming = data.videos;
@@ -254,21 +252,19 @@ export function importData(jsonStr, state) {
   } else {
     throw new Error('Unrecognized format: expected a LoopLlama export.');
   }
+  return incoming.map(migrateVideo);
+}
 
-  // Migrate each incoming video to the current schema before inserting.
-  incoming = incoming.map(_migrateVideo);
-
+// Simple merge of a JSON string into state: imported video wins (add or overwrite).
+// Returns { added, updated } counts. Throws on parse/format error.
+export function importData(jsonStr, state) {
+  const incoming = parseImport(jsonStr);
   let added = 0, updated = 0;
   for (const video of incoming) {
     if (!video.id) continue;
     const idx = state.videos.findIndex(v => v.id === video.id);
-    if (idx === -1) {
-      state.videos.push(video);
-      added++;
-    } else {
-      state.videos[idx] = video;
-      updated++;
-    }
+    if (idx === -1) { state.videos.push(video);    added++;   }
+    else            { state.videos[idx] = video;   updated++; }
   }
   return { added, updated };
 }

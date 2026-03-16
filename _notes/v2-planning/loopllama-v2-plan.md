@@ -821,26 +821,47 @@ Cloud read/write are explicit user operations (`dr` / `ds`), not automatic.
 This keeps the system honest: you control exactly when data moves to or from
 the cloud.
 
+dc (data compare, read-only):
+
+- Fetches current cloud state, classifies each video into one of five
+  buckets: local-only, local-newer, cloud-only, cloud-newer, same.
+- Displays results in llama-cloud-status-modal. No data is written.
+- Use this to understand the divergence between local and cloud before
+  running ds or dr.
+
 ds (data save, local → cloud):
 
 - Fetches current cloud state, compares per-video last_modified.
+- Videos where cloud is strictly newer than local: conflict. User is
+  shown a list of affected videos and prompted with three choices:
+  "Save all" (local overwrites cloud for those videos too),
+  "Skip conflicts" (cloud-newer videos are left untouched in cloud),
+  or "Cancel".
 - Videos where local is newer/equal (or not in cloud): uploaded.
-- Videos where cloud is stricly newer: conflict. User is shown a list of
-  affected videos and prompted: proceed (local overwrites cloud for those
-  videos) or cancel.
 - Videos only in cloud (not local): left untouched in cloud.
 
 dr (data read, cloud → local):
 
 - Fetches current cloud state, compares per-video last_modified.
+- Videos where local is strictly newer than cloud: conflict. User is
+  shown a list of affected videos and prompted with three choices:
+  "Load all" (cloud overwrites local for those videos too),
+  "Skip conflicts" (local-newer videos are left untouched locally),
+  or "Cancel".
 - Videos where cloud is newer/equal (or not in local): pulled in.
-- Videos where local is strictly newer: conflict. User is shown a list of
-  affected videos and prompted: proceed (cloud overwrites local for those
-  videos) or cancel.
 - Videos only in local (not in cloud): left untouched in local.
 
+di (data import, JSON file → local):
+
+- Same conflict logic as dr. Parses the import file, migrates videos,
+  compares per-video last_modified against local. If any imported video
+  is older than the local version, user gets the same three-choice
+  prompt ("Import all" / "Skip conflicts" / "Cancel").
+- Videos only in the import file: added.
+- Videos only in local: left untouched.
+
 Per-video checkbox selection for conflict resolution is a possible future
-enhancement; for now the prompt is all-or-nothing.
+enhancement; for now the prompt is all-or-nothing per operation.
 
 Sign-in: authentication only. No automatic read or write. The user decides
 whether to ds or dr after signing in. Exception: if the user signs in on a
@@ -871,18 +892,18 @@ two-way data resolution procedures.
     # ds
 
     Videos      | Edit in cloud
-    -------------------------------------
+    --------------------------------------------------
     local-only  | Added
     local-newer | Replaced
-    cloud-only  | No change
-    cloud-newer | Replaced, after prompt
+    cloud-only  | No change (preserved)
+    cloud-newer | Replaced ("Save all") or No change ("Skip conflicts")
 
     # dr
 
     Videos      | Edit locally
-    -------------------------------------
-    local-only  | No change
-    local-newer | Replaced, after prompt
+    --------------------------------------------------
+    local-only  | No change (preserved)
+    local-newer | Replaced ("Load all") or No change ("Skip conflicts")
     cloud-only  | Added
     cloud-newer | Replaced
 

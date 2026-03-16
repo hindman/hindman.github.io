@@ -1,6 +1,7 @@
 
 ## CURRENT SESSION
 
+
 ## TODO: LoopLlama v2
 
 Persistence:
@@ -11,6 +12,9 @@ Persistence:
             x set up ID providers
             x planning: details
             . code
+
+                - I think there's no way to push deletes to the cloud
+                    hmmm...
 
                 - Test the user data scenarios more fully.
 
@@ -52,10 +56,21 @@ Persistence:
 
                     https://www.youtube.com/watch?v=lL9Mabl1Hzo
 
+                Should import JSON follow the same model:
+                    - per video logic
+                    - its analogous to `dr` operation
+
                 Stage 3i -- UI polish
                 - Account menu aesthetic polish
                 - Visual indicator on Account menu.
                 - Prompts during ds/dr.
+
+                - what happens if Supabase goes down or is very slow
+                    - how do we test this scenario?
+                          - Block the network request in DevTools: Network tab
+                            → right-click a Supabase request → "Block request
+                            domain". All subsequent calls to that domain fail
+                            immediately.
 
         - prod
             - blast prod DB using sql script
@@ -83,6 +98,8 @@ Persistence:
                     Why sign in?                    ← always present, opens help doc
 
 Current tasks:
+
+    - key binding to recall most recent message(s)?
 
     - key bindings: modify `d` prefix:
         dd = save to cloud
@@ -138,6 +155,15 @@ Text elements: edit/organize: DETAILS:
     - Timeline:
         - Hovers
     - Current panel
+
+SQL queries:
+
+    select au.email,
+           jsonb_array_length(u.app_state -> 'videos') as video_count,
+           u.app_state
+    from users u
+    join auth.users au on au.id = u.id
+    where au.email = 'montyhindman@gmail.com';
 
 ## TODO: The Fifth Fret
 

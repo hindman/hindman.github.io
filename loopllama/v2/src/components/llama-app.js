@@ -16,7 +16,7 @@ import {
   propagateEntityChange, validateEntityChange,
   nudgeLoopStart, nudgeLoopEnd,
 } from '../state.js';
-import { load, save, exportAll, importData as mergeImport,
+import { load, save, exportAll, parseImport, migrateVideo,
          loadFromCloud, saveToCloud, deleteFromCloud } from '../storage.js';
 import { logSessionStart, logVideoLoad } from '../analytics.js';
 import { getUser, onAuthStateChange, signInWithGoogle, signInWithGitHub, signOut } from '../auth.js';
@@ -1046,18 +1046,6 @@ class LlamaApp extends LitElement {
     save(this._appState);
   }
 
-  // Show the confirm modal and return a Promise<boolean> (true = confirmed).
-  _showConfirm({ lines, confirmLabel = 'Yes', cancelLabel = 'No', defaultButton = 'cancel' }) {
-    return new Promise(resolve => {
-      const modal = this._confirmModalEl;
-      const onYes = () => resolve(true);
-      const onNo  = () => resolve(false);
-      modal.addEventListener('ll-confirm-yes', onYes, { once: true });
-      modal.addEventListener('ll-confirm-no',  onNo,  { once: true });
-      modal.show({ lines, confirmLabel, cancelLabel, defaultButton });
-    });
-  }
-
   async firstUpdated() {
     logSessionStart();
 
@@ -1970,6 +1958,7 @@ class LlamaApp extends LitElement {
     const cloudState = await loadFromCloud(userId);
     const cloudMap = new Map((cloudState?.videos ?? []).map(v => [v.id, v]));
 
+    let skipIds = new Set();
     if (cloudState) {
       // Cloud videos strictly newer than their local counterpart.
       const conflicts = [];
@@ -1983,26 +1972,30 @@ class LlamaApp extends LitElement {
       if (conflicts.length > 0) {
         const lines = ['Some cloud videos are newer than your local versions:'];
         for (const cv of conflicts) lines.push(`  \u2022 ${cv.name || cv.id}`);
-        lines.push('Save local data to cloud anyway? Cloud versions will be overwritten.');
-        const confirmed = await this._showConfirm({
+        lines.push('Save to cloud, or save while keeping the newer cloud versions?');
+        const choice = await this._showConfirm3({
           lines,
-          confirmLabel:  'Save anyway',
+          confirmLabel:  'Save all',
+          altLabel:      'Skip conflicts',
           cancelLabel:   'Cancel',
           defaultButton: 'cancel',
         });
-        if (!confirmed) return;
+        if (choice === 'cancel') return;
+        if (choice === 'skip') skipIds = new Set(conflicts.map(cv => cv.id));
       }
     }
 
     // Build merged video list: start with cloud-only videos (preserved), then
     // apply local videos (replace existing or add new). This ensures ds never
-    // deletes cloud-only videos.
-    let added = 0, updated = 0, unchanged = 0;
+    // deletes cloud-only videos. Skipped videos keep their cloud version.
+    let added = 0, updated = 0, unchanged = 0, skipped = 0;
     const mergedVideos = [...cloudMap.values()];
     for (const lv of this._appState.videos) {
       const idx = mergedVideos.findIndex(v => v.id === lv.id);
       if (idx !== -1) {
-        if ((lv.last_modified ?? 0) !== (mergedVideos[idx].last_modified ?? 0)) {
+        if (skipIds.has(lv.id)) {
+          skipped++;
+        } else if ((lv.last_modified ?? 0) !== (mergedVideos[idx].last_modified ?? 0)) {
           mergedVideos[idx] = lv;
           updated++;
         } else {
@@ -2017,7 +2010,8 @@ class LlamaApp extends LitElement {
     const stateToUpload = { ...this._appState, videos: mergedVideos };
     const ok = await saveToCloud(stateToUpload, userId);
     if (ok) {
-      this.statusMsg = `Saved to cloud: ${added} added, ${updated} updated, ${unchanged} unchanged.`;
+      const skipNote = skipped > 0 ? `, ${skipped} skipped` : '';
+      this.statusMsg = `Saved to cloud: ${added} added, ${updated} updated, ${unchanged} unchanged${skipNote}.`;
     } else {
       this._setError('Cloud save failed.');
     }
@@ -2038,8 +2032,9 @@ class LlamaApp extends LitElement {
       return;
     }
 
-    const localMap = new Map(this._appState.videos.map(v => [v.id, v]));
-    const cloudMap = new Map((cloudState.videos ?? []).map(v => [v.id, v]));
+    const localMap  = new Map(this._appState.videos.map(v => [v.id, v]));
+    const cloudVideos = (cloudState.videos ?? []).map(migrateVideo);
+    const cloudMap  = new Map(cloudVideos.map(v => [v.id, v]));
 
     // Local videos strictly newer than their cloud counterpart.
     const conflicts = [];
@@ -2050,23 +2045,28 @@ class LlamaApp extends LitElement {
       }
     }
 
+    let skipIds = new Set();
     if (conflicts.length > 0) {
       const lines = ['Some local videos are newer than their cloud versions:'];
       for (const lv of conflicts) lines.push(`  \u2022 ${lv.name || lv.id}`);
-      lines.push('Load cloud data anyway? Local versions will be overwritten.');
-      const confirmed = await this._showConfirm({
+      lines.push('Load cloud data, or load while keeping your newer local versions?');
+      const choice = await this._showConfirm3({
         lines,
-        confirmLabel:  'Load anyway',
+        confirmLabel:  'Load all',
+        altLabel:      'Skip conflicts',
         cancelLabel:   'Cancel',
         defaultButton: 'cancel',
       });
-      if (!confirmed) return;
+      if (choice === 'cancel') return;
+      if (choice === 'skip') skipIds = new Set(conflicts.map(lv => lv.id));
     }
 
     // Merge: cloud videos replace or add; local-only videos are kept.
-    // Skip overwrite when last_modified matches exactly (nothing changed).
-    let added = 0, updated = 0, unchanged = 0;
+    // Skip overwrite when last_modified matches exactly (nothing changed),
+    // or when the video is in the skip set (user chose to keep local-newer).
+    let added = 0, updated = 0, unchanged = 0, skipped = 0;
     for (const cv of cloudMap.values()) {
+      if (skipIds.has(cv.id)) { skipped++; continue; }
       const idx = this._appState.videos.findIndex(v => v.id === cv.id);
       if (idx !== -1) {
         const lv = this._appState.videos[idx];
@@ -2087,8 +2087,9 @@ class LlamaApp extends LitElement {
     if (currentVideo) this._syncFromVideo(currentVideo);
 
     save(this._appState);
-    this.videos     = [...this._appState.videos];
-    this.statusMsg  = `Read from cloud: ${added} added, ${updated} updated, ${unchanged} unchanged.`;
+    this.videos    = [...this._appState.videos];
+    const skipNote = skipped > 0 ? `, ${skipped} skipped` : '';
+    this.statusMsg = `Read from cloud: ${added} added, ${updated} updated, ${unchanged} unchanged${skipNote}.`;
   }
 
   // Export all app data as a downloadable JSON file.
@@ -2135,23 +2136,73 @@ class LlamaApp extends LitElement {
     }
   }
 
-  // Handle file-picker change: read JSON and merge into app state.
+  // Handle file-picker change: read JSON and hand off to async importer.
   _onFileImport(e) {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      try {
-        const result = mergeImport(evt.target.result, this._appState);
-        this.videos = [...this._appState.videos];
-        this._save();
-        this.statusMsg = `Imported: ${result.added} added, ${result.updated} updated.`;
-      } catch (err) {
-        this.errorMsg = `Import failed: ${err.message}`;
-      }
-    };
-    reader.readAsText(file);
     e.target.value = '';   // reset so the same file can be re-imported
+    const reader = new FileReader();
+    reader.onload = async (evt) => { await this._importFromJson(evt.target.result); };
+    reader.readAsText(file);
+  }
+
+  // Conflict-aware JSON import: mirrors dr logic with the file as the source.
+  async _importFromJson(jsonStr) {
+    let incoming;
+    try {
+      incoming = parseImport(jsonStr);
+    } catch (err) {
+      this.errorMsg = `Import failed: ${err.message}`;
+      return;
+    }
+
+    // Local videos strictly newer than their imported counterpart.
+    const localMap = new Map(this._appState.videos.map(v => [v.id, v]));
+    const conflicts = [];
+    for (const iv of incoming) {
+      const lv = localMap.get(iv.id);
+      if (lv && (lv.last_modified ?? 0) > (iv.last_modified ?? 0)) conflicts.push(lv);
+    }
+
+    let skipIds = new Set();
+    if (conflicts.length > 0) {
+      const lines = ['Some local videos are newer than the imported versions:'];
+      for (const lv of conflicts) lines.push(`  \u2022 ${lv.name || lv.id}`);
+      lines.push('Import anyway, or import while keeping your newer local versions?');
+      const choice = await this._showConfirm3({
+        lines,
+        confirmLabel:  'Import all',
+        altLabel:      'Skip conflicts',
+        cancelLabel:   'Cancel',
+        defaultButton: 'cancel',
+      });
+      if (choice === 'cancel') return;
+      if (choice === 'skip') skipIds = new Set(conflicts.map(lv => lv.id));
+    }
+
+    let added = 0, updated = 0, unchanged = 0, skipped = 0;
+    for (const iv of incoming) {
+      if (!iv.id) continue;
+      if (skipIds.has(iv.id)) { skipped++; continue; }
+      const idx = this._appState.videos.findIndex(v => v.id === iv.id);
+      if (idx !== -1) {
+        const lv = this._appState.videos[idx];
+        if ((iv.last_modified ?? 0) !== (lv.last_modified ?? 0)) {
+          this._appState.videos[idx] = iv;
+          updated++;
+        } else {
+          unchanged++;
+        }
+      } else {
+        this._appState.videos.push(iv);
+        added++;
+      }
+    }
+
+    this.videos = [...this._appState.videos];
+    this._save();
+    const skipNote = skipped > 0 ? `, ${skipped} skipped` : '';
+    this.statusMsg = `Imported: ${added} added, ${updated} updated, ${unchanged} unchanged${skipNote}.`;
   }
 
   // Show the confirm modal and return a Promise that resolves to true (confirm)
@@ -2163,8 +2214,17 @@ class LlamaApp extends LitElement {
     });
   }
 
-  _onConfirmYes() { this._confirmResolve?.(true);  this._confirmResolve = null; }
-  _onConfirmNo()  { this._confirmResolve?.(false); this._confirmResolve = null; }
+  _onConfirmYes() { this._confirmResolve?.(true);   this._confirmResolve = null; }
+  _onConfirmNo()  { this._confirmResolve?.(false);  this._confirmResolve = null; }
+  _onConfirmAlt() { this._confirmResolve?.('skip'); this._confirmResolve = null; }
+
+  // Three-option variant: resolves to 'yes', 'skip', or 'cancel'.
+  _showConfirm3(info) {
+    return new Promise(resolve => {
+      this._confirmResolve = resolve;
+      this._confirmModalEl?.show(info);
+    });
+  }
 
   // Apply a 'loop' share payload: add the loop to the video's namedLoops and
   // load it as the active scratch loop.
@@ -2756,6 +2816,7 @@ class LlamaApp extends LitElement {
       <llama-confirm-modal
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-confirm-yes=${this._onConfirmYes}
+        @ll-confirm-alt=${this._onConfirmAlt}
         @ll-confirm-no=${this._onConfirmNo}
         @ll-modal-close=${() => this._kb?.enable()}
       ></llama-confirm-modal>
