@@ -819,8 +819,7 @@ whenever the video's data changes.
 
 Cloud read/write are explicit user operations (`dr` / `ds`), not automatic.
 This keeps the system honest: you control exactly when data moves to or from
-the cloud. A dirty indicator shows unsaved cloud changes; a tab-close prompt
-fires if there are unsaved changes.
+the cloud.
 
 ds (data save, local → cloud):
 
@@ -865,51 +864,27 @@ is being signed in and using ds on two devices without a dr in between on
 the second device -- you could overwrite the first device's cloud save. Best
 practice: ds before switching devices; dr after switching.
 
-#### Implementation stages
+The ds/dr operations add or update/replace videos, but never simply deletes
+them. In addition, they are one-way operations in terms of data flow, not
+two-way data resolution procedures.
 
-Stage 3e -- Remove auto-save; add dirty tracking.
-- Remove scheduleSaveToCloud, flushCloudSave from storage.js
-- Remove the beforeunload flush listener from llama-app.js
-- _save() reverts to localStorage only; cloud_backup check and schedule
-  call removed
-- Add cloudDirty reactive prop (integer count of saves since last ds/dr);
-  incremented in _save() when user is signed in
-- Add dirty indicator to UI (location TBD; something unobtrusive)
-- beforeunload listener: prompt the browser's native "leave page?" dialog
-  if cloudDirty > 0
+    # ds
 
-Stage 3f -- Implement ds (data save, local → cloud)
-- Add ds handler and key binding (under d prefix)
-- Fetch current cloud state
-- Compare per-video last_modified; collect cloud videos strictly newer
-  than local counterpart
-- If conflicts: prompt listing affected video names; user chooses proceed
-  (full local state replaces cloud) or cancel
-- If no conflicts: upsert full local state to cloud directly
-- On success: reset cloudDirty to 0, show status message
+    Videos      | Edit in cloud
+    -------------------------------------
+    local-only  | Added
+    local-newer | Replaced
+    cloud-only  | No change
+    cloud-newer | Replaced, after prompt
 
-Stage 3g -- Implement dr (data read, cloud → local)
-- Add dr handler and key binding (under d prefix)
-- Fetch current cloud state
-- Compare per-video last_modified; collect local videos strictly newer
-  than their cloud counterpart
-- If conflicts: prompt listing affected video names; user chooses proceed
-  (cloud versions replace local for all videos) or cancel
-- If no conflicts: merge cloud into local (replace/add per-video; keep
-  local-only videos untouched); save to localStorage; update reactive props
-- On success: reset cloudDirty to 0, show status message
+    # dr
 
-Stage 3h -- Simplify sign-in
-- Strip _handleSignIn down to: set cloud_backup = true, save to
-  localStorage
-- If local has no videos: show a status message suggesting the user do dr
-- Remove all auto-merge logic added in earlier stages
-
-Stage 3i -- Nudge UI and account menu polish
-- Visual indicator on Account menu when cloud_backup is true but user is
-  signed out (dot, badge, or color change -- TBD)
-- Prompt on page load if cloud_backup is true and user is not signed in
-- Account menu aesthetic polish (deferred from Stage 3b)
+    Videos      | Edit locally
+    -------------------------------------
+    local-only  | No change
+    local-newer | Replaced, after prompt
+    cloud-only  | Added
+    cloud-newer | Replaced
 
 ---
 

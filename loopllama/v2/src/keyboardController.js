@@ -60,8 +60,8 @@ export const BINDINGS = {
 
   'v': { completions: {
     'u': { handler: 'videoUrl',     desc: 'Switch to YouTube video via URL' },
-    'v': { handler: 'videoPicker',  desc: 'Switch to video' },
-    'o': { handler: 'videoPicker',  desc: 'Switch to video' },
+    'v': { handler: 'videoPickerRecent', desc: 'Open video picker (recent)' },
+    'o': { handler: 'videoPickerAlpha',  desc: 'Open video picker (alphabetical)' },
     'e': { handler: 'editVideo',    desc: 'Edit video attributes' },
     'i': { handler: 'videoInfo',    desc: 'Video info' },
     'd': { handler: 'deleteVideo',  desc: 'Delete current video' },
@@ -138,6 +138,7 @@ export const BINDINGS = {
     'l': { handler: 'shareLoop',   desc: 'Share loop via URL' },
     's': { handler: 'dataSave',    desc: 'Save local data to cloud' },
     'r': { handler: 'dataRead',    desc: 'Read cloud data to local' },
+    'c': { handler: 'dataCompare', desc: 'Compare local vs cloud' },
   }},
 };
 

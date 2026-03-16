@@ -79,6 +79,7 @@ class LlamaVideoPicker extends LitElement {
     mode:           { type: String },
     _filter:        { state: true },
     _selIdx:        { state: true },
+    _sortMode:      { state: true },
   };
 
   constructor() {
@@ -88,12 +89,14 @@ class LlamaVideoPicker extends LitElement {
     this.mode           = 'switch';
     this._filter        = '';
     this._selIdx        = 0;
+    this._sortMode      = 'recent';
   }
 
-  show(mode) {
-    this.mode = mode || 'switch';
-    this._filter = '';
-    this._selIdx = 0;
+  show(mode = 'switch', sortMode = 'recent') {
+    this.mode      = mode;
+    this._sortMode = sortMode;
+    this._filter   = '';
+    this._selIdx   = 0;
     this.renderRoot.querySelector('llama-modal')?.show();
   }
 
@@ -155,9 +158,9 @@ class LlamaVideoPicker extends LitElement {
     this.hide();
   }
 
-  // Sort order: current video first, then named videos alphabetically,
+  // Sort order (alpha): current video first, then named videos alphabetically,
   // then unnamed videos in original arrival order.
-  _sorted() {
+  _sortedAlpha() {
     const currentId = this.currentVideoId;
     return [...this.videos].sort((a, b) => {
       if (a.id === currentId) return -1;
@@ -169,6 +172,25 @@ class LlamaVideoPicker extends LitElement {
       if (aName && bName) return aName.toLowerCase().localeCompare(bName.toLowerCase());
       return 0; // both unnamed: preserve arrival order (stable sort)
     });
+  }
+
+  // Sort order (recent): current video first, then by last_opened descending,
+  // then never-opened videos in alpha order at the bottom.
+  _sortedRecent() {
+    const currentId = this.currentVideoId;
+    return [...this.videos].sort((a, b) => {
+      if (a.id === currentId) return -1;
+      if (b.id === currentId) return 1;
+      const aT = a.last_opened ?? 0;
+      const bT = b.last_opened ?? 0;
+      if (aT !== bT) return bT - aT;
+      // Tie (both never opened): fall back to alpha by name.
+      return (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase());
+    });
+  }
+
+  _sorted() {
+    return this._sortMode === 'alpha' ? this._sortedAlpha() : this._sortedRecent();
   }
 
   _filtered() {
@@ -194,7 +216,8 @@ class LlamaVideoPicker extends LitElement {
   render() {
     const filtered  = this._filtered();
     const isDelete  = this.mode === 'delete';
-    const title     = isDelete ? 'Delete Video' : 'Open Video';
+    const baseTitle = isDelete ? 'Delete Video' : 'Open Video';
+    const title     = `${baseTitle} — ${this._sortMode}`;
     return html`
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="filter-wrap">
@@ -203,6 +226,7 @@ class LlamaVideoPicker extends LitElement {
             .value=${this._filter}
             @sl-input=${this._onFilterInput}
             @keydown=${this._onFilterKeyDown}
+            autocomplete="off"
             clearable
           ></sl-input>
         </div>

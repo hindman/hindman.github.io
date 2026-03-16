@@ -58,6 +58,7 @@ export function createVideo(url, youtubeId) {
     marks:         [],
     jumps:         [],
     last_modified: Date.now(),
+    last_opened:   null,
   };
 }
 

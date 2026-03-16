@@ -11,12 +11,46 @@ Persistence:
             x set up ID providers
             x planning: details
             . code
-                x blast dev DB using sql script
-                x resume chat and check user persistence scenario again: full
-                  life cycle including last_modified in cloud newer.
-                x last_modified as a video-level attribute
 
                 - Test the user data scenarios more fully.
+
+                    # ds
+
+                    Videos      | Edit in cloud
+                    -------------------------------------
+                    local-only  | Added
+                    local-newer | Replaced
+                    cloud-only  | No change
+                    cloud-newer | Replaced, after prompt
+
+                    # local-only: add in Brave
+                    https://www.youtube.com/watch?v=iZMZ_xk2big
+                    https://www.youtube.com/watch?v=nfGmcUCJ9uI
+
+                    # local-newer: edit in Brave
+                    catfish
+                    hairy
+
+                    # cloud-only: create Safari; ds; Brave for test
+                    https://www.youtube.com/watch?v=AEP7xP4ClTE
+                    https://www.youtube.com/watch?v=PaEXjpIzMhs
+
+                    # cloud-newer: edit Safari; ds; Brave for test
+                    dune
+                    hit road
+
+                    # dr
+
+                    Videos      | Edit locally
+                    -------------------------------------
+                    local-only  | No change
+                    local-newer | Replaced, after prompt
+                    cloud-only  | Added
+                    cloud-newer | Replaced
+
+                    # urls
+
+                    https://www.youtube.com/watch?v=lL9Mabl1Hzo
 
                 Stage 3i -- UI polish
                 - Account menu aesthetic polish
@@ -40,7 +74,7 @@ Persistence:
                   Account
                     ─────────────────
                     user@example.com                ← grey, non-clickable (logged in only)
-                    ─────────────────               
+                    ─────────────────
                     Sign in with Google             ← logged out only
                     Sign in with GitHub             ← logged out only
                     Sign out                        ← logged in only

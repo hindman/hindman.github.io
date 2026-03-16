@@ -11,9 +11,9 @@ toc_icon: 'guitar'
     Videos:
 
         vu | Switch to YouTube video via a URL [url-input-modal]
-        vo | Open video [video-picker]
-        y  | Synonym for `vo`.
-        vv | Synonym for `vo`.
+        y  | Synonym for `vu`.
+        vv | Open video [video-picker: recency sort]
+        vo | Open video [video-picker: alphabetical sort]
         ve | Edit current video [edit-video-modal]
         vd | Delete video [via picker]
         vi | Video info [video-info-modal]
@@ -125,6 +125,7 @@ toc_icon: 'guitar'
         dl | Share: scratch-loop [via share-URL]
         dr | Read: app data from cloud
         ds | Save: app data to cloud
+        dc | Compare: info modal comparing local vs cloud
 
     Edit-scratch-loop-mode:
 

@@ -44,6 +44,7 @@ import './llama-jump-history-picker.js';
 import './llama-options-modal.js';
 import './llama-delete-data-modal.js';
 import './llama-inspect-modal.js';
+import './llama-cloud-status-modal.js';
 
 const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
@@ -150,14 +151,6 @@ class LlamaApp extends LitElement {
       color: var(--ll-text-muted, #666);
     }
 
-    .cloud-dirty {
-      font-size: 0.55rem;
-      color: var(--ll-accent, #7ec8e3);
-      vertical-align: super;
-      margin-left: 0.15rem;
-      user-select: none;
-    }
-
     /* --- Body --- */
     .app-body {
       display: flex;
@@ -262,7 +255,6 @@ class LlamaApp extends LitElement {
     zone2Mode:          { type: String },
     loopSourceStart:    { type: Number },
     loopSourceEnd:      { type: Number },
-    cloudDirty:         { type: Number },
   };
 
   constructor() {
@@ -302,7 +294,6 @@ class LlamaApp extends LitElement {
     this.zone2Mode           = 'sections';
     this.loopSourceStart     = null;
     this.loopSourceEnd       = null;
-    this.cloudDirty          = 0;
     this._quip               = '';
     this._quipIndex          = -1;
     this._quipInterval       = null;
@@ -330,6 +321,7 @@ class LlamaApp extends LitElement {
     this._jumpHistoryPickerEl  = null;
     this._optionsModalEl       = null;
     this._deleteDataModalEl    = null;
+    this._cloudStatusModalEl   = null;
     this._fileInputEl          = null;
     this._jumpIdx              = -1;   // -1 = at current/live position
     this._jumpFromTime         = null; // saved position when jb first invoked
@@ -455,6 +447,7 @@ class LlamaApp extends LitElement {
   // Load a Video object: save current state, switch to new video, restore state.
   _loadVideoObject(video, startTime = null) {
     this._saveCurrentState();
+    video.last_opened = Date.now();
     this._appState.currentVideoId = video.id;
     this.currentVideoId = video.id;
     this._syncFromVideo(video);
@@ -659,7 +652,8 @@ class LlamaApp extends LitElement {
       helpKeys:      () => window.open(`${_siteOrigin()}/loopllama/v2/keybindings/`, '_blank'),
       options:       () => this._optionsModalEl?.show(this._appState?.options),
       videoUrl:      () => this._urlInputModalEl?.show(),
-      videoPicker:   () => this._videoPickerEl?.show(),
+      videoPickerRecent: () => this._videoPickerEl?.show('switch', 'recent'),
+      videoPickerAlpha:  () => this._videoPickerEl?.show('switch', 'alpha'),
       editVideo:     () => this._editVideoModalEl?.show(),
       loopVideo: () => {
         if (this.duration == null) {
@@ -1044,14 +1038,12 @@ class LlamaApp extends LitElement {
       shareLoop:     () => this._createLoopShare(),
       dataSave:      () => this._dataSave(),
       dataRead:      () => this._dataRead(),
+      dataCompare:   () => this._dataCompare(),
     };
   }
 
-  // Save to localStorage. When the user is signed in, increment the dirty
-  // counter so the UI can indicate there are unsaved cloud changes.
   _save() {
     save(this._appState);
-    if (this.currentUser) this.cloudDirty++;
   }
 
   // Show the confirm modal and return a Promise<boolean> (true = confirmed).
@@ -1128,6 +1120,7 @@ class LlamaApp extends LitElement {
     this._optionsModalEl      = this.renderRoot.querySelector('llama-options-modal');
     this._deleteDataModalEl   = this.renderRoot.querySelector('llama-delete-data-modal');
     this._inspectModalEl      = this.renderRoot.querySelector('llama-inspect-modal');
+    this._cloudStatusModalEl  = this.renderRoot.querySelector('llama-cloud-status-modal');
     this._confirmModalEl      = this.renderRoot.querySelector('llama-confirm-modal');
     this._fileInputEl         = this.renderRoot.querySelector('#import-file-input');
 
@@ -1926,6 +1919,45 @@ class LlamaApp extends LitElement {
     this._jumpTo(e.detail.time);
   }
 
+  // dc: compare local vs cloud, categorize each video, show status modal.
+  async _dataCompare() {
+    const userId = this.currentUser?.id;
+    if (!userId) {
+      this._setWarning('Sign in to compare local vs cloud data.');
+      return;
+    }
+
+    const cloudState = await loadFromCloud(userId);
+    const localMap = new Map(this._appState.videos.map(v => [v.id, v]));
+    const cloudMap = new Map((cloudState?.videos ?? []).map(v => [v.id, v]));
+    const _name = v => v.name || v.id;
+
+    const localOnly  = [];
+    const localNewer = [];
+    const cloudNewer = [];
+    let   sameCount  = 0;
+
+    for (const lv of this._appState.videos) {
+      const cv = cloudMap.get(lv.id);
+      if (!cv) {
+        localOnly.push(_name(lv));
+      } else if ((lv.last_modified ?? 0) > (cv.last_modified ?? 0)) {
+        localNewer.push(_name(lv));
+      } else if ((cv.last_modified ?? 0) > (lv.last_modified ?? 0)) {
+        cloudNewer.push(_name(lv));
+      } else {
+        sameCount++;
+      }
+    }
+
+    const cloudOnly = [];
+    for (const cv of cloudMap.values()) {
+      if (!localMap.has(cv.id)) cloudOnly.push(_name(cv));
+    }
+
+    this._cloudStatusModalEl?.show({ localOnly, localNewer, cloudOnly, cloudNewer, sameCount });
+  }
+
   // ds: save local state to cloud. Checks for cloud videos strictly newer
   // than their local counterpart and prompts before overwriting.
   async _dataSave() {
@@ -1936,14 +1968,13 @@ class LlamaApp extends LitElement {
     }
 
     const cloudState = await loadFromCloud(userId);
-    if (cloudState) {
-      const localMap = new Map(this._appState.videos.map(v => [v.id, v]));
-      const cloudMap = new Map((cloudState.videos ?? []).map(v => [v.id, v]));
+    const cloudMap = new Map((cloudState?.videos ?? []).map(v => [v.id, v]));
 
+    if (cloudState) {
       // Cloud videos strictly newer than their local counterpart.
       const conflicts = [];
       for (const [id, cv] of cloudMap) {
-        const lv = localMap.get(id);
+        const lv = this._appState.videos.find(v => v.id === id);
         if (lv && (cv.last_modified ?? 0) > (lv.last_modified ?? 0)) {
           conflicts.push(cv);
         }
@@ -1963,10 +1994,30 @@ class LlamaApp extends LitElement {
       }
     }
 
-    const ok = await saveToCloud(this._appState, userId);
+    // Build merged video list: start with cloud-only videos (preserved), then
+    // apply local videos (replace existing or add new). This ensures ds never
+    // deletes cloud-only videos.
+    let added = 0, updated = 0, unchanged = 0;
+    const mergedVideos = [...cloudMap.values()];
+    for (const lv of this._appState.videos) {
+      const idx = mergedVideos.findIndex(v => v.id === lv.id);
+      if (idx !== -1) {
+        if ((lv.last_modified ?? 0) !== (mergedVideos[idx].last_modified ?? 0)) {
+          mergedVideos[idx] = lv;
+          updated++;
+        } else {
+          unchanged++;
+        }
+      } else {
+        mergedVideos.push(lv);
+        added++;
+      }
+    }
+
+    const stateToUpload = { ...this._appState, videos: mergedVideos };
+    const ok = await saveToCloud(stateToUpload, userId);
     if (ok) {
-      this.cloudDirty = 0;
-      this.statusMsg  = 'Data saved to cloud.';
+      this.statusMsg = `Saved to cloud: ${added} added, ${updated} updated, ${unchanged} unchanged.`;
     } else {
       this._setError('Cloud save failed.');
     }
@@ -2037,7 +2088,6 @@ class LlamaApp extends LitElement {
 
     save(this._appState);
     this.videos     = [...this._appState.videos];
-    this.cloudDirty = 0;
     this.statusMsg  = `Read from cloud: ${added} added, ${updated} updated, ${unchanged} unchanged.`;
   }
 
@@ -2193,6 +2243,7 @@ class LlamaApp extends LitElement {
     this.videos = [...this._appState.videos];
     // Don't use _loadVideoObject here: it calls _saveCurrentState() first, which
     // would overwrite the payload data we just set with empty reactive props.
+    video.last_opened = Date.now();
     this._appState.currentVideoId = video.id;
     this.currentVideoId = video.id;
     this._syncFromVideo(video);
@@ -2398,7 +2449,6 @@ class LlamaApp extends LitElement {
     if (userId) await deleteFromCloud(userId);
     this._appState.options.cloud_backup = false;
     this._save();
-    this.cloudDirty = 0;
     await signOut();
   }
 
@@ -2476,7 +2526,7 @@ class LlamaApp extends LitElement {
             label="Account"
             .items=${this._accountMenuItems()}
             @ll-menu-select=${this._onAccountMenuSelect}
-          ></llama-dropdown>${this.cloudDirty > 0 ? html`<span class="cloud-dirty" title="Unsaved cloud changes">●</span>` : ''}
+          ></llama-dropdown>
         </nav>
       </header>
 
@@ -2697,6 +2747,11 @@ class LlamaApp extends LitElement {
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
       ></llama-inspect-modal>
+
+      <llama-cloud-status-modal
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-modal-close=${() => this._kb?.enable()}
+      ></llama-cloud-status-modal>
 
       <llama-confirm-modal
         @ll-modal-open=${() => this._kb?.disable()}
