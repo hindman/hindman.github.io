@@ -1981,10 +1981,13 @@ class LlamaApp extends LitElement {
 
     if (conflicts.length > 0 || orphans.length > 0) {
       const result = await this._showDataOp({
-        conflicts:       conflicts.map(v => v.name || v.id),
-        orphans:         orphans.map(v => v.name || v.id),
-        conflictsHeader: 'Cloud is newer',
-        orphansHeader:   'Cloud only (not in local)',
+        operation:        'Save to cloud',
+        conflicts:        conflicts.map(v => v.name || v.id),
+        orphans:          orphans.map(v => v.name || v.id),
+        conflictsHeader:  'Cloud newer',
+        orphansHeader:    'Cloud only',
+        conflictsTooltip: 'Cloud has a more recent version of these videos. Replace overwrites cloud with your local copy; Skip leaves the cloud version unchanged.',
+        orphansTooltip:   'These videos exist only in the cloud. Delete removes them from cloud when you save; Keep leaves them in cloud.',
       });
       if (result === null) return;
       conflictChoice = result.conflictChoice;
@@ -2073,10 +2076,13 @@ class LlamaApp extends LitElement {
 
     if (conflicts.length > 0 || orphans.length > 0) {
       const result = await this._showDataOp({
-        conflicts:       conflicts.map(v => v.name || v.id),
-        orphans:         orphans.map(v => v.name || v.id),
-        conflictsHeader: 'Local is newer',
-        orphansHeader:   'Local only (not in cloud)',
+        operation:        'Read from cloud',
+        conflicts:        conflicts.map(v => v.name || v.id),
+        orphans:          orphans.map(v => v.name || v.id),
+        conflictsHeader:  'Local newer',
+        orphansHeader:    'Local only',
+        conflictsTooltip: 'Your local copy of these videos is more recent than the cloud version. Replace overwrites local with the cloud version; Skip keeps your local copy.',
+        orphansTooltip:   'These videos exist only in your local library. Delete removes them from local; Keep leaves them unchanged.',
       });
       if (result === null) return;
       conflictChoice = result.conflictChoice;
@@ -2210,10 +2216,13 @@ class LlamaApp extends LitElement {
 
     if (conflicts.length > 0 || orphans.length > 0) {
       const result = await this._showDataOp({
-        conflicts:       conflicts.map(v => v.name || v.id),
-        orphans:         orphans.map(v => v.name || v.id),
-        conflictsHeader: 'Local is newer',
-        orphansHeader:   'Local only (not in import file)',
+        operation:        'Import JSON',
+        conflicts:        conflicts.map(v => v.name || v.id),
+        orphans:          orphans.map(v => v.name || v.id),
+        conflictsHeader:  'Local newer',
+        orphansHeader:    'Local only',
+        conflictsTooltip: 'Your local copy of these videos is more recent than the imported version. Replace overwrites local with the imported version; Skip keeps your local copy.',
+        orphansTooltip:   'These videos exist only in your local library and are absent from the import file. Delete removes them from local; Keep leaves them unchanged.',
       });
       if (result === null) return;
       conflictChoice = result.conflictChoice;

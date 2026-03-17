@@ -1,6 +1,66 @@
 
 ## CURRENT SESSION
 
+Modal size. At least in cases where window size permits, increase width by 25%
+and height by 75%.
+
+Modal title: add the operation using a format like: "OPERATION: review
+changes". Where OPERATION is: "Import JSON"; "Save to cloud"; "Read from
+cloud".
+
+The lists of videos need a visual marker -- perhaps as simle as bullet points.
+Otherwise, the list can look like a blob of text and it's not always clear
+whether lines are wrapping or not (especially because default YouTube titles
+tend to be long).
+
+Category and radio-box labels. My impulse is to make them compact (see below).
+Once you understand the policy and concepts, the long labels are a design
+negative. In a tool tip device for each category we can explain both the
+category and the relevant radio choices. The aim is a better visual look for
+regular users and better explanation for beginners.
+
+    # Categories.
+
+    - Local only
+    - Local newer
+    - Cloud only
+    - Cloud newer
+    - In sync
+
+    # Conflicts radios
+
+    - Replace
+    - Skip
+
+    # Orphans radios
+
+    - Delete
+    - Keep
+
+    # Footer buttons
+    - Do it   [got better ideas? what's a more standard label?]
+    - Cancel
+
+Please draft the tool tip texts and that will inspire me to shift into
+thinking/editing mode.
+
+Not certain about this one, but what about reordering the elements for
+each category: category, then radios, and the listing at the end?
+
+Another speculative thought. Between the list (now with bullets) and then
+radio choices, the whole thing looks rather bullety. What about making
+the choices toggles?
+
+    Replace: Yes/No
+    Delete: Yes/No
+
+That would maybe produce a nicer look (fewer round circles), a even less
+verbose labeling scheme, and it would keep the action item near the category
+labels and the tool tip -- connecting it all logically without the
+intermediate sea of details in the list of titles. The user needs clarity and
+carefulness about the choice, but probably won't need to scan titles with too
+much detailed attention.
+
 ## TODO: LoopLlama v2
 
 Persistence: user data:
