@@ -67,7 +67,7 @@ class LlamaDropdown extends LitElement {
   render() {
     return html`
       <sl-dropdown @sl-select=${this._onSelect}>
-        <button slot="trigger" class="trigger-btn">
+        <button slot="trigger" class="trigger-btn" part="trigger">
           ${this.label}<span class="caret">▾</span>
         </button>
         <sl-menu>

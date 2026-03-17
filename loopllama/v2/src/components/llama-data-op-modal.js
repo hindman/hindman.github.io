@@ -58,6 +58,10 @@ class LlamaDataOpModal extends LitElement {
       font-size: var(--ll-text-xs, 0.75rem);
       color: var(--ll-text-dim, #aaa);
     }
+    .section-heading sl-tooltip::part(body) {
+      text-transform: none;
+      letter-spacing: normal;
+    }
     .name-list {
       list-style: disc;
       margin: 0;

@@ -5,13 +5,6 @@
 
 Persistence: user data:
 
-    - Stage 3i -- UI polish for user data persistence
-        - Account menu aesthetic polish
-        - Prompts during di/ds/dr.
-
-        - Set up some export files to use to check the modal.
-            - di uses same modal as ds/dr.
-
     - what happens if Supabase goes down or is very slow
         - how do we test this scenario?
               - Block the network request in DevTools: Network tab

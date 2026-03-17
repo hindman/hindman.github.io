@@ -152,6 +152,18 @@ class LlamaApp extends LitElement {
       color: var(--ll-text-muted, #666);
     }
 
+    .header-nav llama-dropdown::part(trigger) {
+      padding: 0;
+      background: none;
+      border: none;
+      color: var(--ll-header-font, #a0a0e8);
+      font-size: inherit;
+    }
+
+    .header-nav llama-dropdown::part(trigger):hover {
+      color: var(--ll-accent, #7ec8e3);
+    }
+
     /* --- Body --- */
     .app-body {
       display: flex;
@@ -1986,8 +1998,8 @@ class LlamaApp extends LitElement {
         orphans:          orphans.map(v => v.name || v.id),
         conflictsHeader:  'Cloud newer',
         orphansHeader:    'Cloud only',
-        conflictsTooltip: 'Cloud has a more recent version of these videos. Replace overwrites cloud with your local copy; Skip leaves the cloud version unchanged.',
-        orphansTooltip:   'These videos exist only in the cloud. Delete removes them from cloud when you save; Keep leaves them in cloud.',
+        conflictsTooltip: 'The cloud copy of these videos is more recent than the local copy. Replace overwrites cloud with local.',
+        orphansTooltip:   'These videos exist only in the cloud, not the local library. Delete removes them.',
       });
       if (result === null) return;
       conflictChoice = result.conflictChoice;
@@ -2081,8 +2093,8 @@ class LlamaApp extends LitElement {
         orphans:          orphans.map(v => v.name || v.id),
         conflictsHeader:  'Local newer',
         orphansHeader:    'Local only',
-        conflictsTooltip: 'Your local copy of these videos is more recent than the cloud version. Replace overwrites local with the cloud version; Skip keeps your local copy.',
-        orphansTooltip:   'These videos exist only in your local library. Delete removes them from local; Keep leaves them unchanged.',
+        conflictsTooltip: 'The local copy of these videos is more recent than the cloud copy. Replace overwrites local with cloud.',
+        orphansTooltip:   'These videos exist only in the local library, not the cloud. Delete removes them.',
       });
       if (result === null) return;
       conflictChoice = result.conflictChoice;
@@ -2221,8 +2233,8 @@ class LlamaApp extends LitElement {
         orphans:          orphans.map(v => v.name || v.id),
         conflictsHeader:  'Local newer',
         orphansHeader:    'Local only',
-        conflictsTooltip: 'Your local copy of these videos is more recent than the imported version. Replace overwrites local with the imported version; Skip keeps your local copy.',
-        orphansTooltip:   'These videos exist only in your local library and are absent from the import file. Delete removes them from local; Keep leaves them unchanged.',
+        conflictsTooltip: 'The local copy of these videos is more recent than the imported copy. Replace overwrites local with imported.',
+        orphansTooltip:   'These videos exist only in the local library, not the import file. Delete removes them.',
       });
       if (result === null) return;
       conflictChoice = result.conflictChoice;
