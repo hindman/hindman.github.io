@@ -3,15 +3,13 @@
 
 ## TODO: LoopLlama v2
 
-Persistence: user data:
-
-    - prod
+    - User data persistence: deploy to prod:
         - blast prod DB using sql script
         - set up ID providers
         - deploy
         - check
 
-Current tasks:
+    - Try on other devices: iPad, phone, JK machines
 
     - invoke:
         x build
@@ -24,37 +22,28 @@ Current tasks:
             - follow command
             - kill command
 
+    - Key bindings: assess, edit, reorg.
+
+    - Menu items: assess, edit, reorg.
+
     - Help text: draft
     - Banner write up.
-    - Real-world usage and testing: phase 2.
-    - Try on other devices: iPad, phone, JK machines
 
-    - key bindings: assess/adjust:
-        - `dd` for save, since it's the most common operation?
-        - Then `dD` for delete.
+    - Text elements: messages: info, warning, error, which-key.
 
-    - Text elements and menus: edit/organize [see below].
+    - Text elements: Modals: titles, labels, headings, placeholders, hovers.
+
+    - Text elements: Pickers: titles
+
+    - Text elements: Timeline: hovers
+
+    - Text elements: Current panel
+
     - Code review and refactor.
-    - Real-world usage and testing: phase 3.
-    - Launch: Make v2 the offial version.
 
-Text elements: edit/organize: DETAILS:
-    - Menus:
-        - Edit
-        - Add: Chapter, Data
-    - Messages:
-        - status/info
-        - warning
-        - error
-        - which key
-    - Modals:
-        - titles, labels
-        - messages
-    - Pickers:
-        - titles
-    - Timeline:
-        - Hovers
-    - Current panel
+    - Real-world usage and testing.
+
+    - Launch: Make v2 the offial version.
 
 SQL queries:
 
@@ -387,7 +376,7 @@ Edits requiring an `npm run dev` restart:
     - package.json
 
 
-Identity providers:
+## Supabase: identity providers
 
     LoopLlama Dev:
 
