@@ -132,6 +132,7 @@ const MENUS = [
       { label: 'Save data to cloud',   action: 'dataSave' },
       { label: 'Read data from cloud', action: 'dataRead' },
       { label: 'Compare local vs cloud', action: 'dataCompare' },
+      { label: 'Recall last message',  action: 'msgRecall' },
       { type: 'divider' },
       { label: 'Bulk data delete', action: 'deleteData' },
       { label: 'Options',          action: 'options' },

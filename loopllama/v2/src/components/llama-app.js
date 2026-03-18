@@ -60,6 +60,7 @@ const QUIPS = [
   "Keep on loopin' in the free world!",
   "Loop the good stuff",
   "Time is a flat circle — so a loop",
+  "The Llama abides",
 ];
 
 class LlamaApp extends LitElement {
@@ -313,6 +314,7 @@ class LlamaApp extends LitElement {
     this._warnTimeout        = null;
     this._statusTimeout      = null;
     this._errorTimeout       = null;
+    this._lastMsg            = null;
     this._vc                 = null;
     this._kb                 = null;
     this._pollId             = null;
@@ -346,19 +348,23 @@ class LlamaApp extends LitElement {
     this.loopNudgeDelta   = DEFAULT_OPTIONS.loop_nudge_delta_default;
   }
 
-  // Auto-clear transient messages after 4s whenever they are set.
+  // Auto-clear transient messages after 5s whenever they are set.
+  // Also capture each new message in _lastMsg for dm recall.
   updated(changedProps) {
     if (changedProps.has('statusMsg') && this.statusMsg) {
       clearTimeout(this._statusTimeout);
-      this._statusTimeout = setTimeout(() => { this.statusMsg = null; }, 4000);
+      this._statusTimeout = setTimeout(() => { this.statusMsg = null; }, 5000);
+      if (this.statusMsg !== this._lastMsg?.text) this._lastMsg = { text: this.statusMsg, type: 'status' };
     }
     if (changedProps.has('warningMsg') && this.warningMsg) {
       clearTimeout(this._warnTimeout);
-      this._warnTimeout = setTimeout(() => { this.warningMsg = null; }, 4000);
+      this._warnTimeout = setTimeout(() => { this.warningMsg = null; }, 5000);
+      if (this.warningMsg !== this._lastMsg?.text) this._lastMsg = { text: this.warningMsg, type: 'warning' };
     }
     if (changedProps.has('errorMsg') && this.errorMsg) {
       clearTimeout(this._errorTimeout);
-      this._errorTimeout = setTimeout(() => { this.errorMsg = null; }, 4000);
+      this._errorTimeout = setTimeout(() => { this.errorMsg = null; }, 5000);
+      if (this.errorMsg !== this._lastMsg?.text) this._lastMsg = { text: this.errorMsg, type: 'error' };
     }
   }
 
@@ -1058,6 +1064,13 @@ class LlamaApp extends LitElement {
       dataSave:      () => this._dataSave(),
       dataRead:      () => this._dataRead(),
       dataCompare:   () => this._dataCompare(),
+      msgRecall:     () => {
+        if (!this._lastMsg) { this._setWarning('No recent message.'); return; }
+        const { text, type } = this._lastMsg;
+        if (type === 'warning') this.warningMsg = text;
+        else if (type === 'error') this.errorMsg = text;
+        else this.statusMsg = text;
+      },
     };
   }
 

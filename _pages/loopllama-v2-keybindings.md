@@ -126,6 +126,7 @@ toc_icon: 'guitar'
         dr | Read: app data from cloud
         ds | Save: app data to cloud
         dc | Compare: info modal comparing local vs cloud
+        dm | Message history: deplay most recent message
 
     Edit-scratch-loop-mode:
 

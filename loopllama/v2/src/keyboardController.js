@@ -139,6 +139,7 @@ export const BINDINGS = {
     's': { handler: 'dataSave',    desc: 'Save local data to cloud' },
     'r': { handler: 'dataRead',    desc: 'Read cloud data to local' },
     'c': { handler: 'dataCompare', desc: 'Compare local vs cloud' },
+    'm': { handler: 'msgRecall',   desc: 'Recall last message' },
   }},
 };
 

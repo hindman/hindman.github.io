@@ -3,15 +3,7 @@
 
 ## TODO: LoopLlama v2
 
-Quips:
-    The Llama abides
-
 Persistence: user data:
-
-    - key binding to recall most recent message(s)?
-
-    - marks
-        - resurrect idea of mc = delete left-nearest mark
 
     - what happens if Supabase goes down or is very slow
         - how do we test this scenario?
