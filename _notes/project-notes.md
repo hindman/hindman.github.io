@@ -3,7 +3,15 @@
 
 ## TODO: LoopLlama v2
 
+Quips:
+    The Llama abides
+
 Persistence: user data:
+
+    - key binding to recall most recent message(s)?
+
+    - marks
+        - resurrect idea of mc = delete left-nearest mark
 
     - what happens if Supabase goes down or is very slow
         - how do we test this scenario?
@@ -19,22 +27,6 @@ Persistence: user data:
         - check
 
 Current tasks:
-
-    - key binding to recall most recent message(s)?
-
-    - key bindings: modify `d` prefix:
-        dd = save to cloud
-        dr = read
-        dD = delete
-
-    - Bug: `vv`: if no videos => no picker, just warning msg
-
-    - Improvement: `de` (data export): change file name:
-        loopllama-all.json
-        loopllama-yy-mm-dd.json
-
-    - marks
-        - resurrect idea of mc = delete nearest mark
 
     - invoke:
         x build
@@ -52,9 +44,11 @@ Current tasks:
     - Real-world usage and testing: phase 2.
     - Try on other devices: iPad, phone, JK machines
 
-Pending tasks:
+    - key bindings: assess/adjust:
+        - `dd` for save, since it's the most common operation?
+        - Then `dD` for delete.
 
-    - Text elements: edit/organize [see below].
+    - Text elements and menus: edit/organize [see below].
     - Code review and refactor.
     - Real-world usage and testing: phase 3.
     - Launch: Make v2 the offial version.

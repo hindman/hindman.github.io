@@ -665,8 +665,14 @@ class LlamaApp extends LitElement {
       helpKeys:      () => window.open(`${_siteOrigin()}/loopllama/v2/keybindings/`, '_blank'),
       options:       () => this._optionsModalEl?.show(this._appState?.options),
       videoUrl:      () => this._urlInputModalEl?.show(),
-      videoPickerRecent: () => this._videoPickerEl?.show('switch', 'recent'),
-      videoPickerAlpha:  () => this._videoPickerEl?.show('switch', 'alpha'),
+      videoPickerRecent: () => {
+        if (!this._appState?.videos.length) { this._setWarning('No videos saved.'); return; }
+        this._videoPickerEl?.show('switch', 'recent');
+      },
+      videoPickerAlpha: () => {
+        if (!this._appState?.videos.length) { this._setWarning('No videos saved.'); return; }
+        this._videoPickerEl?.show('switch', 'alpha');
+      },
       editVideo:     () => this._editVideoModalEl?.show(),
       loopVideo: () => {
         if (this.duration == null) {

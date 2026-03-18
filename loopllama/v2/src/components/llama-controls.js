@@ -48,7 +48,7 @@ const MENUS = [
     label: 'Video',
     items: [
       { label: 'Load URL',        action: 'videoUrl'    },
-      { label: 'Open video',      action: 'videoPicker' },
+      { label: 'Open video',      action: 'videoPickerRecent' },
       { label: 'Edit current',    action: 'editVideo'   },
       { label: 'Video info',      action: 'videoInfo'   },
       { label: 'Loop full video', action: 'loopVideo'   },
