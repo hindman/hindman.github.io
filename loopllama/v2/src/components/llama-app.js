@@ -1949,6 +1949,10 @@ class LlamaApp extends LitElement {
     }
 
     const cloudState = await loadFromCloud(userId);
+    if (cloudState === false) {
+      this._setError('Cloud request failed — compare unavailable.');
+      return;
+    }
     const localMap = new Map(this._appState.videos.map(v => [v.id, v]));
     const cloudMap = new Map((cloudState?.videos ?? []).map(v => [v.id, v]));
     const _name = v => v.name || v.id;
@@ -1989,6 +1993,10 @@ class LlamaApp extends LitElement {
     }
 
     const cloudState = await loadFromCloud(userId);
+    if (cloudState === false) {
+      this._setError('Cloud request failed.');
+      return;
+    }
     const cloudMap   = new Map((cloudState?.videos ?? []).map(v => [v.id, v]));
     const localIds   = new Set(this._appState.videos.map(v => v.id));
 
@@ -2078,6 +2086,10 @@ class LlamaApp extends LitElement {
     }
 
     const cloudState = await loadFromCloud(userId);
+    if (cloudState === false) {
+      this._setError('Cloud request failed.');
+      return;
+    }
     if (!cloudState) {
       this._setWarning('No cloud data found.');
       return;

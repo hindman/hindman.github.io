@@ -188,7 +188,7 @@ export function exportVideo(state, videoId) {
 // We upsert on save; we fetch the single row on load.
 
 // Fetch app state from Supabase for the given user.
-// Returns the stored state object, or null if no row exists or on error.
+// Returns the stored state object, null if no row exists, or false on error.
 export async function loadFromCloud(userId) {
   try {
     const { data, error } = await supabase
@@ -200,7 +200,7 @@ export async function loadFromCloud(userId) {
     return data?.app_state ?? null;
   } catch (e) {
     console.error('LoopLlama: loadFromCloud failed', e);
-    return null;
+    return false;
   }
 }
 

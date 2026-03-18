@@ -5,13 +5,6 @@
 
 Persistence: user data:
 
-    - what happens if Supabase goes down or is very slow
-        - how do we test this scenario?
-              - Block the network request in DevTools: Network tab
-                → right-click a Supabase request → "Block request
-                domain". All subsequent calls to that domain fail
-                immediately.
-
     - prod
         - blast prod DB using sql script
         - set up ID providers
@@ -248,6 +241,15 @@ LoopLlama: where the built site lives:
         The hash in the asset filenames (`index-D8aSR4kO.js`) is a
         cache-buster: it changes whenever the file contents change, so
         browsers always fetch the latest version.
+
+Testing Supabase down:
+
+    Dev Tools =>
+    The "..." menu =>
+    More Tools =>
+    Request conditions =>
+    Block =>
+    Pattern =>  *://*.supabase.co/*
 
 ## Two repo setup
 
