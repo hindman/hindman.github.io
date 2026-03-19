@@ -1,18 +1,11 @@
 
 ## TODO: LoopLlama v2
 
-User data persistence: deploy to prod:
-  x blast prod DB using sql script
-  x set up ID providers
-  x export dev JSON
-  x deploy
-  - import dev JSON into prod
-  - check
-
 Try on other devices:
-  - iPad
+  - deploy
   - phone
-  - JK machines
+  - ipad
+  - JK external
 
 invoke:
   - serve individually:

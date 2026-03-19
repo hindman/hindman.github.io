@@ -216,6 +216,13 @@ Supabase panel:
   - Use the client ID and secret to fill out the form.
   - Save.
 
+Supabase: URL setup:
+  - Authentication => URL Configuration:
+  - Set both of these to the same value:
+
+        dev  | http://localhost:5173
+        prod | https://hindman.github.io/loopllama/v2/
+
 ### Google ID provider
 
 Supabase:
@@ -252,4 +259,7 @@ Google Cloud Console
 Supabase panel:
   - Use the client ID and secret to fill out the form.
   - Save.
+
+Supabase: URL setup:
+  - Same process as above.
 

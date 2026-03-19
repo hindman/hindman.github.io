@@ -213,6 +213,20 @@ class LlamaApp extends LitElement {
       }
     }
 
+    /* --- Wide layout: cap video height to keep controls in view --- */
+    @media (min-width: 768px) {
+      .player-wrap {
+        max-height: calc(100svh - 280px);
+      }
+    }
+
+    /* --- Small screens: hide decorative header elements --- */
+    @media (max-width: 480px) {
+      .header-llama { display: none; }
+      .header-flag  { display: none; }
+      .header-nav > span:first-of-type { display: none; }
+    }
+
     /* --- Wide layout: CSS grid puts current panel as right column --- */
     @media (min-width: 768px) {
       .app-body {
