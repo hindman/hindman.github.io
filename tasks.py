@@ -27,7 +27,7 @@ LL2_DIR = 'loopllama/v2'
 PATHS = cons(
     ll_root = LL2_DIR,
     ll_index = f'{LL2_DIR}/index.html',
-    ll_asset_patt = rf'{LL2_DIR}/assets/index-\w+\.(?:js|css)',
+    ll_asset_patt = rf'{LL2_DIR}/assets/index-[\w\-]+\.(?:js|css)',
     ll_deployments = f'{LL2_DIR}/deployments.json',
     ll_version_file = f'{LL2_DIR}/src/version.js',
 )
