@@ -9,6 +9,9 @@
         - deploy
         - check
 
+    - local vids:
+        cl -r v3-local-videos
+
     - Try on other devices: iPad, phone, JK machines
 
     - invoke:
