@@ -962,19 +962,44 @@ everything LL needs:
 - MP4, WebM, and MOV (macOS) all work
 - Implementation is simpler than YouTube, not harder
 
-Serving local files: run a simple HTTP server from the video
-directory (e.g. `python3 -m http.server 8080`), then point LL at
-`http://localhost:8080/my-lesson.mp4`. This works naturally in the
-Vite dev environment. No new server infrastructure required.
+Serving local files: run a simple HTTP server from a directory of
+symlinks pointing at the actual video files (e.g. `python3 -m
+http.server 8080`). Startup automation (an `inv` task or ~/bin
+script) handles both launching the server and generating a JSON
+manifest of available videos.
+
+Manifest format -- a bare list of URLs, nothing more:
+
+    { "videos": ["http://localhost:8080/my-solo.mp4", ...] }
+
+The URL is the identity key for each video. LL derives a default
+display name from the filename (extension stripped,
+hyphens/underscores replaced with spaces); the user can refine it
+via the existing edit-video modal.
+
+On startup, LL fetches the manifest from a configured URL (default:
+`http://localhost:8080/manifest.json`). Any video URL not already in
+the library is added silently; duplicates are skipped. If the fetch
+fails (server not running), LL does nothing -- no error, no message.
+This is the normal case when running against YouTube.
+
+New videos land in `_appState.videos` like any other video, persist
+to localStorage, and can be synced to the cloud via ds/dr.
 
 Architecture: `videoController.js` becomes an adapter interface.
 LL detects the source type from the URL (YouTube domain → YouTube
-adapter; `.mp4`/`.webm`/etc. → HTML5 adapter) and instantiates
-the right controller. The rest of the app is unchanged.
+adapter; localhost or video file extension → HTML5 adapter) and
+instantiates the right controller via a dual-controller pattern
+(both initialized at startup; active one shown based on video type).
+The rest of the app -- loops, marks, sections, speed, timeline --
+is unchanged.
+
+This effort would also include a metadata migration to add a
+video.type attribute, which would hold either "youtube" or "local".
 
 This is also the key enabler for a proper open-source release (see
-next section): users who run LL locally get full LL features on their
-own video library without any cloud dependency.
+next section): users who run LL locally get full LL features on
+their own video library without any cloud dependency.
 
 ### Open-Source LL Project
 
