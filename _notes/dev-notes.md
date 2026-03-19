@@ -175,87 +175,81 @@ Edits requiring an `npm run dev` restart:
 
 ## Supabase: identity providers
 
-LoopLlama Dev:
+### GitHub ID provider
 
-    GitHub:
+Supabase:
 
-        Supabase dashboard => Authentication => Providers
+  - Select DB: dev or prod.
+  - Authentication => Sign in / Providers:
+    - GitHub.
+      - Enable.
+      - Copy the callback URL.
 
-            Select GitHub.
-                - Enable it.
-                - Copy the callback URL.
-                - Leave the panel open for now.
+            dev  | https://zatiaqhwoxnukhlowyys.supabase.co/auth/v1/callback
+            prod | https://wasdctencljkzoefqznp.supabase.co/auth/v1/callback
 
-                # Callback URL.
-                https://zatiaqhwoxnukhlowyys.supabase.co/auth/v1/callback
+      - Leave the panel open for now.
 
-        GitHub → Settings → Developer settings → OAuth Apps → New OAuth App
+GitHub:
 
-            Application name        | LoopLlama Dev
-            Homepage URL            | http://localhost:5173/loopllama/v2/
-            Application description | LoopLlama: dev environment
-            Callback URL            | <copied from Supabase panel>
-            Enable device flow      | No
+  - Settings => Developer settings => OAuth Apps:
+    - New OAuth App
 
-            Sumit the form.
+          Application name        | LoopLlama Dev/Prod
+          Homepage URL dev        | http://localhost:5173/loopllama/v2/
+          "        "   prod       | https://hindman.github.io/loopllama/v2/
+          Application description | LoopLlama: dev/prod environment
+          Callback URL            | <copied from Supabase panel>
+          Enable device flow      | No
 
-            Copy the Client ID:
-                - Paste it into the Supabase panel.
+    - Sumit the form.
 
-            Click Generate new client secret:
-                - GitHub asks for a totp: supply it.
-                - Copy the secret.
-                - Paste it into the Supabase panel.
+    - Copy the Client ID:
+      - Paste into my pws-file.
 
-                Client ID     | <see my pws-file>
-                Client secret | <see my pws-file>
+    - Generate new client secret:
+      - GitHub asks for a totp: supply it.
+      - Copy the secret.
+      - Paste into my pws-file.
 
-        Supabase panel:
-            - Use the GitHub Client ID and secret to fill out the form.
-            - Click Save.
+Supabase panel:
+  - Use the client ID and secret to fill out the form.
+  - Save.
 
-    Google:
+### Google ID provider
 
-        Supabase dashboard => Authentication => Providers
+Supabase:
+  - Same process (leave nonce and no-email toggles off).
+  - Same callback URLs.
+  - As before, leave the panel open for now.
 
-            Select Google:
-                - Same process and callback URL as for the GitHub process.
+Google Cloud Console
+  - APIs & Services
+    - Create Project => LoopLlama Dev|Prod => Create
+    - Configure project:
 
-        Google Cloud Console
-            => APIs & Services
-                => Credentials
-                => Create Project => LoopLlama Dev => Create
-                => Configure consent screen
+          App Name      | LoopLlama Dev|Prod
+          Support email | montyhindman@gmail.com
+          Audience      | external
+          Contact email | montyhindman@gmail.com
 
-                App Name      | LoopLlama Dev
-                Support email | montyhindman@gmail.com
-                Audience      | external
-                Contact email | montyhindman@gmail.com
+  - APIs & Services
+    - Credentials =>
+    - Create Credentials =>
+    - OAuth client ID =>
+    - Web application:
 
-            => APIs & Services
-                => Credentials
-                => Create Credentials
-                => OAuth client ID
-                => Web application
+          Name                          | LoopLlama Dev | Prod
+          Authorized JavaScript origins | http://localhost:5173
+          "          "          "       | https://hindman.github.io
+          Authorized redirect URIs      | <supabase callback URL: see above>
 
-                    Name                          | LoopLlama Dev
-                    Authorized JavaScript origins | http://localhost:5173
-                    Authorized redirect URIs      | <supabase callback URL>
+    - Create.
+    - Copy the Client ID and secret:
+      - Paste into my pws-file.
+      - Also download the JSON file.
 
-                    # Supabase callback URL.
-                    https://zatiaqhwoxnukhlowyys.supabase.co/auth/v1/callback
-
-                => Create
-                => Copy the Client ID and secret
-
-                    Client ID     | <see my pws-file>
-                    Client secret | <see my pws-file>
-
-                => Also download the JSON:
-
-                    <see my pws-file>
-
-        Supabase panel:
-            - Use the Google Client ID and secret to fill out the form.
-            - Click Save.
+Supabase panel:
+  - Use the client ID and secret to fill out the form.
+  - Save.
 

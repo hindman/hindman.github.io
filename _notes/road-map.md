@@ -2,9 +2,11 @@
 ## TODO: LoopLlama v2
 
 User data persistence: deploy to prod:
-  - blast prod DB using sql script
-  - set up ID providers
-  - deploy
+  x blast prod DB using sql script
+  x set up ID providers
+  x export dev JSON
+  x deploy
+  - import dev JSON into prod
   - check
 
 Try on other devices:

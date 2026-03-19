@@ -1,3 +1,4 @@
+
 -- ============================================================
 -- Drop existing objects (safe to run before re-creating)
 -- ============================================================
@@ -115,3 +116,4 @@ create policy "delete_auth"
   on public.users for delete
   to authenticated
   using (auth.uid() = id);
+
