@@ -22,6 +22,10 @@ from textwrap import dedent
 
 from short_con import cons
 
+####
+# Constants.
+####
+
 LL2_DIR = 'loopllama/v2'
 
 PATHS = cons(
@@ -37,6 +41,51 @@ VERSION_FMT = dedent('''
     // DO NOT EDIT MANUALLY. Overwritten during `inv deploy` process.
     export const BUILD_NUM = {};
 ''')
+
+APPS = cons(
+    ll = cons(
+        name = 'lama',
+        cd = 'loopllama/v2',
+        cmd = 'npm run dev',
+        log = 'loopllama/v2/logs/ll.log.txt',
+        pid = 'loopllama/v2/logs/ll.pid.txt',
+    ),
+    f5 = cons(
+        name = 'fifth',
+        cd = '.',
+        cmd = 'bundle exec jekyll serve --drafts --unpublished',
+        log = 'loopllama/v2/logs/f5.log.txt',
+        pid = 'loopllama/v2/logs/f5.pid.txt',
+    ),
+)
+
+NOHUP = 'nohup {command} > {log} 2>&1 & echo $!'
+
+####
+# Tasks.
+####
+
+@task
+def serve(c, ll = False, f5 = False):
+    '''
+    Serves local apps: f5, ll.
+    '''
+    apps = (
+        APPS.values() if ll == f5 else
+        [APPS.ll] if ll else [APPS.f5]
+    )
+
+    for a in apps:
+        # print(a)
+        # continue
+
+        cmd = 'echo ' + a.cmd
+        with c.cd(a.cd):
+            c.run(cmd)
+
+            # result = c.run(NOHUP.format(...), pty = False)
+            # pid = result.stdout.strip()
+            # Path(a.pid_file).write_text(pid)
 
 @task
 def deploy(c, push = False):
@@ -105,6 +154,10 @@ def deploy(c, push = False):
     # Push.
     if push:
         c.run('git push origin master')
+
+####
+# Helpers.
+####
 
 def read_file(path):
     with open(path) as fh:
