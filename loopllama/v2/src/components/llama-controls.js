@@ -381,7 +381,7 @@ class LlamaControls extends LitElement {
     .speed-input {
       font-family: var(--ll-font-mono, monospace);
       font-size: var(--ll-text-sm, 0.85rem);
-      width: 5ch;
+      width: 3.5ch;
       padding: 0.2rem 0.4rem;
       background: var(--ll-surface-raised, #2a2a2a);
       border: 1px solid var(--ll-border, #444);
@@ -391,6 +391,25 @@ class LlamaControls extends LitElement {
     }
 
     .speed-input:focus {
+      outline: none;
+      border-color: var(--ll-accent, #7ec8e3);
+    }
+
+    .speed-preset {
+      appearance: none;
+      -webkit-appearance: none;
+      font-size: var(--ll-text-sm, 0.85rem);
+      width: 1.6rem;
+      padding: 0.2rem 0;
+      background: var(--ll-surface-raised, #2a2a2a);
+      border: 1px solid var(--ll-border, #444);
+      border-radius: var(--ll-radius, 3px);
+      color: var(--ll-text-dim, #aaa);
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .speed-preset:focus {
       outline: none;
       border-color: var(--ll-accent, #7ec8e3);
     }
@@ -528,7 +547,7 @@ class LlamaControls extends LitElement {
     if (this._timeRef.value)  this._timeRef.value.value  = this._fmt(this.currentTime);
     if (this._startRef.value) this._startRef.value.value = this._fmtLoop(this.loopStart);
     if (this._endRef.value)   this._endRef.value.value   = this._fmtLoop(this.loopEnd);
-    if (this._speedRef.value) this._speedRef.value.value = `${(this.speed * 100).toFixed(0)}%`;
+    if (this._speedRef.value) this._speedRef.value.value = `${(this.speed * 100).toFixed(0)}`;
   }
 
   // Sync inputs when values change from outside (keyboard or Now button).
@@ -547,7 +566,7 @@ class LlamaControls extends LitElement {
       this._endRef.value.value = this._fmtLoop(this.loopEnd);
     }
     if (changedProps.has('speed') && this._speedRef.value) {
-      this._speedRef.value.value = `${(this.speed * 100).toFixed(0)}%`;
+      this._speedRef.value.value = `${(this.speed * 100).toFixed(0)}`;
     }
   }
 
@@ -576,8 +595,17 @@ class LlamaControls extends LitElement {
     if (val !== null) {
       this._emit('ll-speed-change', { value: val });
     } else if (this._speedRef.value) {
-      this._speedRef.value.value = `${(this.speed * 100).toFixed(0)}%`;
+      this._speedRef.value.value = `${(this.speed * 100).toFixed(0)}`;
     }
+  }
+
+  _onSpeedPreset(e) {
+    const pct = parseInt(e.target.value);
+    e.target.selectedIndex = 0;           // reset select back to "▾"
+    e.target.blur();
+    if (isNaN(pct)) return;
+    if (this._speedRef.value) this._speedRef.value.value = `${pct}`;
+    this._emit('ll-speed-change', { value: pct / 100 });
   }
 
   // Public: called by llama-app for the `jj` binding to focus the time textbox.
@@ -685,15 +713,21 @@ class LlamaControls extends LitElement {
           <div class="ctrl-group">
             <span class="ctrl-group-label">Speed</span>
             <div class="ctrl-group-body">
-              <sl-tooltip>${ttip('Speed', '- / =')}
-                <input
-                  ${ref(this._speedRef)}
-                  class="speed-input"
-                  type="text"
-                  @keydown=${(e) => { if (e.key === 'Enter') { this._submitSpeed(); e.target.blur(); } }}
-                  @blur=${() => this._submitSpeed()}
-                />
-              </sl-tooltip>
+              <div class="btn-group">
+                <sl-tooltip>${ttip('Speed', '- / =')}
+                  <input
+                    ${ref(this._speedRef)}
+                    class="speed-input"
+                    type="text"
+                    @keydown=${(e) => { if (e.key === 'Enter') { this._submitSpeed(); e.target.blur(); } }}
+                    @blur=${() => this._submitSpeed()}
+                  />
+                </sl-tooltip>
+                <select class="speed-preset" @change=${this._onSpeedPreset}>
+                  <option value="">▾</option>
+                  ${[25,30,40,50,60,70,75,80,85,90,95,100,110,125,150,200].map(v => html`<option value="${v}">${v}</option>`)}
+                </select>
+              </div>
             </div>
           </div>
 

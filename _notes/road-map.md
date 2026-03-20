@@ -1,23 +1,14 @@
 
 ## TODO: LoopLlama v2
 
-Controls:
-  - hover texts with key bindings, via shoelace
-  - 
-
-Speed:
-  - text + drop down
-    - not sure what the values should be
-    - 25-200 in increments of 5 are the legal values
-    - maybe go 30-200 by 10?
-  - speed delta:
-    - we offer text box
-    - but it should be a dropdown since not many values are legal
-    - 5, 10, 15, 20, 25 is probably sufficient
-
-Timeline hovers:
-  - Use shoelace component for nicer look, quicker response
-  - mark hovers: if no label, they look liek this: ": 1:03". Drop the colon.
+Lines of code:
+  - loopllama/
+  - loopllama/v1/
+  - loopllama/v2/
+  - loopllama/v2/src/
+  - loopllama/v2/src/components/
+  - loopllama/v2/styles/
+  - file extensions: .js, .css, .html, maybe .json
 
 invoke:
   - serve individually:
