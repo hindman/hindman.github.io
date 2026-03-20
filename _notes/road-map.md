@@ -1,11 +1,23 @@
 
 ## TODO: LoopLlama v2
 
-Try on other devices:
-  - deploy
-  - phone
-  - ipad
-  - JK external
+Controls:
+  - hover texts with key bindings, via shoelace
+  - 
+
+Speed:
+  - text + drop down
+    - not sure what the values should be
+    - 25-200 in increments of 5 are the legal values
+    - maybe go 30-200 by 10?
+  - speed delta:
+    - we offer text box
+    - but it should be a dropdown since not many values are legal
+    - 5, 10, 15, 20, 25 is probably sufficient
+
+Timeline hovers:
+  - Use shoelace component for nicer look, quicker response
+  - mark hovers: if no label, they look liek this: ": 1:03". Drop the colon.
 
 invoke:
   - serve individually:
@@ -17,6 +29,10 @@ invoke:
     - kill command
 
 Key bindings: assess, edit, reorg.
+  - Add a menu-activate prefix: forward slash?
+
+Menus:
+  - Drop "Actions".
 
 Menu items: assess, edit, reorg.
 

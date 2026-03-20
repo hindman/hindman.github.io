@@ -4,7 +4,8 @@
 //
 // Properties:
 //   label: String -- button label shown on the trigger
-//   items: Array  -- [{ label, action?, disabled? } | { type: 'divider' }]
+//   items: Array  -- [{ label, action?, disabled?, hint? } | { type: 'divider' }]
+//                    hint: optional key binding shown right-aligned (e.g. '⌘T', 'sn')
 //
 // Fires (bubbles + composed):
 //   ll-menu-select -- { action, label }
@@ -40,6 +41,10 @@ class LlamaDropdown extends LitElement {
       font-size: 0.7em;
       margin-left: 0.3em;
       opacity: 0.65;
+    }
+
+    .hint {
+      color: var(--ll-text-muted, #888);
     }
   `;
 
@@ -78,7 +83,7 @@ class LlamaDropdown extends LitElement {
                 <sl-menu-item
                   value=${item.action ?? ''}
                   ?disabled=${item.disabled ?? false}
-                >${item.label}</sl-menu-item>
+                >${item.label}${item.hint ? html`<span slot="suffix" class="hint">${item.hint}</span>` : ''}</sl-menu-item>
               `
           )}
         </sl-menu>
