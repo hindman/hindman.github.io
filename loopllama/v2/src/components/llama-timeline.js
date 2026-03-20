@@ -25,6 +25,7 @@
 //   ll-activate-loop -- named loop bar click; detail.id = loop id
 
 import { LitElement, html, css } from 'lit';
+import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 
 class LlamaTimeline extends LitElement {
   static styles = css`
@@ -127,7 +128,8 @@ class LlamaTimeline extends LitElement {
       cursor: pointer;
     }
 
-    .section-region:first-child {
+    /* With sl-tooltip wrapping each region, :first-child targets the tooltip. */
+    sl-tooltip:first-child > .section-region {
       border-left: none;
     }
 
@@ -219,6 +221,7 @@ class LlamaTimeline extends LitElement {
     .loop-bar--scratch::after {
       background: var(--ll-accent, #7ec8e3);
     }
+
   `;
 
   static properties = {
@@ -315,16 +318,17 @@ class LlamaTimeline extends LitElement {
       const widthPct = endPct - leftPct;
       const widthPx  = (widthPct / 100) * this._zoneWidth;
       const showLabel  = widthPx >= r.name.length * 7 + 8;
-      const tooltip    = `${r.name} (${this._fmt(r.start)})`;
+      const tooltip    = r.name ? `${r.name} (${this._fmt(r.start)})` : this._fmt(r.start);
       const parityClass = i % 2 === 0 ? 'section-region--even' : 'section-region--odd';
       const currentClass = r.isCurrent ? 'section-region--current' : parityClass;
       return html`
-        <div
-          class="section-region ${currentClass}"
-          style="left: ${leftPct}%; width: ${widthPct}%"
-          title="${tooltip}"
-          @click=${() => this._onSectionClick(r)}
-        >${showLabel ? html`<span class="section-label">${r.name}</span>` : ''}</div>
+        <sl-tooltip content="${tooltip}" hoist>
+          <div
+            class="section-region ${currentClass}"
+            style="left: ${leftPct}%; width: ${widthPct}%"
+            @click=${() => this._onSectionClick(r)}
+          >${showLabel ? html`<span class="section-label">${r.name}</span>` : ''}</div>
+        </sl-tooltip>
       `;
     });
   }
@@ -366,14 +370,18 @@ class LlamaTimeline extends LitElement {
   _renderMarks() {
     return (this.marks ?? [])
       .filter(m => this._inScope(m.time))
-      .map(m => html`
-        <div
-          class="mark-dot"
-          style="left: ${this._pct(m.time)}%"
-          title="${m.name}: ${this._fmt(m.time)}"
-          @click=${() => this._onMarkClick(m)}
-        ></div>
-      `);
+      .map(m => {
+        const tooltip = m.name ? `${m.name}: ${this._fmt(m.time)}` : this._fmt(m.time);
+        return html`
+          <sl-tooltip content="${tooltip}" hoist>
+            <div
+              class="mark-dot"
+              style="left: ${this._pct(m.time)}%"
+              @click=${() => this._onMarkClick(m)}
+            ></div>
+          </sl-tooltip>
+        `;
+      });
   }
 
   // Render loop bars for the loop zone (18px, three 6px lanes).
@@ -389,12 +397,13 @@ class LlamaTimeline extends LitElement {
         const leftPct  = this._pct(scratch.start);
         const widthPct = this._pct(scratch.end) - leftPct;
         els.push(html`
-          <div
-            class="loop-bar loop-bar--scratch"
-            style="left: ${leftPct}%; width: ${widthPct}%; top: 0px"
-            title="Loop: ${this._fmt(scratch.start)} – ${this._fmt(scratch.end)}"
-            @click=${() => this._onLoopBarClick(scratch)}
-          ></div>
+          <sl-tooltip content="Loop: ${this._fmt(scratch.start)} – ${this._fmt(scratch.end)}" hoist>
+            <div
+              class="loop-bar loop-bar--scratch"
+              style="left: ${leftPct}%; width: ${widthPct}%; top: 0px"
+              @click=${() => this._onLoopBarClick(scratch)}
+            ></div>
+          </sl-tooltip>
         `);
       }
     }
@@ -407,13 +416,17 @@ class LlamaTimeline extends LitElement {
         if (!this._loopInScope(loop)) continue;
         const leftPct  = this._pct(loop.start);
         const widthPct = this._pct(loop.end) - leftPct;
+        const loopTip = loop.name
+          ? `${loop.name}: ${this._fmt(loop.start)} – ${this._fmt(loop.end)}`
+          : `${this._fmt(loop.start)} – ${this._fmt(loop.end)}`;
         els.push(html`
-          <div
-            class="loop-bar"
-            style="left: ${leftPct}%; width: ${widthPct}%; top: ${barTop}px"
-            title="${loop.name}: ${this._fmt(loop.start)} – ${this._fmt(loop.end)}"
-            @click=${() => this._onLoopBarClick(loop)}
-          ></div>
+          <sl-tooltip content="${loopTip}" hoist>
+            <div
+              class="loop-bar"
+              style="left: ${leftPct}%; width: ${widthPct}%; top: ${barTop}px"
+              @click=${() => this._onLoopBarClick(loop)}
+            ></div>
+          </sl-tooltip>
         `);
       }
     });

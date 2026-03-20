@@ -40,6 +40,7 @@ import { parseTime } from '../parseTime.js';
 import { DEFAULT_OPTIONS } from '../state.js';
 import './llama-dropdown.js';
 import '@shoelace-style/shoelace/dist/components/switch/switch.js';
+import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 
 // Menu definitions for the seven action menus.
 // Each item: { label, action, hint? } or { type: 'divider' }.
@@ -148,6 +149,12 @@ const MENUS = [
   },
 ];
 
+// Tooltip content with a muted key binding suffix.
+// Uses sl-tooltip's content slot so we can style the two parts independently.
+function ttip(desc, binding) {
+  return html`<span slot="content">${desc}<span style="color:#888;margin-left:0.75em;">${binding}</span></span>`;
+}
+
 class LlamaControls extends LitElement {
   static styles = css`
     :host {
@@ -225,6 +232,12 @@ class LlamaControls extends LitElement {
     .btn-group > *:focus {
       position: relative;
       z-index: 1;
+    }
+
+    /* sl-tooltip inside btn-group must not generate a box of its own,
+       so the border-radius / margin rules still target the inner button. */
+    .btn-group > sl-tooltip {
+      display: contents;
     }
 
     /* --- Menus row --- */
@@ -651,30 +664,36 @@ class LlamaControls extends LitElement {
           <div class="ctrl-group">
             <span class="ctrl-group-label">Play</span>
             <div class="ctrl-group-body">
-              <button class="btn-play-pause" @click=${() => this._emit('ll-play-pause')}>
-                ${this.isPlaying ? 'Pause' : 'Play'}
-              </button>
-              <input
-                ${ref(this._timeRef)}
-                class="time-input-play"
-                type="text"
-                @focus=${() => { this._timeFocused = true; this._timeRef.value?.select(); }}
-                @blur=${() => { this._timeFocused = false; if (this._timeRef.value) this._timeRef.value.value = this._fmt(this.currentTime); }}
-                @keydown=${this._onTimeKeyDown}
-              />
+              <sl-tooltip>${ttip('Play / pause', 'Space')}
+                <button class="btn-play-pause" @click=${() => this._emit('ll-play-pause')}>
+                  ${this.isPlaying ? 'Pause' : 'Play'}
+                </button>
+              </sl-tooltip>
+              <sl-tooltip>${ttip('Seek to time', 'jj')}
+                <input
+                  ${ref(this._timeRef)}
+                  class="time-input-play"
+                  type="text"
+                  @focus=${() => { this._timeFocused = true; this._timeRef.value?.select(); }}
+                  @blur=${() => { this._timeFocused = false; if (this._timeRef.value) this._timeRef.value.value = this._fmt(this.currentTime); }}
+                  @keydown=${this._onTimeKeyDown}
+                />
+              </sl-tooltip>
             </div>
           </div>
 
           <div class="ctrl-group">
             <span class="ctrl-group-label">Speed</span>
             <div class="ctrl-group-body">
-              <input
-                ${ref(this._speedRef)}
-                class="speed-input"
-                type="text"
-                @keydown=${(e) => { if (e.key === 'Enter') { this._submitSpeed(); e.target.blur(); } }}
-                @blur=${() => this._submitSpeed()}
-              />
+              <sl-tooltip>${ttip('Speed', '- / =')}
+                <input
+                  ${ref(this._speedRef)}
+                  class="speed-input"
+                  type="text"
+                  @keydown=${(e) => { if (e.key === 'Enter') { this._submitSpeed(); e.target.blur(); } }}
+                  @blur=${() => this._submitSpeed()}
+                />
+              </sl-tooltip>
             </div>
           </div>
 
@@ -682,34 +701,46 @@ class LlamaControls extends LitElement {
             <span class="ctrl-group-label">Navigate</span>
             <div class="ctrl-group-body">
               <div class="btn-group">
-                <button class="btn-accent" @click=${() => this._emit('ll-seek-back')}>◀</button>
-                <select
-                  ${ref(this._seekDeltaRef)}
-                  class="delta-select"
-                  @change=${(e) => { this._emit('ll-seek-delta-change', { value: Number(e.target.value) }); e.target.blur(); }}
-                >
-                  ${this.seekDeltaChoices.map(n => html`
-                    <option value=${n} ?selected=${this.seekDelta === n}>${this._fmtDelta(n)}</option>
-                  `)}
-                </select>
-                <button class="btn-accent" @click=${() => this._emit('ll-seek-forward')}>▶</button>
+                <sl-tooltip>${ttip('Seek back', '←')}
+                  <button class="btn-accent" @click=${() => this._emit('ll-seek-back')}>◀</button>
+                </sl-tooltip>
+                <sl-tooltip>${ttip('Seek delta', '↓ / ↑')}
+                  <select
+                    ${ref(this._seekDeltaRef)}
+                    class="delta-select"
+                    @change=${(e) => { this._emit('ll-seek-delta-change', { value: Number(e.target.value) }); e.target.blur(); }}
+                  >
+                    ${this.seekDeltaChoices.map(n => html`
+                      <option value=${n} ?selected=${this.seekDelta === n}>${this._fmtDelta(n)}</option>
+                    `)}
+                  </select>
+                </sl-tooltip>
+                <sl-tooltip>${ttip('Seek forward', '→')}
+                  <button class="btn-accent" @click=${() => this._emit('ll-seek-forward')}>▶</button>
+                </sl-tooltip>
               </div>
               <div class="btn-group">
-                <button class="btn-accent" @click=${() => this._emit('ll-prev-entity')}>⏮</button>
-                <select
-                  ${ref(this._entitySelectRef)}
-                  class="entity-type-select"
-                  @change=${(e) => { this._emit('ll-entity-type-change', { value: e.target.value }); e.target.blur(); }}
-                  @keydown=${(e) => { if (e.key === 'Enter' || e.key === 'Escape') e.target.blur(); }}
-                >
-                  <option value="any"     ?selected=${this.activeEntityType === 'any'}>Any</option>
-                  <option value="section" ?selected=${this.activeEntityType === 'section'}>Section</option>
-                  <option value="loop"    ?selected=${this.activeEntityType === 'loop'}>Loop</option>
-                  <option value="mark"    ?selected=${this.activeEntityType === 'mark'}>Mark</option>
-                  <option value="chapter" ?selected=${this.activeEntityType === 'chapter'}>Chapter</option>
-                  <option value="video"   ?selected=${this.activeEntityType === 'video'}>Video</option>
-                </select>
-                <button class="btn-accent" @click=${() => this._emit('ll-next-entity')}>⏭</button>
+                <sl-tooltip>${ttip('Prev entity', ',')}
+                  <button class="btn-accent" @click=${() => this._emit('ll-prev-entity')}>⏮</button>
+                </sl-tooltip>
+                <sl-tooltip>${ttip('Entity type', '/')}
+                  <select
+                    ${ref(this._entitySelectRef)}
+                    class="entity-type-select"
+                    @change=${(e) => { this._emit('ll-entity-type-change', { value: e.target.value }); e.target.blur(); }}
+                    @keydown=${(e) => { if (e.key === 'Enter' || e.key === 'Escape') e.target.blur(); }}
+                  >
+                    <option value="any"     ?selected=${this.activeEntityType === 'any'}>Any</option>
+                    <option value="section" ?selected=${this.activeEntityType === 'section'}>Section</option>
+                    <option value="loop"    ?selected=${this.activeEntityType === 'loop'}>Loop</option>
+                    <option value="mark"    ?selected=${this.activeEntityType === 'mark'}>Mark</option>
+                    <option value="chapter" ?selected=${this.activeEntityType === 'chapter'}>Chapter</option>
+                    <option value="video"   ?selected=${this.activeEntityType === 'video'}>Video</option>
+                  </select>
+                </sl-tooltip>
+                <sl-tooltip>${ttip('Next entity', '.')}
+                  <button class="btn-accent" @click=${() => this._emit('ll-next-entity')}>⏭</button>
+                </sl-tooltip>
               </div>
             </div>
           </div>
@@ -717,46 +748,58 @@ class LlamaControls extends LitElement {
           <div class="ctrl-group looping-group">
             <span class="ctrl-group-label">Looping</span>
             <div class="ctrl-group-body">
-              <sl-switch
-                class="loop-switch"
-                ?checked=${this.looping}
-                @sl-change=${() => this._emit('ll-toggle-loop')}
-              ></sl-switch>
+              <sl-tooltip>${ttip('Toggle looping', 'll')}
+                <sl-switch
+                  class="loop-switch"
+                  ?checked=${this.looping}
+                  @sl-change=${() => this._emit('ll-toggle-loop')}
+                ></sl-switch>
+              </sl-tooltip>
               <div class="btn-group">
-                <button
-                  class="btn-now"
-                  @click=${() => this._emit('ll-set-loop-start-now')}
-                >Now</button>
-                <input
-                  ${ref(this._startRef)}
-                  class="time-input align-left ${this.editScratchActive && this.editScratchFocus === 'start' ? 'loop-edit-focus' : ''} ${this.loopStart >= this.loopEnd ? 'loop-invalid' : ''} ${this.loopSourceType && this.currentTime < this.loopSourceStart ? 'source-outside' : ''}"
-                  type="text"
-                  @keydown=${(e) => { if (e.key === 'Enter') { this._submitStart(); e.target.blur(); } else if (e.key === 'Escape') { e.target.value = this._fmtLoop(this.loopStart); e.target.blur(); } }}
-                  @blur=${() => this._submitStart()}
-                />
+                <sl-tooltip>${ttip('Set loop start to now', '[[')}
+                  <button
+                    class="btn-now"
+                    @click=${() => this._emit('ll-set-loop-start-now')}
+                  >Now</button>
+                </sl-tooltip>
+                <sl-tooltip>${ttip('Edit loop start', '[\\')}
+                  <input
+                    ${ref(this._startRef)}
+                    class="time-input align-left ${this.editScratchActive && this.editScratchFocus === 'start' ? 'loop-edit-focus' : ''} ${this.loopStart >= this.loopEnd ? 'loop-invalid' : ''} ${this.loopSourceType && this.currentTime < this.loopSourceStart ? 'source-outside' : ''}"
+                    type="text"
+                    @keydown=${(e) => { if (e.key === 'Enter') { this._submitStart(); e.target.blur(); } else if (e.key === 'Escape') { e.target.value = this._fmtLoop(this.loopStart); e.target.blur(); } }}
+                    @blur=${() => this._submitStart()}
+                  />
+                </sl-tooltip>
               </div>
-              <select
-                ${ref(this._nudgeDeltaRef)}
-                class="delta-select"
-                @change=${(e) => { this._emit('ll-loop-nudge-delta-change', { value: Number(e.target.value) }); e.target.blur(); }}
-                @keydown=${(e) => { if (e.key === 'Enter' || e.key === 'Escape') e.target.blur(); }}
-              >
-                ${this.loopNudgeDeltaChoices.map(n => html`
-                  <option value=${n} ?selected=${this.loopNudgeDelta === n}>${this._fmtDelta(n)}</option>
-                `)}
-              </select>
+              <sl-tooltip>${ttip('Nudge delta', '[]')}
+                <select
+                  ${ref(this._nudgeDeltaRef)}
+                  class="delta-select"
+                  @change=${(e) => { this._emit('ll-loop-nudge-delta-change', { value: Number(e.target.value) }); e.target.blur(); }}
+                  @keydown=${(e) => { if (e.key === 'Enter' || e.key === 'Escape') e.target.blur(); }}
+                >
+                  ${this.loopNudgeDeltaChoices.map(n => html`
+                    <option value=${n} ?selected=${this.loopNudgeDelta === n}>${this._fmtDelta(n)}</option>
+                  `)}
+                </select>
+              </sl-tooltip>
               <div class="btn-group">
-                <input
-                  ${ref(this._endRef)}
-                  class="time-input ${this.editScratchActive && this.editScratchFocus === 'end' ? 'loop-edit-focus' : ''} ${this.loopStart >= this.loopEnd ? 'loop-invalid' : ''} ${this.loopSourceType && this.currentTime > this.loopSourceEnd ? 'source-outside' : ''}"
-                  type="text"
-                  @keydown=${(e) => { if (e.key === 'Enter') { this._submitEnd(); e.target.blur(); } else if (e.key === 'Escape') { e.target.value = this._fmtLoop(this.loopEnd); e.target.blur(); } }}
-                  @blur=${() => this._submitEnd()}
-                />
-                <button
-                  class="btn-now"
-                  @click=${() => this._emit('ll-set-loop-end-now')}
-                >Now</button>
+                <sl-tooltip>${ttip('Edit loop end', ']\\' )}
+                  <input
+                    ${ref(this._endRef)}
+                    class="time-input ${this.editScratchActive && this.editScratchFocus === 'end' ? 'loop-edit-focus' : ''} ${this.loopStart >= this.loopEnd ? 'loop-invalid' : ''} ${this.loopSourceType && this.currentTime > this.loopSourceEnd ? 'source-outside' : ''}"
+                    type="text"
+                    @keydown=${(e) => { if (e.key === 'Enter') { this._submitEnd(); e.target.blur(); } else if (e.key === 'Escape') { e.target.value = this._fmtLoop(this.loopEnd); e.target.blur(); } }}
+                    @blur=${() => this._submitEnd()}
+                  />
+                </sl-tooltip>
+                <sl-tooltip>${ttip('Set loop end to now', ']]')}
+                  <button
+                    class="btn-now"
+                    @click=${() => this._emit('ll-set-loop-end-now')}
+                  >Now</button>
+                </sl-tooltip>
               </div>
             </div>
           </div>
