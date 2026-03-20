@@ -9,12 +9,16 @@
 #
 # Tasks:
 #   inv deploy [--push]
+#   inv serve [--f5] [--ll]
+#   inv kill [--f5] [--ll] [--keep]
 #
 ####
 
 import json
+import os
 import re
 
+from contextlib import contextmanager
 from datetime import datetime
 from invoke import task, Exit
 from pathlib import Path
@@ -43,56 +47,107 @@ VERSION_FMT = dedent('''
 ''')
 
 APPS = cons(
-    ll = cons(
-        name = 'lama',
-        cd = 'loopllama/v2',
-        cmd = 'npm run dev',
-        log = 'loopllama/v2/logs/ll.log.txt',
-        pid = 'loopllama/v2/logs/ll.pid.txt',
-    ),
     f5 = cons(
-        name = 'fifth',
-        cd = '.',
-        cmd = 'bundle exec jekyll serve --drafts --unpublished',
-        log = 'loopllama/v2/logs/f5.log.txt',
-        pid = 'loopllama/v2/logs/f5.pid.txt',
+        name     = 'fifthfret',
+        cmd      = 'bundle exec jekyll serve --drafts --unpublished',
+        cd       = '.',
+        log_file = 'loopllama/v2/logs/f5.log.txt',
+        pid_file = 'loopllama/v2/logs/f5.pid.txt',
+    ),
+    ll = cons(
+        name     = 'loopllama',
+        cmd      = 'npm run dev',
+        cd       = 'loopllama/v2',
+        log_file = 'loopllama/v2/logs/ll.log.txt',
+        pid_file = 'loopllama/v2/logs/ll.pid.txt',
     ),
 )
 
-NOHUP = 'nohup {command} > {log} 2>&1 & echo $!'
+NOHUP_FMT = "nohup {cmd} > {log_file} 2>&1 & echo $! >| {pid_file}"
+
+KILL_SENTINEL = '0'
 
 ####
 # Tasks.
 ####
 
 @task
-def serve(c, ll = False, f5 = False):
+def serve(c, f5 = False, ll = False):
     '''
-    Serves local apps: f5, ll.
+    Serves local apps: f5 and/or ll.
     '''
-    apps = (
-        APPS.values() if ll == f5 else
-        [APPS.ll] if ll else [APPS.f5]
-    )
+    # Setup.
+    dry = c.config.run.dry
+    apps = get_apps(f5, ll)
 
+    # Serve each app: (1) start the app, sending output
+    # to a log file; (2) write a PID file.
     for a in apps:
-        # print(a)
-        # continue
+        # Get full paths to log and PID files -- because the run() happens with cd().
+        log_file = Path(a.log_file).resolve()
+        pid_file = Path(a.pid_file).resolve()
 
-        cmd = 'echo ' + a.cmd
-        with c.cd(a.cd):
+        # Assemble the full nohup command.
+        cmd = NOHUP_FMT.format(
+            cmd = a.cmd,
+            log_file = log_file,
+            pid_file = pid_file,
+        )
+
+        # Run with our own cd() rather than c.cd() to avoid a bash subshell
+        # that would give us the wrong PID.
+        with cd(a.cd):
             c.run(cmd)
 
-            # result = c.run(NOHUP.format(...), pty = False)
-            # pid = result.stdout.strip()
-            # Path(a.pid_file).write_text(pid)
+        # Get the PID.
+        if dry:
+            pid = KILL_SENTINEL
+            Path(a.pid_file).write_text(pid + '\n')
+        else:
+            pid = Path(a.pid_file).read_text().strip()
+
+        # Notify.
+        msg = f'# App started with PID: {a.name} {pid}'
+        print(msg)
+
+@task
+def kill(c, f5 = False, ll = False, keep = False):
+    '''
+    Kills running apps: f5 and/or ll.
+    '''
+    # Setup.
+    dry = c.config.run.dry
+    apps = get_apps(f5, ll)
+
+    # Kill each app.
+    for a in apps:
+        # Get PID file.
+        pid_file = Path(a.pid_file)
+
+        # No PID file: nothing to kill.
+        if not pid_file.exists():
+            print(f'# No PID file found: {a.name}')
+            continue
+
+        # Get the PID.
+        pid = pid_file.read_text().strip()
+
+        # Kill the process.
+        if pid == KILL_SENTINEL:
+            cmd = f"echo '# kill {pid}'"
+        else:
+            cmd = f'kill {pid}'
+        c.run(cmd, warn = True)
+
+        # Delete PID file.
+        if not (dry or keep):
+            pid_file.unlink()
 
 @task
 def deploy(c, push = False):
     '''
     Builds/deploys LoopLlama, with git commit (and optional --push)
     '''
-
     # Read the deployments data file to compute the next build number.
     deployments = read_json(PATHS.ll_deployments)
     build_num = 1 + max(d['build_num'] for d in deployments)
@@ -173,4 +228,20 @@ def read_json(path):
 def write_json(path, d):
     with open(path, 'w') as fh:
         json.dump(d, fh, indent = 2)
+
+def get_apps(f5, ll):
+    return (
+        APPS.values() if ll == f5 else
+        [APPS.ll] if ll else
+        [APPS.f5]
+    )
+
+@contextmanager
+def cd(path):
+    original = Path.cwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(original)
 

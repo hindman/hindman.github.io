@@ -1,23 +1,11 @@
 
 ## TODO: LoopLlama v2
 
-Lines of code:
-  - loopllama/
-  - loopllama/v1/
-  - loopllama/v2/
-  - loopllama/v2/src/
-  - loopllama/v2/src/components/
-  - loopllama/v2/styles/
-  - file extensions: .js, .css, .html, maybe .json
-
 invoke:
-  - serve individually:
-    - bundle exec jekyll serve --drafts --unpublished
-    - npm run dev
-  - serve all to log files:
-    - spin up LL and F5 locally, with output to logs
-    - follow command
-    - kill command
+  x serve
+  x kill
+  - status: report PIDs from files; and processes from `ps`
+  - follow: both logs, maybe with colored-markers?
 
 Key bindings: assess, edit, reorg.
   - Add a menu-activate prefix: forward slash?
@@ -31,6 +19,15 @@ Notes files (_notes): editing/organizing pass.
 
 Help text: draft
 Banner write up.
+
+Lines of code:
+  - loopllama/
+  - loopllama/v1/
+  - loopllama/v2/
+  - loopllama/v2/src/
+  - loopllama/v2/src/components/
+  - loopllama/v2/styles/
+  - file extensions: .js, .css, .html, maybe .json
 
 Text elements: messages: info, warning, error, which-key.
 

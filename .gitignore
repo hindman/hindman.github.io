@@ -8,6 +8,7 @@ Gemfile.lock
 loopllama/v2/node_modules/
 loopllama/v2/src/node_modules/
 loopllama/v2/dist/
+loopllama/v2/logs/
 loopllama/v2/assets/
 loopllama/v2/.env.development
 loopllama/v2/.env.production
