@@ -11,6 +11,8 @@
 #   inv serve [--f5] [--ll]
 #   inv kill [--f5] [--ll] [--keep]
 #   inv follow [--f5] [--ll]
+#   inv status [--f5] [--ll]
+#   inv clear [--f5] [--ll]
 #   inv deploy [--push]
 #
 ####
@@ -64,20 +66,22 @@ COLORS = cons(
 
 APPS = cons(
     f5 = cons(
-        name     = 'fifthfret',
-        cmd      = 'bundle exec jekyll serve --drafts --unpublished',
-        cd       = '.',
-        log_file = 'loopllama/v2/logs/f5.log.txt',
-        pid_file = 'loopllama/v2/logs/f5.pid.txt',
+        name      = 'fifthfret',
+        cmd       = 'bundle exec jekyll serve --drafts --unpublished',
+        cd        = '.',
+        log_file  = 'loopllama/v2/logs/f5.log.txt',
+        pid_file  = 'loopllama/v2/logs/f5.pid.txt',
         log_color = COLORS.yellow,
+        ps_patt   = '[j]ekyll',
     ),
     ll = cons(
-        name     = 'loopllama',
-        cmd      = 'npm run dev',
-        cd       = 'loopllama/v2',
-        log_file = 'loopllama/v2/logs/ll.log.txt',
-        pid_file = 'loopllama/v2/logs/ll.pid.txt',
+        name      = 'loopllama',
+        cmd       = 'npm run dev',
+        cd        = 'loopllama/v2',
+        log_file  = 'loopllama/v2/logs/ll.log.txt',
+        pid_file  = 'loopllama/v2/logs/ll.pid.txt',
         log_color = COLORS.red,
+        ps_patt   = '[v]ite',
     ),
 )
 
@@ -168,10 +172,11 @@ def follow(c, f5 = False, ll = False):
     '''
     # Get the apps and open their log files.
     apps = get_apps(f5, ll)
-    app_handles = [
-        (a, open(a.log_file))
-        for a in apps
-    ]
+    app_handles = []
+    for a in apps:
+        p = Path(a.log_file)
+        if p.exists():
+            app_handles.append([a, open(p)])
 
     # Follow the log files. On the first pass through the apps,
     # we grab the last 20 lines. After that, we grab new lines.
@@ -181,7 +186,7 @@ def follow(c, f5 = False, ll = False):
             for a, fh in app_handles:
                 lines = tail(fh, n)
                 if lines:
-                    print(f'\n{a.log_color}# {a.name}{COLORS.reset}')
+                    print_app_heading(a)
                     for line in lines:
                         print(line, end = '')
             n = None
@@ -189,6 +194,27 @@ def follow(c, f5 = False, ll = False):
     except KeyboardInterrupt:
         for a, fh in app_handles:
             fh.close()
+
+@task
+def status(c, f5 = False, ll = False):
+    '''
+    Shows app status: PID + ps: [--f5] [--ll]
+    '''
+    apps = get_apps(f5, ll)
+    for a in apps:
+        print_app_heading(a)
+        c.run(f'cat {a.pid_file}', warn = True)
+        c.run(f'ps -ef | ack {a.ps_patt}', warn = True)
+
+@task
+def clear(c, f5 = False, ll = False):
+    '''
+    Deletes log and PID files: [--f5] [--ll]
+    '''
+    apps = get_apps(f5, ll)
+    for a in apps:
+        for path in (a.log_file, a.pid_file):
+            c.run(f'rm -f {path}')
 
 @task
 def deploy(c, push = False):
@@ -260,6 +286,11 @@ def deploy(c, push = False):
 ####
 # Helpers.
 ####
+
+def print_app_heading(a):
+    # Takes an app from APPS.
+    # Prints its colored heading.
+    print(f'\n{a.log_color}# {a.name}{COLORS.reset}')
 
 def read_file(path):
     with open(path) as fh:
