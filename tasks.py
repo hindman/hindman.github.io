@@ -8,16 +8,19 @@
 #   inv --help TASK
 #
 # Tasks:
-#   inv deploy [--push]
 #   inv serve [--f5] [--ll]
 #   inv kill [--f5] [--ll] [--keep]
+#   inv follow [--f5] [--ll]
+#   inv deploy [--push]
 #
 ####
 
 import json
 import os
 import re
+import time
 
+from collections import deque
 from contextlib import contextmanager
 from datetime import datetime
 from invoke import task, Exit
@@ -46,6 +49,19 @@ VERSION_FMT = dedent('''
     export const BUILD_NUM = {};
 ''')
 
+def ansi(code):
+    return '\033' + chr(91) + str(code) + 'm'
+
+COLORS = cons(
+    red     = ansi(31),
+    green   = ansi(32),
+    yellow  = ansi(33),
+    blue    = ansi(34),
+    magenta = ansi(35),
+    cyan    = ansi(36),
+    reset   = ansi(0),
+)
+
 APPS = cons(
     f5 = cons(
         name     = 'fifthfret',
@@ -53,6 +69,7 @@ APPS = cons(
         cd       = '.',
         log_file = 'loopllama/v2/logs/f5.log.txt',
         pid_file = 'loopllama/v2/logs/f5.pid.txt',
+        log_color = COLORS.yellow,
     ),
     ll = cons(
         name     = 'loopllama',
@@ -60,6 +77,7 @@ APPS = cons(
         cd       = 'loopllama/v2',
         log_file = 'loopllama/v2/logs/ll.log.txt',
         pid_file = 'loopllama/v2/logs/ll.pid.txt',
+        log_color = COLORS.red,
     ),
 )
 
@@ -74,7 +92,7 @@ KILL_SENTINEL = '0'
 @task
 def serve(c, f5 = False, ll = False):
     '''
-    Serves local apps: f5 and/or ll.
+    Serves local apps: [--f5] [--ll]
     '''
     # Setup.
     dry = c.config.run.dry
@@ -113,7 +131,7 @@ def serve(c, f5 = False, ll = False):
 @task
 def kill(c, f5 = False, ll = False, keep = False):
     '''
-    Kills running apps: f5 and/or ll.
+    Kills running apps: [--f5] [--ll] [--keep]
     '''
     # Setup.
     dry = c.config.run.dry
@@ -144,9 +162,38 @@ def kill(c, f5 = False, ll = False, keep = False):
             pid_file.unlink()
 
 @task
+def follow(c, f5 = False, ll = False):
+    '''
+    Follows log files: [--f5] [--ll]
+    '''
+    # Get the apps and open their log files.
+    apps = get_apps(f5, ll)
+    app_handles = [
+        (a, open(a.log_file))
+        for a in apps
+    ]
+
+    # Follow the log files. On the first pass through the apps,
+    # we grab the last 20 lines. After that, we grab new lines.
+    try:
+        n = 20
+        while True:
+            for a, fh in app_handles:
+                lines = tail(fh, n)
+                if lines:
+                    print(f'\n{a.log_color}# {a.name}{COLORS.reset}')
+                    for line in lines:
+                        print(line, end = '')
+            n = None
+            time.sleep(0.2)
+    except KeyboardInterrupt:
+        for a, fh in app_handles:
+            fh.close()
+
+@task
 def deploy(c, push = False):
     '''
-    Builds/deploys LoopLlama, with git commit (and optional --push)
+    Builds/deploys LoopLlama, with git commit: [--push]
     '''
     # Read the deployments data file to compute the next build number.
     deployments = read_json(PATHS.ll_deployments)
@@ -244,4 +291,17 @@ def cd(path):
         yield
     finally:
         os.chdir(original)
+
+def tail(fh, n = None):
+    # Takes a file handle opened for reading.
+    # Returns either the last N lines or whatever new lines are
+    # available, given the file handle's current position.
+    lines = deque(maxlen = n) if n else []
+    while True:
+        line = fh.readline()
+        if line:
+            lines.append(line)
+        else:
+            break
+    return lines
 

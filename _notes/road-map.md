@@ -1,11 +1,16 @@
 
 ## TODO: LoopLlama v2
 
+Claude usgae:
+  https://claude.com/resources/tutorials/using-claude-code-remote-control
+  https://anthropic.skilljar.com/claude-code-in-action
+
 invoke:
   x serve
   x kill
+  x follow
+  - clear: delete logs/pids
   - status: report PIDs from files; and processes from `ps`
-  - follow: both logs, maybe with colored-markers?
 
 Key bindings: assess, edit, reorg.
   - Add a menu-activate prefix: forward slash?
