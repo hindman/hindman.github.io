@@ -256,6 +256,18 @@ Google Cloud Console
       - Paste into my pws-file.
       - Also download the JSON file.
 
+  - APIs & Services
+    - OAuth consent screen =>
+    - Branding:
+
+          __TODO__
+
+  - APIs & Services
+    - OAuth consent screen =>
+    - Audience:
+
+          __TODO__
+
 Supabase panel:
   - Use the client ID and secret to fill out the form.
   - Save.

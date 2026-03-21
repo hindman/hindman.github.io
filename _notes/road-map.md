@@ -5,6 +5,10 @@ Claude usage:
   - https://anthropic.skilljar.com/claude-code-in-action
   - https://claude.com/resources/tutorials/using-claude-code-remote-control
 
+Sign-in process:
+  - see TODOs in dev-notes
+  - see recent CC chat
+
 Key bindings: assess, edit, reorg.
   - Add a menu-activate prefix: forward slash?
 
