@@ -12,17 +12,9 @@ Menu items: assess, edit, reorg.
 
 Notes files (_notes): editing/organizing pass.
 
-Help text: draft
-Banner write up.
+Docs: help text: draft
 
-Lines of code:
-  - loopllama/
-  - loopllama/v1/
-  - loopllama/v2/
-  - loopllama/v2/src/
-  - loopllama/v2/src/components/
-  - loopllama/v2/styles/
-  - file extensions: .js, .css, .html, maybe .json
+Docs: banner text: draft
 
 Text elements: messages: info, warning, error, which-key.
 
@@ -37,6 +29,10 @@ Text elements: Current panel
 Code review and refactor.
 
 Real-world usage and testing.
+
+Docs: F5 post: draft
+
+Docs: help, hanner, F5 post: edit, wrap up.
 
 Launch: Make v2 the offial version.
 

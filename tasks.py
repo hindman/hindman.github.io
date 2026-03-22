@@ -283,6 +283,17 @@ def deploy(c, push = False):
     if push:
         c.run('git push origin master')
 
+@task
+def loc(c):
+    '''
+    Reports lines of code for LoopLlama v2
+    '''
+    root = PATHS.ll_root
+    exclude = '\/(node_modules|assets)\/'
+    exts = '\.(js|css|html)$'
+    cmd = f"wc -l $(find {root} | ack -v '{exclude}' | ack '{exts}')"
+    c.run(cmd)
+
 ####
 # Helpers.
 ####
