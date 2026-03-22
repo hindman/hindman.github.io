@@ -14,7 +14,7 @@
 //   seekDeltaChoices:     Array    -- available seek delta values
 //   loopNudgeDelta:       Number   -- current loop nudge delta (seconds)
 //   loopNudgeDeltaChoices: Array   -- available loop nudge delta values
-//   activeEntityType:     String   -- 'any'|'section'|'loop'|'mark'|'chapter'|'video'
+//   activeEntityType:     String   -- 'any'|'section'|'loop'|'mark'|'chapter'
 //
 // Fires (bubbles + composed):
 //   ll-play-pause             -- toggle play/pause
@@ -769,7 +769,6 @@ class LlamaControls extends LitElement {
                     <option value="loop"    ?selected=${this.activeEntityType === 'loop'}>Loop</option>
                     <option value="mark"    ?selected=${this.activeEntityType === 'mark'}>Mark</option>
                     <option value="chapter" ?selected=${this.activeEntityType === 'chapter'}>Chapter</option>
-                    <option value="video"   ?selected=${this.activeEntityType === 'video'}>Video</option>
                   </select>
                 </sl-tooltip>
                 <sl-tooltip>${ttip('Next entity', '.')}
@@ -841,7 +840,6 @@ class LlamaControls extends LitElement {
         </div>
 
         <div class="controls-row menus-row">
-          <span class="ctrl-group-label">Actions</span>
           ${MENUS.map(menu => html`
             <llama-dropdown .label=${menu.label} .items=${menu.items}></llama-dropdown>
           `)}

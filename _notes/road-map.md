@@ -1,48 +1,9 @@
 
 ## TODO: LoopLlama v2
 
-Claude usage:
-  - https://anthropic.skilljar.com/claude-code-in-action
-  - https://claude.com/resources/tutorials/using-claude-code-remote-control
-
 Sign-in process:
   - see TODOs in dev-notes
   - see recent CC chat
-
-Menus:
-  - Drop "Actions" label.
-
-Prev/next entity picker:
-  - Video is confusing and not very useful.
-  - Drop it.
-
-Marks:
-  - The app's current model to operate on entities:
-    - delete: picker
-    - create: immediate, here
-    - edit: current
-  - Edit-mark is the outlier in using a picker.
-    - Use current, meaning nearest to left.
-    - There's some mystery for a user about current.
-    - But using current aligns with the most common workflow:
-      - `mm` create mark here.
-      - `me` to add metadata:
-        - Literally here, if video was paused.
-        - Nearest to left also captures the case where `mm` was done while
-          playing the video.
-        - Nearest also embraces the concept of creation-time, so it's
-          conceptually sensible even if that's not the literal implementation.
-
-Timeline hovers:
-  - Include entity type as we do with loops.
-  - Format: "TYPE LABEL TIME"
-  - Where:
-    - TYPE: Chater, Section, Loop, Mark.
-    - LABEL: might not exist.
-    - TIME: "START" for Marks, else "START-END"
-  - No punctuation separating TYPE, LABEL, TIME.
-  - Instead, using character formatting:
-    - Maybe bold for TYPE and gray for TIME?
 
 Key bindings: assess, edit, reorg.
   - Add a menu-activate prefix: forward slash?

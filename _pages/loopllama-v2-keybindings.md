@@ -99,7 +99,7 @@ toc_icon: 'guitar'
     Marks:
 
         mm   | Set mark at current time
-        me   | Edit mark [via picker]
+        me   | Edit current mark [nearest to the left]
         md   | Delete mark [via picker]
 
     Timeline:

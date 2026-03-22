@@ -7,7 +7,7 @@ import {
   DEFAULT_OPTIONS,
   JUMP_HISTORY_MAX, JUMP_THRESHOLD,
   createVideo, createAppState, createScratchLoop,
-  addMark, deleteMarkById,
+  addMark, deleteMarkById, nearestMarkLeft,
   addSection, deleteSectionById, getSectionBounds, nearestSectionLeft,
   fixSectionEnd,
   addLoop, deleteLoopById,
@@ -971,7 +971,7 @@ class LlamaApp extends LitElement {
         this.statusMsg = 'Mark created';
         this._saveCurrentState();
       },
-      editMark:   () => this._openMarksPicker('edit'),
+      editMark:   () => this._editCurrentMark(),
       deleteMark: () => this._openMarksPicker('delete'),
       setChapter: () => {
         const time = this._vc?.getCurrentTime() ?? 0;
@@ -1611,14 +1611,7 @@ class LlamaApp extends LitElement {
     if (type === 'any' || type === 'loop')    this.namedLoops.forEach(l => add(l.start));
     if (type === 'any' || type === 'mark')    this.marks.forEach(m => add(m.time));
     if (type === 'any' || type === 'chapter') this.chapters.forEach(c => add(c.start));
-    if (type === 'any' || type === 'video') {
-      const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
-      if (video) {
-        add(video.start ?? 0);
-        if (video.end != null) add(video.end);
-        else if (this.duration != null) add(this.duration);
-      }
-    }
+
     return [...times].sort((a, b) => a - b);
   }
 
@@ -1776,11 +1769,10 @@ class LlamaApp extends LitElement {
     this._jumpTo(e.detail.time);
   }
 
-  // Handle ll-pick-mark-edit from marks picker (mode='edit').
-  // Looks up the mark and opens edit-mark-modal.
-  _onPickMarkEdit(e) {
-    const mark = this.marks.find(m => m.id === e.detail.id);
-    if (!mark) return;
+  // Edit the current mark (me): find mark nearest to left, open edit modal.
+  _editCurrentMark() {
+    const mark = nearestMarkLeft(this.marks, this.currentTime);
+    if (!mark) { this._setWarning('No mark at or before current position.'); return; }
     this._editMarkModalEl?.show(mark);
   }
 
@@ -2846,7 +2838,6 @@ class LlamaApp extends LitElement {
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-jump-mark=${this._onJumpMark}
-        @ll-pick-mark-edit=${this._onPickMarkEdit}
         @ll-delete-mark=${this._onDeleteMark}
       ></llama-marks-picker>
 

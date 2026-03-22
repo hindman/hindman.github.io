@@ -222,6 +222,18 @@ class LlamaTimeline extends LitElement {
       background: var(--ll-accent, #7ec8e3);
     }
 
+    /* Tooltip rich content: TYPE and START share metadata style */
+    .tip-meta {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #777;
+    }
+
+    .tip-label {
+      font-size: 0.72rem;
+    }
+
   `;
 
   static properties = {
@@ -305,6 +317,12 @@ class LlamaTimeline extends LitElement {
     });
   }
 
+  // Returns rich html template for sl-tooltip slot="content".
+  // TYPE is bold, LABEL (optional) is normal weight, TIME is gray.
+  _tipContent(type, timeStr, name) {
+    return html`<span class="tip-meta">${type}</span> <span class="tip-meta">${timeStr}</span>${name ? html` <span class="tip-meta">•</span> <span class="tip-label">${name}</span>` : ''}`;
+  }
+
   // Returns Lit template for zone-2 region divs (sections or chapters).
   // Hides the label entirely if the region is too narrow to fit it
   // (avoids truncation/ellipsis). Heuristic: ~7px per character + 8px padding.
@@ -318,11 +336,12 @@ class LlamaTimeline extends LitElement {
       const widthPct = endPct - leftPct;
       const widthPx  = (widthPct / 100) * this._zoneWidth;
       const showLabel  = widthPx >= r.name.length * 7 + 8;
-      const tooltip    = r.name ? `${r.name} (${this._fmt(r.start)})` : this._fmt(r.start);
+      const type       = this.zone2Mode === 'chapters' ? 'Chapter' : 'Section';
       const parityClass = i % 2 === 0 ? 'section-region--even' : 'section-region--odd';
       const currentClass = r.isCurrent ? 'section-region--current' : parityClass;
       return html`
-        <sl-tooltip content="${tooltip}" hoist>
+        <sl-tooltip hoist>
+          <span slot="content">${this._tipContent(type, this._fmt(r.start), r.name)}</span>
           <div
             class="section-region ${currentClass}"
             style="left: ${leftPct}%; width: ${widthPct}%"
@@ -371,9 +390,9 @@ class LlamaTimeline extends LitElement {
     return (this.marks ?? [])
       .filter(m => this._inScope(m.time))
       .map(m => {
-        const tooltip = m.name ? `${m.name}: ${this._fmt(m.time)}` : this._fmt(m.time);
         return html`
-          <sl-tooltip content="${tooltip}" hoist>
+          <sl-tooltip hoist>
+            <span slot="content">${this._tipContent('Mark', this._fmt(m.time), m.name)}</span>
             <div
               class="mark-dot"
               style="left: ${this._pct(m.time)}%"
@@ -397,7 +416,8 @@ class LlamaTimeline extends LitElement {
         const leftPct  = this._pct(scratch.start);
         const widthPct = this._pct(scratch.end) - leftPct;
         els.push(html`
-          <sl-tooltip content="Loop: ${this._fmt(scratch.start)} – ${this._fmt(scratch.end)}" hoist>
+          <sl-tooltip hoist>
+            <span slot="content">${this._tipContent('Loop', this._fmt(scratch.start), '')}</span>
             <div
               class="loop-bar loop-bar--scratch"
               style="left: ${leftPct}%; width: ${widthPct}%; top: 0px"
@@ -416,11 +436,9 @@ class LlamaTimeline extends LitElement {
         if (!this._loopInScope(loop)) continue;
         const leftPct  = this._pct(loop.start);
         const widthPct = this._pct(loop.end) - leftPct;
-        const loopTip = loop.name
-          ? `${loop.name}: ${this._fmt(loop.start)} – ${this._fmt(loop.end)}`
-          : `${this._fmt(loop.start)} – ${this._fmt(loop.end)}`;
         els.push(html`
-          <sl-tooltip content="${loopTip}" hoist>
+          <sl-tooltip hoist>
+            <span slot="content">${this._tipContent('Loop', this._fmt(loop.start), loop.name)}</span>
             <div
               class="loop-bar"
               style="left: ${leftPct}%; width: ${widthPct}%; top: ${barTop}px"
