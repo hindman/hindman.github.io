@@ -195,6 +195,7 @@ class LlamaLoopPicker extends LitElement {
             @sl-input=${this._onFilterInput}
             @keydown=${this._onFilterKeyDown}
             clearable
+            autocomplete="off"
           ></sl-input>
         </div>
         <div class="loop-list">
