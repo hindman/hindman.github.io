@@ -2,9 +2,14 @@
 ## TODO: LoopLlama v2
 
 Key bindings: assess, edit, reorg.
+  - See keybindings file: __HERE__
   - Add a menu-activate prefix: forward slash?
 
 Menu items: assess, edit, reorg.
+
+When page loads the timeline arrives late, pushing controls down. Avoidable?
+
+inv serve: halt if already running.
 
 Notes files (_notes): editing/organizing pass.
 

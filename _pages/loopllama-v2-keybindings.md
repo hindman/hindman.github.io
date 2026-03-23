@@ -137,3 +137,166 @@ toc_icon: 'guitar'
         <Backspace>    | Reset: start to video-start or end to video-end
         <Enter>        | Submit
 
+Current menus:
+
+    Video:
+        Load URL
+        Open video
+        Edit current
+        Video info
+        Loop full video
+        Delete video
+        ----------------
+        Creater chapter divider here
+        Open chapter
+        Edit chapter
+        Loop current chapter
+        Delete chapter
+        Zoom current chapter
+        Fix chapter end
+
+    Section:
+        Set section here
+        Edit current section
+        Open section
+        Loop current section
+        Delete section
+        Zoom current section
+        Fix secton end
+        ----------------
+        Toggle zone 2 (sections/chapters)
+
+    Loop:
+        Loop current section
+        Loop current chapter
+        Loop full video
+        ----------------
+        Open loop
+        Save new loop
+        Save back to loop source
+        Reset loop to source
+        Unlink loop source
+        Delete loop
+        Zoom current loop
+        ----------------
+        Edit scratch loop
+
+    Mark:
+        Set mark here
+        Edit mark
+        Delete mark
+
+    Jump:
+        Jump to Chapter
+        Jump to Section
+        Jump to Loop
+        Jump to Mark
+        ----------------
+        Jump history
+        Jump Back
+        Jump Forward
+
+    App:
+        Undo
+        Redo
+        ----------------
+        Share video
+        Share loop
+        ----------------
+        Export all data
+        Import data
+        Inspect JSON
+        ----------------
+        Save data to cloud
+        Read data from cloud
+        Compare local vs cloud
+        Recall last message
+        ----------------
+        Bulk data delete
+        Options
+
+    Help:
+        General help
+        Key bindings
+
+New menus:
+
+    Video:
+        Load URL
+        Open...
+        Edit
+        Loop
+        Info
+        Delete...
+
+    Chapter:
+        Create now
+        Open...
+        Edit
+        Loop
+        Delete...
+        Zoom
+        Fix end
+
+    Section:
+        Create now
+        Open...
+        Edit
+        Loop
+        Delete...
+        Zoom
+        Fix end
+
+    Loop:
+        Open...
+        Edit
+        Zoom
+        Delete...
+        ----------------
+        Save new
+        Save to source
+        Reset to source
+        Unlink source
+
+    Mark:
+        Set now
+        Edit
+        Delete...
+
+    Jump:
+        Chapter...
+        Section...
+        Loop...
+        Mark...
+        ----------------
+        History
+        Back
+        Forward
+
+    __HERE__
+
+    Data:
+        Share video
+        Share loop
+        ----------------
+        Export
+        Import
+        Inspect
+        ----------------
+        Save to cloud
+        Read from cloud
+        Compare local-cloud
+        ----------------
+        Bulk delete
+
+    App:
+        Undo
+        Redo
+        ----------------
+        Recall message
+        ----------------
+        Options
+        ----------------
+        Help
+        Key bindings
+
