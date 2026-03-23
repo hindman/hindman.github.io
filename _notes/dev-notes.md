@@ -260,7 +260,20 @@ Google Cloud Console
     - OAuth consent screen =>
     - Branding:
 
-          __TODO__
+          App name           | LoopLlama
+          User support email | montyhindman@gmail.com
+          App home page      | https://hindman.github.io/loopllama/v2/
+          Privacy policy     | https://hindman.github.io/loopllama/v2/help/#privacy-policy
+          Terms of service   | https://hindman.github.io/loopllama/v2/help/#terms-of-service
+
+    - Have Google verify my branding:
+      - Verification status:
+        - Click view issues.
+        - Let led me eventually to Google Search Console.
+        - Long story but after putting this file at the repo root I'm the
+          verified owner of the site.
+
+              google58358ed2c1865cff.html
 
   - APIs & Services
     - OAuth consent screen =>

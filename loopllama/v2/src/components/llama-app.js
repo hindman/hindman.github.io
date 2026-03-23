@@ -2601,7 +2601,8 @@ class LlamaApp extends LitElement {
       items.push({ label: 'Sign in with GitHub', action: 'signInGitHub' });
     }
     items.push({ type: 'divider' });
-    items.push({ label: 'Why sign in?', action: 'whySignIn' });
+    items.push({ label: 'Why sign in?',   action: 'whySignIn'     });
+    items.push({ label: 'Privacy policy', action: 'privacyPolicy' });
     return items;
   }
 
@@ -2612,6 +2613,7 @@ class LlamaApp extends LitElement {
     if (action === 'signOut')       signOut();
     if (action === 'signOutRemove') this._signOutAndRemoveCloudData();
     if (action === 'whySignIn')     window.open(`${_siteOrigin()}/loopllama/v2/help/#why-sign-in`, '_blank');
+    if (action === 'privacyPolicy') window.open(`${_siteOrigin()}/loopllama/v2/help/#privacy-policy`, '_blank');
   }
 
   // Called when a user signs in (either on page load or after OAuth redirect).
