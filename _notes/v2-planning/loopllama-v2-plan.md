@@ -1086,3 +1086,55 @@ For the current scale and audience, none of these measures are
 needed. The architecture is sound; the mitigations exist and are
 tunable if conditions change.
 
+## LoopLlama Menu Philosophy
+
+NOUN → VERB structure
+
+The menu label names the entity (the noun); menu items are verbs that act on
+it. This makes the hierarchy meaningful rather than just a grouping
+convenience.
+
+Ellipsis = picker required
+
+An ellipsis suffix signals that a picker or selection step will appear before
+the action executes. No ellipsis means the action operates on the
+current/implied entity immediately. This is a narrower use of the convention
+than HIG — it does not apply to every dialog, only to operations that
+require the user to select which entity to act on.
+
+Menu context reduces label verbosity
+
+Because the menu label establishes the noun, item labels need only be the
+verb. "Delete video" becomes "Delete..." under the Video menu. Redundant
+qualifiers ("current", "video", "section") are dropped.
+
+Entity ownership resolves duplication
+
+When an action could appear in multiple menus, it belongs in the menu whose
+label names the primary noun. "Loop current section" belongs under Section,
+not Loop. This eliminates cross-menu duplication and gives each menu a
+coherent identity.
+
+The Loop menu's noun is the scratch loop
+
+Unlike other entity menus, Loop is centered on the scratch loop as its primary
+subject. Named loops are accessed via Open... and Delete..., but Edit, Zoom,
+and the source-management block all act on the scratch loop directly.
+
+Footer messages carry explanatory load
+
+Short or ambiguous labels (e.g. "Toggle timeline") are acceptable when the
+footer provides context at the moment of use. Labels don't need to be
+self-contained documentation.
+
+Real estate is a constraint
+
+Eight menus across a narrow header is the practical limit. The Help menu was
+folded into App to preserve horizontal space. Brevity in labels serves the
+same goal.
+
+Menus do not duplicate main controls
+
+Menu items do not perform actions that are directly available via the app's
+main controls: play/pause; toggle looping; previous/next entity; etc.
+

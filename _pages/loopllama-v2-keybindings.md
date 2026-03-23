@@ -273,8 +273,6 @@ New menus:
         Back
         Forward
 
-    __HERE__
-
     Data:
         Share video
         Share loop
@@ -285,14 +283,15 @@ New menus:
         ----------------
         Save to cloud
         Read from cloud
-        Compare local-cloud
+        Compare
         ----------------
-        Bulk delete
+        Delete...
 
     App:
         Undo
         Redo
         ----------------
+        Toggle timeline
         Recall message
         ----------------
         Options
