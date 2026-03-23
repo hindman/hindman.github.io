@@ -1,10 +1,6 @@
 
 ## TODO: LoopLlama v2
 
-Sign-in process:
-  - see TODOs in dev-notes
-  - see recent CC chat
-
 Key bindings: assess, edit, reorg.
   - Add a menu-activate prefix: forward slash?
 

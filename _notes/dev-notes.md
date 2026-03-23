@@ -235,7 +235,7 @@ Google Cloud Console
     - Create Project => LoopLlama Dev|Prod => Create
     - Configure project:
 
-          App Name      | LoopLlama Dev|Prod
+          App Name      | LoopLlama Dev / LoopLlama Prod
           Support email | montyhindman@gmail.com
           Audience      | external
           Contact email | montyhindman@gmail.com
@@ -246,7 +246,7 @@ Google Cloud Console
     - OAuth client ID =>
     - Web application:
 
-          Name                          | LoopLlama Dev | Prod
+          Name                          | LoopLlama Dev / LoopLlama
           Authorized JavaScript origins | http://localhost:5173
           "          "          "       | https://hindman.github.io
           Authorized redirect URIs      | <supabase callback URL: see above>
@@ -278,8 +278,7 @@ Google Cloud Console
   - APIs & Services
     - OAuth consent screen =>
     - Audience:
-
-          __TODO__
+      - Publish.
 
 Supabase panel:
   - Use the client ID and secret to fill out the form.
