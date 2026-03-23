@@ -8,216 +8,31 @@ toc_label: 'Contents'
 toc_icon: 'guitar'
 ---
 
-    Videos:
+More tolerant navigation when looping=true.
+  - Enforce loop bounds.
+    - Playing the video
+    - Seek
+  - Toggle looping off (only if needed) to allow the navigation:
+    - Navigate to previous/next entity
+    - Jump by time (via `jj` or timeline click)
+    - Jump to entity (via picker)
 
-        vu | Switch to YouTube video via a URL [url-input-modal]
-        y  | Synonym for `vu`.
-        vv | Open video [video-picker: recency sort]
-        vo | Open video [video-picker: alphabetical sort]
-        ve | Edit current video [edit-video-modal]
-        vd | Delete video [via picker]
-        vi | Video info [video-info-modal]
-        vl | Loop: makes current video the scratch-loop source
+Drop Open for chapters, sections, loops:
+  - Not helpful:
+    - It's a halfway step to looping the entity.
+    - User can jump-to then loop-current.
+  - Drop menu items and bindings and code.
 
-    Playing:
+Summary of operations common to multiple entity types:
 
-        <Space>  | Play/pause current video
-        -        | Speed: slower by 5 pct poins
-        =        | Speed: faster by 5 pct poins
-        <Bspace> | Reset speed to 100%
-
-    Navigation:
-
-        <Right> | Seek forward
-        <Left>  | Seek backward
-        <Down>  | Seek delta: reduce
-        <Up>    | Seek delta: increase
-        ,       | Previous entity
-        /       | Activate entity-type dropdown
-        .       | Next entity
-        <Enter> | Jump: to start (of loop if looping, else video)
-        jj      | Jump: by time [activates current-time text box]
-        jc      | Jump: to chapter via picker
-        js      | Jump: to section via picker
-        jl      | Jump: to loop via picker
-        jm      | Jump: to mark via picker
-        jh      | Jump: within jump-history via jump-history-picker
-        jb      | Jump: backward within jump-history
-        jf      | Jump: forward within jump-history
-
-    Looping:
-
-        ll     | Toggle looping on/off
-        lo     | Open: opens/loads a saved-loop into scratch-loop [loops-picker]
-        ln     | Save-new: a new loop [save-loop-modal]
-        lb     | Save-back: save scratch-loop endpoints back to source Loop
-        le     | Edit: scratch-loop [edit-scratch-loop-mode]
-        \      | Synonym for `le`
-        lv     | Loop current video (synonym for `vl`)
-        lc     | Loop current chapter (synonym for `cl`)
-        ls     | Loop current section (synonym for `sl`)
-        l<bsp> | Unlink loop source [severs connection to source]
-        l=     | Reset loop to equal source
-        ld     | Delete loop [via picker]
-        lz     | Toggle timline zoom, using current loop
-        --------------------------------------------------
-        [[     | Loop start: set to current time
-        [<bsp> | Loop start: reset to video start
-        [-     | Loop start: nudge: decrease
-        [=     | Loop start: nudge: increase
-        [\     | Loop start: edit [activate loop-start text box]
-        --------------------------------------------------
-        ]]     | Loop end: set to current time
-        ]<bsp> | Loop end: reset to video end
-        ]-     | Loop end: nudge: decrease
-        ]=     | Loop end: nudge: increase
-        ]\     | Loop end: edit [activate loop-end text box]
-        --------------------------------------------------
-        []     | Nudge_delta: activate dropdown
-        ][     | Synonym for `[]`
-
-    Chapters:
-
-        cc | Create new chapter [new-chapter-modal, using scratch-loop start/end]
-        co | Open chapter [via picker => populate scratch-loop start/end]
-        ce | Edit current chapter
-        cf | Fix: toggle chapter-fixed status.
-        cl | Loop: makes current chapter the scratch-loop source
-        cd | Delete chapter [via picker]
-        cz | Toggle timline zoom, using current chapter
-
-    Sections:
-
-        ss | Set: sets a new section divider at current time
-        se | Edit: edit current section [edit-section-modal]
-        sl | Loop: makes current section the scratch-loop source
-        sf | Fix: toggle section-fixed status.
-        so | Open section [via picker => populate scratch-loop]
-        sd | Delete section [via picker]
-        sz | Toggle timline zoom, using current section
-
-    Marks:
-
-        mm   | Set mark at current time
-        me   | Edit current mark [nearest to the left]
-        md   | Delete mark [via picker]
-
-    Timeline:
-
-        tt | Toggle timline to show sections or chapters
-
-    Undo and help:
-
-        u  | Undo: most recent edit
-        U  | Redo: reverses an Undo
-        hh | Help: general
-        hk | Help: key bindings
-        ?  | Synonym for `hk`      [should this point to general help instead?]
-        o  | Options-modal
-
-    Data:
-
-        dd | Delete: delete-data-modal
-        de | Export: app data as JSON
-        di | Import: app data from JSON
-        dI | Inspect: app data as JSON [bottom of web page]
-        dv | Share: video [via share-URL]
-        dl | Share: scratch-loop [via share-URL]
-        dr | Read: app data from cloud
-        ds | Save: app data to cloud
-        dc | Compare: info modal comparing local vs cloud
-        dm | Message history: deplay most recent message
-
-    Edit-scratch-loop-mode:
-
-        <Tab>          | Toggle focus between start or end
-        <Left> <right> | Move start/end
-        <Up> <down>    | Change the move delta
-        <Space>        | Play/pause the video at the relevant spot
-        <Backspace>    | Reset: start to video-start or end to video-end
-        <Enter>        | Submit
-
-Current menus:
-
-    Video:
-        Load URL
-        Open video
-        Edit current
-        Video info
-        Loop full video
-        Delete video
-        ----------------
-        Creater chapter divider here
-        Open chapter
-        Edit chapter
-        Loop current chapter
-        Delete chapter
-        Zoom current chapter
-        Fix chapter end
-
-    Section:
-        Set section here
-        Edit current section
-        Open section
-        Loop current section
-        Delete section
-        Zoom current section
-        Fix secton end
-        ----------------
-        Toggle zone 2 (sections/chapters)
-
-    Loop:
-        Loop current section
-        Loop current chapter
-        Loop full video
-        ----------------
-        Open loop
-        Save new loop
-        Save back to loop source
-        Reset loop to source
-        Unlink loop source
-        Delete loop
-        Zoom current loop
-        ----------------
-        Edit scratch loop
-
-    Mark:
-        Set mark here
-        Edit mark
-        Delete mark
-
-    Jump:
-        Jump to Chapter
-        Jump to Section
-        Jump to Loop
-        Jump to Mark
-        ----------------
-        Jump history
-        Jump Back
-        Jump Forward
-
-    App:
-        Undo
-        Redo
-        ----------------
-        Share video
-        Share loop
-        ----------------
-        Export all data
-        Import data
-        Inspect JSON
-        ----------------
-        Save data to cloud
-        Read data from cloud
-        Compare local vs cloud
-        Recall last message
-        ----------------
-        Bulk data delete
-        Options
-
-    Help:
-        General help
-        Key bindings
+    Action    | Video | Chapter | Section | Loop | Mark
+    ----------------------------------------------------
+    Create    | .     | Y       | Y       | .    | Y
+    Edit      | Y     | Y       | Y       | Y    | Y
+    Loop      | Y     | Y       | Y       | .    | .
+    Zoom      | .     | Y       | Y       | Y    | .
+    Fix-end   | .     | Y       | Y       | .    | .
+    Delete... | Y     | Y       | Y       | Y    | Y
 
 New menus:
 
@@ -226,29 +41,26 @@ New menus:
         Open...
         Edit
         Loop
-        Info
         Delete...
+        Info
 
     Chapter:
-        Create now
-        Open...
+        Create
         Edit
         Loop
-        Delete...
         Zoom
         Fix end
+        Delete...
 
     Section:
-        Create now
-        Open...
+        Create
         Edit
         Loop
-        Delete...
         Zoom
         Fix end
+        Delete...
 
     Loop:
-        Open...
         Edit
         Zoom
         Delete...
@@ -259,7 +71,7 @@ New menus:
         Unlink source
 
     Mark:
-        Set now
+        Create
         Edit
         Delete...
 
@@ -269,7 +81,7 @@ New menus:
         Loop...
         Mark...
         ----------------
-        History
+        History...
         Back
         Forward
 
@@ -298,4 +110,161 @@ New menus:
         ----------------
         Help
         Key bindings
+
+Key bindings:
+
+    Video:
+
+        vu | Load URL
+        vo | Open...
+        ve | Edit
+        vl | Loop
+        vd | Delete...
+        vi | Info
+        ------------
+        y  | vu synonym
+        vv | vo synonym
+
+    Chapter:
+
+        cc | Create
+        ce | Edit
+        cl | Loop
+        cz | Zoom
+        cf | Fix end
+        cd | Delete...
+
+    Section:
+
+        ss | Create
+        se | Edit
+        sl | Loop
+        sz | Zoom
+        sf | Fix end
+        sd | Delete...
+
+    Loop:
+
+        ll     | Toggle
+        le     | Edit
+        lz     | Zoom
+        ld     | Delete...
+        -------------------
+        ln     | Save new
+        lb     | Save to source
+        l=     | Reset to source
+        l<bsp> | Unlink source
+        -------------------
+        \      | le synonym
+
+    Loop bounds:
+
+        [[     | Start: set now
+        [<bsp> | Start: reset to video start
+        [-     | Start: nudge: decrease
+        [=     | Start: nudge: increase
+        [\     | Start: edit
+        --------------
+        ]]     | End: set now
+        ]<bsp> | End: reset to video end
+        ]-     | End: nudge: decrease
+        ]=     | End: nudge: increase
+        ]\     | End: edit
+        -------------------
+        []     | Nudge_delta: activate dropdown
+        ][     | [] synonym
+
+    Mark:
+
+        mm | Create
+        me | Edit
+        md | Delete...
+
+    Jump:
+
+        jj      | By time
+        <Enter> | To start
+        -------------------
+        jc      | Chapter...
+        js      | Section...
+        jl      | Loop...
+        jm      | Mark...
+        -------------------
+        jh      | History...
+        jb      | Backward
+        jf      | Forward
+
+    Data:
+
+        dv | Share video
+        dl | Share loop
+        -------------------
+        de | Export
+        di | Import
+        dI | Inspect
+        -------------------
+        ds | Save to cloud
+        dr | Read from cloud
+        dc | Compare
+        -------------------
+        dd | Delete...
+
+    App:
+
+        u  | Undo
+        U  | Redo
+        -------------------
+        tt | Toggle timeline
+        dm | Recall message
+        -------------------
+        o  | Options
+        -------------------
+        hh | Help
+        hk | Key bindings
+        ?  | hk synonym
+
+    Playback:
+
+        <Space>  | Play/pause
+        -        | Speed: slower
+        =        | Speed: faster
+        <Bspace> | Speed: reset to 100%
+
+    Navigation:
+
+        <Right> | Seek forward
+        <Left>  | Seek backward
+        <Down>  | Seek delta: reduce
+        <Up>    | Seek delta: increase
+        -------------------
+        ,       | Previous entity
+        /       | Entity-type dropdown
+        .       | Next entity
+
+    Edit-loop mode:
+
+        <Tab>       | Toggle focus: start/end
+        -------------------
+        <Right>     | Increase: start/end
+        <Left>      | Decrease: start/end
+        -------------------
+        <Up>        | Increase: nudge-delta
+        <Down>      | Decrease: nudge-delta
+        -------------------
+        <Space>     | Play/pause near start/end
+        <Backspace> | Reset: start/end
+        -------------------
+        <Enter>     | Exit mode
+        <Esc>       | Exit mode
+
+    Menu activation:
+
+        `v | Video
+        `c | Chapter
+        `s | Section
+        `l | Loop
+        `m | Mark
+        `j | Jump
+        `d | Data
+        `a | App
 
