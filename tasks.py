@@ -109,6 +109,13 @@ def serve(c, f5 = False, ll = False):
         log_file = Path(a.log_file).resolve()
         pid_file = Path(a.pid_file).resolve()
 
+        # Skip if PID file for app already exists.
+        if exists(a.pid_file):
+            pid = read_pid(a.pid_file)
+            msg = f'# PID file exists: {a.name} {pid}'
+            print(color_msg(msg, COLORS.red))
+            continue
+
         # Assemble the full nohup command.
         cmd = NOHUP_FMT.format(
             cmd = a.cmd,
@@ -298,11 +305,6 @@ def loc(c):
 # Helpers.
 ####
 
-def print_app_heading(a):
-    # Takes an app from APPS.
-    # Prints its colored heading.
-    print(f'\n{a.log_color}# {a.name}{COLORS.reset}')
-
 def read_file(path):
     with open(path) as fh:
         return fh.read()
@@ -325,6 +327,12 @@ def get_apps(f5, ll):
         [APPS.f5]
     )
 
+def read_pid(path):
+    return Path(path).read_text().strip()
+
+def exists(path):
+    return Path(path).exists()
+
 @contextmanager
 def cd(path):
     original = Path.cwd()
@@ -346,4 +354,12 @@ def tail(fh, n = None):
         else:
             break
     return lines
+
+def print_app_heading(a):
+    # Takes an app from APPS.
+    # Prints its colored heading.
+    print(color_msg(f'\n# {a.name}', a.log_color))
+
+def color_msg(msg, color):
+    return color + msg + COLORS.reset
 

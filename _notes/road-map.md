@@ -5,9 +5,9 @@ Key bindings and menu items:
 
     _pages/loopllama-v2-keybindings.md
 
-When page loads the timeline arrives late, pushing controls down. Avoidable?
+    - code stages 1 - 6.
 
-inv serve: halt if pid files
+When page loads the timeline arrives late, pushing controls down. Avoidable?
 
 Notes files (_notes): editing/organizing pass.
 
