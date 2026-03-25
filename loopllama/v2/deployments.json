@@ -64,5 +64,11 @@
     "build_num": 11,
     "js": "loopllama/v2/assets/index-B9j1lEMG.js",
     "css": "loopllama/v2/assets/index-UZuT5DGV.css"
+  },
+  {
+    "time": "2026-03-24--20-15",
+    "build_num": 12,
+    "js": "loopllama/v2/assets/index-BRcoUeNm.js",
+    "css": "loopllama/v2/assets/index-UZuT5DGV.css"
   }
 ]
