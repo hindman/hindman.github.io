@@ -199,7 +199,7 @@ class LlamaOptionsModal extends LitElement {
 
         <div class="field-row">
           <span class="field-label">Default</span>
-          <sl-input
+          <sl-input autocomplete="off"
             data-field="seek-default"
             .value=${this._seekDefault}
             @sl-input=${e => { this._seekDefault = e.target.value; this._error = ''; }}
@@ -208,7 +208,7 @@ class LlamaOptionsModal extends LitElement {
         </div>
         <div class="field-row">
           <span class="field-label">Choices</span>
-          <sl-input
+          <sl-input autocomplete="off"
             .value=${this._seekChoices}
             @sl-input=${e => { this._seekChoices = e.target.value; this._error = ''; }}
             @keydown=${this._onKeyDown}
@@ -224,7 +224,7 @@ class LlamaOptionsModal extends LitElement {
 
         <div class="field-row">
           <span class="field-label">Default</span>
-          <sl-input
+          <sl-input autocomplete="off"
             .value=${this._nudgeDefault}
             @sl-input=${e => { this._nudgeDefault = e.target.value; this._error = ''; }}
             @keydown=${this._onKeyDown}
@@ -232,7 +232,7 @@ class LlamaOptionsModal extends LitElement {
         </div>
         <div class="field-row">
           <span class="field-label">Choices</span>
-          <sl-input
+          <sl-input autocomplete="off"
             .value=${this._nudgeChoices}
             @sl-input=${e => { this._nudgeChoices = e.target.value; this._error = ''; }}
             @keydown=${this._onKeyDown}
@@ -248,7 +248,7 @@ class LlamaOptionsModal extends LitElement {
 
         <div class="field-row">
           <span class="field-label">Delta</span>
-          <sl-input
+          <sl-input autocomplete="off"
             .value=${this._speedDelta}
             @sl-input=${e => { this._speedDelta = e.target.value; this._error = ''; }}
             @keydown=${this._onKeyDown}
@@ -264,7 +264,7 @@ class LlamaOptionsModal extends LitElement {
 
         <div class="field-row">
           <span class="field-label">Start</span>
-          <sl-input
+          <sl-input autocomplete="off"
             .value=${this._padStart}
             @sl-input=${e => { this._padStart = e.target.value; this._error = ''; }}
             @keydown=${this._onKeyDown}
@@ -272,7 +272,7 @@ class LlamaOptionsModal extends LitElement {
         </div>
         <div class="field-row">
           <span class="field-label">End</span>
-          <sl-input
+          <sl-input autocomplete="off"
             .value=${this._padEnd}
             @sl-input=${e => { this._padEnd = e.target.value; this._error = ''; }}
             @keydown=${this._onKeyDown}

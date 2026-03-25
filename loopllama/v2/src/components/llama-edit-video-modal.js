@@ -119,7 +119,7 @@ class LlamaEditVideoModal extends LitElement {
     return html`
       <div class="field-row">
         <span class="field-label">${label}</span>
-        <sl-input
+        <sl-input autocomplete="off"
           data-field=${field}
           placeholder=${placeholder}
           .value=${value}

@@ -71,7 +71,7 @@ class LlamaUrlInputModal extends LitElement {
         label="Load Video"
         @ll-modal-initial-focus=${this._onInitialFocus}
       >
-        <sl-input
+        <sl-input autocomplete="off"
           placeholder="YouTube URL or video ID"
           .value=${this._value}
           @sl-input=${this._onInput}

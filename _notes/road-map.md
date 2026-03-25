@@ -4,12 +4,13 @@
 Key bindings and menu items:
 
     - test/check
+      x tolerant nav when looping
       - all menu actions
-      - tolerant nav when looping
+        - check everything again from the start.
 
-Docs: help text: draft
+User docs: help text: draft
 
-Docs: banner text: draft
+User docs: banner text: draft
 
 Text elements: messages: info, warning, error, which-key.
 
@@ -23,15 +24,16 @@ Text elements: Current panel
 
 Code review and refactor.
 
-Real-world usage and testing.
-
-Docs:
+Dev docs:
   - data-schema.md
   - dev-notes.md
+  - architecture-notes.md: have CC summarize how the code is organized and how it works
 
-Docs: F5 post: draft
+Real-world usage and testing.
 
-Docs: help, hanner, F5 post: edit, wrap up.
+User docs: F5 post: draft
+
+User docs: edit, wrap up (help, banner text, F5 post).
 
 Launch: Make v2 the offial version.
 

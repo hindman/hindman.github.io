@@ -184,7 +184,7 @@ class LlamaSectionsPicker extends LitElement {
     return html`
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="filter-wrap">
-          <sl-input
+          <sl-input autocomplete="off"
             placeholder="Filter by name or time…"
             .value=${this._filter}
             @sl-input=${this._onFilterInput}

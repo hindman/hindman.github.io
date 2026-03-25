@@ -216,12 +216,11 @@ class LlamaVideoPicker extends LitElement {
   render() {
     const filtered  = this._filtered();
     const isDelete  = this.mode === 'delete';
-    const baseTitle = isDelete ? 'Delete Video' : 'Open Video';
-    const title     = `${baseTitle} — ${this._sortMode}`;
+    const title = isDelete ? 'Delete Video' : 'Open Video';
     return html`
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="filter-wrap">
-          <sl-input
+          <sl-input autocomplete="off"
             placeholder="Filter by name…"
             .value=${this._filter}
             @sl-input=${this._onFilterInput}

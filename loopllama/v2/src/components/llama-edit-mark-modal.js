@@ -87,7 +87,7 @@ class LlamaEditMarkModal extends LitElement {
       <llama-modal label="Edit Mark" @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="field-row">
           <span class="field-label">Name</span>
-          <sl-input
+          <sl-input autocomplete="off"
             data-field="name"
             placeholder="Optional label (e.g. "Bridge start")"
             .value=${this._name}
@@ -97,7 +97,7 @@ class LlamaEditMarkModal extends LitElement {
         </div>
         <div class="field-row">
           <span class="field-label">Time (m:ss)</span>
-          <sl-input
+          <sl-input autocomplete="off"
             data-field="time"
             placeholder="e.g. 1:23"
             .value=${this._time}

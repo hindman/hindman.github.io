@@ -42,6 +42,7 @@ export const BINDINGS = {
   'h':          { handler: 'helpGeneral', desc: 'General help (synonym: ah)' },
   'k':          { handler: 'helpKeys',    desc: 'Key bindings (synonym: ak)' },
   'o':          { handler: 'options',     desc: 'Options (synonym: ao)' },
+  'z':          { handler: 'zoomOff',    desc: 'Zoom off (synonym: az)' },
 
   // --- Prefix-key bindings ---
 
@@ -71,6 +72,7 @@ export const BINDINGS = {
     'i': { handler: 'videoInfo',         desc: 'Video info' },
     'd': { handler: 'deleteVideo',       desc: 'Delete current video' },
     'l': { handler: 'loopVideo',         desc: 'Loop: full video as scratch loop' },
+    'z': { handler: 'zoomVideo',         desc: 'Toggle video zoom' },
   }},
 
   'j': { completions: {
@@ -128,6 +130,7 @@ export const BINDINGS = {
     'u': { handler: 'undo',        desc: 'Undo' },
     'r': { handler: 'redo',        desc: 'Redo' },
     't': { handler: 'toggleZone2', desc: 'Toggle timeline' },
+    'z': { handler: 'zoomOff',     desc: 'Zoom off' },
     'm': { handler: 'msgRecall',   desc: 'Recall last message' },
     'o': { handler: 'options',     desc: 'Options' },
     'h': { handler: 'helpGeneral', desc: 'General help' },

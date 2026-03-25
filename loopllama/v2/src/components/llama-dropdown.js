@@ -62,17 +62,11 @@ class LlamaDropdown extends LitElement {
 
   open() {
     const dropdown = this.renderRoot.querySelector('sl-dropdown');
-    const trigger  = this.renderRoot.querySelector('.trigger-btn');
     if (!dropdown) return;
     // sl-menu has no tabindex; focus the first enabled item via roving tabindex.
     dropdown.show().then(() => {
       this.renderRoot.querySelector('sl-menu-item:not([disabled])')?.focus();
     });
-    // Shoelace calls focusOnTrigger() before hide(), leaving focus on the
-    // trigger button. Blur it after the panel finishes hiding.
-    dropdown.addEventListener('sl-after-hide', () => {
-      trigger?.blur();
-    }, { once: true });
   }
 
   _onMenuOpen() {
@@ -80,6 +74,9 @@ class LlamaDropdown extends LitElement {
   }
 
   _onMenuClose() {
+    // Shoelace calls focusOnTrigger() when a menu item is selected, leaving
+    // the trigger button focused. Blur it so keyboard events go to the app.
+    this.renderRoot.querySelector('.trigger-btn')?.blur();
     this.dispatchEvent(new CustomEvent('ll-menu-close', { bubbles: true, composed: true }));
   }
 

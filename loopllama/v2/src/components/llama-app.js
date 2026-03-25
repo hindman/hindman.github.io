@@ -617,7 +617,7 @@ class LlamaApp extends LitElement {
       return true;
     };
     return {
-      playPause:     () => { if (noVideo()) return; this._onPlayPause(); },
+      playPause:     () => { if (noVideo()) return; this._onPlayPause(); this._flash('playPause'); },
       speedDown:     (count = 1) => { this._speedChange(-this.speedDelta * count); this._flash('speed'); },
       speedUp:       (count = 1) => { this._speedChange(this.speedDelta * count); this._flash('speed'); },
       speedReset:    () => { this._vc?.setPlaybackRate(1.0); this.speed = 1.0; this._flash('speed'); },
@@ -640,7 +640,8 @@ class LlamaApp extends LitElement {
       nextEntity:    (count = 1) => { this._clearLoopingIfActive(); this._navigateEntity('next', count); },
       jumpToStart:   () => {
         if (noVideo()) return;
-        const target = this.looping ? this.loopStart : 0;
+        const video  = this._appState?.videos.find(v => v.id === this.currentVideoId);
+        const target = this.looping ? this.loopStart : (video?.start ?? 0);
         this._maybePushJump(this._vc?.getCurrentTime() ?? 0, target);
         this._vc?.seekTo(target);
         this._flash('time');
@@ -709,6 +710,24 @@ class LlamaApp extends LitElement {
         this.loopSourceStart = 0;
         this.loopSourceEnd   = this.duration;
         this.statusMsg       = 'Looping full video.';
+      },
+      zoomVideo: () => {
+        if (this.zoomSource?.trigger === 'video') {
+          this.zoomSource = null;
+          this.statusMsg  = 'Video zoom off.';
+          return;
+        }
+        const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
+        if (!video) { this._setWarning('No video loaded.'); return; }
+        const start = video.start ?? 0;
+        const end   = video.end   ?? this.duration;
+        if (start === 0 && (end == null || end >= this.duration)) {
+          this._setWarning('Video has no start/end offsets set; zoom has no effect.');
+          return;
+        }
+        this.zoomSource = { start, end, trigger: 'video' };
+        this.statusMsg  = 'Video zoom on.';
+        this._seekIntoZoomIfNeeded();
       },
       deleteVideo: () => {
         if (!this._appState?.videos.length) { this._setWarning('No videos saved.'); return; }
@@ -1040,18 +1059,19 @@ class LlamaApp extends LitElement {
           this.statusMsg  = 'Chapter zoom off.';
           return;
         }
-        if (!this.activeChapterId) {
-          this._setWarning('No active chapter. Open one first (co).');
+        const bounds = getChapterBounds(this.chapters, this.currentTime, this.duration);
+        if (!bounds || bounds.end == null) {
+          this._setWarning('No chapter at current position.');
           return;
         }
-        const chapter = this.chapters.find(c => c.id === this.activeChapterId);
-        if (!chapter) {
-          this._setWarning('Active chapter not found.');
-          return;
-        }
-        this.zoomSource = { start: chapter.start, end: chapter.end, trigger: 'chapter' };
+        this.zoomSource = { start: bounds.start, end: bounds.end, trigger: 'chapter' };
         this.statusMsg  = 'Chapter zoom on.';
         this._seekIntoZoomIfNeeded();
+      },
+      zoomOff: () => {
+        if (!this.zoomSource) { this._setWarning('No zoom active.'); return; }
+        this.zoomSource = null;
+        this.statusMsg  = 'Zoom off.';
       },
       videoInfo:     () => this._videoInfoModalEl?.show(),
       helpGeneral:   () => window.open(`${_siteOrigin()}/loopllama/v2/help/`, '_blank'),
@@ -1510,7 +1530,11 @@ class LlamaApp extends LitElement {
   }
 
   _seek(delta) {
-    this._jumpTo((this._vc?.getCurrentTime() ?? 0) + delta);
+    let t = (this._vc?.getCurrentTime() ?? 0) + delta;
+    if (this.looping && this.loopStart < this.loopEnd) {
+      t = Math.max(this.loopStart, Math.min(this.loopEnd, t));
+    }
+    this._jumpTo(t);
   }
 
   _onPlayPause() {
@@ -1748,6 +1772,7 @@ class LlamaApp extends LitElement {
   }
 
   _onSeekTo(e) {
+    this._clearLoopingIfActive();
     this._jumpTo(e.detail.time);
   }
 
@@ -2699,8 +2724,12 @@ class LlamaApp extends LitElement {
         return sec?.name ? `Section: ${sec.name}` : `Section: ${_fmtTimePlain(start)}`;
       }
       if (trigger === 'chapter') {
-        const ch = this.chapters.find(c => c.id === this.activeChapterId);
+        const ch = this.chapters.find(c => c.start === start);
         return ch?.name ? `Chapter: ${ch.name}` : `Chapter: ${_fmtTimePlain(start)}`;
+      }
+      if (trigger === 'video') {
+        const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
+        return video?.name ? `Video: ${video.name}` : `Video: ${_fmtTimePlain(start)} – ${_fmtTimePlain(end)}`;
       }
       return null;
     })();

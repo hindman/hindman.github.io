@@ -17,7 +17,7 @@ toc_icon: 'guitar'
     Create    | .     | cc      | ss      | .    | mm
     Edit      | ve    | ce      | se      | le   | me
     Loop      | vl    | cl      | sl      | .    | .
-    Zoom      | .     | cz      | sz      | lz   | .
+    Zoom      | vz    | cz      | sz      | lz   | .
     Fix-end   | .     | cf      | sf      | .    | .
     Delete... | vd    | cd      | sd      | ld   | md
 
@@ -30,6 +30,7 @@ toc_icon: 'guitar'
         Open...   | vo  vv
         Edit      | ve
         Loop      | vl
+        Zoom      | vz
         Delete... | vd
         Info      | vi
 
@@ -93,9 +94,11 @@ toc_icon: 'guitar'
         Redo            | ar  U
         --------------------------------
         Toggle timeline | at  t
+        Zoom off        | az  z
+        --------------------------------
         Recall message  | am
         --------------------------------
-        Options         | ao
+        Options         | ao  o
         --------------------------------
         Help            | ah  h
         Key bindings    | ak  k
@@ -110,6 +113,7 @@ toc_icon: 'guitar'
         vo | Open...
         ve | Edit
         vl | Loop
+        vz | Zoom
         vd | Delete...
         vi | Info
         --------------------------------
@@ -208,6 +212,8 @@ toc_icon: 'guitar'
         ar | Redo
         --------------------------------
         at | Toggle timeline
+        az | Zoom off
+        --------------------------------
         am | Recall message
         --------------------------------
         ao | Options
@@ -220,6 +226,7 @@ toc_icon: 'guitar'
         t  | at synonym
         h  | ah synonym
         k  | ak synonym
+        z  | az synonym
 
     Playback:
 

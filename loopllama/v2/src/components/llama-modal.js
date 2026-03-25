@@ -34,7 +34,12 @@ class LlamaModal extends LitElement {
   }
 
   _onShow()      { this._emit('ll-modal-open'); }
-  _onAfterHide() { this._emit('ll-modal-close'); }
+  _onAfterHide() {
+    // Shoelace restores focus to the trigger element (e.g. a menu button) after
+    // sl-after-hide fires, so defer the blur one tick to run after that restore.
+    setTimeout(() => document.activeElement?.blur(), 0);
+    this._emit('ll-modal-close');
+  }
 
   _onInitialFocus(e) {
     e.preventDefault();

@@ -122,7 +122,7 @@ class LlamaEditSectionModal extends LitElement {
       <llama-modal label="Edit Section" @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="field-row">
           <span class="field-label">Name</span>
-          <sl-input
+          <sl-input autocomplete="off"
             data-field="name"
             placeholder="Optional label (e.g. &quot;Verse&quot;, &quot;Solo&quot;)"
             .value=${this._name}
@@ -132,7 +132,7 @@ class LlamaEditSectionModal extends LitElement {
         </div>
         <div class="field-row">
           <span class="field-label">Start (m:ss)</span>
-          <sl-input
+          <sl-input autocomplete="off"
             data-field="time"
             placeholder="e.g. 1:23"
             .value=${this._time}
@@ -142,7 +142,7 @@ class LlamaEditSectionModal extends LitElement {
         </div>
         <div class="field-row">
           <span class="field-label">End (m:ss) — optional</span>
-          <sl-input
+          <sl-input autocomplete="off"
             data-field="end"
             placeholder=${endPlaceholder}
             .value=${this._end}

@@ -142,7 +142,7 @@ class LlamaJumpHistoryPicker extends LitElement {
     return html`
       <llama-modal label="Jump History" @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="filter-wrap">
-          <sl-input
+          <sl-input autocomplete="off"
             placeholder="Filter by time…"
             .value=${this._filter}
             @sl-input=${this._onFilterInput}

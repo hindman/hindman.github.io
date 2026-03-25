@@ -84,7 +84,7 @@ class LlamaJumpTimeModal extends LitElement {
         label="Jump to Time"
         @ll-modal-initial-focus=${this._onInitialFocus}
       >
-        <sl-input
+        <sl-input autocomplete="off"
           placeholder="e.g. 1:23 or 83"
           .value=${this._value}
           @sl-input=${this._onInput}

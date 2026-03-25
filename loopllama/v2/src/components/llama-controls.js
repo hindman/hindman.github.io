@@ -53,6 +53,7 @@ const MENUS = [
       { label: 'Open...', action: 'videoPickerRecent',  hint: 'vo · vv' },
       { label: 'Edit',     action: 'editVideo',         hint: 've'      },
       { label: 'Loop',     action: 'loopVideo',         hint: 'vl'      },
+      { label: 'Zoom',     action: 'zoomVideo',         hint: 'vz'      },
       { label: 'Delete...', action: 'deleteVideo',      hint: 'vd'      },
       { label: 'Info',     action: 'videoInfo',         hint: 'vi'      },
     ],
@@ -137,6 +138,8 @@ const MENUS = [
       { label: 'Redo', action: 'redo', hint: 'ar · U' },
       { type: 'divider' },
       { label: 'Toggle timeline', action: 'toggleZone2', hint: 'at · t' },
+      { label: 'Zoom off',        action: 'zoomOff',     hint: 'az · z'  },
+      { type: 'divider' },
       { label: 'Recall message',  action: 'msgRecall',   hint: 'am'      },
       { type: 'divider' },
       { label: 'Options', action: 'options', hint: 'ao · o' },
@@ -491,6 +494,7 @@ class LlamaControls extends LitElement {
     this.editScratchFocus  = 'start';
     this.editScratchDelta  = 1;
     this.activeEntityType  = 'any';
+    this._playPauseRef    = createRef();
     this._timeRef         = createRef();
     this._timeFocused     = false;
     this._startRef        = createRef();
@@ -657,6 +661,7 @@ class LlamaControls extends LitElement {
   //         'until-blur'      -- remove when the element loses focus
   flash(target, mode = 'timed') {
     const refs = {
+      playPause:    this._playPauseRef,
       time:         this._timeRef,
       speed:        this._speedRef,
       seekDelta:    this._seekDeltaRef,
@@ -698,7 +703,7 @@ class LlamaControls extends LitElement {
             <span class="ctrl-group-label">Play</span>
             <div class="ctrl-group-body">
               <sl-tooltip>${ttip('Play / pause', 'Space')}
-                <button class="btn-play-pause" @click=${() => this._emit('ll-play-pause')}>
+                <button class="btn-play-pause" ${ref(this._playPauseRef)} @click=${() => this._emit('ll-play-pause')}>
                   ${this.isPlaying ? 'Pause' : 'Play'}
                 </button>
               </sl-tooltip>
