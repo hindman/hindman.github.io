@@ -45,6 +45,7 @@ class LlamaDropdown extends LitElement {
 
     .hint {
       color: var(--ll-text-muted, #888);
+      padding-left: 1.5em;
     }
   `;
 
@@ -57,6 +58,21 @@ class LlamaDropdown extends LitElement {
     super();
     this.label = '';
     this.items = [];
+  }
+
+  open() {
+    const dropdown = this.renderRoot.querySelector('sl-dropdown');
+    const trigger  = this.renderRoot.querySelector('.trigger-btn');
+    if (!dropdown) return;
+    // sl-menu has no tabindex; focus the first enabled item via roving tabindex.
+    dropdown.show().then(() => {
+      this.renderRoot.querySelector('sl-menu-item:not([disabled])')?.focus();
+    });
+    // Shoelace calls focusOnTrigger() before hide(), leaving focus on the
+    // trigger button. Blur it after the panel finishes hiding.
+    dropdown.addEventListener('sl-after-hide', () => {
+      trigger?.blur();
+    }, { once: true });
   }
 
   _onSelect(e) {

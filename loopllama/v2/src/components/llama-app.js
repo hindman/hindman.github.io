@@ -635,9 +635,9 @@ class LlamaApp extends LitElement {
         this.seekDelta = choices[Math.min(idx + 1, choices.length - 1)];
         this._flash('seekDelta');
       },
-      prevEntity:    (count = 1) => this._navigateEntity('prev', count),
+      prevEntity:    (count = 1) => { this._clearLoopingIfActive(); this._navigateEntity('prev', count); },
       entityType:    () => { this.renderRoot.querySelector('llama-controls')?.focusEntitySelect(); this._flash('entitySelect', 'until-blur'); },
-      nextEntity:    (count = 1) => this._navigateEntity('next', count),
+      nextEntity:    (count = 1) => { this._clearLoopingIfActive(); this._navigateEntity('next', count); },
       jumpToStart:   () => {
         if (noVideo()) return;
         const target = this.looping ? this.loopStart : 0;
@@ -714,12 +714,12 @@ class LlamaApp extends LitElement {
         if (!this._appState?.videos.length) { this._setWarning('No videos saved.'); return; }
         this._videoPickerEl?.show('delete');
       },
-      jumpTime:      () => { this.renderRoot.querySelector('llama-controls')?.focusTimeInput(); this._flash('time', 'until-blur'); },
-      jumpSection:   () => this._openSectionsPicker('jump'),
-      jumpLoop:      () => this._openLoopsPicker('jump'),
-      jumpMark:      () => this._openMarksPicker('jump'),
-      jumpChapter:   () => this._openChapterPicker('jump'),
-      jumpHistory: () => this._jumpHistoryPickerEl?.show(),
+      jumpTime:      () => { this._clearLoopingIfActive(); this.renderRoot.querySelector('llama-controls')?.focusTimeInput(); this._flash('time', 'until-blur'); },
+      jumpSection:   () => { this._clearLoopingIfActive(); this._openSectionsPicker('jump'); },
+      jumpLoop:      () => { this._clearLoopingIfActive(); this._openLoopsPicker('jump'); },
+      jumpMark:      () => { this._clearLoopingIfActive(); this._openMarksPicker('jump'); },
+      jumpChapter:   () => { this._clearLoopingIfActive(); this._openChapterPicker('jump'); },
+      jumpHistory:   () => { this._clearLoopingIfActive(); this._jumpHistoryPickerEl?.show(); },
       jumpBack: () => {
         if (!this.jumps.length) { this._setWarning('No jump history.'); return; }
         if (this._jumpIdx === -1) {
@@ -770,7 +770,6 @@ class LlamaApp extends LitElement {
         if (this.looping) this._seekIntoLoopIfNeeded();
       },
       saveLoop: () => this._saveLoopModalEl?.show(),
-      openLoop: () => this._openLoopsPicker('load'),
       saveBack: () => {
         if (!this.loopSource) {
           this._setWarning('No source to save back to.');
@@ -914,7 +913,6 @@ class LlamaApp extends LitElement {
         this._saveCurrentState();
       },
       editSection:   () => this._editCurrentSection(),
-      openSection:   () => this._openSectionsPicker('open'),
       loopSection: () => {
         const bounds = getSectionBounds(this.sections, this.currentTime, this.duration);
         if (!bounds || bounds.end == null) {
@@ -986,7 +984,6 @@ class LlamaApp extends LitElement {
         this.statusMsg = 'Chapter created';
         this._saveCurrentState();
       },
-      openChapter:   () => this._openChapterPicker('open'),
       editChapter:   () => this._editCurrentChapter(),
       loopChapter: () => {
         const bounds = getChapterBounds(this.chapters, this.currentTime, this.duration);
@@ -1035,7 +1032,7 @@ class LlamaApp extends LitElement {
       },
       toggleZone2: () => {
         this.zone2Mode = this.zone2Mode === 'sections' ? 'chapters' : 'sections';
-        this.statusMsg = `Zone 2: ${this.zone2Mode}.`;
+        this.statusMsg = `Timeline displaying: ${this.zone2Mode}.`;
       },
       zoomChapter: () => {
         if (this.zoomSource?.trigger === 'chapter') {
@@ -1085,6 +1082,15 @@ class LlamaApp extends LitElement {
         else if (type === 'error') this.errorMsg = text;
         else this.statusMsg = text;
       },
+
+      openMenuVideo:   () => this.renderRoot.querySelector('llama-controls')?.openMenu('Video'),
+      openMenuChapter: () => this.renderRoot.querySelector('llama-controls')?.openMenu('Chapter'),
+      openMenuSection: () => this.renderRoot.querySelector('llama-controls')?.openMenu('Section'),
+      openMenuLoop:    () => this.renderRoot.querySelector('llama-controls')?.openMenu('Loop'),
+      openMenuMark:    () => this.renderRoot.querySelector('llama-controls')?.openMenu('Mark'),
+      openMenuJump:    () => this.renderRoot.querySelector('llama-controls')?.openMenu('Jump'),
+      openMenuData:    () => this.renderRoot.querySelector('llama-controls')?.openMenu('Data'),
+      openMenuApp:     () => this.renderRoot.querySelector('llama-controls')?.openMenu('App'),
     };
   }
 
@@ -1567,6 +1573,14 @@ class LlamaApp extends LitElement {
     if (t == null) return;
     if (t < this.loopStart || t >= this.loopEnd) {
       this._vc.seekTo(this.loopStart);
+    }
+  }
+
+  _clearLoopingIfActive() {
+    if (this.looping) {
+      this.looping = false;
+      this._saveCurrentState();
+      this.statusMsg = 'Looping off.';
     }
   }
 

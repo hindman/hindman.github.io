@@ -31,12 +31,17 @@ export const BINDINGS = {
   '/':          { handler: 'entityType',    desc: 'Entity type dropdown' },
   '.':          { handler: 'nextEntity',    desc: 'Next entity' },
   'Enter':      { handler: 'jumpToStart',   desc: 'Jump to start' },
-  'u':          { handler: 'undo',          desc: 'Undo' },
-  'U':          { handler: 'redo',          desc: 'Redo' },
-  '?':          { handler: 'helpKeys',      desc: 'Key bindings help' },
-  'o':          { handler: 'options',       desc: 'Options' },
-  'y':          { handler: 'videoUrl',      desc: 'Switch to YouTube URL' },
-  '\\':         { handler: 'editScratch',   desc: 'Edit scratch loop (synonym for le)' },
+  'y':          { handler: 'videoUrl',      desc: 'Switch to YouTube URL (synonym: vu)' },
+  '\\':         { handler: 'editScratch',   desc: 'Edit scratch loop (synonym: le)' },
+
+  // --- Single-key synonyms ---
+
+  'u':          { handler: 'undo',        desc: 'Undo (synonym: au)' },
+  'U':          { handler: 'redo',        desc: 'Redo (synonym: ar)' },
+  't':          { handler: 'toggleZone2', desc: 'Toggle timeline (synonym: at)' },
+  'h':          { handler: 'helpGeneral', desc: 'General help (synonym: ah)' },
+  'k':          { handler: 'helpKeys',    desc: 'Key bindings (synonym: ak)' },
+  'o':          { handler: 'options',     desc: 'Options (synonym: ao)' },
 
   // --- Prefix-key bindings ---
 
@@ -59,13 +64,13 @@ export const BINDINGS = {
   }},
 
   'v': { completions: {
-    'u': { handler: 'videoUrl',     desc: 'Switch to YouTube video via URL' },
-    'v': { handler: 'videoPickerRecent', desc: 'Open video picker (recent)' },
-    'o': { handler: 'videoPickerAlpha',  desc: 'Open video picker (alphabetical)' },
-    'e': { handler: 'editVideo',    desc: 'Edit video attributes' },
-    'i': { handler: 'videoInfo',    desc: 'Video info' },
-    'd': { handler: 'deleteVideo',  desc: 'Delete current video' },
-    'l': { handler: 'loopVideo',    desc: 'Loop: full video as scratch loop' },
+    'u': { handler: 'videoUrl',          desc: 'Switch to YouTube video via URL' },
+    'o': { handler: 'videoPickerRecent', desc: 'Open video picker' },
+    'v': { handler: 'videoPickerRecent', desc: 'Open video picker (synonym: vo)' },
+    'e': { handler: 'editVideo',         desc: 'Edit video attributes' },
+    'i': { handler: 'videoInfo',         desc: 'Video info' },
+    'd': { handler: 'deleteVideo',       desc: 'Delete current video' },
+    'l': { handler: 'loopVideo',         desc: 'Loop: full video as scratch loop' },
   }},
 
   'j': { completions: {
@@ -81,22 +86,17 @@ export const BINDINGS = {
 
   'l': { completions: {
     'l': { handler: 'toggleLoop',        desc: 'Toggle looping' },
-    'o': { handler: 'openLoop',          desc: 'Open saved loop' },
     'n': { handler: 'saveLoop',          desc: 'Save new loop' },
     'b': { handler: 'saveBack',          desc: 'Save back to loop source' },
-    '=': { handler: 'resetLoopToSource', desc: 'Reset loop to source' },
-    'Backspace': { handler: 'unlinkLoopSource', desc: 'Unlink loop source' },
+    'r': { handler: 'resetLoopToSource', desc: 'Reset loop to source' },
+    'u': { handler: 'unlinkLoopSource',  desc: 'Unlink loop source' },
     'e': { handler: 'editScratch',       desc: 'Edit scratch loop' },
     'd': { handler: 'deleteLoop',        desc: 'Delete a loop' },
     'z': { handler: 'zoomLoop',          desc: 'Toggle loop zoom' },
-    's': { handler: 'loopSection',       desc: 'Loop current section (synonym: sl)' },
-    'c': { handler: 'loopChapter',       desc: 'Loop current chapter (synonym: cl)' },
-    'v': { handler: 'loopVideo',         desc: 'Loop full video (synonym: vl)' },
   }},
 
   'c': { completions: {
     'c': { handler: 'setChapter',    desc: 'Create chapter divider here' },
-    'o': { handler: 'openChapter',   desc: 'Open chapter' },
     'e': { handler: 'editChapter',   desc: 'Edit current chapter' },
     'l': { handler: 'loopChapter',   desc: 'Loop: current chapter as scratch loop' },
     'd': { handler: 'deleteChapter', desc: 'Delete a chapter' },
@@ -107,15 +107,31 @@ export const BINDINGS = {
   's': { completions: {
     's': { handler: 'setSection',    desc: 'Set section divider here' },
     'e': { handler: 'editSection',   desc: 'Edit current section' },
-    'o': { handler: 'openSection',   desc: 'Open section' },
     'l': { handler: 'loopSection',   desc: 'Loop current section' },
     'd': { handler: 'deleteSection', desc: 'Delete a section' },
     'z': { handler: 'zoomSection',   desc: 'Toggle section zoom' },
     'f': { handler: 'fixSection',    desc: 'Fix section end to derived boundary' },
   }},
 
-  't': { completions: {
-    't': { handler: 'toggleZone2',   desc: 'Toggle zone 2: sections / chapters' },
+  '`': { completions: {
+    'v': { handler: 'openMenuVideo',   desc: 'Open Video menu' },
+    'c': { handler: 'openMenuChapter', desc: 'Open Chapter menu' },
+    's': { handler: 'openMenuSection', desc: 'Open Section menu' },
+    'l': { handler: 'openMenuLoop',    desc: 'Open Loop menu' },
+    'm': { handler: 'openMenuMark',    desc: 'Open Mark menu' },
+    'j': { handler: 'openMenuJump',    desc: 'Open Jump menu' },
+    'd': { handler: 'openMenuData',    desc: 'Open Data menu' },
+    'a': { handler: 'openMenuApp',     desc: 'Open App menu' },
+  }},
+
+  'a': { completions: {
+    'u': { handler: 'undo',        desc: 'Undo' },
+    'r': { handler: 'redo',        desc: 'Redo' },
+    't': { handler: 'toggleZone2', desc: 'Toggle timeline' },
+    'm': { handler: 'msgRecall',   desc: 'Recall last message' },
+    'o': { handler: 'options',     desc: 'Options' },
+    'h': { handler: 'helpGeneral', desc: 'General help' },
+    'k': { handler: 'helpKeys',    desc: 'Key bindings' },
   }},
 
   'm': { completions: {
@@ -124,22 +140,17 @@ export const BINDINGS = {
     'd': { handler: 'deleteMark', desc: 'Delete a mark' },
   }},
 
-  'h': { completions: {
-    'h': { handler: 'helpGeneral', desc: 'General help' },
-    'k': { handler: 'helpKeys',    desc: 'Key bindings' },
-  }},
-
   'd': { completions: {
-    'd': { handler: 'deleteData',  desc: 'Delete data modal' },
+    's': { handler: 'dataSave',    desc: 'Save local data to cloud' },
+    'd': { handler: 'dataSave',    desc: 'Save local data to cloud (synonym: ds)' },
+    'D': { handler: 'deleteData',  desc: 'Delete data modal' },
+    'r': { handler: 'dataRead',    desc: 'Read cloud data to local' },
+    'c': { handler: 'dataCompare', desc: 'Compare local vs cloud' },
     'e': { handler: 'exportAll',   desc: 'Export data as JSON' },
     'i': { handler: 'importData',  desc: 'Import data from JSON' },
     'I': { handler: 'inspectData', desc: 'Inspect data as JSON' },
     'v': { handler: 'shareVideo',  desc: 'Share video as JSON' },
     'l': { handler: 'shareLoop',   desc: 'Share loop via URL' },
-    's': { handler: 'dataSave',    desc: 'Save local data to cloud' },
-    'r': { handler: 'dataRead',    desc: 'Read cloud data to local' },
-    'c': { handler: 'dataCompare', desc: 'Compare local vs cloud' },
-    'm': { handler: 'msgRecall',   desc: 'Recall last message' },
   }},
 };
 

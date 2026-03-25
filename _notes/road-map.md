@@ -5,9 +5,8 @@ Key bindings and menu items:
 
     _pages/loopllama-v2-keybindings.md
 
-    - code stages 1 - 6.
-
-When page loads the timeline arrives late, pushing controls down. Avoidable?
+    x code stages 1 - 6.
+    - test/check
 
 Notes files (_notes): editing/organizing pass.
 

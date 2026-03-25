@@ -42,7 +42,7 @@ class LlamaTimeline extends LitElement {
     }
 
     .no-video {
-      height: 40px;
+      height: 75px; /* matches zone--play(24) + zone--section(18) + zone--mark(12) + zone--loop(21) */
       display: flex;
       align-items: center;
       padding: 0 var(--ll-pad-lg, 1rem);
