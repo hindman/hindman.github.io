@@ -44,7 +44,7 @@ class LlamaDropdown extends LitElement {
     }
 
     .hint {
-      color: var(--ll-text-muted, #888);
+      opacity: 0.55;
       padding-left: 1.5em;
     }
   `;
@@ -75,6 +75,14 @@ class LlamaDropdown extends LitElement {
     }, { once: true });
   }
 
+  _onMenuOpen() {
+    this.dispatchEvent(new CustomEvent('ll-menu-open', { bubbles: true, composed: true }));
+  }
+
+  _onMenuClose() {
+    this.dispatchEvent(new CustomEvent('ll-menu-close', { bubbles: true, composed: true }));
+  }
+
   _onSelect(e) {
     const action = e.detail.item.value;
     const label  = e.detail.item.textContent.trim();
@@ -87,7 +95,7 @@ class LlamaDropdown extends LitElement {
 
   render() {
     return html`
-      <sl-dropdown @sl-select=${this._onSelect}>
+      <sl-dropdown @sl-show=${this._onMenuOpen} @sl-after-hide=${this._onMenuClose} @sl-select=${this._onSelect}>
         <button slot="trigger" class="trigger-btn" part="trigger">
           ${this.label}<span class="caret">▾</span>
         </button>

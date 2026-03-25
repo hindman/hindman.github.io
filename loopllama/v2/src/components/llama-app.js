@@ -2790,6 +2790,8 @@ class LlamaApp extends LitElement {
           @ll-entity-type-change=${this._onEntityTypeChange}
           @ll-invalid-time=${() => this._setWarning('Invalid time format.')}
           @ll-menu-select=${this._onMenuSelect}
+          @ll-menu-open=${() => this._kb?.disable()}
+          @ll-menu-close=${() => this._kb?.enable()}
         ></llama-controls>
 
         <llama-current
