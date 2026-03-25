@@ -13,7 +13,7 @@
 #   inv follow [--f5] [--ll]
 #   inv status [--f5] [--ll]
 #   inv clear [--f5] [--ll]
-#   inv deploy [--push]
+#   inv deploy
 #
 ####
 
@@ -224,9 +224,9 @@ def clear(c, f5 = False, ll = False):
             c.run(f'rm -f {path}')
 
 @task
-def deploy(c, push = False):
+def deploy(c):
     '''
-    Builds/deploys LoopLlama, with git commit: [--push]
+    Builds/deploys LoopLlama, with git commit
     '''
     # Read the deployments data file to compute the next build number.
     deployments = read_json(PATHS.ll_deployments)
@@ -282,13 +282,10 @@ def deploy(c, push = False):
     ]
     c.run(' '.join(args))
 
-    # Commit and list the added/changed files.
+    # Commit, list added/changed files, print build number.
     c.run(f"git commit -m 'v2 deploy {now}'")
     c.run('git show --stat HEAD')
-
-    # Push.
-    if push:
-        c.run('git push origin master')
+    print(f'# Build number: {build_num}')
 
 @task
 def loc(c):

@@ -3,12 +3,13 @@
 
 Key bindings and menu items:
 
-    _pages/loopllama-v2-keybindings.md
+    - binding ccanges:
+      - lb => ls
+      - dD => dx
 
-    x code stages 1 - 6.
     - test/check
-
-Notes files (_notes): editing/organizing pass.
+      - all menu actions
+      - tolerant nav when looping
 
 Docs: help text: draft
 
@@ -27,6 +28,10 @@ Text elements: Current panel
 Code review and refactor.
 
 Real-world usage and testing.
+
+Docs:
+  - data-schema.md
+  - dev-notes.md
 
 Docs: F5 post: draft
 
