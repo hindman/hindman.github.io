@@ -87,7 +87,7 @@ export const BINDINGS = {
   'l': { completions: {
     'l': { handler: 'toggleLoop',        desc: 'Toggle looping' },
     'n': { handler: 'saveLoop',          desc: 'Save new loop' },
-    'b': { handler: 'saveBack',          desc: 'Save back to loop source' },
+    's': { handler: 'saveBack',          desc: 'Save back to loop source' },
     'r': { handler: 'resetLoopToSource', desc: 'Reset loop to source' },
     'u': { handler: 'unlinkLoopSource',  desc: 'Unlink loop source' },
     'e': { handler: 'editScratch',       desc: 'Edit scratch loop' },
@@ -143,7 +143,7 @@ export const BINDINGS = {
   'd': { completions: {
     's': { handler: 'dataSave',    desc: 'Save local data to cloud' },
     'd': { handler: 'dataSave',    desc: 'Save local data to cloud (synonym: ds)' },
-    'D': { handler: 'deleteData',  desc: 'Delete data modal' },
+    'x': { handler: 'deleteData',  desc: 'Delete data modal' },
     'r': { handler: 'dataRead',    desc: 'Read cloud data to local' },
     'c': { handler: 'dataCompare', desc: 'Compare local vs cloud' },
     'e': { handler: 'exportAll',   desc: 'Export data as JSON' },

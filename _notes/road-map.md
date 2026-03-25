@@ -3,10 +3,6 @@
 
 Key bindings and menu items:
 
-    - binding ccanges:
-      - lb => ls
-      - dD => dx
-
     - test/check
       - all menu actions
       - tolerant nav when looping

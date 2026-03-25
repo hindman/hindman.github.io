@@ -166,6 +166,7 @@ def kill(c, f5 = False, ll = False, keep = False):
             cmd = f"echo '# kill {pid}'"
         else:
             cmd = f'kill {pid}'
+            print( f'# killing {pid}')
         c.run(cmd, warn = True)
 
         # Delete PID file.
@@ -210,7 +211,7 @@ def status(c, f5 = False, ll = False):
     apps = get_apps(f5, ll)
     for a in apps:
         print_app_heading(a)
-        c.run(f'cat {a.pid_file}', warn = True)
+        c.run(f'cat {a.pid_file} 2>&1 | ack -v "No such file"', warn = True)
         c.run(f'ps -ef | ack {a.ps_patt}', warn = True)
 
 @task

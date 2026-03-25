@@ -87,7 +87,7 @@ const MENUS = [
       { label: 'Delete...', action: 'deleteLoop',        hint: 'ld'      },
       { type: 'divider' },
       { label: 'Save new',        action: 'saveLoop',          hint: 'ln' },
-      { label: 'Save to source',  action: 'saveBack',          hint: 'lb' },
+      { label: 'Save to source',  action: 'saveBack',          hint: 'ls' },
       { label: 'Reset to source', action: 'resetLoopToSource', hint: 'lr' },
       { label: 'Unlink source',   action: 'unlinkLoopSource',  hint: 'lu' },
     ],
@@ -127,7 +127,7 @@ const MENUS = [
       { label: 'Read from cloud', action: 'dataRead',    hint: 'dr'      },
       { label: 'Compare',         action: 'dataCompare', hint: 'dc'      },
       { type: 'divider' },
-      { label: 'Delete...', action: 'deleteData', hint: 'dD' },
+      { label: 'Delete...', action: 'deleteData', hint: 'dx' },
     ],
   },
   {
