@@ -273,7 +273,7 @@ class LlamaVideoInfoModal extends LitElement {
           ${this._renderMarks()}
         </div>
         <div slot="footer">
-          <sl-button @click=${this.hide}>Close</sl-button>
+          <sl-button variant="primary" @click=${this.hide}>Close</sl-button>
         </div>
       </llama-modal>
     `;

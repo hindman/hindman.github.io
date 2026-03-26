@@ -35,10 +35,16 @@ class LlamaModal extends LitElement {
 
   _onShow()      { this._emit('ll-modal-open'); }
   _onAfterHide() {
-    // Shoelace restores focus to the trigger element (e.g. a menu button) after
-    // sl-after-hide fires, so defer the blur one tick to run after that restore.
-    setTimeout(() => document.activeElement?.blur(), 0);
-    this._emit('ll-modal-close');
+    // Defer both the blur and the ll-modal-close event by one tick.
+    // Shoelace restores focus to the trigger element after sl-after-hide, so
+    // we need to blur after that restore. Deferring ll-modal-close also ensures
+    // that re-enabling the keyboard controller happens after the current event
+    // loop tick, preventing any in-flight keydown event (e.g. the Enter that
+    // closed the modal) from being processed by the keyboard controller.
+    setTimeout(() => {
+      document.activeElement?.blur();
+      this._emit('ll-modal-close');
+    }, 0);
   }
 
   _onInitialFocus(e) {

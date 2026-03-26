@@ -117,6 +117,7 @@ class LlamaDeleteDataModal extends LitElement {
     this._videos           = [];
     this._currentVideoId   = null;
     this._currentVideoName = null;
+    this._keyHandler       = null;
   }
 
   // initialMode: 'current' (default) or 'videos'.
@@ -133,10 +134,32 @@ class LlamaDeleteDataModal extends LitElement {
     this._currentVideoName = currentVideoName ?? null;
     this._checked          = preCheckedVideoId ? { [preCheckedVideoId]: true } : {};
     this.renderRoot.querySelector('llama-modal')?.show();
+    this._addKeyHandler();
   }
 
   hide() {
     this.renderRoot.querySelector('llama-modal')?.hide();
+  }
+
+  _addKeyHandler() {
+    if (this._keyHandler) return;
+    this._keyHandler = (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        this._confirm();
+      }
+    };
+    document.addEventListener('keydown', this._keyHandler);
+  }
+
+  _removeKeyHandler() {
+    if (!this._keyHandler) return;
+    document.removeEventListener('keydown', this._keyHandler);
+    this._keyHandler = null;
+  }
+
+  _onModalClose() {
+    this._removeKeyHandler();
   }
 
   _isChecked(id) {
@@ -291,7 +314,7 @@ class LlamaDeleteDataModal extends LitElement {
   render() {
     const count = this._getSelectedCount();
     return html`
-      <llama-modal label="Delete Video Data">
+      <llama-modal label="Delete Video Data" @ll-modal-close=${this._onModalClose}>
         <div class="mode-toggle">
           <button
             class="mode-btn ${this._mode === 'current' ? 'active' : ''}"

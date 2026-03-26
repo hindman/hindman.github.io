@@ -83,7 +83,7 @@ class LlamaConfirmModal extends LitElement {
       >
         ${this.lines.map(line => html`<p>${line}</p>`)}
         <div slot="footer" style="display:flex; gap:0.5rem; justify-content:flex-end">
-          <sl-button ${ref(this._confirmRef)} @click=${this._onYes}>${this.confirmLabel}</sl-button>
+          <sl-button variant="primary" ${ref(this._confirmRef)} @click=${this._onYes}>${this.confirmLabel}</sl-button>
           ${this.altLabel ? html`
             <sl-button ${ref(this._altRef)} @click=${this._onAlt}>${this.altLabel}</sl-button>
           ` : ''}

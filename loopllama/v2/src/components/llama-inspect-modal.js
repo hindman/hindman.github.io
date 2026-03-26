@@ -72,7 +72,7 @@ class LlamaInspectModal extends LitElement {
       >
         <pre class="json-pre" tabindex="0" @keydown=${this._onKeyDown}>${this._json}</pre>
         <div slot="footer">
-          <sl-button @click=${this.hide}>Close</sl-button>
+          <sl-button variant="primary" @click=${this.hide}>Close</sl-button>
         </div>
       </llama-modal>
     `;
