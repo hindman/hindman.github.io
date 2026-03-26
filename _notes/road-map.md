@@ -5,8 +5,21 @@ Key bindings and menu items:
 
     - test/check
       x tolerant nav when looping
-      - all menu actions
-        - check everything again from the start.
+      - test menu actions and key bindings
+        x Video
+        x Chapter
+        - Section
+        - Loop
+        x Mark
+        x Jump
+        - Data
+        - App
+
+    video-info modal. (1) Our other modals (eg section-edit, video-edit) style
+    the default button with a blue that fits the rest of the design. But the
+    video-info modal does not. (2) Both Enter and Esc should exit the modal --
+    and they do. But Enter has the side effect of sending Enter to the main
+    app, jumping the playhead to the video/loop start.
 
 User docs: help text: draft
 
