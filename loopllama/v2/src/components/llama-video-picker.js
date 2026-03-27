@@ -237,7 +237,7 @@ class LlamaVideoPicker extends LitElement {
     const title = isDelete ? 'Delete Video' : isRestore ? 'Unstash Video' : 'Open Video';
     return html`
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
-        ${isRestore ? html`<p class="video-sub restore-desc">Restores a video to its prior version — before the last video replacement during a data read, data import, or video share. Selecting again swaps back.</p>` : ''}
+        ${isRestore ? html`<p class="video-sub restore-desc">Restores a video to its prior version — before the last video replacement during a data read from cloud, data import from JSON, video share via URL, or unstash.</p>` : ''}
         <div class="filter-wrap">
           <sl-input autocomplete="off"
             placeholder="Filter by name…"
