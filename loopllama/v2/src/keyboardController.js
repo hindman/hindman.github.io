@@ -71,16 +71,13 @@ export const BINDINGS = {
     'e': { handler: 'editVideo',         desc: 'Edit video attributes' },
     'i': { handler: 'videoInfo',         desc: 'Video info' },
     'd': { handler: 'deleteVideo',       desc: 'Delete current video' },
+    'r': { handler: 'restoreVideo',      desc: 'Restore video from stash' },
     'l': { handler: 'loopVideo',         desc: 'Loop: full video as scratch loop' },
     'z': { handler: 'zoomVideo',         desc: 'Toggle video zoom' },
   }},
 
   'j': { completions: {
-    'c': { handler: 'jumpChapter',  desc: 'Jump to chapter' },
     'j': { handler: 'jumpTime',     desc: 'Jump by time' },
-    's': { handler: 'jumpSection',  desc: 'Jump to section' },
-    'l': { handler: 'jumpLoop',     desc: 'Jump to loop' },
-    'm': { handler: 'jumpMark',     desc: 'Jump to mark' },
     'h': { handler: 'jumpHistory',  desc: 'Jump history picker' },
     'b': { handler: 'jumpBack',     desc: 'Jump back in history' },
     'f': { handler: 'jumpForward',  desc: 'Jump forward in history' },
@@ -93,6 +90,7 @@ export const BINDINGS = {
     'r': { handler: 'resetLoopToSource', desc: 'Reset loop to source' },
     'u': { handler: 'unlinkLoopSource',  desc: 'Unlink loop source' },
     'e': { handler: 'editScratch',       desc: 'Edit scratch loop' },
+    'j': { handler: 'jumpLoop',          desc: 'Jump to loop' },
     'd': { handler: 'deleteLoop',        desc: 'Delete a loop' },
     'z': { handler: 'zoomLoop',          desc: 'Toggle loop zoom' },
   }},
@@ -101,6 +99,7 @@ export const BINDINGS = {
     'c': { handler: 'setChapter',    desc: 'Create chapter divider here' },
     'e': { handler: 'editChapter',   desc: 'Edit current chapter' },
     'l': { handler: 'loopChapter',   desc: 'Loop: current chapter as scratch loop' },
+    'j': { handler: 'jumpChapter',   desc: 'Jump to chapter' },
     'd': { handler: 'deleteChapter', desc: 'Delete a chapter' },
     'z': { handler: 'zoomChapter',   desc: 'Toggle chapter zoom' },
     'f': { handler: 'fixChapter',    desc: 'Fix chapter end to derived boundary' },
@@ -110,6 +109,7 @@ export const BINDINGS = {
     's': { handler: 'setSection',    desc: 'Set section divider here' },
     'e': { handler: 'editSection',   desc: 'Edit current section' },
     'l': { handler: 'loopSection',   desc: 'Loop current section' },
+    'j': { handler: 'jumpSection',   desc: 'Jump to section' },
     'd': { handler: 'deleteSection', desc: 'Delete a section' },
     'z': { handler: 'zoomSection',   desc: 'Toggle section zoom' },
     'f': { handler: 'fixSection',    desc: 'Fix section end to derived boundary' },
@@ -127,6 +127,7 @@ export const BINDINGS = {
   }},
 
   'a': { completions: {
+    'c': { handler: 'copyTime',    desc: 'Copy current time to clipboard' },
     'u': { handler: 'undo',        desc: 'Undo' },
     'r': { handler: 'redo',        desc: 'Redo' },
     't': { handler: 'toggleZone2', desc: 'Toggle timeline' },
@@ -140,6 +141,7 @@ export const BINDINGS = {
   'm': { completions: {
     'm': { handler: 'setMark',    desc: 'Set mark here' },
     'e': { handler: 'editMark',   desc: 'Edit a mark' },
+    'j': { handler: 'jumpMark',   desc: 'Jump to mark' },
     'd': { handler: 'deleteMark', desc: 'Delete a mark' },
   }},
 

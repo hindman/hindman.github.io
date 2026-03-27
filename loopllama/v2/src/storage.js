@@ -96,6 +96,11 @@ function _migrateAppState(state) {
     }
     state.schema_version = 8;
   }
+  // v8 → v9: add stashes dict for replace-recovery.
+  if ((state.schema_version ?? 0) < 9) {
+    if (!state.stashes) state.stashes = {};
+    state.schema_version = 9;
+  }
   return state;
 }
 
@@ -124,7 +129,8 @@ function _reorderVideo(v) {
 // single-value fields first, then options, then videos.
 function _reorderState(state) {
   const { schema_version, currentVideoId, options, videos } = state;
-  const known = new Set(['schema_version','currentVideoId','options','videos']);
+  // stashes is local-only; excluded from export/inspect via the known set.
+  const known = new Set(['schema_version','currentVideoId','options','videos','stashes']);
   const extra = Object.fromEntries(Object.entries(state).filter(([k]) => !known.has(k)));
   return { schema_version, currentVideoId, ...extra, options,
            videos: (videos ?? []).map(_reorderVideo) };

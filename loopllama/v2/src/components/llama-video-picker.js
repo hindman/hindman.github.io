@@ -58,6 +58,10 @@ class LlamaVideoPicker extends LitElement {
     .video-row.mode-delete.selected {
       border-color: var(--sl-color-danger-600, #c0392b);
     }
+    .video-row.mode-restore:hover,
+    .video-row.mode-restore.selected {
+      border-color: var(--ll-accent-warm, #e3a857);
+    }
     .video-primary {
       font-size: var(--ll-text-base, 1.05rem);
     }
@@ -71,12 +75,16 @@ class LlamaVideoPicker extends LitElement {
       font-size: var(--ll-text-sm, 0.85rem);
       padding: 0.5rem;
     }
+    .restore-desc {
+      margin: -0.5rem 0 1.25rem;
+    }
   `;
 
   static properties = {
     videos:         { type: Array },
     currentVideoId: { type: String },
     mode:           { type: String },
+    stashes:        { type: Object },
     _filter:        { state: true },
     _selIdx:        { state: true },
     _sortMode:      { state: true },
@@ -87,6 +95,7 @@ class LlamaVideoPicker extends LitElement {
     this.videos         = [];
     this.currentVideoId = null;
     this.mode           = 'switch';
+    this.stashes        = {};
     this._filter        = '';
     this._selIdx        = 0;
     this._sortMode      = 'recent';
@@ -148,6 +157,12 @@ class LlamaVideoPicker extends LitElement {
         bubbles: true,
         composed: true,
       }));
+    } else if (this.mode === 'restore') {
+      this.dispatchEvent(new CustomEvent('ll-restore-video', {
+        detail: { id: video.id },
+        bubbles: true,
+        composed: true,
+      }));
     } else {
       this.dispatchEvent(new CustomEvent('ll-pick-video', {
         detail: { videoId: video.id },
@@ -195,7 +210,9 @@ class LlamaVideoPicker extends LitElement {
 
   _filtered() {
     const q = this._filter.trim().toLowerCase();
-    const sorted = this._sorted();
+    const sorted = this.mode === 'restore'
+      ? this._sorted().filter(v => this.stashes[v.id])
+      : this._sorted();
     if (!q) return sorted;
     return sorted.filter(v =>
       (v.name || '').toLowerCase().includes(q) ||
@@ -214,11 +231,13 @@ class LlamaVideoPicker extends LitElement {
   }
 
   render() {
-    const filtered  = this._filtered();
-    const isDelete  = this.mode === 'delete';
-    const title = isDelete ? 'Delete Video' : 'Open Video';
+    const filtered   = this._filtered();
+    const isDelete   = this.mode === 'delete';
+    const isRestore  = this.mode === 'restore';
+    const title = isDelete ? 'Delete Video' : isRestore ? 'Unstash Video' : 'Open Video';
     return html`
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
+        ${isRestore ? html`<p class="video-sub restore-desc">Restores a video to its prior version — before the last video replacement during a data read, data import, or video share. Selecting again swaps back.</p>` : ''}
         <div class="filter-wrap">
           <sl-input autocomplete="off"
             placeholder="Filter by name…"
@@ -234,7 +253,7 @@ class LlamaVideoPicker extends LitElement {
             ? filtered.map((v, i) => html`
                 <div
                   class="video-row
-                    ${isDelete ? 'mode-delete' : ''}
+                    ${isDelete ? 'mode-delete' : isRestore ? 'mode-restore' : ''}
                     ${v.id === this.currentVideoId ? 'current' : ''}
                     ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(v)}

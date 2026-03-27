@@ -31,6 +31,7 @@ class LlamaTimeline extends LitElement {
   static styles = css`
     :host {
       display: block;
+      position: relative;
     }
 
     .timeline-wrap {
@@ -63,6 +64,21 @@ class LlamaTimeline extends LitElement {
 
     .zone--play:hover .play-dot {
       transform: translate(-50%, -50%) scale(1.4);
+    }
+
+    /* Hover time label: floats above the play zone, positioned relative to :host */
+    .play-hover-time {
+      position: absolute;
+      top: -16px;
+      font-size: 0.72rem;
+      color: #ddd;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 1px 5px;
+      border-radius: 3px;
+      pointer-events: none;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      z-index: 20;
     }
 
     /* Track: a thick horizontal line centered in the zone */
@@ -251,6 +267,8 @@ class LlamaTimeline extends LitElement {
     scopeEnd:    { type: Number },
     zoomed:      { type: Boolean },
     _zoneWidth:  { type: Number, state: true },
+    _hoverX:     { type: Number, state: true },
+    _hoverTime:  { type: Number, state: true },
   };
 
   constructor() {
@@ -270,6 +288,8 @@ class LlamaTimeline extends LitElement {
     this.zoomed      = false;
     this._zoneWidth  = 0;
     this._ro         = null;
+    this._hoverX     = null;
+    this._hoverTime  = null;
   }
 
   firstUpdated() {
@@ -335,7 +355,6 @@ class LlamaTimeline extends LitElement {
       const endPct   = r.end != null ? this._pct(r.end) : 100;
       const widthPct = endPct - leftPct;
       const widthPx  = (widthPct / 100) * this._zoneWidth;
-      const showLabel  = widthPx >= r.name.length * 7 + 8;
       const type       = this.zone2Mode === 'chapters' ? 'Chapter' : 'Section';
       const parityClass = i % 2 === 0 ? 'section-region--even' : 'section-region--odd';
       const currentClass = r.isCurrent ? 'section-region--current' : parityClass;
@@ -346,7 +365,7 @@ class LlamaTimeline extends LitElement {
             class="section-region ${currentClass}"
             style="left: ${leftPct}%; width: ${widthPct}%"
             @click=${() => this._onSectionClick(r)}
-          >${showLabel ? html`<span class="section-label">${r.name}</span>` : ''}</div>
+          ><span class="section-label">${r.name}</span></div>
         </sl-tooltip>
       `;
     });
@@ -451,6 +470,21 @@ class LlamaTimeline extends LitElement {
     return els;
   }
 
+  _onPlayZoneMouseMove(e) {
+    if (!this.duration) return;
+    const start = this.scopeStart ?? 0;
+    const end   = this.scopeEnd   ?? this.duration;
+    const rect  = e.currentTarget.getBoundingClientRect();
+    const pct   = (e.clientX - rect.left) / rect.width;
+    this._hoverTime = Math.max(start, Math.min(end, start + pct * (end - start)));
+    this._hoverX    = e.clientX - rect.left;
+  }
+
+  _onPlayZoneMouseLeave() {
+    this._hoverTime = null;
+    this._hoverX    = null;
+  }
+
   _fireSeekTo(time) {
     this.dispatchEvent(new CustomEvent('ll-seek-to', {
       bubbles: true, composed: true, detail: { time },
@@ -500,7 +534,11 @@ class LlamaTimeline extends LitElement {
     return html`
       <div class="timeline-wrap ${this.zoomed ? 'zoomed' : ''}">
 
-        <div class="zone--play" @click=${this._onPlayZoneClick}>
+        <div class="zone--play"
+          @click=${this._onPlayZoneClick}
+          @mousemove=${this._onPlayZoneMouseMove}
+          @mouseleave=${this._onPlayZoneMouseLeave}
+        >
           <div class="play-track">
             <div class="play-fill" style="width: ${phPct}%"></div>
           </div>
@@ -514,6 +552,7 @@ class LlamaTimeline extends LitElement {
         <div class="zone--loop">${this._renderLoops()}</div>
 
       </div>
+      ${this._hoverTime != null ? html`<span class="play-hover-time" style="left: ${this._hoverX}px">${this._fmt(this._hoverTime)}</span>` : ''}
     `;
   }
 }

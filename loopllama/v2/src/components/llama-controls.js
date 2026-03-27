@@ -55,6 +55,7 @@ const MENUS = [
       { label: 'Loop',     action: 'loopVideo',         hint: 'vl'      },
       { label: 'Zoom',     action: 'zoomVideo',         hint: 'vz'      },
       { label: 'Delete...', action: 'deleteVideo',      hint: 'vd'      },
+      { label: 'Unstash...', action: 'restoreVideo',   hint: 'vr'      },
       { label: 'Info',     action: 'videoInfo',         hint: 'vi'      },
     ],
   },
@@ -64,6 +65,7 @@ const MENUS = [
       { label: 'Create',    action: 'setChapter',    hint: 'cc' },
       { label: 'Edit',      action: 'editChapter',   hint: 'ce' },
       { label: 'Loop',      action: 'loopChapter',   hint: 'cl' },
+      { label: 'Jump...',   action: 'jumpChapter',   hint: 'cj' },
       { label: 'Zoom',      action: 'zoomChapter',   hint: 'cz' },
       { label: 'Fix end',   action: 'fixChapter',    hint: 'cf' },
       { label: 'Delete...', action: 'deleteChapter', hint: 'cd' },
@@ -75,6 +77,7 @@ const MENUS = [
       { label: 'Create',    action: 'setSection',    hint: 'ss' },
       { label: 'Edit',      action: 'editSection',   hint: 'se' },
       { label: 'Loop',      action: 'loopSection',   hint: 'sl' },
+      { label: 'Jump...',   action: 'jumpSection',   hint: 'sj' },
       { label: 'Zoom',      action: 'zoomSection',   hint: 'sz' },
       { label: 'Fix end',   action: 'fixSection',    hint: 'sf' },
       { label: 'Delete...', action: 'deleteSection', hint: 'sd' },
@@ -84,6 +87,7 @@ const MENUS = [
     label: 'Loop',
     items: [
       { label: 'Edit',      action: 'editScratch',       hint: 'le · \\' },
+      { label: 'Jump...',   action: 'jumpLoop',          hint: 'lj'      },
       { label: 'Zoom',      action: 'zoomLoop',          hint: 'lz'      },
       { label: 'Delete...', action: 'deleteLoop',        hint: 'ld'      },
       { type: 'divider' },
@@ -98,17 +102,13 @@ const MENUS = [
     items: [
       { label: 'Create',    action: 'setMark',    hint: 'mm' },
       { label: 'Edit',      action: 'editMark',   hint: 'me' },
+      { label: 'Jump...',   action: 'jumpMark',   hint: 'mj' },
       { label: 'Delete...', action: 'deleteMark', hint: 'md' },
     ],
   },
   {
     label: 'Jump',
     items: [
-      { label: 'Chapter...', action: 'jumpChapter', hint: 'jc' },
-      { label: 'Section...',  action: 'jumpSection', hint: 'js' },
-      { label: 'Loop...',     action: 'jumpLoop',    hint: 'jl' },
-      { label: 'Mark...',     action: 'jumpMark',    hint: 'jm' },
-      { type: 'divider' },
       { label: 'History...', action: 'jumpHistory', hint: 'jh' },
       { label: 'Back',       action: 'jumpBack',    hint: 'jb' },
       { label: 'Forward',    action: 'jumpForward', hint: 'jf' },
@@ -134,6 +134,8 @@ const MENUS = [
   {
     label: 'App',
     items: [
+      { label: 'Copy time', action: 'copyTime', hint: 'ac' },
+      { type: 'divider' },
       { label: 'Undo', action: 'undo', hint: 'au · u' },
       { label: 'Redo', action: 'redo', hint: 'ar · U' },
       { type: 'divider' },

@@ -17,6 +17,7 @@ toc_icon: 'guitar'
     Create    | .     | cc      | ss      | .    | mm
     Edit      | ve    | ce      | se      | le   | me
     Loop      | vl    | cl      | sl      | .    | .
+    Jump...   | .     | cj      | sj      | lj   | mj
     Zoom      | vz    | cz      | sz      | lz   | .
     Fix-end   | .     | cf      | sf      | .    | .
     Delete... | vd    | cd      | sd      | ld   | md
@@ -26,18 +27,20 @@ toc_icon: 'guitar'
 ## Menus
 
     Video:
-        Load URL  | vu  y
-        Open...   | vo  vv
-        Edit      | ve
-        Loop      | vl
-        Zoom      | vz
-        Delete... | vd
-        Info      | vi
+        Load URL   | vu  y
+        Open...    | vo  vv
+        Edit       | ve
+        Loop       | vl
+        Zoom       | vz
+        Delete...  | vd
+        Unstash... | vr
+        Info       | vi
 
     Chapter:
         Create    | cc
         Edit      | ce
         Loop      | cl
+        Jump...   | cj
         Zoom      | cz
         Fix end   | cf
         Delete... | cd
@@ -46,12 +49,14 @@ toc_icon: 'guitar'
         Create    | ss
         Edit      | se
         Loop      | sl
+        Jump...   | sj
         Zoom      | sz
         Fix end   | sf
         Delete... | sd
 
     Loop:
         Edit            | le  \
+        Jump...         | lj
         Zoom            | lz
         Delete...       | ld
         --------------------------------
@@ -63,14 +68,10 @@ toc_icon: 'guitar'
     Mark:
         Create    | mm
         Edit      | me
+        Jump...   | mj
         Delete... | md
 
     Jump:
-        Chapter... | jc
-        Section... | js
-        Loop...    | jl
-        Mark...    | jm
-        --------------------------------
         History... | jh
         Back       | jb
         Forward    | jf
@@ -90,6 +91,8 @@ toc_icon: 'guitar'
         Delete...       | dx
 
     App:
+        Copy time       | ac
+        --------------------------------
         Undo            | au  u
         Redo            | ar  U
         --------------------------------
@@ -115,6 +118,7 @@ toc_icon: 'guitar'
         vl | Loop
         vz | Zoom
         vd | Delete...
+        vr | Restore...
         vi | Info
         --------------------------------
         y  | vu synonym
@@ -125,6 +129,7 @@ toc_icon: 'guitar'
         cc | Create
         ce | Edit
         cl | Loop
+        cj | Jump...
         cz | Zoom
         cf | Fix end
         cd | Delete...
@@ -134,6 +139,7 @@ toc_icon: 'guitar'
         ss | Create
         se | Edit
         sl | Loop
+        sj | Jump...
         sz | Zoom
         sf | Fix end
         sd | Delete...
@@ -142,6 +148,7 @@ toc_icon: 'guitar'
 
         ll | Toggle
         le | Edit
+        lj | Jump...
         lz | Zoom
         ld | Delete...
         --------------------------------
@@ -173,17 +180,13 @@ toc_icon: 'guitar'
 
         mm | Create
         me | Edit
+        mj | Jump...
         md | Delete...
 
     Jump:
 
         jj      | By time
         <enter> | To start (loop or video)
-        --------------------------------
-        jc      | Chapter...
-        js      | Section...
-        jl      | Loop...
-        jm      | Mark...
         --------------------------------
         jh      | History...
         jb      | Backward

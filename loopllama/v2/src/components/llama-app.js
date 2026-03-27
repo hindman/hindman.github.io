@@ -61,6 +61,7 @@ const QUIPS = [
   "Loop the good stuff",
   "Time is a flat circle — so a loop",
   "The Llama abides",
+  "Hey, baby, scratch my ears",
 ];
 
 class LlamaApp extends LitElement {
@@ -269,6 +270,7 @@ class LlamaApp extends LitElement {
     editScratchFocus:   { type: String },
     editScratchDelta:   { type: Number },
     videos:             { type: Array },
+    stashes:            { type: Object },
     currentVideoId:     { type: String },
     activeEntityType:   { type: String },
     chapters:           { type: Array },
@@ -310,6 +312,7 @@ class LlamaApp extends LitElement {
     this.editScratchDelta    = EDIT_SCRATCH_DELTAS[2];
     this._appState           = load() ?? createAppState();
     this.videos              = this._appState.videos;
+    this.stashes             = this._appState.stashes ?? {};
     this.currentVideoId      = this._appState.currentVideoId;
     this.activeEntityType    = 'any';
     this.chapters            = [];
@@ -681,6 +684,16 @@ class LlamaApp extends LitElement {
       focusLoopNudgeDelta: () => { this.renderRoot.querySelector('llama-controls')?.focusNudgeDeltaSelect(); this._flash('nudgeDelta', 'until-blur'); },
       focusLoopStart:     () => { this.renderRoot.querySelector('llama-controls')?.focusStartInput(); this._flash('loopStart', 'until-blur'); },
       focusLoopEnd:       () => { this.renderRoot.querySelector('llama-controls')?.focusEndInput(); this._flash('loopEnd', 'until-blur'); },
+      copyTime:      () => {
+        const t = this.currentTime ?? 0;
+        const m = Math.floor(t / 60);
+        const s = Math.floor(t % 60).toString().padStart(2, '0');
+        const text = `${m}:${s}`;
+        navigator.clipboard.writeText(text).then(
+          ()  => { this.statusMsg = `Time copied: ${text}`; },
+          ()  => this._setWarning('Clipboard write failed.'),
+        );
+      },
       undo:          () => this._undo(),
       redo:          () => this._redo(),
       helpKeys:      () => window.open(`${_siteOrigin()}/loopllama/v2/keybindings/`, '_blank'),
@@ -732,6 +745,10 @@ class LlamaApp extends LitElement {
       deleteVideo: () => {
         if (!this._appState?.videos.length) { this._setWarning('No videos saved.'); return; }
         this._videoPickerEl?.show('delete');
+      },
+      restoreVideo: () => {
+        if (!Object.keys(this._appState.stashes ?? {}).length) { this._setWarning('No stashed videos.'); return; }
+        this._videoPickerEl?.show('restore');
       },
       jumpTime:      () => { this._clearLoopingIfActive(); this.renderRoot.querySelector('llama-controls')?.focusTimeInput(); this._flash('time', 'until-blur'); },
       jumpSection:   () => { this._clearLoopingIfActive(); this._openSectionsPicker('jump'); },
@@ -1499,6 +1516,26 @@ class LlamaApp extends LitElement {
     this._save();
   }
 
+  // Handle ll-restore-video from the video picker (restore mode).
+  // Swaps the stashed copy back to current and saves the current copy as the
+  // new stash, giving free toggle behavior.
+  _onRestoreVideo(e) {
+    const { id } = e.detail;
+    const stash = this._appState.stashes?.[id];
+    if (!stash) return;
+    const idx = this._appState.videos.findIndex(v => v.id === id);
+    if (idx === -1) return;
+    this._pushUndoSnapshot('Video restored');
+    const current = JSON.parse(JSON.stringify(this._appState.videos[idx]));
+    this._appState.stashes[id] = current;
+    this._appState.videos[idx] = stash;
+    this.stashes = { ...this._appState.stashes };
+    this.videos  = [...this._appState.videos];
+    if (this.currentVideoId === id) this._syncFromVideo(stash);
+    this._save();
+    this.statusMsg = `Restored: "${stash.name || stash.id}".`;
+  }
+
   // Show a transient warning; auto-clears after 4 seconds (via updated()).
   _setWarning(msg) {
     this.warningMsg = msg;
@@ -2109,7 +2146,9 @@ class LlamaApp extends LitElement {
       }
     }
 
-    const stateToUpload = { ...this._appState, videos: mergedVideos };
+    // stashes are local-only; exclude from cloud upload.
+    const { stashes: _s, ...baseState } = this._appState;
+    const stateToUpload = { ...baseState, videos: mergedVideos };
     const ok = await saveToCloud(stateToUpload, userId);
     if (ok) {
       const skipNote    = skipped > 0 ? `, ${skipped} skipped` : '';
@@ -2169,7 +2208,7 @@ class LlamaApp extends LitElement {
         orphans:          orphans.map(v => v.name || v.id),
         conflictsHeader:  'Local newer',
         orphansHeader:    'Local only',
-        conflictsTooltip: 'The local copy of these videos is more recent than the cloud copy. Replace overwrites local with cloud.',
+        conflictsTooltip: 'The local copy of these videos is more recent than the cloud copy. Replace overwrites local with cloud; the prior version is stashed for recovery (vr).',
         orphansTooltip:   'These videos exist only in the local library, not the cloud. Delete removes them.',
       });
       if (result === null) return;
@@ -2197,6 +2236,7 @@ class LlamaApp extends LitElement {
       if (idx !== -1) {
         const lv = this._appState.videos[idx];
         if ((cv.last_modified ?? 0) !== (lv.last_modified ?? 0)) {
+          this._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
           this._appState.videos[idx] = cv;
           updated++;
         } else {
@@ -2213,7 +2253,8 @@ class LlamaApp extends LitElement {
     if (currentVideo) this._syncFromVideo(currentVideo);
 
     save(this._appState);
-    this.videos = [...this._appState.videos];
+    this.videos  = [...this._appState.videos];
+    this.stashes = { ...this._appState.stashes };
     const skipNote    = skipped > 0 ? `, ${skipped} skipped` : '';
     const deletedNote = deleted > 0 ? `, ${deleted} deleted` : '';
     this.statusMsg = `Read from cloud: ${added} added, ${updated} updated, ${unchanged} unchanged${skipNote}${deletedNote}.`;
@@ -2309,7 +2350,7 @@ class LlamaApp extends LitElement {
         orphans:          orphans.map(v => v.name || v.id),
         conflictsHeader:  'Local newer',
         orphansHeader:    'Local only',
-        conflictsTooltip: 'The local copy of these videos is more recent than the imported copy. Replace overwrites local with imported.',
+        conflictsTooltip: 'The local copy of these videos is more recent than the imported copy. Replace overwrites local with imported; the prior version is stashed for recovery (vr).',
         orphansTooltip:   'These videos exist only in the local library, not the import file. Delete removes them.',
       });
       if (result === null) return;
@@ -2336,6 +2377,7 @@ class LlamaApp extends LitElement {
       if (idx !== -1) {
         const lv = this._appState.videos[idx];
         if ((iv.last_modified ?? 0) !== (lv.last_modified ?? 0)) {
+          this._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
           this._appState.videos[idx] = iv;
           updated++;
         } else {
@@ -2347,7 +2389,12 @@ class LlamaApp extends LitElement {
       }
     }
 
-    this.videos = [...this._appState.videos];
+    this.videos  = [...this._appState.videos];
+    this.stashes = { ...this._appState.stashes };
+    // If the current video was replaced, re-sync reactive props so stale
+    // state isn't flushed back over the imported data on the next video switch.
+    const currentVideo = this._appState.videos.find(v => v.id === this.currentVideoId);
+    if (currentVideo) this._syncFromVideo(currentVideo);
     this._save();
     const skipNote    = skipped > 0 ? `, ${skipped} skipped` : '';
     const deletedNote = deleted > 0 ? `, ${deleted} deleted` : '';
@@ -2446,6 +2493,9 @@ class LlamaApp extends LitElement {
         this.statusMsg = `Skipped: "${displayName}" already in your library.`;
         return;
       }
+      // Stash the current version before replacing.
+      this._appState.stashes[video.id] = JSON.parse(JSON.stringify(video));
+      this.stashes = { ...this._appState.stashes };
     } else {
       video = createVideo(videoUrl, parsed.id);
       this._appState.videos.push(video);
@@ -2847,11 +2897,13 @@ class LlamaApp extends LitElement {
 
       <llama-video-picker
         .videos=${this.videos}
+        .stashes=${this.stashes}
         .currentVideoId=${this.currentVideoId}
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-pick-video=${this._onPickVideo}
         @ll-delete-video=${this._onDeleteVideo}
+        @ll-restore-video=${this._onRestoreVideo}
       ></llama-video-picker>
 
       <llama-edit-video-modal

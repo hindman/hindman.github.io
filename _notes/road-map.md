@@ -1,6 +1,8 @@
 
 ## TODO: LoopLlama v2
 
+video-unstash: confirm it's working; edit text.
+
 User docs: help text: draft
 
 User docs: banner text: draft

@@ -5,7 +5,7 @@
 // Mutation functions will be added in later stages as needed.
 
 export const APP_VERSION    = 2;
-export const SCHEMA_VERSION = 8;
+export const SCHEMA_VERSION = 9;
 
 export const JUMP_HISTORY_MAX = 40;   // max persisted jump entries per video
 export const JUMP_THRESHOLD   = 15;   // seconds; smaller moves are not stored
@@ -32,6 +32,7 @@ export function createAppState() {
     schema_version: SCHEMA_VERSION,
     options:        { ...DEFAULT_OPTIONS },
     videos:         [],
+    stashes:        {},   // keyed by YouTube ID; one stash per video; local-only
     currentVideoId: null,
   };
 }
