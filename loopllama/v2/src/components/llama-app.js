@@ -404,6 +404,7 @@ class LlamaApp extends LitElement {
     this.speed           = video.speed ?? 1.0;
     this._vc?.setPlaybackRate(this.speed);
     this.zoomSource = null;
+    this.zone2Mode  = video.zone2_mode ?? 'sections';
   }
 
   // Push a jump-history entry if the move is large enough.
@@ -442,6 +443,7 @@ class LlamaApp extends LitElement {
     scratch.end    = this.loopEnd;
     video.looping       = this.looping;
     video.loops         = [scratch, ...this.namedLoops];
+    video.zone2_mode    = this.zone2Mode;
     video.last_modified = Date.now();
     this._save();
   }
@@ -1064,6 +1066,7 @@ class LlamaApp extends LitElement {
       toggleZone2: () => {
         this.zone2Mode = this.zone2Mode === 'sections' ? 'chapters' : 'sections';
         this.statusMsg = `Timeline displaying: ${this.zone2Mode}.`;
+        this._saveCurrentState();
       },
       zoomChapter: () => {
         if (this.zoomSource?.trigger === 'chapter') {

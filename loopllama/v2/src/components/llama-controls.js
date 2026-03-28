@@ -756,7 +756,7 @@ class LlamaControls extends LitElement {
                     class="delta-select"
                     @change=${(e) => { this._emit('ll-seek-delta-change', { value: Number(e.target.value) }); e.target.blur(); }}
                   >
-                    ${this.seekDeltaChoices.map(n => html`
+                    ${[...this.seekDeltaChoices].sort((a, b) => b - a).map(n => html`
                       <option value=${n} ?selected=${this.seekDelta === n}>${this._fmtDelta(n)}</option>
                     `)}
                   </select>
@@ -824,7 +824,7 @@ class LlamaControls extends LitElement {
                   @change=${(e) => { this._emit('ll-loop-nudge-delta-change', { value: Number(e.target.value) }); e.target.blur(); }}
                   @keydown=${(e) => { if (e.key === 'Enter' || e.key === 'Escape') e.target.blur(); }}
                 >
-                  ${this.loopNudgeDeltaChoices.map(n => html`
+                  ${[...this.loopNudgeDeltaChoices].sort((a, b) => b - a).map(n => html`
                     <option value=${n} ?selected=${this.loopNudgeDelta === n}>${this._fmtDelta(n)}</option>
                   `)}
                 </select>

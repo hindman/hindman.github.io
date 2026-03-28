@@ -19,7 +19,7 @@ export const DEFAULT_OPTIONS = {
   seek_delta_default:       5,
   seek_delta_choices:       [0.1, 1, 5, 10, 30, 60, 300, 1800],
   loop_nudge_delta_default: 5,
-  loop_nudge_delta_choices: [0.1, 1, 5, 10, 30, 60, 300, 1800],
+  loop_nudge_delta_choices: [1800, 300, 60, 30, 10, 5, 1, 0.1],
   speed_delta:              0.05,
   loop_pad_start:           2,
   loop_pad_end:             2,
@@ -58,6 +58,7 @@ export function createVideo(url, youtubeId) {
     loops:       [createScratchLoop()],  // always one scratch loop
     marks:         [],
     jumps:         [],
+    zone2_mode:    'sections',
     last_modified: Date.now(),
     last_opened:   null,
   };
