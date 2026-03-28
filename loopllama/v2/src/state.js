@@ -63,8 +63,9 @@ export function createVideo(url, youtubeId) {
   };
 }
 
-// Create a Chapter.
-// name is required; start/end are times in seconds.
+// Create a Chapter divider.
+// start is the divider point; end starts as null and is either derived at
+// runtime or explicitly set later (same model as sections).
 export function createChapter(name, start, end) {
   return { id: createId(), name, start, end };
 }
@@ -93,14 +94,6 @@ export function createScratchLoop() {
 // Create a Mark.
 export function createMark(time, name = '') {
   return { id: createId(), time, name };
-}
-
-// Add a chapter (sorted by start time). Returns the new chapter.
-export function addChapter(chapters, name, start, end) {
-  const chapter = createChapter(name, start, end);
-  chapters.push(chapter);
-  chapters.sort((a, b) => a.start - b.start);
-  return chapter;
 }
 
 // Remove a chapter by id.

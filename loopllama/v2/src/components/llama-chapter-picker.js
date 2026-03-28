@@ -1,12 +1,10 @@
 // llama-chapter-picker.js -- modal to pick a chapter.
 //
 // Props:
-//   chapters:        Array of Chapter objects ({ id, name, start, end })
-//   mode:            'open' | 'delete' | 'jump'
-//   activeChapterId: String | null (highlights the current active chapter)
+//   chapters: Array of Chapter objects ({ id, name, start, end })
+//   mode:     'delete' | 'jump'
 //
 // Events fired (composed, bubbling):
-//   ll-open-chapter   { id }        -- mode='open': set as active chapter
 //   ll-delete-chapter { id }        -- mode='delete': delete the chapter
 //   ll-jump-chapter   { id, time }  -- mode='jump': seek to chapter start
 //
@@ -19,7 +17,6 @@ import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
 
 const TITLES = {
-  open:   'Open Chapter',
   delete: 'Delete Chapter',
   jump:   'Jump to Chapter',
 };
@@ -54,13 +51,6 @@ class LlamaChapterPicker extends LitElement {
       border-color: var(--ll-accent, #7ec8e3);
       outline: none;
     }
-    .chapter-row.active-chapter {
-      border-color: var(--ll-accent-warm, #e3a857);
-    }
-    .chapter-row.active-chapter.selected {
-      border-color: var(--ll-accent-warm, #e3a857);
-      box-shadow: 0 0 0 1px var(--ll-accent, #7ec8e3);
-    }
     .chapter-row.mode-delete:hover,
     .chapter-row.mode-delete.selected {
       border-color: var(--sl-color-danger-600, #c0392b);
@@ -81,20 +71,18 @@ class LlamaChapterPicker extends LitElement {
   `;
 
   static properties = {
-    chapters:        { type: Array },
-    mode:            { type: String },
-    activeChapterId: { type: String },
-    _filter:         { state: true },
-    _selIdx:         { state: true },
+    chapters: { type: Array },
+    mode:     { type: String },
+    _filter:  { state: true },
+    _selIdx:  { state: true },
   };
 
   constructor() {
     super();
-    this.chapters        = [];
-    this.mode            = 'open';
-    this.activeChapterId = null;
-    this._filter         = '';
-    this._selIdx         = 0;
+    this.chapters = [];
+    this.mode     = 'jump';
+    this._filter  = '';
+    this._selIdx  = 0;
   }
 
   show(mode) {
@@ -142,18 +130,12 @@ class LlamaChapterPicker extends LitElement {
   }
 
   _select(chapter) {
-    const mode = this.mode;
-    if (mode === 'open') {
-      this.dispatchEvent(new CustomEvent('ll-open-chapter', {
-        detail: { id: chapter.id },
-        bubbles: true, composed: true,
-      }));
-    } else if (mode === 'delete') {
+    if (this.mode === 'delete') {
       this.dispatchEvent(new CustomEvent('ll-delete-chapter', {
         detail: { id: chapter.id },
         bubbles: true, composed: true,
       }));
-    } else if (mode === 'jump') {
+    } else {
       this.dispatchEvent(new CustomEvent('ll-jump-chapter', {
         detail: { id: chapter.id, time: chapter.start },
         bubbles: true, composed: true,
@@ -193,8 +175,7 @@ class LlamaChapterPicker extends LitElement {
                 <div
                   class="chapter-row
                     ${isDelete ? 'mode-delete' : ''}
-                    ${i === this._selIdx ? 'selected' : ''}
-                    ${c.id === this.activeChapterId ? 'active-chapter' : ''}"
+                    ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(c)}
                 >
                   <div class="chapter-primary">${c.name || _fmtRange(c.start, c.end)}</div>

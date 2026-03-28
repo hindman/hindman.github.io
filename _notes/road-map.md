@@ -2,6 +2,7 @@
 ## TODO: LoopLlama v2
 
 User docs: help text: draft
+  * See latest CC reply.
 
 User docs: banner text: draft
 

@@ -11,7 +11,7 @@ import {
   addSection, deleteSectionById, getSectionBounds, nearestSectionLeft,
   fixSectionEnd,
   addLoop, deleteLoopById,
-  addChapter, deleteChapterById,
+  deleteChapterById,
   addChapterDivider, nearestChapterLeft, getChapterBounds, fixChapterEnd,
   propagateEntityChange, validateEntityChange,
   nudgeLoopStart, nudgeLoopEnd,
@@ -274,7 +274,6 @@ class LlamaApp extends LitElement {
     currentVideoId:     { type: String },
     activeEntityType:   { type: String },
     chapters:           { type: Array },
-    activeChapterId:    { type: String },
     zoomSource:         { type: Object },
     loopSourceLabel:    { type: String },
     loopSourceType:     { type: String },
@@ -316,7 +315,6 @@ class LlamaApp extends LitElement {
     this.currentVideoId      = this._appState.currentVideoId;
     this.activeEntityType    = 'any';
     this.chapters            = [];
-    this.activeChapterId     = null;
     this.zoomSource          = null;
     this.loopSourceLabel     = null;
     this.loopSourceType      = null;
@@ -406,9 +404,6 @@ class LlamaApp extends LitElement {
     this.speed           = video.speed ?? 1.0;
     this._vc?.setPlaybackRate(this.speed);
     this.zoomSource = null;
-    if (this.activeChapterId) {
-      this.activeChapterId = null;
-    }
   }
 
   // Push a jump-history entry if the move is large enough.
@@ -1912,36 +1907,6 @@ class LlamaApp extends LitElement {
     this._jumpTo(e.detail.time);
   }
 
-  // Handle ll-open-chapter from chapter picker (mode='open').
-  // Sets activeChapterId, loads chapter's range into scratch loop,
-  // and seeks the player to chapter.start.
-  _onOpenChapter(e) {
-    const chapter = this.chapters.find(c => c.id === e.detail.id);
-    if (!chapter) return;
-    const bounds = getChapterBounds(this.chapters, chapter.start, this.duration);
-    if (!bounds || bounds.end == null) {
-      this._setWarning('Chapter has no end boundary.');
-      return;
-    }
-    const padStart = this._appState?.options.loop_pad_start ?? DEFAULT_OPTIONS.loop_pad_start;
-    const padEnd   = this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end;
-    const newStart = Math.max(0, bounds.start - padStart);
-    const newEnd   = bounds.end + padEnd;
-    this._clearZoomIfOutside(newStart, newEnd);
-    this.activeChapterId = chapter.id;
-    this.loopStart       = newStart;
-    this.loopEnd         = newEnd;
-    this.loopSource      = chapter.id;
-    this.loopSourceLabel = chapter.name || null;
-    this.loopSourceType  = 'chapter';
-    this.loopSourceStart = bounds.start;
-    this.loopSourceEnd   = bounds.end;
-    this._autoDisableLoopIfInvalid();
-    this._maybePushJump(this._vc?.getCurrentTime() ?? 0, bounds.start);
-    this._vc?.seekTo(bounds.start);
-    this.statusMsg = `Chapter: ${chapter.name || `${_fmtTimePlain(bounds.start)} → ${_fmtTimePlain(bounds.end)}`}`;
-  }
-
   // Handle ll-open-section from sections picker (mode='open').
   // Loads section's range into scratch loop and seeks to section start.
   _onOpenSection(e) {
@@ -1970,17 +1935,7 @@ class LlamaApp extends LitElement {
     this.statusMsg = `Section: ${section.name || _fmtTimePlain(section.start)}`;
   }
 
-  // Handle ll-create-chapter from edit-chapter-modal (create mode).
-  _onCreateChapter(e) {
-    this._pushUndoSnapshot('Chapter created');
-    const { name, start, end } = e.detail;
-    addChapter(this.chapters, name, start, end);
-    this.chapters  = [...this.chapters];
-    this.statusMsg = 'Chapter created';
-    this._saveCurrentState();
-  }
-
-  // Handle ll-update-chapter from edit-chapter-modal (edit mode).
+  // Handle ll-update-chapter from edit-chapter-modal.
   _onUpdateChapter(e) {
     const { id, name, start, end } = e.detail;
     const idx = this.chapters.findIndex(c => c.id === id);
@@ -2003,11 +1958,8 @@ class LlamaApp extends LitElement {
     deleteChapterById(this.chapters, e.detail.id);
     this.chapters = [...this.chapters];
     this.statusMsg = 'Chapter deleted';
-    if (this.activeChapterId === e.detail.id) {
-      this.activeChapterId = null;
-      if (this.zoomSource?.trigger === 'chapter') {
-        this.zoomSource = null;
-      }
+    if (this.zoomSource?.trigger === 'chapter') {
+      this.zoomSource = null;
     }
     this._saveCurrentState();
   }
@@ -2758,9 +2710,7 @@ class LlamaApp extends LitElement {
 
   render() {
     const currentVideo   = this._appState?.videos.find(v => v.id === this.currentVideoId) ?? null;
-    const activeChapter  = this.activeChapterId
-      ? this.chapters.find(c => c.id === this.activeChapterId) ?? null
-      : null;
+    const currentChapter = nearestChapterLeft(this.chapters, this.currentTime);
     const currentSection = nearestSectionLeft(this.sections, this.currentTime);
     const loopDirty      = this._isLoopDirty();
     const zoomLabel = (() => {
@@ -2876,7 +2826,7 @@ class LlamaApp extends LitElement {
         <llama-current
           .videoName=${currentVideo?.name ?? ''}
           .videoId=${currentVideo?.id ?? null}
-          .chapterName=${activeChapter?.name ?? null}
+          .chapterName=${currentChapter?.name ?? null}
           .sectionName=${currentSection?.name ?? null}
           .loopSourceLabel=${this.loopSourceLabel}
           .loopSourceType=${this.loopSourceType}
@@ -2971,18 +2921,15 @@ class LlamaApp extends LitElement {
 
       <llama-chapter-picker
         .chapters=${this.chapters}
-        .activeChapterId=${this.activeChapterId}
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-jump-chapter=${this._onJumpChapter}
-        @ll-open-chapter=${this._onOpenChapter}
         @ll-delete-chapter=${this._onDeleteChapter}
       ></llama-chapter-picker>
 
       <llama-edit-chapter-modal
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
-        @ll-create-chapter=${this._onCreateChapter}
         @ll-update-chapter=${this._onUpdateChapter}
       ></llama-edit-chapter-modal>
 

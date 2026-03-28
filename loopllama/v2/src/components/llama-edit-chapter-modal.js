@@ -1,12 +1,10 @@
-// llama-edit-chapter-modal.js -- modal to create or edit a chapter.
+// llama-edit-chapter-modal.js -- modal to edit an existing chapter.
 //
 // API:
-//   showCreate(start, end) -- create mode; pre-filled with start/end
-//   showEdit(chapter)      -- edit mode; pre-filled from chapter object
+//   showEdit(chapter, derivedEnd?) -- pre-filled from chapter object
 //   hide()
 //
 // Events fired (composed, bubbling):
-//   ll-create-chapter  { name, start, end }
 //   ll-update-chapter  { id, name, start, end }
 
 import { LitElement, html, css } from 'lit';
@@ -35,8 +33,7 @@ class LlamaEditChapterModal extends LitElement {
   `;
 
   static properties = {
-    _mode:        { state: true },  // 'create' | 'edit'
-    _id:          { state: true },  // chapter id when editing
+    _id:          { state: true },  // chapter id being edited
     _name:        { state: true },
     _start:       { state: true },
     _end:         { state: true },
@@ -46,23 +43,12 @@ class LlamaEditChapterModal extends LitElement {
 
   constructor() {
     super();
-    this._mode       = 'create';
     this._id         = null;
     this._name       = '';
     this._start      = '';
     this._end        = '';
     this._derivedEnd = null;
     this._error      = '';
-  }
-
-  showCreate(start, end) {
-    this._mode  = 'create';
-    this._id    = null;
-    this._name  = '';
-    this._start = _fmtTime(start);
-    this._end   = _fmtTime(end);
-    this._error = '';
-    this.renderRoot.querySelector('llama-modal')?.show();
   }
 
   // derivedEnd: the end that would be used if chapter.end stays null
@@ -105,17 +91,10 @@ class LlamaEditChapterModal extends LitElement {
       }
     }
     this._error = '';
-    if (this._mode === 'create') {
-      this.dispatchEvent(new CustomEvent('ll-create-chapter', {
-        detail: { name: this._name.trim(), start, end },
-        bubbles: true, composed: true,
-      }));
-    } else {
-      this.dispatchEvent(new CustomEvent('ll-update-chapter', {
-        detail: { id: this._id, name: this._name.trim(), start, end },
-        bubbles: true, composed: true,
-      }));
-    }
+    this.dispatchEvent(new CustomEvent('ll-update-chapter', {
+      detail: { id: this._id, name: this._name.trim(), start, end },
+      bubbles: true, composed: true,
+    }));
     this.hide();
   }
 
@@ -142,8 +121,8 @@ class LlamaEditChapterModal extends LitElement {
   }
 
   render() {
-    const title = this._mode === 'create' ? 'Create Chapter' : 'Edit Chapter';
-    const endPlaceholder = (this._mode === 'edit' && this._derivedEnd != null)
+    const title = 'Edit Chapter';
+    const endPlaceholder = (this._derivedEnd != null)
       ? `${_fmtTime(this._derivedEnd)} (derived — leave blank to keep open-ended)`
       : 'Leave blank to derive from next chapter';
     return html`
