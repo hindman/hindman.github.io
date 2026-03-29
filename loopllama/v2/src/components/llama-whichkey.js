@@ -119,7 +119,7 @@ class LlamaWhichkey extends LitElement {
         <div class="bar">
           <div class="row">
             <span class="warning">
-              Keyboard control inactive — click anywhere in the app to restore
+              Shortcuts inactive
             </span>
           </div>
         </div>

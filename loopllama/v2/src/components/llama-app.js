@@ -62,6 +62,7 @@ const QUIPS = [
   "Time is a flat circle — so a loop",
   "The Llama abides",
   "Hey, baby, scratch my ears",
+  "¿Cómo se Llama?",
 ];
 
 class LlamaApp extends LitElement {

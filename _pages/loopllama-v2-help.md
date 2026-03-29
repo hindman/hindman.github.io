@@ -76,20 +76,12 @@ are always available.
           Jump to a time      | jj       | .
 
     - Basic controls via mouse:
-
       - All of those keyboard controls have buttons and dropdowns to perform
         the same operations: see the controls labeled Play, Speed, and
         Navigate.
       - Jump by time via by clickling the blue timeline (where the playhead
         is) or my clicking the current-time text box and entering a specific
         time.
-
-    - App focus: a key guideline:
-
-        - If you click anywhere in the YT frame to the LL app loses focus
-        - Notice the warning in the footer: that's where all messages go
-        - The fix/advice: click the app again, outside the YT frame; avoid
-          clicking the YT frame (it's never needed with LL).
 
     - At this point the user can use LL to play videos, control speed, and do
       basic navigation.
@@ -110,22 +102,23 @@ are always available.
   - Timeline hovers: to see current time and other details about information
     you have attached to the video.
 
-- Brief note to user: two pathways (with anchor links) to read the help docs:
-  - Entities: chapters, sections, loops, marks.
-  - Efficient loop adjustment: loop nudging.
-  - NOTE: I'm leaning toward dropping this comment. The document will have a
-    TOC sidebar, so users can navigate anywhere they want; no need to state
-    this obvious fact.
+- App focus: a key guideline:
+  - If you click anywhere in the YT frame to the LL app loses focus
+  - Notice the warning in the footer.
+  - The fix/advice: click the app again, outside the YT frame; avoid
+    clicking the YT frame (it's never needed with LL).
 
 ## Entities
 
-In addition to offering efficient ways to play, loop, and control speed of YT
-vids, LL allows you to attach infomation to the videos you are using. That
-information is organized around five types of entities: videos, sections,
-loops, marks, and chapters. Understanding them is the key to using the app
-effectively.
+For many users -- those who simply want to have tool to loop or change the
+speed of YT videos using an efficient user interface -- everything you need to
+know was covered in the Quick Start. But if you need to work with a video
+in-depth (for example, transcribing a musical performance) being able to
+attach additional information to the video is powerful. That information is
+organized around five types of entities: videos, sections, chapters, marks,
+and loops.
 
-### Video
+### Videos
 
 The first entity is obvious: videos. Once you open a YouTube video in LL, the
 app remembers the video and how you last left it: the current playhead
@@ -135,31 +128,26 @@ about the entities that a video can have.
 To illustrate some video behaviors open these two URLs which will load two
 example videos into your LL data.
 
-<!-- Two shared video examples: 
+<!-- Two shared video examples:
 
-- example-video-1: basic song with sections
-- example-video-2: concert video with song/chapters.
+- example-video-1: song with no metadata yet
+- example-video-2: basic song with sections
+- example-video-3: concert video with song/chapters.
 
 -->
 
 You can open a video you've already loaded into LL via `vo`. Give that a
 try with the example videos.
 
-<!-- Info notice. LL keybindings. Most LL bindings follow a two-character
+<!-- Info notice. Key bindings. Most LL bindings follow a two-character
 system, where the first letter is a prefix for the type of entity involved
-(`v` for video or `s` for section) and the second letter is a mnemonic for the
-operation: for example, `vo` for "Video => Open" or `vu` for "Video => Load
-URL". Some of the most common operations also have synonym bindings that are
-easier to type, either because they use a single letter or because they use
-two of the same letter: for example, `y` as a synonym for `vu` (load a video
-via a YouTube URL) or `vv` for `vo` (open an video the app has already seen).
-Take a look at the Video menu and notice that both bindings are listed: first
-the official binding, then the fast-typing synonym, if one exists. The help
-documentation will tend to use the offical two-character bindings. See the
-key-bindings page for a full listing.
--->
+(`v` for video) and the second letter is a mnemonic for the operation: `vo`
+for "Video => Open" or `vu` for "Video => Load URL". Some of the most common
+operations also have synonym bindings that are easier to type. Look at the
+Video menu to see examples. The help documentation will tend to use the formal
+two-character bindings. -->
 
-### Section
+### Sections
 
 Sections provide a way to divide a video into non-overlapping parts. What
 those segments represent is up to you: a musician might label them Intro,
@@ -171,18 +159,13 @@ and pressing `ss` -- that's it. The section now exists (notice the visual
 change in the timeline). The section end is inferred from the start of the
 next section (or the video end).
 
-<!--
-
-Info notice: the docs will focus on keybindings. Almost every operation can
-also be perfomed via the mouse and menus.
-
--->
+<!-- Switch to example-video-1. -->
 
 **Edit**. Once a section exists, you can edit it, mainly to give it a name
 (via `se`). The section name will appear in the timeline area, just below the
 blue progress bar.
 
-Switch to the example-video-1 to illustrate what sections enable in LL.
+<!-- Switch to the example-video-2. -->
 
 **Loop**. Because a section has start and end points, it provides a way to
 define a loop quickly (via `sl`). Give that a try with the example video:
@@ -199,7 +182,8 @@ padding amount via "App => Options" in the menus). -->
 jump to the start of a different section.
 
 **Zoom**. To study a section in depth you can zoom the timeline to focus just
-on the current section (via `sz`).
+on the current section (via `sz`). Use `sz` again to toggle the section-zoom
+off (or `az` to turn off any kind of zooming).
 
 **Fix end**. Although rarely needed, this operation allows you to set a
 section's endpoint explicitly -- in other words, fix the section's end point
@@ -210,14 +194,14 @@ covered by the sections you define.
 
 **Delete**. Finally you can delete a section (via `sd).
 
-<!-- Info notice. **Elipses and pickers**. Look at the Section menu. Notice
-that "Delete..." has a trailing elipses. It conveys that the delete operation
-will occur though an interactive picker where you first select the section to
-be deleted. The "Jump..." item uses the same menu convention. But the other
-items have no elipses, because they operate on the current section -- meaning
-the one where the playhead sits. -->
+<!-- Info notice. **Menu elipses**. Look at the Section menu. Notice that
+"Delete..." and "Jump..." have a trailing elipses. That conveys that the
+operations will occur though an interactive picker where you first select the
+section to be deleted or jumped to. The other menu items have no elipses,
+because they operate on the current section -- meaning the one where the
+playhead sits. -->
 
-### Chapter
+### Chapters
 
 Chapters are similar to sections: they divide a video into non-overlapping
 parts; they support the same operations (compare the two menus); and their key
@@ -228,16 +212,32 @@ So if you understand sections, you also understand chapters. But there are two
 differences worth pointing out:
 
 **Default timeline view**. But default, the timeline area shows sections, not
-chapters. That view can be toggled via `t`. Switch to example-video-2. Notice
-that regardless of the timeline's current display, the current chapter and
-section, if defined, are both listed in the Current panel.
+chapters. That view can be toggled via `at` and LL will remember each video's
+most recent setting. Switch to example-video-3. Notice that regardless of the
+timeline's current display, the current chapter and section, if defined, are
+both listed in the Current panel.
 
 **Design intent**. The app was built with the premise that chapters are bigger
-(eg songs in a concert) and sections are smaller (eg the parts of a song).
-You are not required to follow that model, but future versions of the app
-might end up with features where this distinction becomes relevant.
+(eg songs in a concert) and sections are smaller (eg the parts of a song), but
+you are not required to follow that model.
 
-### Loop
+### Marks
+
+Marks are the simplest entities -- nothing more than a time point. The are
+displayed visually as yellow dots in the timeline, below the
+sections/chapters. The operations and key bindings are simple and follow the
+conventions already established for sections and chapters (see the Mark menu).
+
+### Loops
+
+The entity tour saved loops for last because they sit at the center
+of the app's mission. There are several things to know about loops
+
+Topics:
+  - saved loops
+  - scratch loop
+  - nudging
+  - sources
 
 A named, loopable time range. Unlike sections, loops don't have to
 align with the structure you've defined -- they're free-form. A loop
@@ -249,12 +249,7 @@ unnamed loop that is the target of all looping activity. Named loops
 are saved separately and loaded into the scratch loop when you want
 to work on them. See The Scratch Loop for details.
 
-### Mark
-
-A named time point. The most lightweight entity -- just a position
-you want to return to quickly. No range or structure implied.
-
-## The Scratch Loop
+### The Scratch Loop
 
 The scratch loop is your active working loop -- the single loop the
 player uses when looping is enabled. There is always exactly one

@@ -86,10 +86,11 @@ const MENUS = [
   {
     label: 'Loop',
     items: [
-      { label: 'Edit',      action: 'editScratch',       hint: 'le · \\' },
       { label: 'Jump...',   action: 'jumpLoop',          hint: 'lj'      },
-      { label: 'Zoom',      action: 'zoomLoop',          hint: 'lz'      },
       { label: 'Delete...', action: 'deleteLoop',        hint: 'ld'      },
+      { type: 'divider' },
+      { label: 'Edit',      action: 'editScratch',       hint: 'le · \\' },
+      { label: 'Zoom',      action: 'zoomLoop',          hint: 'lz'      },
       { type: 'divider' },
       { label: 'Save new',        action: 'saveLoop',          hint: 'ln' },
       { label: 'Save to source',  action: 'saveBack',          hint: 'ls' },

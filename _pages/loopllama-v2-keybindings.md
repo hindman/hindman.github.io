@@ -55,10 +55,11 @@ toc_icon: 'guitar'
         Delete... | sd
 
     Loop:
-        Edit            | le  \
         Jump...         | lj
-        Zoom            | lz
         Delete...       | ld
+        --------------------------------
+        Edit            | le  \
+        Zoom            | lz
         --------------------------------
         Save new        | ln
         Save to source  | ls
