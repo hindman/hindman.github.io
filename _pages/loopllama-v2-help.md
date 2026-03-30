@@ -89,9 +89,9 @@ are always available.
       - OTOH, it's valuable because the controls are easy, efficient.
 
 - Basic looping:
-  - `[[`/`]]` to set loop endpoints (or the Now buttons).
-  - `ll` to toggle looping (or the toggle).
-  - Video playback will now adhere to the loop bounds: when the playhead
+  - `[[`/`]]` to set scratch loop endpoints (or the Now buttons).
+  - `xx` to toggle looping (or the toggle).
+  - Video playback will now adhere to the scratch loop bounds: when the playhead
     reaches the end it will wrap around to the loop start. Regular seek
     movements will be confined to the loop boundaries.
 
@@ -122,7 +122,7 @@ and loops.
 
 The first entity is obvious: videos. Once you open a YouTube video in LL, the
 app remembers the video and how you last left it: the current playhead
-position, the playback speed, the loop endpoints, and any other information
+position, the playback speed, the scratch loop endpoints, and any other information
 about the entities that a video can have.
 
 To illustrate some video behaviors open these two URLs which will load two
@@ -167,16 +167,14 @@ blue progress bar.
 
 <!-- Switch to the example-video-2. -->
 
-**Loop**. Because a section has start and end points, it provides a way to
-define a loop quickly (via `sl`). Give that a try with the example video:
-navigate the playhead anywhere within a section; press `sl`; notice that
-the loop end points are set to enclose the section; press `ll` to toggle
-looping on.
+**Scratch**. Because a section has start and end points, it provides a way to
+define a scratch loop quickly (via `sx`). Give that a try with the example video:
+navigate the playhead anywhere within a section; press `sx`; notice that the
+loop end points are set to enclose the section; press `xx` to toggle looping
+on.
 
-<!-- Info notice. Technically, the loop will be a slightly larger than the
-section. This is done to provide a small bit lead-in and lead-out time as you
-play and loop the section. You can adjust the application's default loop
-padding amount via "App => Options" in the menus). -->
+<!-- Info notice. Why is the operation called "Scratch" rather than "Loop"?
+See the help documentation for loops (add anchor link). -->
 
 **Jump**. Sections can also be used for efficient navigation: try `sj` to
 jump to the start of a different section.
@@ -230,14 +228,17 @@ conventions already established for sections and chapters (see the Mark menu).
 
 ### Loops
 
-The entity tour saved loops for last because they sit at the center
-of the app's mission. There are several things to know about loops
+The entity tour postponed loops until the end because they sit at the center
+of the app's mission. There are several topics to cover: saved loops, the
+scratch loop and the scratch operaton; scratch loop nudging; and scratch loop
+sources.
 
-Topics:
-  - saved loops
-  - scratch loop
-  - nudging
-  - sources
+#### Saved loops
+
+<!-- Info notice. Technically, the loop will be a slightly larger than the
+section. This is done to provide a small bit lead-in and lead-out time as you
+play and loop the section. You can adjust the application's default loop
+padding amount via "App => Options" in the menus). -->
 
 A named, loopable time range. Unlike sections, loops don't have to
 align with the structure you've defined -- they're free-form. A loop

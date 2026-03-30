@@ -476,7 +476,6 @@ class LlamaControls extends LitElement {
     loopNudgeDeltaChoices: { type: Array },
     editScratchActive:   { type: Boolean },
     editScratchFocus:    { type: String },
-    editScratchDelta:    { type: Number },
     activeEntityType:    { type: String },
   };
 
@@ -497,7 +496,6 @@ class LlamaControls extends LitElement {
     this.loopNudgeDeltaChoices = DEFAULT_OPTIONS.loop_nudge_delta_choices;
     this.editScratchActive = false;
     this.editScratchFocus  = 'start';
-    this.editScratchDelta  = 1;
     this.activeEntityType  = 'any';
     this._playPauseRef    = createRef();
     this._timeRef         = createRef();
@@ -526,7 +524,7 @@ class LlamaControls extends LitElement {
   // active (delta < 1); falls back to m:ss otherwise.
   _fmtLoop(secs) {
     if (secs == null) return '?';
-    if (this.editScratchDelta < 1) {
+    if (this.loopNudgeDelta < 1) {
       const rounded = Math.round(secs * 10) / 10;
       const m = Math.floor(rounded / 60);
       const rawS = rounded % 60;
@@ -564,16 +562,19 @@ class LlamaControls extends LitElement {
     if (changedProps.has('currentTime') && this._timeRef.value && !this._timeFocused) {
       this._timeRef.value.value = this._fmt(this.currentTime);
     }
-    if ((changedProps.has('loopStart') || changedProps.has('editScratchDelta'))
+    if ((changedProps.has('loopStart') || changedProps.has('loopNudgeDelta'))
         && this._startRef.value) {
       this._startRef.value.value = this._fmtLoop(this.loopStart);
     }
-    if ((changedProps.has('loopEnd') || changedProps.has('editScratchDelta'))
+    if ((changedProps.has('loopEnd') || changedProps.has('loopNudgeDelta'))
         && this._endRef.value) {
       this._endRef.value.value = this._fmtLoop(this.loopEnd);
     }
     if (changedProps.has('speed') && this._speedRef.value) {
       this._speedRef.value.value = `${(this.speed * 100).toFixed(0)}`;
+    }
+    if (changedProps.has('loopNudgeDelta') && this._nudgeDeltaRef.value) {
+      this._nudgeDeltaRef.value.value = String(this.loopNudgeDelta);
     }
   }
 

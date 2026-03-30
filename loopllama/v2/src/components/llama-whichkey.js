@@ -73,8 +73,6 @@ class LlamaWhichkey extends LitElement {
     count:             { type: Number },
     windowFocused:     { type: Boolean },
     editScratchActive: { type: Boolean },
-    editScratchFocus:  { type: String },
-    editScratchDelta:  { type: Number },
     warningMsg:        { type: String },
     errorMsg:          { type: String },
     statusMsg:         { type: String },
@@ -87,8 +85,6 @@ class LlamaWhichkey extends LitElement {
     this.count             = null;
     this.windowFocused     = true;
     this.editScratchActive = false;
-    this.editScratchFocus  = 'start';
-    this.editScratchDelta  = 5;
     this.warningMsg        = null;
     this.errorMsg          = null;
     this.statusMsg         = null;
@@ -130,7 +126,6 @@ class LlamaWhichkey extends LitElement {
     // When edit-scratch is active, always show the cheatsheet; a simultaneous
     // warning appears above it on a second row.
     if (this.editScratchActive) {
-      const focusLabel = this.editScratchFocus === 'start' ? 'Start' : 'End';
       const cheatRow = html`
         <div class="row">
           <span class="cheat-label">Edit Loop</span>
@@ -141,14 +136,6 @@ class LlamaWhichkey extends LitElement {
           ${this._kbItem('Bsp', 'reset')}
           ${this._kbItem('0-9/:', 'type time')}
           ${this._kbItem('Enter/Esc', 'done')}
-          <span class="item">
-            <span class="desc">Focus:</span>
-            <span class="state-val">${focusLabel}</span>
-          </span>
-          <span class="item">
-            <span class="desc">Delta:</span>
-            <span class="state-val">${this.editScratchDelta}s</span>
-          </span>
         </div>
       `;
       if (this.warningMsg) {

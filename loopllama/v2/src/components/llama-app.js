@@ -47,7 +47,6 @@ import './llama-inspect-modal.js';
 import './llama-cloud-status-modal.js';
 import './llama-data-op-modal.js';
 
-const EDIT_SCRATCH_DELTAS = [0.1, 1, 5, 10, 30];
 
 const QUIP_INTERVAL_MS = 3000;
 
@@ -63,6 +62,12 @@ const QUIPS = [
   "The Llama abides",
   "Hey, baby, scratch my ears",
   "¿Cómo se Llama?",
+  "Need loops? No probllama",
+  "Dream ticket: Millard Fillmore & No-Drama Obama",
+  "Which side of The Llama has the most fleece? The outside",
+  "How does The Llama do so much? He uses an allama clock",
+  "What's two llamas next to the Liberty Bell? Llama llama ding dong",
+  "Never doubt The Llama",
 ];
 
 class LlamaApp extends LitElement {
@@ -269,7 +274,6 @@ class LlamaApp extends LitElement {
     currentUser:     { type: Object },
     editScratchActive:  { type: Boolean },
     editScratchFocus:   { type: String },
-    editScratchDelta:   { type: Number },
     videos:             { type: Array },
     stashes:            { type: Object },
     currentVideoId:     { type: String },
@@ -309,7 +313,6 @@ class LlamaApp extends LitElement {
     this.currentUser         = null;
     this.editScratchActive   = false;
     this.editScratchFocus    = 'start';
-    this.editScratchDelta    = EDIT_SCRATCH_DELTAS[2];
     this._appState           = load() ?? createAppState();
     this.videos              = this._appState.videos;
     this.stashes             = this._appState.stashes ?? {};
@@ -901,7 +904,7 @@ class LlamaApp extends LitElement {
       },
       editScratch: () => this._enterEditScratch(),
       editLoop: () => {
-        const loop = nearestLoopLeft(this.namedLoops, this.currentTime);
+        const loop = this.namedLoops.find(l => this.currentTime >= l.start && this.currentTime <= l.end);
         if (!loop) { this._setWarning('No saved loop at current position.'); return; }
         this._saveLoopModalEl?.show(loop);
       },
@@ -1307,8 +1310,12 @@ class LlamaApp extends LitElement {
     this._kb.disable();
     this.editScratchActive   = true;
     this.editScratchFocus    = 'start';
-    this.editScratchDelta    = EDIT_SCRATCH_DELTAS[2];
     this._editScratchHandler = (e) => this._editScratchKeyDown(e);
+    // Blur any focused element (including deep inside shadow DOM) so that
+    // Shoelace dropdown triggers don't intercept arrow keys.
+    let el = document.activeElement;
+    while (el?.shadowRoot?.activeElement) el = el.shadowRoot.activeElement;
+    el?.blur();
     document.addEventListener('keydown', this._editScratchHandler);
   }
 
@@ -1348,7 +1355,7 @@ class LlamaApp extends LitElement {
 
     if (key === 'ArrowLeft' || key === 'ArrowRight') {
       event.preventDefault();
-      const delta = (key === 'ArrowRight' ? 1 : -1) * this.editScratchDelta;
+      const delta = (key === 'ArrowRight' ? 1 : -1) * this.loopNudgeDelta;
       const maxT  = this.duration ?? Infinity;
       if (this.editScratchFocus === 'start') {
         this.loopStart = Math.max(0, Math.min(this.loopStart + delta, maxT));
@@ -1361,11 +1368,12 @@ class LlamaApp extends LitElement {
 
     if (key === 'ArrowUp' || key === 'ArrowDown') {
       event.preventDefault();
-      const idx = EDIT_SCRATCH_DELTAS.indexOf(this.editScratchDelta);
+      const choices = [...(this._appState?.options.loop_nudge_delta_choices ?? DEFAULT_OPTIONS.loop_nudge_delta_choices)].sort((a, b) => a - b);
+      const idx = choices.indexOf(this.loopNudgeDelta);
       if (key === 'ArrowUp') {
-        this.editScratchDelta = EDIT_SCRATCH_DELTAS[Math.min(idx + 1, EDIT_SCRATCH_DELTAS.length - 1)];
+        this.loopNudgeDelta = choices[Math.min(idx + 1, choices.length - 1)];
       } else {
-        this.editScratchDelta = EDIT_SCRATCH_DELTAS[Math.max(idx - 1, 0)];
+        this.loopNudgeDelta = choices[Math.max(idx - 1, 0)];
       }
       return;
     }
@@ -1376,7 +1384,7 @@ class LlamaApp extends LitElement {
         ? this.loopStart
         : Math.max(0, this.loopEnd - 3);
       this._vc?.seekTo(seekTo);
-      this._onPlayPause();
+      if (!this._vc?.isPlaying()) this._vc?.play();
       return;
     }
 
@@ -2854,7 +2862,6 @@ class LlamaApp extends LitElement {
           .loopNudgeDeltaChoices=${this._appState?.options.loop_nudge_delta_choices ?? DEFAULT_OPTIONS.loop_nudge_delta_choices}
           .editScratchActive=${this.editScratchActive}
           .editScratchFocus=${this.editScratchFocus}
-          .editScratchDelta=${this.editScratchDelta}
           .activeEntityType=${this.activeEntityType}
           @ll-play-pause=${this._onPlayPause}
           @ll-seek-to=${(e) => this._jumpTo(e.detail.value)}
@@ -2874,7 +2881,7 @@ class LlamaApp extends LitElement {
           @ll-invalid-time=${() => this._setWarning('Invalid time format.')}
           @ll-menu-select=${this._onMenuSelect}
           @ll-menu-open=${() => this._kb?.disable()}
-          @ll-menu-close=${() => this._kb?.enable()}
+          @ll-menu-close=${() => { if (!this.editScratchActive) this._kb?.enable(); }}
         ></llama-controls>
 
         <llama-current
@@ -3058,8 +3065,6 @@ class LlamaApp extends LitElement {
         .count=${this.wkCount}
         .windowFocused=${this.windowFocused}
         .editScratchActive=${this.editScratchActive}
-        .editScratchFocus=${this.editScratchFocus}
-        .editScratchDelta=${this.editScratchDelta}
         .warningMsg=${this.warningMsg}
         .errorMsg=${this.errorMsg}
         .statusMsg=${this.statusMsg}
