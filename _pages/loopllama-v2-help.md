@@ -13,12 +13,13 @@ toc_icon: 'guitar'
 ## What is LoopLlama?
 ## Quick start
 ## Entities
-### Video
-### Section
-### Chapter
-### Loop
-### Mark
-## The Scratch Loop
+### Videos
+### Sections
+### Chapters
+### Marks
+### Loops
+#### Saved loops
+### The Scratch Loop
 ### Source tracking
 ### Nudging endpoints
 ## The Visual Timeline
@@ -230,15 +231,98 @@ conventions already established for sections and chapters (see the Mark menu).
 
 The entity tour postponed loops until the end because they sit at the center
 of the app's mission. There are several topics to cover: saved loops, the
-scratch loop and the scratch operaton; scratch loop nudging; and scratch loop
-sources.
+scratch loop and the scratch operaton; scratch loop edit mode; nudging scratch
+loop boundaries; and scratch loop sources.
 
 #### Saved loops
 
-<!-- Info notice. Technically, the loop will be a slightly larger than the
-section. This is done to provide a small bit lead-in and lead-out time as you
-play and loop the section. You can adjust the application's default loop
-padding amount via "App => Options" in the menus). -->
+Saved loops are similar to chapters and sections in that they define a range
+via their start and end. They are more generic because their purpose is not to
+partition a video into non-overlapping parts: saved loops can overlap. They
+are displayed at the bottom of the the timeline area (below sections,
+chapters, and marks) as brown line segments.
+
+The key binding and menu items for saved loops are similar to those for
+sections and chapters. You can create a loop via `ll`, edit the current loop
+(based on playhead position) to give it a name or to adjust its boundaries via
+`le`, and zoom the timeline to the current loop's range via `lz`. Also, like
+chapters and section, you can use `lj` to jump to the start of a loop and `ld`
+to delete a loop. And the Scratch operation, via `lx`, will load the current
+loop's boundaries into the scratch loop — our next topic.
+
+#### Scratch loop and the scratch operation
+
+The scratch loop is the active working area for looping a video. In the app's
+main controls see the Scratch Loop area. You can toggle looping on and off,
+directly edit the scratch loop's boundaries via text boxes, or use the "Now"
+buttons to set a scratch loop boundary to the current playhead position.
+
+As mentioned in the documentation for sections, chapters, and saved loops,
+entities with a start and end support the "Scratch" operation. Although the
+terminology is idiosyncratic, the app's menu labeling and key binding scheme
+benefit from keeping a clear distinction between saved loops and the scratch
+loop. Saved loop operations are found on the "Loop" menu and used `l` as the
+prefix for their key bindings. Scratch loop operations are on the "Scratch"
+menu and use `x` as the binding prefix. And the "Scratch" operation means
+loading the bounds of a saved entity (chapter, section, or saved loop) into
+the scratch loop work area.
+
+(Maybe defer this issue entirely and put it in a section dealing with the
+app's options?) When you perform "Loop => Scratch", the saved loop's bounds
+are directly loading into the scratch loop. The Scratch operation for sections
+and chapters is the same, but with one wrinkle: the scratch loop bounds will
+be a slightly larger than the source entity. This is done to provide a small
+bit lead-in and lead-out time as you play and loop the section or chapter. You
+can adjust the application's default loop padding amount via "App => Options"
+in the menus.
+
+#### Scratch loop edit mode
+
+Although you can edit bounds directly via the scratch loop controls, LoopLlama
+also provides a special keyboard mode to make such adjustments. The mode can
+be invoked via "Edit mode" on the "Scratch" menu (also via the `xe` and `\`
+bindings).
+
+After the mode is invoked, the scratch loop's start point will have focus
+(notice the yellow border). In the message footer, the available key bindings
+are listed, but the primary controls are left/right arrows to
+decrease/increase the boundary and up/down arrows to adjust the "delta" (ie,
+the size of those adjustments). Use tab to switch focus and enter or escape to
+exit the mode.
+
+Within scratch edit mode, the space key will play the video near the boundary
+that currently has focus. The purpose is to allow you to adjust a boundary,
+then play the video to assess whether more fine-tuning is needed.
+
+#### Nudging
+
+In addition to scratch loop edit mode, the app also supports a coherent set of
+key bindings to make quick adjustments to the loop bounds. If you hover over
+the "Now" buttons, notice that `[[` is the binding to set the start to the
+playhead position and `]]` sets the end. The nudge key bindings build on that
+convention: `[` is the prefix for start, `]` for end. See the nudge key
+bindings (add link) for a full listing, but the most commonly used bindings
+are these four:
+
+    [- | Start: decrease
+    [= | Start: increase
+    ]- | End: decrease
+    ]= | End: increase
+
+__HERE__
+
+One situation requires special handling: if a nudge would push an
+endpoint past the other one, making an illegal loop (start >= end),
+the app moves the endpoint relative to the other instead. So if you
+nudge the end leftward past the start, the end lands just past the
+start rather than crossing it.
+
+If looping is currently active, the app will refuse an edit that
+would make the loop illegal. If looping is off, the illegal state is
+allowed temporarily -- useful when you're setting one endpoint first
+and intend to fix the other next.
+
+#### Sources
 
 A named, loopable time range. Unlike sections, loops don't have to
 align with the structure you've defined -- they're free-form. A loop
@@ -249,27 +333,6 @@ The active (working) loop is always the scratch loop -- a single
 unnamed loop that is the target of all looping activity. Named loops
 are saved separately and loaded into the scratch loop when you want
 to work on them. See The Scratch Loop for details.
-
-### The Scratch Loop
-
-The scratch loop is your active working loop -- the single loop the
-player uses when looping is enabled. There is always exactly one
-scratch loop. It has a start point and an end point, and that's it:
-no name, no saved state.
-
-All looping activity goes through the scratch loop:
-
-- Setting loop endpoints directly (the `[[` and `]]` keys) always
-  writes to the scratch loop.
-- Loading a section or saved loop copies its endpoints into the
-  scratch loop. The source entity is not modified.
-- Editing loop endpoints always edits the scratch loop, regardless
-  of where the endpoints came from.
-
-The typical workflow is: load something into scratch, adjust the
-endpoints until they're right, then optionally save.
-
-### Source tracking
 
 When you load a section or named loop into the scratch loop, the app
 remembers the source. This gives you three additional operations in
@@ -283,23 +346,6 @@ the Loop menu:
 
 Save new (`ln`) creates a new named loop from the current scratch
 loop endpoints, regardless of source.
-
-### Nudging endpoints
-
-The `[-` / `[=` keys nudge the loop start; `]-` / `]=` nudge the
-end. Each nudge moves the endpoint by the current nudge delta (a
-small time increment you can adjust).
-
-One situation requires special handling: if a nudge would push an
-endpoint past the other one, making an illegal loop (start >= end),
-the app moves the endpoint relative to the other instead. So if you
-nudge the end leftward past the start, the end lands just past the
-start rather than crossing it.
-
-If looping is currently active, the app will refuse an edit that
-would make the loop illegal. If looping is off, the illegal state is
-allowed temporarily -- useful when you're setting one endpoint first
-and intend to fix the other next.
 
 ## The Visual Timeline
 

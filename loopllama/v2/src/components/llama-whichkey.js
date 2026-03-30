@@ -130,11 +130,11 @@ class LlamaWhichkey extends LitElement {
         <div class="row">
           <span class="cheat-label">Edit Loop</span>
           ${this._kbItem('Tab', 'toggle focus')}
-          ${this._kbItem('←/→', 'nudge')}
+          ${this._kbItem('←/→', 'decrease/increase')}
           ${this._kbItem('↑/↓', 'delta')}
           ${this._kbItem('Space', 'play/pause')}
           ${this._kbItem('Bsp', 'reset')}
-          ${this._kbItem('0-9/:', 'type time')}
+          ${this._kbItem('0-9', 'type time')}
           ${this._kbItem('Enter/Esc', 'done')}
         </div>
       `;
