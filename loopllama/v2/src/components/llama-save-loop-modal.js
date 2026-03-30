@@ -1,14 +1,17 @@
-// llama-save-loop-modal.js -- modal to save the scratch loop as a named loop.
+// llama-save-loop-modal.js -- modal to save the scratch loop as a named loop,
+// or to edit an existing named loop.
 //
 // Props:
 //   loopStart: Number -- current scratch-loop start (seconds); used as default
 //   loopEnd:   Number -- current scratch-loop end (seconds); used as default
 //
 // Events fired (composed, bubbling):
-//   ll-save-loop  { name, start, end }
+//   ll-save-loop    { name, start, end }     -- create mode
+//   ll-update-loop  { id, name, start, end } -- edit mode
 //
 // API:
-//   show() / hide()
+//   show(loop?)  -- no arg = create; loop object = edit
+//   hide()
 
 import { LitElement, html, css } from 'lit';
 import { parseTime as _parseTime } from '../parseTime.js';
@@ -38,6 +41,7 @@ class LlamaSaveLoopModal extends LitElement {
   static properties = {
     loopStart: { type: Number },
     loopEnd:   { type: Number },
+    _editId:   { state: true },
     _name:     { state: true },
     _start:    { state: true },
     _end:      { state: true },
@@ -48,16 +52,25 @@ class LlamaSaveLoopModal extends LitElement {
     super();
     this.loopStart = 0;
     this.loopEnd   = 0;
+    this._editId   = null;
     this._name     = '';
     this._start    = '';
     this._end      = '';
     this._error    = '';
   }
 
-  show() {
-    this._name  = '';
-    this._start = _fmtTime(this.loopStart);
-    this._end   = _fmtTime(this.loopEnd);
+  show(loop = null) {
+    if (loop) {
+      this._editId = loop.id;
+      this._name   = loop.name || '';
+      this._start  = _fmtTime(loop.start);
+      this._end    = _fmtTime(loop.end);
+    } else {
+      this._editId = null;
+      this._name   = '';
+      this._start  = _fmtTime(this.loopStart);
+      this._end    = _fmtTime(this.loopEnd);
+    }
     this._error = '';
     this.renderRoot.querySelector('llama-modal')?.show();
   }
@@ -82,11 +95,20 @@ class LlamaSaveLoopModal extends LitElement {
       return;
     }
     this._error = '';
-    this.dispatchEvent(new CustomEvent('ll-save-loop', {
-      detail: { name: this._name.trim(), start, end },
-      bubbles:  true,
-      composed: true,
-    }));
+    const name = this._name.trim();
+    if (this._editId) {
+      this.dispatchEvent(new CustomEvent('ll-update-loop', {
+        detail: { id: this._editId, name, start, end },
+        bubbles:  true,
+        composed: true,
+      }));
+    } else {
+      this.dispatchEvent(new CustomEvent('ll-save-loop', {
+        detail: { name, start, end },
+        bubbles:  true,
+        composed: true,
+      }));
+    }
     this.hide();
   }
 
@@ -113,8 +135,10 @@ class LlamaSaveLoopModal extends LitElement {
   }
 
   render() {
+    const title  = this._editId ? 'Edit Loop' : 'Save Loop';
+    const btnLabel = this._editId ? 'Update' : 'Save';
     return html`
-      <llama-modal label="Save Loop" @ll-modal-initial-focus=${this._onInitialFocus}>
+      <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
         ${this._renderField('Name (optional)', 'name', this._name,
             'Short label (e.g. "outro lick")',
             e => { this._name = e.target.value; })}
@@ -127,7 +151,7 @@ class LlamaSaveLoopModal extends LitElement {
         ${this._error ? html`<div class="error">${this._error}</div>` : ''}
         <div slot="footer">
           <sl-button @click=${this.hide}>Cancel</sl-button>
-          <sl-button variant="primary" @click=${this._save}>Save</sl-button>
+          <sl-button variant="primary" @click=${this._save}>${btnLabel}</sl-button>
         </div>
       </llama-modal>
     `;

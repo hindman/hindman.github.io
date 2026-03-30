@@ -10,7 +10,7 @@ import {
   addMark, deleteMarkById, nearestMarkLeft,
   addSection, deleteSectionById, getSectionBounds, nearestSectionLeft,
   fixSectionEnd,
-  addLoop, deleteLoopById,
+  addLoop, deleteLoopById, updateLoop, nearestLoopLeft,
   deleteChapterById,
   addChapterDivider, nearestChapterLeft, getChapterBounds, fixChapterEnd,
   propagateEntityChange, validateEntityChange,
@@ -706,7 +706,7 @@ class LlamaApp extends LitElement {
         this._videoPickerEl?.show('switch', 'alpha');
       },
       editVideo:     () => this._editVideoModalEl?.show(),
-      loopVideo: () => {
+      scratchVideo: () => {
         if (this.duration == null) {
           this._setError('Video duration not yet known.');
           return;
@@ -720,7 +720,7 @@ class LlamaApp extends LitElement {
         this.loopSourceType  = null;
         this.loopSourceStart = 0;
         this.loopSourceEnd   = this.duration;
-        this.statusMsg       = 'Looping full video.';
+        this.statusMsg       = 'Scratch: full video.';
       },
       zoomVideo: () => {
         if (this.zoomSource?.trigger === 'video') {
@@ -900,6 +900,28 @@ class LlamaApp extends LitElement {
         this.statusMsg = 'Loop source unlinked.';
       },
       editScratch: () => this._enterEditScratch(),
+      editLoop: () => {
+        const loop = nearestLoopLeft(this.namedLoops, this.currentTime);
+        if (!loop) { this._setWarning('No saved loop at current position.'); return; }
+        this._saveLoopModalEl?.show(loop);
+      },
+      scratchLoop: () => {
+        const loop = nearestLoopLeft(this.namedLoops, this.currentTime);
+        if (!loop) { this._setWarning('No saved loop at current position.'); return; }
+        this._clearZoomIfOutside(loop.start, loop.end);
+        this.loopStart       = loop.start;
+        this.loopEnd         = loop.end;
+        this.loopSource      = loop.id;
+        this.loopSourceLabel = loop.name || null;
+        this.loopSourceType  = 'loop';
+        this.loopSourceStart = loop.start;
+        this.loopSourceEnd   = loop.end;
+        this.statusMsg       = `Scratch: loop${loop.name ? ' \u2013 ' + loop.name : ''}.`;
+        if (this.looping) {
+          this._maybePushJump(this._vc?.getCurrentTime() ?? 0, loop.start);
+          this._vc?.seekTo(loop.start);
+        }
+      },
       deleteLoop: () => this._openLoopsPicker('delete'),
       zoomLoop: () => {
         if (this.zoomSource?.trigger === 'loop') {
@@ -947,7 +969,7 @@ class LlamaApp extends LitElement {
         this._saveCurrentState();
       },
       editSection:   () => this._editCurrentSection(),
-      loopSection: () => {
+      scratchSection: () => {
         const bounds = getSectionBounds(this.sections, this.currentTime, this.duration);
         if (!bounds || bounds.end == null) {
           this._setWarning('No section at current position.');
@@ -967,7 +989,7 @@ class LlamaApp extends LitElement {
         this.loopSourceType  = 'section';
         this.loopSourceStart = bounds.start;
         this.loopSourceEnd   = bounds.end;
-        this.statusMsg       = 'Looping section.';
+        this.statusMsg       = 'Scratch: section.';
       },
       deleteSection: () => this._openSectionsPicker('delete'),
       fixSection: () => {
@@ -1019,7 +1041,7 @@ class LlamaApp extends LitElement {
         this._saveCurrentState();
       },
       editChapter:   () => this._editCurrentChapter(),
-      loopChapter: () => {
+      scratchChapter: () => {
         const bounds = getChapterBounds(this.chapters, this.currentTime, this.duration);
         if (!bounds || bounds.end == null) {
           this._setWarning('No chapter at current position.');
@@ -1039,7 +1061,7 @@ class LlamaApp extends LitElement {
         this.loopSourceType  = 'chapter';
         this.loopSourceStart = bounds.start;
         this.loopSourceEnd   = bounds.end;
-        this.statusMsg       = 'Looping chapter.';
+        this.statusMsg       = 'Scratch: chapter.';
       },
       deleteChapter: () => this._openChapterPicker('delete'),
       fixChapter: () => {
@@ -1123,8 +1145,8 @@ class LlamaApp extends LitElement {
       openMenuChapter: () => this.renderRoot.querySelector('llama-controls')?.openMenu('Chapter'),
       openMenuSection: () => this.renderRoot.querySelector('llama-controls')?.openMenu('Section'),
       openMenuLoop:    () => this.renderRoot.querySelector('llama-controls')?.openMenu('Loop'),
+      openMenuScratch: () => this.renderRoot.querySelector('llama-controls')?.openMenu('Scratch'),
       openMenuMark:    () => this.renderRoot.querySelector('llama-controls')?.openMenu('Mark'),
-      openMenuJump:    () => this.renderRoot.querySelector('llama-controls')?.openMenu('Jump'),
       openMenuData:    () => this.renderRoot.querySelector('llama-controls')?.openMenu('Data'),
       openMenuApp:     () => this.renderRoot.querySelector('llama-controls')?.openMenu('App'),
     };
@@ -1782,6 +1804,34 @@ class LlamaApp extends LitElement {
       this._maybePushJump(this._vc?.getCurrentTime() ?? 0, loop.start);
       this._vc?.seekTo(loop.start);
     }
+  }
+
+  // Handle ll-scratch-loop from loop picker (mode='scratch'): load into scratch,
+  // no padding, set source tracking. Same behavior as _onLoadLoop.
+  _onScratchLoop(e) {
+    this._onLoadLoop(e);
+  }
+
+  // Handle ll-edit-loop from loop picker (mode='edit'): open save-loop modal
+  // pre-filled with the selected loop's data.
+  _onEditLoop(e) {
+    const loop = this.namedLoops.find(l => l.id === e.detail.id);
+    if (!loop) return;
+    this._saveLoopModalEl?.show(loop);
+  }
+
+  // Handle ll-update-loop from save-loop modal (edit mode): update the loop
+  // in place, trigger re-render, and persist.
+  _onUpdateLoop(e) {
+    this._pushUndoSnapshot('Loop updated');
+    updateLoop(this.namedLoops, e.detail.id, {
+      name:  e.detail.name,
+      start: e.detail.start,
+      end:   e.detail.end,
+    });
+    this.namedLoops = [...this.namedLoops];
+    this.statusMsg  = 'Loop updated.';
+    this._saveCurrentState();
   }
 
   // Handle ll-activate-loop from timeline zone click: activate named loop as
@@ -2874,6 +2924,7 @@ class LlamaApp extends LitElement {
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-save-loop=${this._onSaveLoop}
+        @ll-update-loop=${this._onUpdateLoop}
       ></llama-save-loop-modal>
 
       <llama-loop-picker
@@ -2883,6 +2934,8 @@ class LlamaApp extends LitElement {
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-jump-loop=${this._onJumpLoop}
         @ll-load-loop=${this._onLoadLoop}
+        @ll-scratch-loop=${this._onScratchLoop}
+        @ll-edit-loop=${this._onEditLoop}
         @ll-delete-loop=${this._onDeleteLoop}
       ></llama-loop-picker>
 

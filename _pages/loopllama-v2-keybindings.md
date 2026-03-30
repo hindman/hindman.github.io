@@ -14,9 +14,9 @@ toc_icon: 'guitar'
 
     Action    | Video | Chapter | Section | Loop | Mark
     ----------------------------------------------------
-    Create    | .     | cc      | ss      | .    | mm
+    Create    | .     | cc      | ss      | ll   | mm
     Edit      | ve    | ce      | se      | le   | me
-    Loop      | vl    | cl      | sl      | .    | .
+    Scratch   | vx    | cx      | sx      | lx   | .
     Jump...   | .     | cj      | sj      | lj   | mj
     Zoom      | vz    | cz      | sz      | lz   | .
     Fix-end   | .     | cf      | sf      | .    | .
@@ -30,7 +30,7 @@ toc_icon: 'guitar'
         Load URL   | vu  y
         Open...    | vo  vv
         Edit       | ve
-        Loop       | vl
+        Scratch    | vx
         Zoom       | vz
         Delete...  | vd
         Unstash... | vr
@@ -39,7 +39,7 @@ toc_icon: 'guitar'
     Chapter:
         Create    | cc
         Edit      | ce
-        Loop      | cl
+        Scratch   | cx
         Jump...   | cj
         Zoom      | cz
         Fix end   | cf
@@ -48,34 +48,34 @@ toc_icon: 'guitar'
     Section:
         Create    | ss
         Edit      | se
-        Loop      | sl
+        Scratch   | sx
         Jump...   | sj
         Zoom      | sz
         Fix end   | sf
         Delete... | sd
 
     Loop:
-        Jump...         | lj
-        Delete...       | ld
+        Create    | ll
+        Edit      | le
+        Scratch   | lx
+        Jump...   | lj
+        Zoom      | lz
+        Delete... | ld
+
+    Scratch:
+        Toggle          | xx
+        Edit mode       | xe  \
+        Zoom            | xz
         --------------------------------
-        Edit            | le  \
-        Zoom            | lz
-        --------------------------------
-        Save new        | ln
-        Save to source  | ls
-        Reset to source | lr
-        Unlink source   | lu
+        Save to source  | xs
+        Reset to source | xr
+        Unlink source   | xu
 
     Mark:
         Create    | mm
         Edit      | me
         Jump...   | mj
         Delete... | md
-
-    Jump:
-        History... | jh
-        Back       | jb
-        Forward    | jf
 
     Data:
         Share video     | dv
@@ -89,21 +89,22 @@ toc_icon: 'guitar'
         Read from cloud | dr
         Compare         | dc
         --------------------------------
-        Delete...       | dx
+        Delete...       | d<bsp>
 
     App:
-        Copy time       | ac
+        Jump history... | jh
+        Back            | jb
+        Forward         | jf
         --------------------------------
         Undo            | au  u
         Redo            | ar  U
+        Recall message  | am
         --------------------------------
+        Copy time       | ac
         Toggle timeline | at  t
         Zoom off        | az  z
         --------------------------------
-        Recall message  | am
-        --------------------------------
         Options         | ao  o
-        --------------------------------
         Help            | ah  h
         Key bindings    | ak  k
 
@@ -113,23 +114,23 @@ toc_icon: 'guitar'
 
     Video:
 
-        vu | Load URL
+        vl | Load URL
         vo | Open...
         ve | Edit
-        vl | Loop
+        vx | Scratch
         vz | Zoom
         vd | Delete...
-        vr | Restore...
+        vu | Unstash...
         vi | Info
         --------------------------------
-        y  | vu synonym
+        y  | vl synonym
         vv | vo synonym
 
     Chapter:
 
         cc | Create
         ce | Edit
-        cl | Loop
+        cx | Scratch
         cj | Jump...
         cz | Zoom
         cf | Fix end
@@ -139,28 +140,31 @@ toc_icon: 'guitar'
 
         ss | Create
         se | Edit
-        sl | Loop
+        sx | Scratch
         sj | Jump...
         sz | Zoom
         sf | Fix end
         sd | Delete...
 
     Loop:
-
-        ll | Toggle
+        ll | Create
         le | Edit
+        lx | Scratch
         lj | Jump...
         lz | Zoom
         ld | Delete...
-        --------------------------------
-        ln | Save new
-        ls | Save to source
-        lr | Reset to source
-        lu | Unlink source
-        --------------------------------
-        \  | le synonym
 
-    Loop bounds:
+    Scratch loop:
+        xx | Toggle
+        xe | Edit mode
+        xz | Zoom
+        xs | Save to source
+        xr | Reset to source
+        xu | Unlink source
+        --------------------------------
+        \  | xe synonym
+
+    Scratch loop bounds:
 
         [[     | Start: set now
         [<bsp> | Start: reset to video start
@@ -184,44 +188,43 @@ toc_icon: 'guitar'
         mj | Jump...
         md | Delete...
 
+    Data:
+
+        dv     | Share video
+        dl     | Share loop
+        --------------------------------
+        de     | Export
+        di     | Import
+        dI     | Inspect
+        --------------------------------
+        ds     | Save to cloud
+        dr     | Read from cloud
+        dc     | Compare
+        --------------------------------
+        d<bsp> | Delete...
+        --------------------------------
+        dd     | ds synonym
+
     Jump:
 
         jj      | By time
         <enter> | To start (loop or video)
         --------------------------------
-        jh      | History...
+        jh      | Jump history...
         jb      | Backward
         jf      | Forward
-
-    Data:
-
-        dv | Share video
-        dl | Share loop
-        --------------------------------
-        de | Export
-        di | Import
-        dI | Inspect
-        --------------------------------
-        ds | Save to cloud
-        dr | Read from cloud
-        dc | Compare
-        --------------------------------
-        dx | Delete...
-        --------------------------------
-        dd | ds synonym
 
     App:
 
         au | Undo
         ar | Redo
+        am | Recall message
         --------------------------------
+        ac | Copy time
         at | Toggle timeline
         az | Zoom off
         --------------------------------
-        am | Recall message
-        --------------------------------
         ao | Options
-        --------------------------------
         ah | Help
         ak | Key bindings
         --------------------------------
@@ -256,8 +259,8 @@ toc_icon: 'guitar'
         `c | Chapter
         `s | Section
         `l | Loop
+        `x | Scratch
         `m | Mark
-        `j | Jump
         `d | Data
         `a | App
 

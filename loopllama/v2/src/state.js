@@ -170,6 +170,17 @@ export function nearestSectionLeft(sections, time) {
   return result;
 }
 
+// Returns the named loop whose start is <= time and greatest, or null.
+// Assumes loops are sorted by start.
+export function nearestLoopLeft(loops, time) {
+  let result = null;
+  for (const l of loops) {
+    if (l.start <= time) result = l;
+    else break;
+  }
+  return result;
+}
+
 // Add a named loop (sorted by start). Returns the new loop.
 export function addLoop(loops, start, end, name = '') {
   const loop = createLoop(start, end, name);
@@ -182,6 +193,12 @@ export function addLoop(loops, start, end, name = '') {
 export function deleteLoopById(loops, id) {
   const idx = loops.findIndex(l => l.id === id);
   if (idx !== -1) loops.splice(idx, 1);
+}
+
+// Update named loop fields by id. fields: { name?, start?, end? }
+export function updateLoop(loops, id, fields) {
+  const loop = loops.find(l => l.id === id);
+  if (loop) Object.assign(loop, fields);
 }
 
 // Nudge the loop start point by delta seconds.

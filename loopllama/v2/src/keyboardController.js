@@ -31,8 +31,8 @@ export const BINDINGS = {
   '/':          { handler: 'entityType',    desc: 'Entity type dropdown' },
   '.':          { handler: 'nextEntity',    desc: 'Next entity' },
   'Enter':      { handler: 'jumpToStart',   desc: 'Jump to start' },
-  'y':          { handler: 'videoUrl',      desc: 'Switch to YouTube URL (synonym: vu)' },
-  '\\':         { handler: 'editScratch',   desc: 'Edit scratch loop (synonym: le)' },
+  'y':          { handler: 'videoUrl',      desc: 'Switch to YouTube URL (synonym: vl)' },
+  '\\':         { handler: 'editScratch',   desc: 'Edit scratch loop (synonym: xe)' },
 
   // --- Single-key synonyms ---
 
@@ -65,14 +65,14 @@ export const BINDINGS = {
   }},
 
   'v': { completions: {
-    'u': { handler: 'videoUrl',          desc: 'Switch to YouTube video via URL' },
+    'l': { handler: 'videoUrl',          desc: 'Load URL' },
     'o': { handler: 'videoPickerRecent', desc: 'Open video picker' },
     'v': { handler: 'videoPickerRecent', desc: 'Open video picker (synonym: vo)' },
     'e': { handler: 'editVideo',         desc: 'Edit video attributes' },
     'i': { handler: 'videoInfo',         desc: 'Video info' },
     'd': { handler: 'deleteVideo',       desc: 'Delete current video' },
-    'r': { handler: 'restoreVideo',      desc: 'Restore video from stash' },
-    'l': { handler: 'loopVideo',         desc: 'Loop: full video as scratch loop' },
+    'u': { handler: 'restoreVideo',      desc: 'Unstash video' },
+    'x': { handler: 'scratchVideo',      desc: 'Scratch: full video as scratch loop' },
     'z': { handler: 'zoomVideo',         desc: 'Toggle video zoom' },
   }},
 
@@ -84,21 +84,27 @@ export const BINDINGS = {
   }},
 
   'l': { completions: {
-    'l': { handler: 'toggleLoop',        desc: 'Toggle looping' },
-    'n': { handler: 'saveLoop',          desc: 'Save new loop' },
-    's': { handler: 'saveBack',          desc: 'Save back to loop source' },
-    'r': { handler: 'resetLoopToSource', desc: 'Reset loop to source' },
-    'u': { handler: 'unlinkLoopSource',  desc: 'Unlink loop source' },
-    'e': { handler: 'editScratch',       desc: 'Edit scratch loop' },
-    'j': { handler: 'jumpLoop',          desc: 'Jump to loop' },
-    'd': { handler: 'deleteLoop',        desc: 'Delete a loop' },
-    'z': { handler: 'zoomLoop',          desc: 'Toggle loop zoom' },
+    'l': { handler: 'saveLoop',   desc: 'Create (save) new loop' },
+    'e': { handler: 'editLoop',   desc: 'Edit a loop' },
+    'x': { handler: 'scratchLoop', desc: 'Scratch: load loop into scratch loop' },
+    'j': { handler: 'jumpLoop',   desc: 'Jump to loop' },
+    'z': { handler: 'zoomLoop',   desc: 'Toggle loop zoom' },
+    'd': { handler: 'deleteLoop', desc: 'Delete a loop' },
+  }},
+
+  'x': { completions: {
+    'x': { handler: 'toggleLoop',        desc: 'Toggle looping' },
+    'e': { handler: 'editScratch',        desc: 'Edit scratch loop' },
+    'z': { handler: 'zoomLoop',           desc: 'Toggle loop zoom' },
+    's': { handler: 'saveBack',           desc: 'Save scratch loop back to source' },
+    'r': { handler: 'resetLoopToSource',  desc: 'Reset scratch loop to source' },
+    'u': { handler: 'unlinkLoopSource',   desc: 'Unlink loop source' },
   }},
 
   'c': { completions: {
     'c': { handler: 'setChapter',    desc: 'Create chapter divider here' },
     'e': { handler: 'editChapter',   desc: 'Edit current chapter' },
-    'l': { handler: 'loopChapter',   desc: 'Loop: current chapter as scratch loop' },
+    'x': { handler: 'scratchChapter', desc: 'Scratch: current chapter as scratch loop' },
     'j': { handler: 'jumpChapter',   desc: 'Jump to chapter' },
     'd': { handler: 'deleteChapter', desc: 'Delete a chapter' },
     'z': { handler: 'zoomChapter',   desc: 'Toggle chapter zoom' },
@@ -108,7 +114,7 @@ export const BINDINGS = {
   's': { completions: {
     's': { handler: 'setSection',    desc: 'Set section divider here' },
     'e': { handler: 'editSection',   desc: 'Edit current section' },
-    'l': { handler: 'loopSection',   desc: 'Loop current section' },
+    'x': { handler: 'scratchSection', desc: 'Scratch: current section as scratch loop' },
     'j': { handler: 'jumpSection',   desc: 'Jump to section' },
     'd': { handler: 'deleteSection', desc: 'Delete a section' },
     'z': { handler: 'zoomSection',   desc: 'Toggle section zoom' },
@@ -120,8 +126,8 @@ export const BINDINGS = {
     'c': { handler: 'openMenuChapter', desc: 'Open Chapter menu' },
     's': { handler: 'openMenuSection', desc: 'Open Section menu' },
     'l': { handler: 'openMenuLoop',    desc: 'Open Loop menu' },
+    'x': { handler: 'openMenuScratch', desc: 'Open Scratch menu' },
     'm': { handler: 'openMenuMark',    desc: 'Open Mark menu' },
-    'j': { handler: 'openMenuJump',    desc: 'Open Jump menu' },
     'd': { handler: 'openMenuData',    desc: 'Open Data menu' },
     'a': { handler: 'openMenuApp',     desc: 'Open App menu' },
   }},
@@ -148,7 +154,6 @@ export const BINDINGS = {
   'd': { completions: {
     's': { handler: 'dataSave',    desc: 'Save local data to cloud' },
     'd': { handler: 'dataSave',    desc: 'Save local data to cloud (synonym: ds)' },
-    'x': { handler: 'deleteData',  desc: 'Delete data modal' },
     'r': { handler: 'dataRead',    desc: 'Read cloud data to local' },
     'c': { handler: 'dataCompare', desc: 'Compare local vs cloud' },
     'e': { handler: 'exportAll',   desc: 'Export data as JSON' },
@@ -156,6 +161,7 @@ export const BINDINGS = {
     'I': { handler: 'inspectData', desc: 'Inspect data as JSON' },
     'v': { handler: 'shareVideo',  desc: 'Share video as JSON' },
     'l': { handler: 'shareLoop',   desc: 'Share loop via URL' },
+    'Backspace': { handler: 'deleteData', desc: 'Delete data modal' },
   }},
 };
 
