@@ -17,6 +17,12 @@
   margin-bottom: 0.75em;
 }
 
+/* Keep active TOC item readable on hover (default hover turns text white,
+   which is unreadable against the active item's light background). */
+.toc .active a:hover {
+  color: #3d4144;
+}
+
 /* Don't show the Follow button (was occuring when window is narrow). */
 .author__urls-wrapper button {
   display: none;

@@ -27,13 +27,13 @@ toc_icon: 'guitar'
 ## Menus
 
     Video:
-        Load URL   | vu  y
+        Load URL   | vl  y
         Open...    | vo  vv
         Edit       | ve
         Scratch    | vx
         Zoom       | vz
         Delete...  | vd
-        Unstash... | vr
+        Unstash... | vu
         Info       | vi
 
     Chapter:

@@ -66,77 +66,74 @@ Notice syntax/styles:
 
 ## What is LoopLlama?
 
-LoopLlama is a browser-based YouTube controller for close study of
-video content. If you want to loop a passage, slow it down, mark
-moments to return to, or annotate a video's structure, LoopLlama is
-built for that. A common use case is learning from instructional or
-performance videos -- a musician working through a song, for instance
--- but the app isn't specific to music or any other domain.
+LoopLlama is a browser-based YouTube controller for close study of video
+content. If you want to loop a passage, slow down or speed up a video, mark
+moments to return to, or annotate a video's structure, LoopLlama is built for
+that. A common use case is learning from instructional or performance videos
+-- a musician working through a song, for instance -- but the app isn't
+specific to music or any other domain.
 
-The keyboard-first design means you can drive the app without putting down
-whatever is in your hands. Vim-inspired key bindings cover nearly every
-operation. For those who prefer a mouse, the usual menus, buttons, pickers,
-and a visual timeline provide the same access.
+The keyboard-first design means you can drive the app efficiently:
+Vim-inspired key bindings cover nearly every operation. For those who prefer a
+mouse, the usual menus, buttons, and other controls, plus a clickable visual
+timeline, provide the same access.
 
 ## Quick start
 
-- Core usage: load video, play, and simple navigation:
+**Load URL**. To load a YouTube video into LoopLlama, see "Load URL" on the
+Video menu. Also notice the two key bindings listed on that menu item: `vl` or
+the even-shorter `y`. You can paste either a full URL or just the YouTube
+video ID. Here is an example ID to copy if you don't have one handy:
+`QQ5XMmV7-bY`. Notice that video name and YT ID are in the Current panel.
 
-  - Load a video via `y`. Give th user a URL to copy. The video has nothing: no
-    metadata yet.
+**Basic controls**. The basic operations to play, pause, seek, and adjust the
+playback speed are available in familiar buttons, text boxes, and dropdowns in
+the app's main controls (see the groups labelled Play, Speed, and Navigate).
+Here's a listing of the key bindings for the most common operations:
 
-    - Notice that video.name and YT ID are in the Current panel
+    Keys  | Operation
+    -----------------------------------------
+    Space | Play/pause
+    Left  | Seek: backward
+    Right | Seek: forward
+    Down  | Seek time: decrease
+    Up    | Seek time: increase
+    -     | Speed: decrease
+    =     | Speed: increase
+    jj    | Jump to a time
 
-    - Basic controls:
+**Basic looping**. The controls in the Scratch Loop area allow you to loop a
+specific part of a video. If looping is toggled on, video playback and basic
+seek movements will adhere to the loop bounds: when the playhead reaches the
+end it will wrap around to the loop start; and seek movements will be confined
+to the loop boundaries. Here are the most important key bindings:
 
-          Action              | Keyboard | Mouse
-          -------------------------------------------------------
-          Play/pause          | Space    | .
-          Seek: backward      | Left     | .
-          Seek: forward       | Right    | .
-          Seek time: decrease | Down     | .
-          Seek time: increase | Up       | .
-          Speed: decrease     | -        | .
-          Speed: increase     | =        | .
-          Jump to a time      | jj       | .
+    Keys | Operation
+    -----------------------------------------
+    [[   | Set loop start to current time
+    ]]   | Set loop end to current time
+    xx   | Toggle looping
 
-    - Basic controls via mouse:
-      - All of those keyboard controls have buttons and dropdowns to perform
-        the same operations: see the controls labeled Play, Speed, and
-        Navigate.
-      - Jump by time via by clickling the blue timeline (where the playhead
-        is) or my clicking the current-time text box and entering a specific
-        time.
+**Informational elements**. The app provides information in various ways.
 
-    - At this point the user can use LL to play videos, control speed, and do
-      basic navigation.
-      - On one hand, that's nothing more that YT can do already.
-      - OTOH, it's valuable because the controls are easy, efficient.
-
-- Basic looping:
-  - `[[`/`]]` to set scratch loop endpoints (or the Now buttons).
-  - `xx` to toggle looping (or the toggle).
-  - Video playback will now adhere to the scratch loop bounds: when the playhead
-    reaches the end it will wrap around to the loop start. Regular seek
-    movements will be confined to the loop boundaries.
-
-- Briefly point to the app's primary informational devices:
   - Current panel: lists current video and other information about the video.
+
   - Message footer: info/warning/error messages.
+
   - Control hovers: to see a brief label and the key binding.
+
   - Timeline: Mimics the familiar YouTube progress bar: a thick horizontal
     line with a dot marking the playhead. The elapsed portion is colored; the
     remaining portion is gray. Hover to see a time displa and click to jump to
     a specific time.
-  - Timeline hovers: to see current time and other details about information
-    you have attached to the video.
 
-- App focus: a key guideline:
-  - If you click anywhere in the YT frame to the LL app loses focus
-  - Notice the warning in the footer.
-  - The fix/advice: click the app again, outside the YT frame; avoid clicking
-    the YT frame (it's rarely needed with LL, since LL provides a clickable
-    timeline).
+  - Timeline hovers: to see current time and other details about information
+    you have attached to the video. (provide link to example-2).
+
+**Gotcha: app focus**. If you click anywhere in the YouTube frame, the LL app
+loses focus. Give it a try and notice the warning in the footer. The fix is
+simple: click anywhere in the app outside of the YouTube frame. The clickable
+LoopLlama timeline makes clicking in the YouTube frame rarely necessary.
 
 ## Entities
 
@@ -166,8 +163,8 @@ example videos into your LL data.
 
 -->
 
-You can open a video you've already loaded into LL via `vo`. Give that a
-try with the example videos.
+**Open**. You can open a video you've already loaded into LL via `vo`. Give
+that a try with the example videos.
 
 <!-- Info notice. Key bindings. Most LL bindings follow a two-character
 system, where the first letter is a prefix for the type of entity involved
@@ -176,6 +173,29 @@ for "Video => Open" or `vu` for "Video => Load URL". Some of the most common
 operations also have synonym bindings that are easier to type. Look at the
 Video menu to see examples. The help documentation will tend to use the formal
 two-character bindings. -->
+
+**Edit**. By default the video name is set to the title provided by the YT
+player. You can use `ve` to edit the name to something else. The edit
+operation can also be used to set custom start and end times for the video --
+for example, to exclude filler material at the beginning or ending of the
+video that you rarely need to watch.
+
+**Zoom**. If a video has custom values for start and end, you can use `vz`
+(Zoom) to zoom the timeline view to that custom range.
+
+**Scratch**. To loop an entire video (or the range defined by its custom start
+and end values) use `vx`. That performs a Scratch operation, which loads the
+start and end into the scratch loop — the app's work area for looping. The
+discussion of Looping (add link) provides more details on looping and the
+reasons behind the Scratch terminology.
+
+**Info**. To see all of the LL information about a video you can use `vi`
+(Info). See example-2 for an illustration.
+
+**Delete**. If your LL data has videos you no longer need, use `vd` to delete
+a video. The app also provide an operation to delete data in bulk (add link).
+
+**Unstash**. See the discussion on cloud backups for details (add link).
 
 ### Sections
 
@@ -198,10 +218,10 @@ blue progress bar.
 <!-- Switch to the example-video-2. -->
 
 **Scratch**. Because a section has start and end points, it provides a way to
-define a scratch loop quickly (via `sx`). Give that a try with the example video:
-navigate the playhead anywhere within a section; press `sx`; notice that the
-loop end points are set to enclose the section; press `xx` to toggle looping
-on.
+define a scratch loop quickly (via `sx`). Give that a try with the example
+video: navigate the playhead anywhere within a section; press `sx`; notice
+that the scratch loop end points are set to enclose the section; press `xx` to
+toggle looping on.
 
 <!-- Info notice. Why is the operation called "Scratch" rather than "Loop"?
 See the help documentation for loops (add anchor link). -->
@@ -232,9 +252,8 @@ playhead sits. -->
 ### Chapters
 
 Chapters are similar to sections: they divide a video into non-overlapping
-parts; they support the same operations (compare the two menus); and their key
-bindings are directly parallel to the section bindings, but using the `c`
-prefix rather than `s`.
+parts; they support the same operations; and their key bindings are directly
+parallel to the section bindings, but using the `c` prefix rather than `s`.
 
 So if you understand sections, you also understand chapters. But there are two
 differences worth pointing out:
@@ -281,25 +300,29 @@ Also, like chapters and section, you can use `lj` to jump to the start of a
 loop and `ld` to delete a loop. Finally, the Scratch operation, via `lx`, will
 load the current loop's bounds into the scratch loop — our next topic.
 
-#### Scratch loop and the scratch operation
+#### Scratch loop
 
-The scratch loop is the active working area for looping a video. In the app's
-main controls see the Scratch Loop area. You can toggle looping on and off,
-directly edit the scratch loop's boundaries via text boxes, or use the "Now"
-buttons to set a scratch loop boundary to the current playhead position.
-
-As mentioned in the documentation for sections, chapters, and saved loops,
-entities with a start and end support the "Scratch" operation. Although the
-terminology is idiosyncratic, the app's menu labeling and key binding scheme
-benefit from keeping a clear distinction between saved loops and the scratch
-loop. Saved loop operations are found on the "Loop" menu and used `l` as the
-prefix for their key bindings. Scratch loop operations are on the "Scratch"
-menu and use `x` as the binding prefix. And the "Scratch" operation means
-loading the bounds of a saved entity into the scratch loop work area.
+As noted above, the scratch loop is the active working area for looping. The
+main looping controls were convered in the Quick Start (add link).
 
 When the scratch loop bounds produce a valid loop — meaning start less than
 end — the text boxes display the values in regular font. When the bounds are
 invalid, the font is red and the app disallows toggling looping on.
+
+#### Scratch operation
+
+As mentioned in the documentation for sections, chapters, and saved loops,
+entities with a start and end support the "Scratch" operation, which loads the
+bounds of a saved entity into the scratch loop work area.
+
+Although the terminology is idiosyncratic, the app's menu labeling and key
+binding scheme benefit from keeping a clear distinction between saved loops
+and the scratch loop.
+
+    Operations   | Menu    | Key binding prefix
+    --------------------------------------------
+    Saved loop   | Loop    | l
+    Scratch loop | Scratch | x
 
 #### Scratch loop edit mode
 
@@ -317,7 +340,7 @@ are listed, but the most important controls are the following:
     tab        | Toggle focus between start and end
     enter/esc  | Exit edit mode
 
-Within scratch edit mode, the space key will play the video near the boundary
+Within scratch edit mode, the `space` will play the video near the boundary
 that currently has focus. The purpose is to allow you to adjust a boundary,
 then play the video to assess whether more fine-tuning is needed.
 
@@ -328,7 +351,7 @@ key bindings to make quick adjustments to the loop bounds. If you hover over
 the "Now" buttons, notice that `[[` is the binding to set the start to the
 playhead position and `]]` sets the end. The nudge key bindings build on that
 convention: `[` is the prefix for start, `]` for end. See the nudge key
-bindings (add link) for a full listing, but the most commonly used bindings
+bindings for a full listing (add link), but the most commonly used bindings
 are these four:
 
     [- [= | Start: nudge decrease/increase
@@ -339,14 +362,14 @@ loops. This behavior is best explained via a simple example. Initially, the
 scratch loop start and end are a short distance apart, near the beginning of a
 video, and the playhead is near the video end:
 
-    ------------------------------------------------------------
-      S     E                                      ^
+    ---------------------------------------
+      S     E                     ^
 
 To create a short loop starting at the playhead, you can press `[[`. Now the
 situation looks like this:
 
-    ------------------------------------------------------------
-            E                                      S
+    ---------------------------------------
+            E                     S
 
 Consider what happens if the user presses `]=` to perform a nudge increase on
 the end. A *regular nudge* would shift the end to the right, leaving an
@@ -354,17 +377,18 @@ invalid loop (assume the delta is at a typical value like 5s).
 
     Regular nudge
 
-    ------------------------------------------------------------
-                E                                  S
+    ---------------------------------------
+                E                 S
 
-But a *relative nudge* is different: it applies the delta to the loop's other
-bound. In our example, the end nudge would be applied relative to the start.
-The result would be a legal loop, so the app would apply this nudge:
+But a *relative nudge* is different: it applies the delta relative to the
+loop's other bound. In our example, the end nudge would be applied relative to
+the start. The result would be a legal loop, so the app would apply this
+nudge:
 
     Relative nudge
 
-    ------------------------------------------------------------
-                                                   S   E
+    ---------------------------------------
+                                  S   E
 
 The key intuition is that nudges have a bias toward creating legal loops. The
 app calculates the result for both regular and relative nudges and stops at
@@ -394,18 +418,22 @@ the current section. There are several things to notice:
     bound is highlighted yellow.
 
   - If you modify the scratch loop bounds, either via a nudge operation or a
-    direct edit to one of the text boxes, notices that the time range in the
+    direct edit to one of the text boxes, notice that the time range in the
     Current panel is displayed in yellow font, conveying that the scratch loop
     bounds and the source bounds have diverged.
 
-If the scratch loop has a source, there are three operations available. You
-can press `xs` (Save to source) to update the source entity's bounds based on
-the current scratch loop bounds (after controlling for padding, where
-applicable). You can press `xr` (Reset to source), which returns the scratch
-loop bounds to match those of the source. Or you can press `xu` (Unlink
-source) to remove the linkage source: after that the scratch loop will have no
-connection to the source and it will behave as if you had set the bounds
-manually.
+If the scratch loop has a source, there are three operations available:
+
+  - Save to source. Press `xs` to update the source entity's bounds based on
+    the current scratch loop bounds (after controlling for padding, where
+    applicable).
+
+  - Reset to source. Press `xr` to return the scratch loop bounds to match
+    those of the source.
+
+  - Unlink source. Press `xu` to remove the source linkage: after that the
+    scratch loop will have no connection to the source and it will behave as
+    if you had set the bounds manually.
 
 ## The Visual Timeline
 

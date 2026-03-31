@@ -715,15 +715,18 @@ class LlamaApp extends LitElement {
           this._setError('Video duration not yet known.');
           return;
         }
-        this._clearZoomIfOutside(0, this.duration);
-        this.loopStart       = 0;
-        this.loopEnd         = this.duration;
+        const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
+        const start = video?.start ?? 0;
+        const end   = video?.end   ?? this.duration;
+        this._clearZoomIfOutside(start, end);
+        this.loopStart       = start;
+        this.loopEnd         = end;
         this.looping         = true;
         this.loopSource      = null;
         this.loopSourceLabel = null;
         this.loopSourceType  = null;
-        this.loopSourceStart = 0;
-        this.loopSourceEnd   = this.duration;
+        this.loopSourceStart = start;
+        this.loopSourceEnd   = end;
         this.statusMsg       = 'Scratch: full video.';
       },
       zoomVideo: () => {
