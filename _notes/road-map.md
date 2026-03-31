@@ -16,6 +16,7 @@ Text elements: Timeline: hovers
 Text elements: Current panel
 
 Code review and refactor.
+  - See _notes/refactoring-prompt.md
 
 Dev docs:
   - data-schema.md

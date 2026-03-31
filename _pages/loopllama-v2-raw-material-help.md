@@ -8,7 +8,6 @@ toc: true
 
 <!--
 
-## Draft outline
 ## Visual Timeline
 ## Flexible Time Inputs
 ## Operations
@@ -29,34 +28,6 @@ toc: true
 ## LoopLlama Menu Philosophy
 
 -->
-
-## Draft outline
-
-x What is LoopLlama?
-- Quick Start
-- Core Concepts
-  x Entities: Videos, Sections, Chapters, Loops, Marks
-  - The Scratch Loop
-  - The Visual Timeline
-- Time Input Formats
-- Playback and Navigation
-  - Playback Controls
-  - Seek and Navigate
-- Key Binding System
-- Working with Each Entity
-- Data: Export, Import, and Sharing
-  - Local data (localStorage)
-  - Export and Import
-  - Inspect
-  - Sharing (`dv`, `dl`)
-- Cloud Storage and Sign-In
-  - Why sign in?
-  - How cloud sync works
-  - ds / dr / dc operations
-- Menu Philosophy
-- The LoopLlama Banner
-- Privacy Policy
-- Terms of Service
 
 ## Visual Timeline
 

@@ -10,7 +10,7 @@ import {
   addMark, deleteMarkById, nearestMarkLeft,
   addSection, deleteSectionById, getSectionBounds, nearestSectionLeft,
   fixSectionEnd,
-  addLoop, deleteLoopById, updateLoop, nearestLoopLeft,
+  addLoop, deleteLoopById, updateLoop,
   deleteChapterById,
   addChapterDivider, nearestChapterLeft, getChapterBounds, fixChapterEnd,
   propagateEntityChange, validateEntityChange,
@@ -51,23 +51,24 @@ import './llama-data-op-modal.js';
 const QUIP_INTERVAL_MS = 3000;
 
 const QUIPS = [
-  "Freedom isn't free — but looping is",
-  "Freedom to loop",
-  "How about a little something, you know, for the effort",
-  "I have two speeds: loop and nap",
-  "It's loops all the way down",
+  "Freedom isn't free — but looping is.",
+  "Freedom to loop.",
+  "How about a little something, you know, for the effort?",
+  "I have two speeds: loop and nap.",
+  "It's loops all the way down.",
   "Keep on loopin' in the free world!",
-  "Loop the good stuff",
-  "Time is a flat circle — so a loop",
-  "The Llama abides",
-  "Hey, baby, scratch my ears",
+  "Loop the good stuff.",
+  "Time is a flat circle — so a loop.",
+  "The Llama abides.",
+  "Hey, baby, scratch my ears.",
   "¿Cómo se Llama?",
-  "Need loops? No probllama",
-  "Dream ticket: Millard Fillmore & No-Drama Obama",
-  "Which side of The Llama has the most fleece? The outside",
-  "How does The Llama do so much? He uses an allama clock",
-  "What's two llamas next to the Liberty Bell? Llama llama ding dong",
-  "Never doubt The Llama",
+  "Need loops? No probllama.",
+  "Dream ticket: Millard Fillmore & Barack \"Murphy\" O'Llama.",
+  "Which side of The Llama has the most fleece? The outside.",
+  "How does The Llama do so much? He uses an allama clock.",
+  "What's two llamas next to the Liberty Bell? Llama llama ding dong.",
+  "Never doubt The Llama.",
+  "If life gives you lemons, make Llamonade."
 ];
 
 class LlamaApp extends LitElement {
@@ -639,9 +640,9 @@ class LlamaApp extends LitElement {
         this.seekDelta = choices[Math.min(idx + 1, choices.length - 1)];
         this._flash('seekDelta');
       },
-      prevEntity:    (count = 1) => { this._clearLoopingIfActive(); this._navigateEntity('prev', count); },
+      prevEntity:    (count = 1) => { this._navigateEntity('prev', count); },
       entityType:    () => { this.renderRoot.querySelector('llama-controls')?.focusEntitySelect(); this._flash('entitySelect', 'until-blur'); },
-      nextEntity:    (count = 1) => { this._clearLoopingIfActive(); this._navigateEntity('next', count); },
+      nextEntity:    (count = 1) => { this._navigateEntity('next', count); },
       jumpToStart:   () => {
         if (noVideo()) return;
         const video  = this._appState?.videos.find(v => v.id === this.currentVideoId);
@@ -751,12 +752,12 @@ class LlamaApp extends LitElement {
         if (!Object.keys(this._appState.stashes ?? {}).length) { this._setWarning('No stashed videos.'); return; }
         this._videoPickerEl?.show('restore');
       },
-      jumpTime:      () => { this._clearLoopingIfActive(); this.renderRoot.querySelector('llama-controls')?.focusTimeInput(); this._flash('time', 'until-blur'); },
-      jumpSection:   () => { this._clearLoopingIfActive(); this._openSectionsPicker('jump'); },
-      jumpLoop:      () => { this._clearLoopingIfActive(); this._openLoopsPicker('jump'); },
-      jumpMark:      () => { this._clearLoopingIfActive(); this._openMarksPicker('jump'); },
-      jumpChapter:   () => { this._clearLoopingIfActive(); this._openChapterPicker('jump'); },
-      jumpHistory:   () => { this._clearLoopingIfActive(); this._jumpHistoryPickerEl?.show(); },
+      jumpTime:      () => { this.renderRoot.querySelector('llama-controls')?.focusTimeInput(); this._flash('time', 'until-blur'); },
+      jumpSection:   () => { this._openSectionsPicker('jump'); },
+      jumpLoop:      () => { this._openLoopsPicker('jump'); },
+      jumpMark:      () => { this._openMarksPicker('jump'); },
+      jumpChapter:   () => { this._openChapterPicker('jump'); },
+      jumpHistory:   () => { this._jumpHistoryPickerEl?.show(); },
       jumpBack: () => {
         if (!this.jumps.length) { this._setWarning('No jump history.'); return; }
         if (this._jumpIdx === -1) {
@@ -909,21 +910,18 @@ class LlamaApp extends LitElement {
         this._saveLoopModalEl?.show(loop);
       },
       scratchLoop: () => {
-        const loop = nearestLoopLeft(this.namedLoops, this.currentTime);
+        const loop = this.namedLoops.find(l => this.currentTime >= l.start && this.currentTime <= l.end);
         if (!loop) { this._setWarning('No saved loop at current position.'); return; }
         this._clearZoomIfOutside(loop.start, loop.end);
         this.loopStart       = loop.start;
         this.loopEnd         = loop.end;
+        this.looping         = true;
         this.loopSource      = loop.id;
         this.loopSourceLabel = loop.name || null;
         this.loopSourceType  = 'loop';
         this.loopSourceStart = loop.start;
         this.loopSourceEnd   = loop.end;
         this.statusMsg       = `Scratch: loop${loop.name ? ' \u2013 ' + loop.name : ''}.`;
-        if (this.looping) {
-          this._maybePushJump(this._vc?.getCurrentTime() ?? 0, loop.start);
-          this._vc?.seekTo(loop.start);
-        }
       },
       deleteLoop: () => this._openLoopsPicker('delete'),
       zoomLoop: () => {
@@ -1580,8 +1578,7 @@ class LlamaApp extends LitElement {
   }
 
   // Clamp to zoom, enforce loop boundaries, then seek. Used by all
-  // user-initiated jumps (seek delta, entity navigation, picker jumps,
-  // timeline clicks, jump-by-time).
+  // user-initiated jumps (seek delta, timeline clicks).
   _jumpTo(t) {
     if (this.zoomSource) {
       t = Math.max(this.zoomSource.start, Math.min(this.zoomSource.end, t));
@@ -1590,6 +1587,21 @@ class LlamaApp extends LitElement {
         && (t < this.loopStart || t > this.loopEnd)) {
       this._flashLoopViolation();
       return;
+    }
+    this._maybePushJump(this._vc?.getCurrentTime() ?? 0, t);
+    this._vc?.seekTo(t);
+  }
+
+  // Like _jumpTo, but for explicit user jumps (entity navigation, pickers,
+  // jump-by-time). Clears looping only if the target falls outside the
+  // current scratch loop bounds; leaves looping on if the target is inside.
+  _jumpToExplicit(t) {
+    if (this.zoomSource) {
+      t = Math.max(this.zoomSource.start, Math.min(this.zoomSource.end, t));
+    }
+    if (this.looping && this.loopStart < this.loopEnd
+        && (t < this.loopStart || t > this.loopEnd)) {
+      this._clearLoopingIfActive();
     }
     this._maybePushJump(this._vc?.getCurrentTime() ?? 0, t);
     this._vc?.seekTo(t);
@@ -1737,7 +1749,7 @@ class LlamaApp extends LitElement {
       const candidates = times.filter(t => t > time + EPS);
       if (candidates.length) target = candidates[Math.min(count - 1, candidates.length - 1)];
     }
-    if (target != null) this._jumpTo(target);
+    if (target != null) this._jumpToExplicit(target);
   }
 
   _onEntityTypeChange(e) {
@@ -1862,12 +1874,11 @@ class LlamaApp extends LitElement {
 
   // Handle ll-jump-loop from loop picker (mode='jump').
   _onJumpLoop(e) {
-    this._jumpTo(e.detail.start);
+    this._jumpToExplicit(e.detail.start);
   }
 
   _onSeekTo(e) {
-    this._clearLoopingIfActive();
-    this._jumpTo(e.detail.time);
+    this._jumpToExplicit(e.detail.time);
   }
 
   _onDeleteLoop(e) {
@@ -1899,7 +1910,7 @@ class LlamaApp extends LitElement {
 
   // Handle ll-jump-mark from marks picker (mode='jump').
   _onJumpMark(e) {
-    this._jumpTo(e.detail.time);
+    this._jumpToExplicit(e.detail.time);
   }
 
   // Edit the current mark (me): find mark nearest to left, open edit modal.
@@ -1966,7 +1977,7 @@ class LlamaApp extends LitElement {
 
   // Handle ll-jump-chapter from chapter picker (mode='jump').
   _onJumpChapter(e) {
-    this._jumpTo(e.detail.time);
+    this._jumpToExplicit(e.detail.time);
   }
 
   // Handle ll-open-section from sections picker (mode='open').
@@ -2028,12 +2039,12 @@ class LlamaApp extends LitElement {
 
   // Handle ll-jump-time from jump-time-modal.
   _onJumpTime(e) {
-    this._jumpTo(e.detail.time);
+    this._jumpToExplicit(e.detail.time);
   }
 
   // Handle ll-jump-history from jump-history-picker.
   _onJumpHistory(e) {
-    this._jumpTo(e.detail.time);
+    this._jumpToExplicit(e.detail.time);
   }
 
   // dc: compare local vs cloud, categorize each video, show status modal.
@@ -2602,7 +2613,7 @@ class LlamaApp extends LitElement {
 
   // Handle ll-jump-section from sections picker (mode='jump').
   _onJumpSection(e) {
-    this._jumpTo(e.detail.start);
+    this._jumpToExplicit(e.detail.start);
   }
 
   // Handle ll-pick-section-edit from sections picker (mode='edit').
@@ -2864,7 +2875,7 @@ class LlamaApp extends LitElement {
           .editScratchFocus=${this.editScratchFocus}
           .activeEntityType=${this.activeEntityType}
           @ll-play-pause=${this._onPlayPause}
-          @ll-seek-to=${(e) => this._jumpTo(e.detail.value)}
+          @ll-seek-to=${(e) => this._jumpToExplicit(e.detail.value)}
           @ll-seek-forward=${this._onSeekForward}
           @ll-seek-back=${this._onSeekBack}
           @ll-seek-delta-change=${(e) => { this.seekDelta = e.detail.value; }}

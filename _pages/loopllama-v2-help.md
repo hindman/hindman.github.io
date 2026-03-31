@@ -19,14 +19,39 @@ toc_icon: 'guitar'
 ### Marks
 ### Loops
 #### Saved loops
-### The Scratch Loop
-### Source tracking
-### Nudging endpoints
+#### Scratch loop and the scratch operation
+#### Scratch loop edit mode
+#### Scratch loop nudges
+#### Scratch loop sources
+
 ## The Visual Timeline
 ### Play zone
 ### Chapter/Section zone
 ### Mark zone
 ### Loop zone
+
+## Time Input Formats
+
+## Playback and Navigation
+### Playback Controls
+### Seek and Navigate
+
+## Key Binding System
+## Working with Each Entity
+## Data: Export, Import, and Sharing
+### Local data (localStorage)
+### Export and Import
+### Inspect
+### Sharing
+## Cloud Storage and Sign-In
+### Why sign in?
+### How cloud sync works
+### ds / dr / dc operations
+## Menu Philosophy
+## App Options
+## The LoopLlama Banner
+## Privacy Policy
+## Terms of Service
 
 Notice syntax/styles:
 
@@ -48,11 +73,10 @@ built for that. A common use case is learning from instructional or
 performance videos -- a musician working through a song, for instance
 -- but the app isn't specific to music or any other domain.
 
-The keyboard-first design means you can drive the app without putting
-down whatever is in your hands. Vim-style two-key bindings cover
-nearly every operation. For those who prefer a mouse, menus, buttons,
-pickers, and a visual timeline provide the same access. Both modes
-are always available.
+The keyboard-first design means you can drive the app without putting down
+whatever is in your hands. Vim-inspired key bindings cover nearly every
+operation. For those who prefer a mouse, the usual menus, buttons, pickers,
+and a visual timeline provide the same access.
 
 ## Quick start
 
@@ -100,14 +124,19 @@ are always available.
   - Current panel: lists current video and other information about the video.
   - Message footer: info/warning/error messages.
   - Control hovers: to see a brief label and the key binding.
+  - Timeline: Mimics the familiar YouTube progress bar: a thick horizontal
+    line with a dot marking the playhead. The elapsed portion is colored; the
+    remaining portion is gray. Hover to see a time displa and click to jump to
+    a specific time.
   - Timeline hovers: to see current time and other details about information
     you have attached to the video.
 
 - App focus: a key guideline:
   - If you click anywhere in the YT frame to the LL app loses focus
   - Notice the warning in the footer.
-  - The fix/advice: click the app again, outside the YT frame; avoid
-    clicking the YT frame (it's never needed with LL).
+  - The fix/advice: click the app again, outside the YT frame; avoid clicking
+    the YT frame (it's rarely needed with LL, since LL provides a clickable
+    timeline).
 
 ## Entities
 
@@ -243,12 +272,14 @@ are displayed at the bottom of the the timeline area (below sections,
 chapters, and marks) as brown line segments.
 
 The key binding and menu items for saved loops are similar to those for
-sections and chapters. You can create a loop via `ll`, edit the current loop
-(based on playhead position) to give it a name or to adjust its boundaries via
-`le`, and zoom the timeline to the current loop's range via `lz`. Also, like
-chapters and section, you can use `lj` to jump to the start of a loop and `ld`
-to delete a loop. And the Scratch operation, via `lx`, will load the current
-loop's boundaries into the scratch loop — our next topic.
+sections and chapters. You can create a saved loop via `ll`. That loop's
+bounds will be the same as those currently in the scratch loop start and end
+text boxes. To edit the current saved loop — to give it a name or to adjust
+its boundaries — you can use `le`. The binding `lz` will zoom the timeline to
+the current loop's range (as usual, current is based on playhead position).
+Also, like chapters and section, you can use `lj` to jump to the start of a
+loop and `ld` to delete a loop. Finally, the Scratch operation, via `lx`, will
+load the current loop's bounds into the scratch loop — our next topic.
 
 #### Scratch loop and the scratch operation
 
@@ -264,37 +295,33 @@ benefit from keeping a clear distinction between saved loops and the scratch
 loop. Saved loop operations are found on the "Loop" menu and used `l` as the
 prefix for their key bindings. Scratch loop operations are on the "Scratch"
 menu and use `x` as the binding prefix. And the "Scratch" operation means
-loading the bounds of a saved entity (chapter, section, or saved loop) into
-the scratch loop work area.
+loading the bounds of a saved entity into the scratch loop work area.
 
-(Maybe defer this issue entirely and put it in a section dealing with the
-app's options?) When you perform "Loop => Scratch", the saved loop's bounds
-are directly loading into the scratch loop. The Scratch operation for sections
-and chapters is the same, but with one wrinkle: the scratch loop bounds will
-be a slightly larger than the source entity. This is done to provide a small
-bit lead-in and lead-out time as you play and loop the section or chapter. You
-can adjust the application's default loop padding amount via "App => Options"
-in the menus.
+When the scratch loop bounds produce a valid loop — meaning start less than
+end — the text boxes display the values in regular font. When the bounds are
+invalid, the font is red and the app disallows toggling looping on.
 
 #### Scratch loop edit mode
 
 Although you can edit bounds directly via the scratch loop controls, LoopLlama
 also provides a special keyboard mode to make such adjustments. The mode can
-be invoked via "Edit mode" on the "Scratch" menu (also via the `xe` and `\`
-bindings).
+be invoked via "Edit mode" on the "Scratch" menu or via the `xe` and `\`
+bindings.
 
 After the mode is invoked, the scratch loop's start point will have focus
 (notice the yellow border). In the message footer, the available key bindings
-are listed, but the primary controls are left/right arrows to
-decrease/increase the boundary and up/down arrows to adjust the "delta" (ie,
-the size of those adjustments). Use tab to switch focus and enter or escape to
-exit the mode.
+are listed, but the most important controls are the following:
+
+    left/right | Decrease/increase the active bound
+    down/up    | Decrease/increase the delta (size of left/right adjustment)
+    tab        | Toggle focus between start and end
+    enter/esc  | Exit edit mode
 
 Within scratch edit mode, the space key will play the video near the boundary
 that currently has focus. The purpose is to allow you to adjust a boundary,
 then play the video to assess whether more fine-tuning is needed.
 
-#### Nudging
+#### Scratch loop nudges
 
 In addition to scratch loop edit mode, the app also supports a coherent set of
 key bindings to make quick adjustments to the loop bounds. If you hover over
@@ -304,48 +331,81 @@ convention: `[` is the prefix for start, `]` for end. See the nudge key
 bindings (add link) for a full listing, but the most commonly used bindings
 are these four:
 
-    [- | Start: decrease
-    [= | Start: increase
-    ]- | End: decrease
-    ]= | End: increase
+    [- [= | Start: nudge decrease/increase
+    ]- ]= | End: nudge decrease/increase
 
-__HERE__
+The nudge operation has one special wrinkle to support the rapid creation of
+loops. This behavior is best explained via a simple example. Initially, the
+scratch loop start and end are a short distance apart, near the beginning of a
+video, and the playhead is near the video end:
 
-One situation requires special handling: if a nudge would push an
-endpoint past the other one, making an illegal loop (start >= end),
-the app moves the endpoint relative to the other instead. So if you
-nudge the end leftward past the start, the end lands just past the
-start rather than crossing it.
+    ------------------------------------------------------------
+      S     E                                      ^
 
-If looping is currently active, the app will refuse an edit that
-would make the loop illegal. If looping is off, the illegal state is
-allowed temporarily -- useful when you're setting one endpoint first
-and intend to fix the other next.
+To create a short loop starting at the playhead, you can press `[[`. Now the
+situation looks like this:
 
-#### Sources
+    ------------------------------------------------------------
+            E                                      S
 
-A named, loopable time range. Unlike sections, loops don't have to
-align with the structure you've defined -- they're free-form. A loop
-called "tricky-bit" might span parts of two sections. Loops can
-overlap each other and sections freely.
+Consider what happens if the user presses `]=` to perform a nudge increase on
+the end. A *regular nudge* would shift the end to the right, leaving an
+invalid loop (assume the delta is at a typical value like 5s).
 
-The active (working) loop is always the scratch loop -- a single
-unnamed loop that is the target of all looping activity. Named loops
-are saved separately and loaded into the scratch loop when you want
-to work on them. See The Scratch Loop for details.
+    Regular nudge
 
-When you load a section or named loop into the scratch loop, the app
-remembers the source. This gives you three additional operations in
-the Loop menu:
+    ------------------------------------------------------------
+                E                                  S
 
-- Save to source (`ls`): push the scratch loop's current endpoints
-  back to the source entity, updating it.
-- Reset to source (`lr`): restore the scratch loop's endpoints from
-  the source, discarding your edits.
-- Unlink source (`lu`): forget the source association without saving.
+But a *relative nudge* is different: it applies the delta to the loop's other
+bound. In our example, the end nudge would be applied relative to the start.
+The result would be a legal loop, so the app would apply this nudge:
 
-Save new (`ln`) creates a new named loop from the current scratch
-loop endpoints, regardless of source.
+    Relative nudge
+
+    ------------------------------------------------------------
+                                                   S   E
+
+The key intuition is that nudges have a bias toward creating legal loops. The
+app calculates the result for both regular and relative nudges and stops at
+the first method that produces a valid loop. The methods are attempted in this
+order: regular, then relative, with fallback to regular if both methods result
+in invalid loops.
+
+#### Scratch loop sources
+
+As mentioned above, the Scratch operation loads the bounds of a saved
+entity into the scratch loop. Using example-2, press `sx` to Scratch
+the current section. There are several things to notice:
+
+  - Looping is toggled on.
+
+  - The Current panel indicates the name and range of the scratch loop source.
+
+  - The scratch loop bounds are set slightly larger than the source bounds.
+    This is done to provide a small bit of lead-in and lead-out time [is
+    "lead-out" a real/correct term?] as you play the loop. Loop padding is
+    done for sections and chapters, but not for saved loops. You can adjust
+    the padding via Options (link).
+
+  - Press `space` to play the video and then `enter` to jump to the loop
+    start. After you do that, notice that whenever the playhead sits in
+    the padded region beyond the source bounds, the relevant scratch loop
+    bound is highlighted yellow.
+
+  - If you modify the scratch loop bounds, either via a nudge operation or a
+    direct edit to one of the text boxes, notices that the time range in the
+    Current panel is displayed in yellow font, conveying that the scratch loop
+    bounds and the source bounds have diverged.
+
+If the scratch loop has a source, there are three operations available. You
+can press `xs` (Save to source) to update the source entity's bounds based on
+the current scratch loop bounds (after controlling for padding, where
+applicable). You can press `xr` (Reset to source), which returns the scratch
+loop bounds to match those of the source. Or you can press `xu` (Unlink
+source) to remove the linkage source: after that the scratch loop will have no
+connection to the source and it will behave as if you had set the bounds
+manually.
 
 ## The Visual Timeline
 
@@ -380,4 +440,44 @@ Has three lanes:
 - Lanes 2 and 3: saved named loops.
 
 Hovering a loop shows its name and time range.
+
+## Time Input Formats
+
+## Playback and Navigation
+
+### Playback Controls
+
+### Seek and Navigate
+
+## Key Binding System
+
+## Working with Each Entity
+
+## Data: Export, Import, and Sharing
+
+### Local data (localStorage)
+
+### Export and Import
+
+### Inspect
+
+### Sharing
+
+## Cloud Storage and Sign-In
+
+### Why sign in?
+
+### How cloud sync works
+
+### ds / dr / dc operations
+
+## Menu Philosophy
+
+## App Options
+
+## The LoopLlama Banner
+
+## Privacy Policy
+
+## Terms of Service
 
