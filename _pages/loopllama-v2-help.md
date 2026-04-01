@@ -10,49 +10,6 @@ toc_icon: 'guitar'
 
 <!--
 
-## What is LoopLlama?
-## Quick start
-## Entities
-### Videos
-### Sections
-### Chapters
-### Marks
-### Loops
-#### Saved loops
-#### Scratch loop and the scratch operation
-#### Scratch loop edit mode
-#### Scratch loop nudges
-#### Scratch loop sources
-
-## The Visual Timeline
-### Play zone
-### Chapter/Section zone
-### Mark zone
-### Loop zone
-
-## Time Input Formats
-
-## Playback and Navigation
-### Playback Controls
-### Seek and Navigate
-
-## Key Binding System
-## Working with Each Entity
-## Data: Export, Import, and Sharing
-### Local data (localStorage)
-### Export and Import
-### Inspect
-### Sharing
-## Cloud Storage and Sign-In
-### Why sign in?
-### How cloud sync works
-### ds / dr / dc operations
-## Menu Philosophy
-## App Options
-## The LoopLlama Banner
-## Privacy Policy
-## Terms of Service
-
 Notice syntax/styles:
 
       gray/blue-gray | {: .notice}          | .
@@ -81,23 +38,23 @@ timeline, provide the same access.
 ## Quick start
 
 **Load URL**. To load a YouTube video into LoopLlama, see "Load URL" on the
-Video menu. Also notice the two key bindings listed on that menu item: `vl` or
-the even-shorter `y`. You can paste either a full URL or just the YouTube
-video ID. Here is an example ID to copy if you don't have one handy:
-`QQ5XMmV7-bY`. Notice that video name and YT ID are in the Current panel.
+Video menu. Also notice the two key bindings listed on that menu item: `vl`.
+You can paste either a full URL or just the YouTube video ID. Here's an
+example ID to copy if you don't have one handy: `QQ5XMmV7-bY`. Notice that
+video name and YT ID are shown in the Current panel.
 
 **Basic controls**. The basic operations to play, pause, seek, and adjust the
 playback speed are available in familiar buttons, text boxes, and dropdowns in
-the app's main controls (see the groups labelled Play, Speed, and Navigate).
-Here's a listing of the key bindings for the most common operations:
+the app's main controls, specifically in the groups labelled Play, Speed, and
+Navigate. Here's a listing of the key bindings for the most common operations:
 
     Keys  | Operation
     -----------------------------------------
     Space | Play/pause
     Left  | Seek: backward
     Right | Seek: forward
-    Down  | Seek time: decrease
-    Up    | Seek time: increase
+    Down  | Seek delta: decrease
+    Up    | Seek delta: increase
     -     | Speed: decrease
     =     | Speed: increase
     jj    | Jump to a time
@@ -118,20 +75,17 @@ to the loop boundaries. Here are the most important key bindings:
 
   - Current panel: lists current video and other information about the video.
 
-  - Message footer: info/warning/error messages.
+  - Control hovers: to see label and key binding.
 
-  - Control hovers: to see a brief label and the key binding.
+  - Message footer: display information, warning, and error messages, along
+    with key binding continuation information.
 
-  - Timeline: Mimics the familiar YouTube progress bar: a thick horizontal
-    line with a dot marking the playhead. The elapsed portion is colored; the
-    remaining portion is gray. Hover to see a time displa and click to jump to
-    a specific time.
-
-  - Timeline hovers: to see current time and other details about information
-    you have attached to the video. (provide link to example-2).
+  - Timeline: Mimics the YouTube progress bar and provides a visual overview
+    of the information the user has attached to it (additional details [add
+    link]). Support hover for information and click to jump.
 
 **Gotcha: app focus**. If you click anywhere in the YouTube frame, the LL app
-loses focus. Give it a try and notice the warning in the footer. The fix is
+loses focus. When that occurs, a warning is shown in the footer. The fix is
 simple: click anywhere in the app outside of the YouTube frame. The clickable
 LoopLlama timeline makes clicking in the YouTube frame rarely necessary.
 
@@ -437,75 +391,154 @@ If the scratch loop has a source, there are three operations available:
 
 ## The Visual Timeline
 
-The timeline sits below the video and gives a visual overview of
-everything attached to it. It has four horizontal zones stacked top
-to bottom.
+The timeline sits below the video and provides a visual overview of the
+information attached to it. It has four horizontal zones stacked top to
+bottom. Both for the progress bar and saved entities — sections, chapters,
+marks, and loops — hover to display time and name information.
 
-### Play zone
+  - Playhead zone. Mimics the YouTube progress bar: a thick line with a dot
+    marking the playhead. The elapsed portion is blue, the remainder gray.
 
-Mimics the familiar YouTube progress bar: a thick horizontal line
-with a dot marking the playhead. The elapsed portion is colored; the
-remaining portion is gray. Click anywhere in this zone to jump to
-that time.
+  - Section/chapter zone. Displays sections or chapters as shaded regions.
+    Press `at` to toggle the display.
 
-### Chapter/Section zone
+  - Mark zone. Displays marks as yellow dots.
 
-Shows the video partitioned into named segments. Press `t` to toggle
-between showing chapters and sections. Each segment is labeled;
-hovering shows its name and time range. Clicking a segment jumps to
-its start.
-
-### Mark zone
-
-Shows marks as dots along the timeline. Hover a dot to see the
-mark's name and time.
-
-### Loop zone
-
-Has three lanes:
-
-- Lane 1: the current scratch loop.
-- Lanes 2 and 3: saved named loops.
-
-Hovering a loop shows its name and time range.
+  - Loop zone. Displays loops as colored line segments: blue for the scratch
+    loop, brown for saved loops.
 
 ## Time Input Formats
 
+The app supports various time input styles:
+
+    Format          | Example | Equivalent or note
+    ----------------------------------------------
+    mm:ss           | 32:45   | .
+    hh:mm:ss        | 1:13:28 | .
+    condensed forms | 73:44   | 1:13:44
+    raw seconds     | 245     | 4:05
+    decimal seconds | 34:43.2 | 1 digit max
+    forward slash   | 7/44    | 7:44
+
 ## Playback and Navigation
 
-### Playback Controls
+__TODO__
 
-### Seek and Navigate
-
-## Key Binding System
-
-## Working with Each Entity
+- Play pause
+- speed
+- seek
+- Jump:
+  - by time
+  - to start
+  - to entity
+  - previous/next entity
+- Jump history.
 
 ## Data: Export, Import, and Sharing
 
-### Local data (localStorage)
+__TODO__
 
-### Export and Import
+- Local data (localStorage)
+- Export and Import
+- Inspect
+- Sharing
 
-### Inspect
+## App menu
 
-### Sharing
+__TODO__
 
 ## Cloud Storage and Sign-In
 
-### Why sign in?
+### Why sign in? {#why-sign-in}
+
+Signing in with Google or GitHub lets you back up your videos, loops,
+and marks to the cloud and restore them on any device. Your data is
+stored privately — only you can access it.
+
+Without signing in, everything is saved locally in your browser.
+Local data persists across sessions but is tied to that browser and
+device.
 
 ### How cloud sync works
 
-### ds / dr / dc operations
+LL does not attempt true multi-device sync. Cloud storage is a backup/restore
+facility, not a live sync. The mental model: localStorage is your working
+copy; the cloud is your saved copy, like a hard drive.
 
-## Menu Philosophy
+Cloud read/write are explicit user operations (`dr` / `ds` / `dc`), not
+automatic. This keeps the system honest: you control exactly when data moves
+to or from the cloud.
 
-## App Options
+Every video has a last-modified timestamp. If a dr/ds/di would cause a older
+data for a video to overwrite newer data, the user is first prompted to decide
+whether to skip the affected videos or perform the old-stomps-new replacement.
+
+Whenever such replacements occur, the newer data is first stashed, providing
+one layer of insurance. The Unstash operation allows you to retrieve that data
+to replace the video's current data. For any video, one one stash is held at a
+time.
+
+Multi-device advice: adhere to the core idea that the cloud is a hard drive.
+Organize your ds/dr operations to align correctly with your device switches.
 
 ## The LoopLlama Banner
 
-## Privacy Policy
+## Privacy Policy {#privacy-policy}
 
-## Terms of Service
+Last updated: March 2026
+
+LoopLlama is a personal project hosted at hindman.github.io. This
+policy describes how your data is handled.
+
+**What we collect**
+
+- If you sign in, we receive your email address and basic profile
+  information from Google or GitHub (OAuth). This is used only to
+  identify your account.
+- Your app data (videos, loops, marks) is stored in your browser's
+  localStorage and, if you choose to back up, in a private Supabase
+  database associated with your account.
+
+**What we don't do**
+
+- We do not sell, share, or transfer your data to third parties.
+- We do not use your data for advertising or analytics.
+- We do not store payment information (The Llama will always be free!).
+
+**Third-party services**
+
+- Google and GitHub handle authentication. Their privacy policies
+  apply to the sign-in process.
+- Supabase stores cloud backups. See supabase.com/privacy for their
+  policy.
+- YouTube videos are played via the YouTube IFrame API. Google's
+  privacy policy applies to video playback.
+
+**Data deletion**
+
+You can delete your cloud data at any time using the "Sign out and
+remove cloud data" option in the Account menu. Local data can be
+cleared via your browser's storage settings.
+
+**Contact**
+
+Questions? Open an issue at the
+[project repository](https://github.com/mhindman/hindman.github.io)
+or use the site contact page.
+
+## Terms of Service {#terms-of-service}
+
+Last updated: March 2026
+
+LoopLlama is provided as-is, free of charge, with no warranty of
+any kind. Use it at your own risk.
+
+- The author makes no guarantees about uptime, data retention, or
+  continued availability.
+- You are responsible for maintaining your own backups of any data
+  you care about.
+- Misuse of the service (e.g., attempts to access other users' data)
+  is prohibited.
+
+By using LoopLlama, you agree to these terms.
 

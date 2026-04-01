@@ -1,6 +1,9 @@
 
 ## TODO: LoopLlama v2
 
+Missing:
+  - scratch : Zoom
+
 User docs: help text: draft
 
 User docs: banner text: draft
