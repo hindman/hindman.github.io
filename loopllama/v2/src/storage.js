@@ -112,15 +112,15 @@ function _migrateAppState(state) {
 // single-value fields first, then collections.
 function _reorderVideo(v) {
   const { id, url, name, last_modified, duration, time, start, end,
-          speed, seek_delta, speed_delta, looping,
+          speed, seek_delta, speed_delta, nudge_delta, entity_type, looping,
           chapters, sections, loops, marks, jumps } = v;
   // Preserve any unexpected extra keys between scalars and collections.
   const known = new Set(['id','url','name','last_modified','duration','time',
-    'start','end','speed','seek_delta','speed_delta','looping',
+    'start','end','speed','seek_delta','speed_delta','nudge_delta','entity_type','looping',
     'chapters','sections','loops','marks','jumps','schema_version','version']);
   const extra = Object.fromEntries(Object.entries(v).filter(([k]) => !known.has(k)));
   return { id, url, name, last_modified, duration, time, start, end,
-           speed, seek_delta, speed_delta, looping,
+           speed, seek_delta, speed_delta, nudge_delta, entity_type, looping,
            ...extra,
            chapters, sections, loops, marks, jumps };
 }

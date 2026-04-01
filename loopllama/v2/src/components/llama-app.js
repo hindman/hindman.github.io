@@ -406,8 +406,11 @@ class LlamaApp extends LitElement {
     this.loopSourceType  = null;
     this.loopSourceStart = null;
     this.loopSourceEnd   = null;
-    this.speed           = video.speed ?? 1.0;
+    this.speed              = video.speed ?? 1.0;
     this._vc?.setPlaybackRate(this.speed);
+    this.seekDelta          = video.seek_delta   ?? DEFAULT_OPTIONS.seek_delta_default;
+    this.loopNudgeDelta     = video.nudge_delta  ?? DEFAULT_OPTIONS.loop_nudge_delta_default;
+    this.activeEntityType   = video.entity_type  ?? 'any';
     this.zoomSource = null;
     this.zone2Mode  = video.zone2_mode ?? 'sections';
   }
@@ -448,6 +451,9 @@ class LlamaApp extends LitElement {
     scratch.end    = this.loopEnd;
     video.looping       = this.looping;
     video.loops         = [scratch, ...this.namedLoops];
+    video.seek_delta    = this.seekDelta;
+    video.nudge_delta   = this.loopNudgeDelta;
+    video.entity_type   = this.activeEntityType;
     video.zone2_mode    = this.zone2Mode;
     video.last_modified = Date.now();
     this._save();

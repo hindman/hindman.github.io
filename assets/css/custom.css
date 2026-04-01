@@ -28,6 +28,13 @@
   display: none;
 }
 
+/* Paragraph heading: small-caps label at the start of a paragraph. */
+.ll-phead {
+  font-variant: small-caps;
+  letter-spacing: 0.05em;
+  color: #f0a040;
+}
+
 /* Ensure that the image fills the container. */
 .sidebar .author__avatar img,
 .sidebar .author__avatar a img {

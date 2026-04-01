@@ -37,16 +37,18 @@ timeline, provide the same access.
 
 ## Quick start
 
-**Load URL**. To load a YouTube video into LoopLlama, see "Load URL" on the
-Video menu. Also notice the two key bindings listed on that menu item: `vl`.
-You can paste either a full URL or just the YouTube video ID. Here's an
-example ID to copy if you don't have one handy: `QQ5XMmV7-bY`. Notice that
-video name and YT ID are shown in the Current panel.
+<span class="ll-phead">Load URL</span>. To load a YouTube video into
+LoopLlama, see "Load URL" on the Video menu. Also notice the two key bindings
+listed on that menu item: `vl` or `y`. You can paste either a full URL or just the
+YouTube video ID. Here's an example ID to copy if you don't have one handy:
+`QQ5XMmV7-bY`. Notice that video name and YT ID are shown in the Current
+panel.
 
-**Basic controls**. The basic operations to play, pause, seek, and adjust the
-playback speed are available in familiar buttons, text boxes, and dropdowns in
-the app's main controls, specifically in the groups labelled Play, Speed, and
-Navigate. Here's a listing of the key bindings for the most common operations:
+<span class="ll-phead">Basic controls</span>. The basic operations to play,
+pause, seek, and adjust the playback speed are available in familiar buttons,
+text boxes, and dropdowns in the app's main controls, specifically in the
+groups labelled Play, Speed, and Navigate. Here's a listing of the key
+bindings for the most common operations:
 
     Keys  | Operation
     -----------------------------------------
@@ -59,11 +61,12 @@ Navigate. Here's a listing of the key bindings for the most common operations:
     =     | Speed: increase
     jj    | Jump to a time
 
-**Basic looping**. The controls in the Scratch Loop area allow you to loop a
-specific part of a video. If looping is toggled on, video playback and basic
-seek movements will adhere to the loop bounds: when the playhead reaches the
-end it will wrap around to the loop start; and seek movements will be confined
-to the loop boundaries. Here are the most important key bindings:
+<span class="ll-phead">Basic looping</span>. The controls in the Scratch Loop
+area allow you to loop a specific part of a video. If looping is toggled on,
+video playback and basic seek movements will adhere to the loop bounds: when
+the playhead reaches the end it will wrap around to the loop start; and seek
+movements will be confined to the loop boundaries. Here are the most important
+key bindings:
 
     Keys | Operation
     -----------------------------------------
@@ -71,7 +74,8 @@ to the loop boundaries. Here are the most important key bindings:
     ]]   | Set loop end to current time
     xx   | Toggle looping
 
-**Informational elements**. The app provides information in various ways.
+<span class="ll-phead">Informational elements</span>. The app provides
+information in various ways.
 
   - Current panel: lists current video and other information about the video.
 
@@ -84,10 +88,11 @@ to the loop boundaries. Here are the most important key bindings:
     of the information the user has attached to it (additional details [add
     link]). Support hover for information and click to jump.
 
-**Gotcha: app focus**. If you click anywhere in the YouTube frame, the LL app
-loses focus. When that occurs, a warning is shown in the footer. The fix is
-simple: click anywhere in the app outside of the YouTube frame. The clickable
-LoopLlama timeline makes clicking in the YouTube frame rarely necessary.
+<span class="ll-phead">Gotcha: app focus</span>. If you click anywhere in the
+YouTube frame, the LL app loses focus. When that occurs, a warning is shown in
+the footer. The fix is simple: click anywhere in the app outside of the
+YouTube frame. The clickable LoopLlama timeline makes clicking in the YouTube
+frame rarely necessary.
 
 ## Entities
 
@@ -420,66 +425,105 @@ The app supports various time input styles:
     decimal seconds | 34:43.2 | 1 digit max
     forward slash   | 7/44    | 7:44
 
-## Playback and Navigation
+## Navigation: other operations
 
-__TODO__
+Basic playback and navigation is available in the app's main controls and was
+covered in the Quick Start (link): play, pause, speed control, seeking, and
+jumping to specific times or entities.
 
-- Play pause
-- speed
-- seek
-- Jump:
-  - by time
-  - to start
-  - to entity
-  - previous/next entity
-- Jump history.
+LoopLlama supports a few other navigational methods:
 
-## Data: Export, Import, and Sharing
+  - Jump to start. Pressing `enter` jumps the playhead to the "start", which
+    is contextual: start of scratch loop, if looping; start of zoom, if
+    zoomed; otherwise, start of video.
 
-__TODO__
+  - Jump to previous/next entity. To right of the app's seek controls are
+    buttons and a dropdown to support navigation by entity. The dropdown
+    (accessible via the `/` binding) controls the entity type. The
+    previous/next buttons next to the dropdown (or the `,` and `.` bindings)
+    allow you to navigate efficiently to the start of the previous/next
+    chapter, section, loop, or mark.
 
-- Local data (localStorage)
-- Export and Import
-- Inspect
-- Sharing
+  - Jump history. Navigational jumps of more than 15 seconds are stored in a
+    jump history that you can traverse. Although the history holds up to the
+    last 40 jumps for a video, the primary intent is to allow a user to return
+    to their prior location if that inadvertently perform an unwanted jump.
+    The jump history operations and key bindings are listed on the App menu.
+
+## Data management
+
+LoopLlama provides several ways to share your LoopLlama data with others,
+backup your data to your computer, sync your data across multiple browsers and
+devices, or perform bulk deletions.
+
+### Sharing
+
+You can share your LL data for either a complete video (via `dv`, Share Video)
+or for a single scratch loop (via `dl`, Share Loop). Those operations copy a
+LL sharing URL to your clipboard. Give the URL to someone else and they can
+use it to open the video and see the data you shared. Their version of that
+data is an indepenent copy; nothing they do will alter your LL data or affect
+the data stored to support the sharing URL.
+
+### Export, Import, Inspect.
+
+Export. You can export all of your LL data as a JSON file (via `de`, Export).
+If you understand how to use the app, all of the data in the file will be
+understandable.
+
+Import. A exported JSON file can be imported into the app, for example on a
+different browser or computer (via `di`, Import). To understand the import
+process, you first need to know that LL stores a last-updated time for all
+videos in your collection. During the import, LL checks whether any of the
+videos in the JSON you are trying to import have an older last-updated time
+than the corresponding time currently stored in your browser. If any cases
+like that are detected, the app prompts you to decide how to handle the
+situation. The default is to skip the affected videos. Alternatively, you can
+choose to replace those videos, using the older data from the JSON file.
+Additionally, any time an import overwrites a video with a different
+last-modified time, the app "stashes" a copy of the video before overwriting
+occurs. The Unstash operation (via `vu` on the Video menu) allows you to
+retrive the overwritten copy in case you change your mind.
+
+Inspect. Most users don't need this, but if you're simply curious you
+can view your LL data directly in the browser via `dI`, Inspect.
+
+### Cloud Storage and Sign-In {#why-sign-in}
+
+LoopLlama does not require sign in. But signing in with Google or GitHub lets
+you back up your LoopLlama data to the cloud — providing a more convenient
+insurance mechanism against lost data (for example, caused by clearing your
+browser cache) and a simpler way to coordinate LL usage across multiple
+browsers or devices.
+
+LL does not attempt true multi-device sync. Cloud storage is a backup/restore
+facility, not a live sync. The correct mental model for this feature is to
+view the cloud as if it were a hard drive: the browser's localStorage is your
+working copy; the cloud is a saved copy. Multi-device users can use LL
+successfully if they treat the cloud as a hard drive and organize their ds/dr
+operations to align with their device switches.
+
+- Writing to the cloud or reading data from it are diven by user operations
+  (`ds` for Save to cloud, `dr` for Read from cloud, and `dc` for Compare).
+
+- The save and read operations use the last-modified time comparisons
+  described when disussing `di`, Data import. The app performs a
+  video-by-video check and prompts the user before overwriting any newer data.
+  And video data is stashed before being overwritten.
+
+- The Account menu allows you to sign out and delete all LL cloud data.
+
+### Bulk deletion
+
+The "Delete" operation on the Data menu (via `d<bsp>`) allows you to delete
+data in bulk — either entire videos or the entities within a single video.
 
 ## App menu
 
 __TODO__
 
-## Cloud Storage and Sign-In
+review undo/redo algo
 
-### Why sign in? {#why-sign-in}
-
-Signing in with Google or GitHub lets you back up your videos, loops,
-and marks to the cloud and restore them on any device. Your data is
-stored privately — only you can access it.
-
-Without signing in, everything is saved locally in your browser.
-Local data persists across sessions but is tied to that browser and
-device.
-
-### How cloud sync works
-
-LL does not attempt true multi-device sync. Cloud storage is a backup/restore
-facility, not a live sync. The mental model: localStorage is your working
-copy; the cloud is your saved copy, like a hard drive.
-
-Cloud read/write are explicit user operations (`dr` / `ds` / `dc`), not
-automatic. This keeps the system honest: you control exactly when data moves
-to or from the cloud.
-
-Every video has a last-modified timestamp. If a dr/ds/di would cause a older
-data for a video to overwrite newer data, the user is first prompted to decide
-whether to skip the affected videos or perform the old-stomps-new replacement.
-
-Whenever such replacements occur, the newer data is first stashed, providing
-one layer of insurance. The Unstash operation allows you to retrieve that data
-to replace the video's current data. For any video, one one stash is held at a
-time.
-
-Multi-device advice: adhere to the core idea that the cloud is a hard drive.
-Organize your ds/dr operations to align correctly with your device switches.
 
 ## The LoopLlama Banner
 
@@ -489,6 +533,32 @@ Last updated: March 2026
 
 LoopLlama is a personal project hosted at hindman.github.io. This
 policy describes how your data is handled.
+
+What is localStorage:
+  https://en.wikipedia.org/wiki/Web_storage
+
+- Privacy. Your LL data is private in the sense that no other LoopLlama users
+  can access it. Only the authenticated user can get access.
+
+- Transparent. The LL data saved to the cloud is the same as the JSON data you
+  see during a JSON export (via `de`) or JSON inspect (via `dI`).
+
+- User-driven. The app interacts with the cloud data only in response to your
+  explicit requests to save your browser data to the cloud or to read data
+  from the cloud into your browser.
+
+- No snooping. The LL developers never examine your LL data other than for the
+  purpose of investigating or fixing problems raised by you. The app does not
+  use cookies. It does track aggregate things like each time an authenticated
+  user starts a browser session or loads a video. In that data, the user is
+  represented by an opaque client ID, not the user's actual email address. The
+  client ID is linkable to the email address — for example, in response to
+  user requests to investigate a problem — but the email does not reside,
+  strictly speaking, in any database entries controlled by LL. The URL for
+  loaded video is stored is LL table, purely for aggregate tracking purpose;
+  the DB rows containing those URLs never contains the client ID, let alone
+  the email address, so the app and its developers have neither the interest
+  nor a way to monitor your video habits.
 
 **What we collect**
 

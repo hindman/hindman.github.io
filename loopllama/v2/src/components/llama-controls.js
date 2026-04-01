@@ -781,10 +781,10 @@ class LlamaControls extends LitElement {
                     @keydown=${(e) => { if (e.key === 'Enter' || e.key === 'Escape') e.target.blur(); }}
                   >
                     <option value="any"     ?selected=${this.activeEntityType === 'any'}>Any</option>
+                    <option value="chapter" ?selected=${this.activeEntityType === 'chapter'}>Chapter</option>
                     <option value="section" ?selected=${this.activeEntityType === 'section'}>Section</option>
                     <option value="loop"    ?selected=${this.activeEntityType === 'loop'}>Loop</option>
                     <option value="mark"    ?selected=${this.activeEntityType === 'mark'}>Mark</option>
-                    <option value="chapter" ?selected=${this.activeEntityType === 'chapter'}>Chapter</option>
                   </select>
                 </sl-tooltip>
                 <sl-tooltip>${ttip('Next entity', '.')}

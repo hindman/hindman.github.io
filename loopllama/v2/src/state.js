@@ -58,6 +58,8 @@ export function createVideo(url, youtubeId) {
     loops:       [createScratchLoop()],  // always one scratch loop
     marks:         [],
     jumps:         [],
+    entity_type:   'any',
+    nudge_delta:   DEFAULT_OPTIONS.loop_nudge_delta_default,
     zone2_mode:    'sections',
     last_modified: Date.now(),
     last_opened:   null,
