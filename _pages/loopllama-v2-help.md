@@ -520,12 +520,55 @@ data in bulk — either entire videos or the entities within a single video.
 
 ## App menu
 
-__TODO__
+The app menu is a bit of a catch-all for various operations and settings. The
+jump history operations have already been covered, and the two help items are
+self-evident.
 
-review undo/redo algo
+### Edit history: undo/redo
 
+LL tracks edits to your data and support undo and redo operations, via the
+`au` and `ar` bindings (also `u` and `U`). Undo reverses a prior edit; redo
+reapplies it.
+
+Undo and redo support are limited to the 20 most recent edits.
+
+Undo and redo cover explicit changes to your library data — videos, chapters,
+sections, loops, and marks. They do not cover routine navigation or
+adjustments to playback and looping controls (current location and speed, jump
+history, navigation settings, scratch loop bounds), even though those settings
+are remembered per video.
+
+### Recall last message
+
+The `am` binding recalls that most recent message emitted in the message
+footer, in cases you did not have time to read it fully.
+
+### Timeline operations
+
+The App menu has a few items relating to the timeline:
+
+- Copy time. Copies the current playhead time to the clipboard.
+
+- Toggle timeline. Toggles the timeline to display either chapters or
+  sections.
+
+- Zoom off. Turns off any type of timeline zoom (video, chapter, section,
+  saved loop, or scratch loop).
+
+### Options
+
+LoopLlama has a few options than can be customized via the `ao` binding.
+For details, see the Options modal, which provides hover text for
+each setting to explain their meaning:
+
+- Seek delta.
+- Scratch loop nudge delta.
+- Speed delta.
+- Loop padding for sections and chapters.
 
 ## The LoopLlama Banner
+
+__TODO__
 
 ## Privacy Policy {#privacy-policy}
 
@@ -536,6 +579,12 @@ policy describes how your data is handled.
 
 What is localStorage:
   https://en.wikipedia.org/wiki/Web_storage
+
+Your data is not shared. It is stored in your browser's localStorage and, if
+you opt in, in a private Supabase database tied to your account. Other
+LoopLlama users cannot access it. The developer may access stored data only to
+investigate problems you report; Supabase's own policies govern their
+infrastructure staff's access.
 
 - Privacy. Your LL data is private in the sense that no other LoopLlama users
   can access it. Only the authenticated user can get access.
@@ -555,7 +604,7 @@ What is localStorage:
   client ID is linkable to the email address — for example, in response to
   user requests to investigate a problem — but the email does not reside,
   strictly speaking, in any database entries controlled by LL. The URL for
-  loaded video is stored is LL table, purely for aggregate tracking purpose;
+  loaded video is stored in a LL table, purely for aggregate tracking purpose;
   the DB rows containing those URLs never contains the client ID, let alone
   the email address, so the app and its developers have neither the interest
   nor a way to monitor your video habits.

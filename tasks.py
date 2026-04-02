@@ -14,6 +14,8 @@
 #   inv status [--f5] [--ll]
 #   inv clear [--f5] [--ll]
 #   inv deploy
+#   inv builds [--limit N]
+#   inv loc
 #
 ####
 
@@ -30,6 +32,7 @@ from pathlib import Path
 from textwrap import dedent
 
 from short_con import cons
+from mhutils import delimited_rows_text
 
 ####
 # Constants.
@@ -287,6 +290,34 @@ def deploy(c):
     c.run(f"git commit -m 'v2 deploy {now}'")
     c.run('git show --stat HEAD')
     print(f'# Build number: {build_num}')
+
+@task
+def builds(c, limit = 10):
+    '''
+    Lists LoopLlama builds as a table
+    '''
+    # Convert deployments JSON file into rows.
+    rows = [
+        dict(
+            build = d['build_num'],
+            time = d['time'],
+            js = Path(d['js']).name,
+            css = Path(d['css']).name,
+        )
+        for d in read_json(PATHS.ll_deployments)
+    ]
+
+    # Reverse the rows and limit to recent deployments.
+    rows = list(reversed(rows))[0 : limit]
+
+    # Print table.
+    table = delimited_rows_text(
+        rows,
+        delimiter = '|',
+        want_header = True,
+        align = True,
+    )
+    print(table)
 
 @task
 def loc(c):

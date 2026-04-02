@@ -52,7 +52,6 @@ export function createVideo(url, youtubeId) {
     looping:     false,
     speed:       1.0,
     seek_delta:  DEFAULT_OPTIONS.seek_delta_default,
-    speed_delta: DEFAULT_OPTIONS.speed_delta,
     chapters:    [],
     sections:    [],
     loops:       [createScratchLoop()],  // always one scratch loop

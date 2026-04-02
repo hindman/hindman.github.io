@@ -451,6 +451,7 @@ class LlamaApp extends LitElement {
     scratch.end    = this.loopEnd;
     video.looping       = this.looping;
     video.loops         = [scratch, ...this.namedLoops];
+    video.speed         = this.speed;
     video.seek_delta    = this.seekDelta;
     video.nudge_delta   = this.loopNudgeDelta;
     video.entity_type   = this.activeEntityType;
@@ -510,6 +511,7 @@ class LlamaApp extends LitElement {
     const clamped = Math.max(0.25, Math.min(2.0, next));
     this._vc?.setPlaybackRate(clamped);
     this.speed = clamped;
+    this._saveCurrentState();
   }
 
   // Flash a yellow border on the affected control after a keyboard action.
@@ -631,7 +633,7 @@ class LlamaApp extends LitElement {
       playPause:     () => { if (noVideo()) return; this._onPlayPause(); this._flash('playPause'); },
       speedDown:     (count = 1) => { this._speedChange(-this.speedDelta * count); this._flash('speed'); },
       speedUp:       (count = 1) => { this._speedChange(this.speedDelta * count); this._flash('speed'); },
-      speedReset:    () => { this._vc?.setPlaybackRate(1.0); this.speed = 1.0; this._flash('speed'); },
+      speedReset:    () => { this._vc?.setPlaybackRate(1.0); this.speed = 1.0; this._saveCurrentState(); this._flash('speed'); },
       seekForward:   (count = 1) => { if (noVideo()) return; this._seek(this.seekDelta * count); this._flash('time'); },
       seekBack:      (count = 1) => { if (noVideo()) return; this._seek(-this.seekDelta * count); this._flash('time'); },
       seekDeltaDown: () => {
@@ -2894,7 +2896,7 @@ class LlamaApp extends LitElement {
           @ll-set-loop-end-now=${this._onSetLoopEndNow}
           @ll-loop-start-change=${this._onLoopStartChange}
           @ll-loop-end-change=${this._onLoopEndChange}
-          @ll-speed-change=${(e) => { const v = Math.max(0.25, Math.min(2.0, e.detail.value)); this._vc?.setPlaybackRate(v); this.speed = v; }}
+          @ll-speed-change=${(e) => { const v = Math.max(0.25, Math.min(2.0, e.detail.value)); this._vc?.setPlaybackRate(v); this.speed = v; this._saveCurrentState(); }}
           @ll-prev-entity=${() => this._navigateEntity('prev')}
           @ll-next-entity=${() => this._navigateEntity('next')}
           @ll-entity-type-change=${this._onEntityTypeChange}
