@@ -39,6 +39,7 @@ toc_icon: 'guitar'
 ### Options
 ## Privacy Policy {#privacy-policy}
 ## Terms of Service {#terms-of-service}
+## Contact
 ## The LoopLlama Banner
 
 Notice syntax/styles:
@@ -599,94 +600,105 @@ each setting to explain their meaning:
 
 ## Privacy Policy {#privacy-policy}
 
-Last updated: March 2026
+Personal project. LoopLlama is a personal project managed and designed by me,
+Monty Hindman. I wrote the v1 code; v2 code was written entirely by Claude
+Code. Although simply a personal project, it is nonetheless serious: a great
+deal of care was put into planning its features, designing its user
+experience, and checking that the app functions correctly.
 
-LoopLlama is a personal project hosted at hindman.github.io. This
-policy describes how your data is handled.
+Hosting. The project is hosted by GitHub, as part of its GitHub Pages feature.
 
-What is localStorage:
-  https://en.wikipedia.org/wiki/Web_storage
+YouTube handles the videos. YouTube provides and streams all video content via
+its standard embed API. LoopLlama simply uses that API.
 
-Your data is not shared. It is stored in your browser's localStorage and, if
-you opt in, in a private Supabase database tied to your account. Other
-LoopLlama users cannot access it. The developer may access stored data only to
-investigate problems you report; Supabase's own policies govern their
-infrastructure staff's access.
+Browser storage by default. By default, your LoopLLama data is stored only in
+your web browser, in
+[localStorage][https://en.wikipedia.org/wiki/Web_storage]. The app does not
+use cookies.
 
-- Privacy. Your LoopLlama data is private in the sense that no other LoopLlama users
-  can access it. Only the authenticated user can get access.
+Transparent. The data that LoopLlama stores can be viewed directly via the
+`de` binding (Data => Export). The resulting JSON file provides an accurate
+representation of your LoopLLama data.
 
-- Transparent. The LoopLlama data saved to the cloud is the same as the JSON data you
-  see during a JSON export (via `de`) or JSON inspect (via `dI`).
+Cloud backup is optional. If you sign-in via Google or GitHub, LoopLLama backs
+up your data in the cloud, using [Supabase][https://supabase.com/], which
+offers a free database service for small projects like LoopLLama.
 
-- User-driven. The app interacts with the cloud data only in response to your
-  explicit requests to save your browser data to the cloud or to read data
-  from the cloud into your browser.
+Authentication via known, reliable third-parties. LoopLLama does not manage
+user authentication or know anything about your credentials. Those details are
+handled by the authentication provide you choose — either Google or GitHub.
 
-- No snooping. The LoopLlama developers never examine your LoopLlama data other than for the
-  purpose of investigating or fixing problems raised by you. The app does not
-  use cookies. It does track aggregate things like each time an authenticated
-  user starts a browser session or loads a video. In that data, the user is
-  represented by an opaque client ID, not the user's actual email address. The
-  client ID is linkable to the email address — for example, in response to
-  user requests to investigate a problem — but the email does not reside,
-  strictly speaking, in any database entries controlled by LoopLlama. The URL for
-  loaded video is stored in a LoopLlama table, purely for aggregate tracking purpose;
-  the DB rows containing those URLs never contains the client ID, let alone
-  the email address, so the app and its developers have neither the interest
-  nor a way to monitor your video habits.
+LoopLLama does not store your email address. None of the LoopLLama database
+tables contain your email address. The table holding a backup copy of your
+LoopLLama data does have an ID which can be linked to a Supabase table holding
+your email address (Supabase needs to store that email to ensure that only the
+properly authenticated user can access your data). But the LoopLLama project
+will never issue queries linking your email address and your cloud backup
+other than to investigate problems or requests initiated by you.
 
-**What we collect**
+Cloud data is not shared. The copy of your LoopLLama data stored in the cloud
+requires valid authentication to access. That means other internet users
+cannot access it, unless you share your credentials with them.
 
-- If you sign in, we receive your email address and basic profile
-  information from Google or GitHub (OAuth). This is used only to
-  identify your account.
-- Your app data (videos, loops, marks) is stored in your browser's
-  localStorage and, if you choose to back up, in a private Supabase
-  database associated with your account.
+Cloud data can be accessed by infrastructure staff. The LoopLLama app, and
+developers on the LoopLLama project, can access your data. But the project
+commits to access this information only for the purpose of allowing the app to
+function or to investigate specific problems or requests sumitted by you to
+the LoopLLama team. Similarly, some Supabase staff can access the data in the
+LoopLLama database, but their access is governed in similar ways by Supabase
+policies.
 
-**What we don't do**
+User-driven access to your cloud data. The LoopLLama app interacts with your
+cloud data only in response to your explicit requests to save your browser
+data to the cloud or to read data from the cloud into your browser.
 
-- We do not sell, share, or transfer your data to third parties.
-- We do not use your data for advertising or analytics.
-- We do not store payment information (The Llama will always be free!).
+Cloud data can be deleted. You can delete your cloud data at any time using
+the "Sign out and remove cloud data" item on the Account menu.
 
-**Third-party services**
+No user-data tracking. LoopLLama does not use cookies and does not sell,
+share, or tranfer your data to any third parties — other than backing up your
+data in Supabase, as noted above. The application does track a some events for
+the purpose of collecting aggregate metrics for the project, specifically (1)
+when a user starts a new LoopLLama session and (2) when a user loads a new
+YouTube URL. In that data, the user is represented by a client ID, which is
+simply a random ID stored in your browser that helps us count approximate
+unique visitors. That ID is not linked to your identity. Further, in the data
+that holds the URL for newly loaded YouTube videos, the app purposely omits
+the client ID.
 
-- Google and GitHub handle authentication. Their privacy policies
-  apply to the sign-in process.
-- Supabase stores cloud backups. See supabase.com/privacy for their
-  policy.
-- YouTube videos are played via the YouTube IFrame API. Google's
-  privacy policy applies to video playback.
+Shared data is publicly available, but opaque. If you ask LoopLLama to create
+a URL to share either a video or a loop, the shared data can be accessed by
+anyone with the correct URL. That URL includes a random ID generated by the
+app, so it is not something anyone can guess or tie to your identity.
 
-**Data deletion**
-
-You can delete your cloud data at any time using the "Sign out and
-remove cloud data" option in the Account menu. Local data can be
-cleared via your browser's storage settings.
-
-**Contact**
-
-Questions? Open an issue at the
-[project repository](https://github.com/mhindman/hindman.github.io)
-or use the site contact page.
+LoopLlama is free. We do not charge to use the app and do not rely on
+advertising. The project has no commercial relationships of any kind. Cloud
+backup is provided via a free tier from Supabase. If the volume of cloud usage
+becomes prohibitively large — very unlikely — the app might need to charge for
+cloud backup in the future, but the project has every intention to avoid that
+scenario.
 
 ## Terms of Service {#terms-of-service}
 
-Last updated: March 2026
+LoopLlama is provided as-is, free of charge, with no warranty of any kind. By
+using LoopLlama, you agree to these terms:
 
-LoopLlama is provided as-is, free of charge, with no warranty of
-any kind. Use it at your own risk.
+- The author makes no guarantees about uptime, data retention, or continued
+  availability.
 
-- The author makes no guarantees about uptime, data retention, or
-  continued availability.
-- You are responsible for maintaining your own backups of any data
-  you care about.
-- Misuse of the service (e.g., attempts to access other users' data)
-  is prohibited.
+- You are responsible for maintaining your own backups of any data you care
+  about.
 
-By using LoopLlama, you agree to these terms.
+- Misuse of the service — such as attempts to access other users' data — is
+  prohibited.
+
+## Contact
+
+If you have questions, comments, problems to report, or features to request
+you can file an issue via the project's [GitHub
+codebase][https://github.com/hindman/hindman.github.io]. You can also contact
+Monty Hindman directly, as [detailed here][
+https://hindman.github.io/about/#contact].
 
 ## The LoopLlama Banner
 
