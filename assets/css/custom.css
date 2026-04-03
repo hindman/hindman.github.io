@@ -78,3 +78,19 @@
   }
 }
 
+/* Inline code chips: page bg is #252a34; theme default was #1f242c (darker
+   than page, nearly invisible). Raise to a clearly lighter value so key
+   binding chips and inline code stand out. */
+.page__content :not(pre) > code {
+  background: #2d3f48;
+  border: 1px solid #3d5260;
+}
+
+/* Code blocks: theme default was #263238. Lighten slightly and add a
+   border so fenced blocks have a visible edge against the page. */
+div.highlighter-rouge,
+figure.highlight {
+  background: #2d3f48 !important;
+  border: 1px solid #3d5260;
+}
+
