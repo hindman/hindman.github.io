@@ -43,6 +43,7 @@ export function buildVideoPayload(video) {
     end:            video.end,
     looping:        video.looping ?? false,
     scratchLoop:    scratch ? { start: scratch.start, end: scratch.end } : null,
+    last_modified:  video.last_modified ?? null,
   };
 }
 

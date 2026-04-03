@@ -10,6 +10,37 @@ toc_icon: 'guitar'
 
 <!--
 
+## What is LoopLlama?
+## Quick start
+## Entities
+### Videos
+### Sections
+### Chapters
+### Marks
+### Loops
+#### Saved loops
+#### Scratch loop
+#### Scratch operation
+#### Scratch loop edit mode
+#### Scratch loop nudges
+#### Scratch loop sources
+## The Visual Timeline
+## Time Input Formats
+## Navigation: other operations
+## Data management
+### Sharing
+### Export, Import, Inspect.
+### Cloud Storage and Sign-In {#why-sign-in}
+### Bulk deletion
+## App menu
+### Edit history: undo/redo
+### Recall last message
+### Timeline operations
+### Options
+## Privacy Policy {#privacy-policy}
+## Terms of Service {#terms-of-service}
+## The LoopLlama Banner
+
 Notice syntax/styles:
 
       gray/blue-gray | {: .notice}          | .
@@ -89,7 +120,7 @@ information in various ways.
     link]). Support hover for information and click to jump.
 
 <span class="ll-phead">Gotcha: app focus</span>. If you click anywhere in the
-YouTube frame, the LL app loses focus. When that occurs, a warning is shown in
+YouTube frame, the LoopLlama app loses focus. When that occurs, a warning is shown in
 the footer. The fix is simple: click anywhere in the app outside of the
 YouTube frame. The clickable LoopLlama timeline makes clicking in the YouTube
 frame rarely necessary.
@@ -106,13 +137,13 @@ and loops.
 
 ### Videos
 
-The first entity is obvious: videos. Once you open a YouTube video in LL, the
+The first entity is obvious: videos. Once you open a YouTube video in LoopLlama, the
 app remembers the video and how you last left it: the current playhead
 position, the playback speed, the scratch loop endpoints, and any other information
 about the entities that a video can have.
 
 To illustrate some video behaviors open these two URLs which will load two
-example videos into your LL data.
+example videos into your LoopLlama data.
 
 <!-- Two shared video examples:
 
@@ -122,10 +153,10 @@ example videos into your LL data.
 
 -->
 
-**Open**. You can open a video you've already loaded into LL via `vo`. Give
+**Open**. You can open a video you've already loaded into LoopLlama via `vo`. Give
 that a try with the example videos.
 
-<!-- Info notice. Key bindings. Most LL bindings follow a two-character
+<!-- Info notice. Key bindings. Most LoopLlama bindings follow a two-character
 system, where the first letter is a prefix for the type of entity involved
 (`v` for video) and the second letter is a mnemonic for the operation: `vo`
 for "Video => Open" or `vu` for "Video => Load URL". Some of the most common
@@ -148,10 +179,10 @@ start and end into the scratch loop — the app's work area for looping. The
 discussion of Looping (add link) provides more details on looping and the
 reasons behind the Scratch terminology.
 
-**Info**. To see all of the LL information about a video you can use `vi`
+**Info**. To see all of the LoopLlama information about a video you can use `vi`
 (Info). See example-2 for an illustration.
 
-**Delete**. If your LL data has videos you no longer need, use `vd` to delete
+**Delete**. If your LoopLlama data has videos you no longer need, use `vd` to delete
 a video. The app also provide an operation to delete data in bulk (add link).
 
 **Unstash**. See the discussion on cloud backups for details (add link).
@@ -218,7 +249,7 @@ So if you understand sections, you also understand chapters. But there are two
 differences worth pointing out:
 
 **Default timeline view**. But default, the timeline area shows sections, not
-chapters. That view can be toggled via `at` and LL will remember each video's
+chapters. That view can be toggled via `at` and LoopLlama will remember each video's
 most recent setting. Switch to example-video-3. Notice that regardless of the
 timeline's current display, the current chapter and section, if defined, are
 both listed in the Current panel.
@@ -458,23 +489,23 @@ devices, or perform bulk deletions.
 
 ### Sharing
 
-You can share your LL data for either a complete video (via `dv`, Share Video)
+You can share your LoopLlama data for either a complete video (via `dv`, Share Video)
 or for a single scratch loop (via `dl`, Share Loop). Those operations copy a
-LL sharing URL to your clipboard. Give the URL to someone else and they can
+LoopLlama sharing URL to your clipboard. Give the URL to someone else and they can
 use it to open the video and see the data you shared. Their version of that
-data is an indepenent copy; nothing they do will alter your LL data or affect
+data is an indepenent copy; nothing they do will alter your LoopLlama data or affect
 the data stored to support the sharing URL.
 
 ### Export, Import, Inspect.
 
-Export. You can export all of your LL data as a JSON file (via `de`, Export).
+Export. You can export all of your LoopLlama data as a JSON file (via `de`, Export).
 If you understand how to use the app, all of the data in the file will be
 understandable.
 
 Import. A exported JSON file can be imported into the app, for example on a
 different browser or computer (via `di`, Import). To understand the import
-process, you first need to know that LL stores a last-updated time for all
-videos in your collection. During the import, LL checks whether any of the
+process, you first need to know that LoopLlama stores a last-updated time for all
+videos in your collection. During the import, LoopLlama checks whether any of the
 videos in the JSON you are trying to import have an older last-updated time
 than the corresponding time currently stored in your browser. If any cases
 like that are detected, the app prompts you to decide how to handle the
@@ -486,20 +517,20 @@ occurs. The Unstash operation (via `vu` on the Video menu) allows you to
 retrive the overwritten copy in case you change your mind.
 
 Inspect. Most users don't need this, but if you're simply curious you
-can view your LL data directly in the browser via `dI`, Inspect.
+can view your LoopLlama data directly in the browser via `dI`, Inspect.
 
 ### Cloud Storage and Sign-In {#why-sign-in}
 
 LoopLlama does not require sign in. But signing in with Google or GitHub lets
 you back up your LoopLlama data to the cloud — providing a more convenient
 insurance mechanism against lost data (for example, caused by clearing your
-browser cache) and a simpler way to coordinate LL usage across multiple
+browser cache) and a simpler way to coordinate LoopLlama usage across multiple
 browsers or devices.
 
-LL does not attempt true multi-device sync. Cloud storage is a backup/restore
+LoopLlama does not attempt true multi-device sync. Cloud storage is a backup/restore
 facility, not a live sync. The correct mental model for this feature is to
 view the cloud as if it were a hard drive: the browser's localStorage is your
-working copy; the cloud is a saved copy. Multi-device users can use LL
+working copy; the cloud is a saved copy. Multi-device users can use LoopLlama
 successfully if they treat the cloud as a hard drive and organize their ds/dr
 operations to align with their device switches.
 
@@ -511,7 +542,7 @@ operations to align with their device switches.
   video-by-video check and prompts the user before overwriting any newer data.
   And video data is stashed before being overwritten.
 
-- The Account menu allows you to sign out and delete all LL cloud data.
+- The Account menu allows you to sign out and delete all LoopLlama cloud data.
 
 ### Bulk deletion
 
@@ -526,7 +557,7 @@ self-evident.
 
 ### Edit history: undo/redo
 
-LL tracks edits to your data and support undo and redo operations, via the
+LoopLlama tracks edits to your data and support undo and redo operations, via the
 `au` and `ar` bindings (also `u` and `U`). Undo reverses a prior edit; redo
 reapplies it.
 
@@ -566,10 +597,6 @@ each setting to explain their meaning:
 - Speed delta.
 - Loop padding for sections and chapters.
 
-## The LoopLlama Banner
-
-__TODO__
-
 ## Privacy Policy {#privacy-policy}
 
 Last updated: March 2026
@@ -586,25 +613,25 @@ LoopLlama users cannot access it. The developer may access stored data only to
 investigate problems you report; Supabase's own policies govern their
 infrastructure staff's access.
 
-- Privacy. Your LL data is private in the sense that no other LoopLlama users
+- Privacy. Your LoopLlama data is private in the sense that no other LoopLlama users
   can access it. Only the authenticated user can get access.
 
-- Transparent. The LL data saved to the cloud is the same as the JSON data you
+- Transparent. The LoopLlama data saved to the cloud is the same as the JSON data you
   see during a JSON export (via `de`) or JSON inspect (via `dI`).
 
 - User-driven. The app interacts with the cloud data only in response to your
   explicit requests to save your browser data to the cloud or to read data
   from the cloud into your browser.
 
-- No snooping. The LL developers never examine your LL data other than for the
+- No snooping. The LoopLlama developers never examine your LoopLlama data other than for the
   purpose of investigating or fixing problems raised by you. The app does not
   use cookies. It does track aggregate things like each time an authenticated
   user starts a browser session or loads a video. In that data, the user is
   represented by an opaque client ID, not the user's actual email address. The
   client ID is linkable to the email address — for example, in response to
   user requests to investigate a problem — but the email does not reside,
-  strictly speaking, in any database entries controlled by LL. The URL for
-  loaded video is stored in a LL table, purely for aggregate tracking purpose;
+  strictly speaking, in any database entries controlled by LoopLlama. The URL for
+  loaded video is stored in a LoopLlama table, purely for aggregate tracking purpose;
   the DB rows containing those URLs never contains the client ID, let alone
   the email address, so the app and its developers have neither the interest
   nor a way to monitor your video habits.
@@ -660,4 +687,45 @@ any kind. Use it at your own risk.
   is prohibited.
 
 By using LoopLlama, you agree to these terms.
+
+## The LoopLlama Banner
+
+The colored banner at the top of the page is a composite drawn from the visual
+traditions of movements that fought against fascism and authoritarianism. The
+color order reads as a loose narrative arc, from the darkest symbols of
+resistance toward warmer symbols of hope:
+
+  - Black. Anarchism and anarcho-syndicalism, the oldest visual language of
+    anti-fascist organizing.
+
+  - Deep red. Organized labor and the socialist left, broadly construed — a
+    color that runs through more anti-authoritarian traditions than any other.
+
+  - Purple. The Second Spanish Republic, whose defense drew volunteers from
+    dozens of countries — perhaps the broadest anti-fascist coalition before
+    World War II.
+
+  - White. Peace and nonviolent resistance — the center band, as a pivot
+    between the harder symbols and the warmer ones.
+
+  - Gold. The German democratic tradition — colors the Nazis rejected and the
+    Federal Republic later reclaimed.
+
+  - Forest green. Pan-African resistance and the struggle against colonial and
+    racial authoritarianism.
+
+  - Blue. The liberal democratic tradition — from the Enlightenment through
+    the American and French revolutions, upheavals that shared the conviction
+    that legitimate power derives from the consent of the governed, not the
+    will of a ruler.
+
+In the past quarter century, the long trend toward democratization has slowed
+or reversed, most notably in the United States — not only my own country but
+also the nation that most symbolized democratic governance, due to its
+pioneering liberal-democratic revolution and its economic, military, and
+cultural dominance since World War I. Authoritarian politics is not inherently
+a phenomenon of the right, but recent anti-democratic movements have come
+predominantly from the populist right. The LoopLlama banner is intended as a
+symbolic gesture of resistance — to authoritarianism generally, and to its
+modern rightwing variants specifically.
 

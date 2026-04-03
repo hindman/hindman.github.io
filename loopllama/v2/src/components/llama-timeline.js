@@ -436,7 +436,7 @@ class LlamaTimeline extends LitElement {
         const widthPct = this._pct(scratch.end) - leftPct;
         els.push(html`
           <sl-tooltip hoist>
-            <span slot="content">${this._tipContent('Loop', this._fmt(scratch.start), '')}</span>
+            <span slot="content">${this._tipContent('Scratch Loop', this._fmt(scratch.start), '')}</span>
             <div
               class="loop-bar loop-bar--scratch"
               style="left: ${leftPct}%; width: ${widthPct}%; top: 0px"

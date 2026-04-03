@@ -22,7 +22,7 @@ import { logSessionStart, logVideoLoad } from '../analytics.js';
 import { getUser, onAuthStateChange, signInWithGoogle, signInWithGitHub, signOut } from '../auth.js';
 import { createShare, shareUrl, fetchShare, shareIdFromUrl,
          buildVideoPayload, buildLoopPayload } from '../sharing.js';
-import './llama-confirm-modal.js';
+import './llama-shared-video-conflict-modal.js';
 import './llama-whichkey.js';
 import './llama-controls.js';
 import './llama-timeline.js';
@@ -48,7 +48,7 @@ import './llama-cloud-status-modal.js';
 import './llama-data-op-modal.js';
 
 
-const QUIP_INTERVAL_MS = 3000;
+const QUIP_INTERVAL_MS = 6000;
 
 const QUIPS = [
   "Freedom isn't free — but looping is.",
@@ -65,7 +65,7 @@ const QUIPS = [
   "Need loops? No probllama.",
   "Dream ticket: Millard Fillmore & Barack \"Murphy\" O'Llama.",
   "Which side of The Llama has the most fleece? The outside.",
-  "How does The Llama do so much? He uses an allama clock.",
+  "Top productivity hack: an allama clock.",
   "What's two llamas next to the Liberty Bell? Llama llama ding dong.",
   "Never doubt The Llama.",
   "If life gives you lemons, make Llamonade."
@@ -329,7 +329,8 @@ class LlamaApp extends LitElement {
     this.loopSourceStart     = null;
     this.loopSourceEnd       = null;
     this._quip               = '';
-    this._quipIndex          = -1;
+    this._quipDeck           = [];
+    this._quipPos            = 0;
     this._quipInterval       = null;
     this._warnTimeout        = null;
     this._statusTimeout      = null;
@@ -1231,7 +1232,7 @@ class LlamaApp extends LitElement {
     this._deleteDataModalEl   = this.renderRoot.querySelector('llama-delete-data-modal');
     this._inspectModalEl      = this.renderRoot.querySelector('llama-inspect-modal');
     this._cloudStatusModalEl  = this.renderRoot.querySelector('llama-cloud-status-modal');
-    this._confirmModalEl      = this.renderRoot.querySelector('llama-confirm-modal');
+    this._sharedVideoConflictModalEl = this.renderRoot.querySelector('llama-shared-video-conflict-modal');
     this._dataOpModalEl       = this.renderRoot.querySelector('llama-data-op-modal');
     this._fileInputEl         = this.renderRoot.querySelector('#import-file-input');
 
@@ -2437,26 +2438,17 @@ class LlamaApp extends LitElement {
     this.statusMsg = `Imported: ${added} added, ${updated} updated, ${unchanged} unchanged${skipNote}${deletedNote}.`;
   }
 
-  // Show the confirm modal and return a Promise that resolves to true (confirm)
-  // or false (cancel / dismiss).
-  _showConfirm(info) {
+  // Show the shared-video conflict modal and return a Promise that resolves to
+  // true (replace) or false (skip / dismiss).
+  _showSharedVideoConflict(info) {
     return new Promise(resolve => {
-      this._confirmResolve = resolve;
-      this._confirmModalEl?.show(info);
+      this._sharedVideoConflictResolve = resolve;
+      this._sharedVideoConflictModalEl?.show(info);
     });
   }
 
-  _onConfirmYes() { this._confirmResolve?.(true);   this._confirmResolve = null; }
-  _onConfirmNo()  { this._confirmResolve?.(false);  this._confirmResolve = null; }
-  _onConfirmAlt() { this._confirmResolve?.('skip'); this._confirmResolve = null; }
-
-  // Three-option variant: resolves to 'yes', 'skip', or 'cancel'.
-  _showConfirm3(info) {
-    return new Promise(resolve => {
-      this._confirmResolve = resolve;
-      this._confirmModalEl?.show(info);
-    });
-  }
+  _onShareConflictReplace() { this._sharedVideoConflictResolve?.(true);  this._sharedVideoConflictResolve = null; }
+  _onShareConflictSkip()    { this._sharedVideoConflictResolve?.(false); this._sharedVideoConflictResolve = null; }
 
   // Data-op modal: resolves to { conflictChoice, orphanChoice } or null.
   _showDataOp(params) {
@@ -2519,11 +2511,10 @@ class LlamaApp extends LitElement {
     let video = this._appState.videos.find(v => v.id === parsed.id);
 
     if (video) {
-      const replace = await this._showConfirm({
-        lines:         [`"${displayName}" is already in your library.`, 'Replace it with the shared version?'],
-        confirmLabel:  'Replace',
-        cancelLabel:   'Skip',
-        defaultButton: 'cancel',
+      const replace = await this._showSharedVideoConflict({
+        videoName:      displayName,
+        localModified:  video.last_modified ?? null,
+        sharedModified: payload.last_modified ?? null,
       });
       if (!replace) {
         this.statusMsg = `Skipped: "${displayName}" already in your library.`;
@@ -2762,15 +2753,33 @@ class LlamaApp extends LitElement {
     await signOut();
   }
 
+  _shuffleQuipDeck(avoidFirst = null) {
+    // Fisher-Yates shuffle into a fresh deck.
+    const deck = QUIPS.map((_, i) => i);
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    // Avoid repeating the last quip of the previous cycle at position 0.
+    if (avoidFirst !== null && deck[0] === avoidFirst && deck.length > 1) {
+      [deck[0], deck[1]] = [deck[1], deck[0]];
+    }
+    return deck;
+  }
+
   _nextQuip() {
-    let idx;
-    do { idx = Math.floor(Math.random() * QUIPS.length); } while (idx === this._quipIndex && QUIPS.length > 1);
-    this._quipIndex = idx;
-    this._quip = QUIPS[idx];
+    if (this._quipPos >= this._quipDeck.length) {
+      const lastIdx = this._quipDeck[this._quipDeck.length - 1];
+      this._quipDeck = this._shuffleQuipDeck(lastIdx);
+      this._quipPos = 0;
+    }
+    this._quip = QUIPS[this._quipDeck[this._quipPos++]];
     this.requestUpdate();
   }
 
   _onQuipEnter() {
+    this._quipDeck = this._shuffleQuipDeck();
+    this._quipPos = 0;
     this._nextQuip();
     this._quipInterval = setInterval(() => this._nextQuip(), QUIP_INTERVAL_MS);
   }
@@ -3067,13 +3076,12 @@ class LlamaApp extends LitElement {
         @ll-modal-close=${() => this._kb?.enable()}
       ></llama-cloud-status-modal>
 
-      <llama-confirm-modal
+      <llama-shared-video-conflict-modal
         @ll-modal-open=${() => this._kb?.disable()}
-        @ll-confirm-yes=${this._onConfirmYes}
-        @ll-confirm-alt=${this._onConfirmAlt}
-        @ll-confirm-no=${this._onConfirmNo}
+        @ll-share-conflict-replace=${this._onShareConflictReplace}
+        @ll-share-conflict-skip=${this._onShareConflictSkip}
         @ll-modal-close=${() => this._kb?.enable()}
-      ></llama-confirm-modal>
+      ></llama-shared-video-conflict-modal>
 
       <llama-data-op-modal
         @ll-modal-open=${() => this._kb?.disable()}

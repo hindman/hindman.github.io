@@ -138,13 +138,13 @@ class LlamaCurrent extends LitElement {
         <div class="current-rows">
           ${this._row('Name',        this.videoName)}
           ${this._row('Video ID',    this.videoId)}
+          ${this._row('Duration',    this.duration != null ? this._fmtDuration(this.duration) : null)}
           ${this._row('Chapter',     this.chapterName)}
           ${this._row('Section',     this.sectionName)}
           <div class="current-row">
             <div class="row-label">Scratch loop source</div>
             <div class="row-value ${!this.loopSourceType ? 'dim' : ''}">${this._loopSourceValue() ?? '—'}</div>
           </div>
-          ${this._row('Duration',    this.duration != null ? this._fmtDuration(this.duration) : null)}
           ${this.zoomLabel ? html`
             <div class="current-row">
               <div class="row-label zoom-label">Zoom</div>

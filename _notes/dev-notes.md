@@ -442,3 +442,190 @@ For the current scale and audience, none of these measures are
 needed. The architecture is sound; the mitigations exist and are
 tunable if conditions change.
 
+## Backend Persistence
+
+### Supabase: how it works for users
+
+Users authenticate through LoopLlama using a "Sign in with X" button
+(e.g., Google). Supabase orchestrates the OAuth handshake with the
+chosen identity provider. Users never create a Supabase account --
+Supabase is invisible to them. They just need an account with whatever
+identity provider LL offers.
+
+Once signed in, a user's LL data is stored in the Supabase database
+and tied to their identity. It is accessible from any browser or device
+they sign into.
+
+### How it works for LL
+
+LL (i.e., the developer) holds the Supabase project. The app is
+initialized with a project URL and an anon key -- both embeddable in
+client-side code, as this is the standard Supabase pattern. The anon key
+is intentionally public; what controls data access is Row Level Security
+(RLS) configured in Supabase, which ensures each user can only read and
+write their own data.
+
+### Identity providers
+
+Multiple sign-in options can be offered simultaneously (e.g., Google and
+GitHub). Each is configured in the Supabase dashboard.
+
+### Benefits and features
+
+Three categories of value, in rough order of implementation complexity:
+
+1. Metrics and telemetry (no user auth required)
+   - Total users, active users, retention
+   - Which videos are being loaded
+   - Which features are used (loops vs. marks vs. sections vs. chapters)
+   - Informs future development priorities based on actual usage
+   - Supabase's built-in dashboard handles basic reporting without
+     any additional reporting code
+
+2. Shareable setups (no user auth required)
+   - A user can share a video setup (sections, loops, marks) via a URL
+   - Recipient clicks the link and LL loads that setup directly --
+     no JSON file exchange
+   - Setups can be stored as public anonymous records in Supabase
+   - Enables a community library over time: users contribute setups
+     for songs, others discover and load them
+
+3. Per-user data backup and sync (requires auth)
+   - User's LL data stored in Supabase, tied to their identity
+   - Accessible from any browser or device after signing in
+   - Eliminates the risk of data loss from clearing browser storage
+   - Cross-device sync happens automatically, no manual export/import
+
+Privacy note: video_id and client_id are deliberately never stored
+together. A per-user watch history -- even pseudonymous -- is contrary
+to the intent of this data collection. Counts per video are sufficient
+for the "popular videos" use case; linking them to device identities
+is not needed and is avoided.
+
+client_id lifecycle: generated once as a UUID, stored in localStorage.
+Survives across sessions on the same device/browser. Does not survive
+clearing browser storage. Is not connected to any real-world identity
+unless the user later creates an account
+
+session_id lifecycle: generated once per page load, stored in
+sessionStorage. Cleared when the tab is closed.
+
+### User data persistence: cloud storage and multi-device issues
+
+LL does not attempt true multi-device sync. Cloud storage is a backup/restore
+facility, not a live sync. The mental model: localStorage is your working
+copy; the cloud is your saved copy, like a hard drive.
+
+Each video object carries a last_modified timestamp (ms since epoch), updated
+whenever the video's data changes.
+
+Cloud read/write are explicit user operations (`dr` / `ds` / `dc`), not automatic.
+This keeps the system honest: you control exactly when data moves to or from
+the cloud.
+
+Sign-in: authentication only. No automatic read or write. The user decides
+whether to ds or dr after signing in. Exception: if the user signs in on a
+device with no local videos, the app suggests a dr (but does not force it).
+
+Options include a cloud_backup flag (default false). Controls whether the
+app nudges the user to sign in when signed out. The lifecycle:
+
+- New user, never signed in: cloud_backup false, no nudging.
+- First sign-in: cloud_backup set to true.
+- Signed out after normal use: cloud_backup remains true; app nudges the
+  user to sign back in (prompt on load, visual indicator on Account menu).
+- Sign out and remove cloud data (SORCD): cloud_backup set to false; no
+  more nudging. User has made a deliberate choice to leave the cloud.
+- User unchecks cloud_backup in options: nudging stops. Cloud ops (ds/dr)
+  still available manually; the flag only controls the nudge.
+
+Multi-device advice: ds and dr are safe to use across devices because all
+transfers go through the per-video conflict check. The one scenario to avoid
+is being signed in and using ds on two devices without a dr in between on
+the second device -- you could overwrite the first device's cloud save. Best
+practice: ds before switching devices; dr after switching.
+
+Decision tables for ds, dr, and di:
+
+    ds (local → cloud)
+
+    Videos      | Edit in cloud
+    -----------------------------------------------
+    local-only  | Added
+    local-newer | Replaced
+    same        | No change
+    cloud-newer | Replaced, or skipped — after prompt
+    cloud-only  | Deleted, or kept — after prompt
+
+    dr (cloud → local)
+
+    Videos      | Edit locally
+    -----------------------------------------------
+    cloud-only  | Added
+    cloud-newer | Replaced
+    same        | No change
+    local-newer | Replaced, or skipped — after prompt
+    local-only  | Deleted, or kept — after prompt
+
+    di (JSON → local): just like dr with JSON=cloud
+
+    Videos      | Edit locally
+    -----------------------------------------------
+    JSON-only   | Added
+    JSON-newer  | Replaced
+    same        | No change
+    local-newer | Replaced, or skipped — after prompt
+    local-only  | Deleted, or kept — after prompt
+
+## LoopLlama Menu Philosophy
+
+NOUN → VERB structure
+
+The menu label names the entity (the noun); menu items are verbs that act on
+it. This makes the hierarchy meaningful rather than just a grouping
+convenience.
+
+Ellipsis = picker required
+
+An ellipsis suffix signals that a picker or selection step will appear before
+the action executes. No ellipsis means the action operates on the
+current/implied entity immediately. This is a narrower use of the convention
+than HIG — it does not apply to every dialog, only to operations that
+require the user to select which entity to act on.
+
+Menu context reduces label verbosity
+
+Because the menu label establishes the noun, item labels need only be the
+verb. "Delete video" becomes "Delete..." under the Video menu. Redundant
+qualifiers ("current", "video", "section") are dropped.
+
+Entity ownership resolves duplication
+
+When an action could appear in multiple menus, it belongs in the menu whose
+label names the primary noun. "Loop current section" belongs under Section,
+not Loop. This eliminates cross-menu duplication and gives each menu a
+coherent identity.
+
+The Loop menu's noun is the scratch loop
+
+Unlike other entity menus, Loop is centered on the scratch loop as its primary
+subject. Named loops are accessed via Open... and Delete..., but Edit, Zoom,
+and the source-management block all act on the scratch loop directly.
+
+Footer messages carry explanatory load
+
+Short or ambiguous labels (e.g. "Toggle timeline") are acceptable when the
+footer provides context at the moment of use. Labels don't need to be
+self-contained documentation.
+
+Real estate is a constraint
+
+Eight menus across a narrow header is the practical limit. The Help menu was
+folded into App to preserve horizontal space. Brevity in labels serves the
+same goal.
+
+Menus do not duplicate main controls
+
+Menu items do not perform actions that are directly available via the app's
+main controls: play/pause; toggle looping; previous/next entity; etc.
+
