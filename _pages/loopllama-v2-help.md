@@ -58,9 +58,9 @@ Notice syntax/styles:
 LoopLlama is a browser-based YouTube controller for close study of video
 content. If you want to loop a passage, slow down or speed up a video, mark
 moments to return to, or annotate a video's structure, LoopLlama is built for
-that. A common use case is learning from instructional or performance videos
--- a musician working through a song, for instance -- but the app isn't
-specific to music or any other domain.
+that. A common use case is learning from instructional or performance videos —
+a musician working through a song, for instance — but the app isn't specific
+to music or any other domain.
 
 The keyboard-first design means you can drive the app efficiently:
 Vim-inspired key bindings cover nearly every operation. For those who prefer a
@@ -71,10 +71,10 @@ timeline, provide the same access.
 
 <span class="ll-phead">Load URL</span>. To load a YouTube video into
 LoopLlama, see "Load URL" on the Video menu. Also notice the two key bindings
-listed on that menu item: `vl` or `y`. You can paste either a full URL or just the
-YouTube video ID. Here's an example ID to copy if you don't have one handy:
-`QQ5XMmV7-bY`. Notice that video name and YT ID are shown in the Current
-panel.
+listed on that menu item: `vl` or `y`. You can paste either a full URL or just
+the YouTube video ID. Here's an example ID to copy if you don't have one
+handy: `QQ5XMmV7-bY`. Notice that video name and YT ID are shown in the
+Current panel.
 
 <span class="ll-phead">Basic controls</span>. The basic operations to play,
 pause, seek, and adjust the playback speed are available in familiar buttons,
@@ -82,16 +82,16 @@ text boxes, and dropdowns in the app's main controls, specifically in the
 groups labelled Play, Speed, and Navigate. Here's a listing of the key
 bindings for the most common operations:
 
-    Keys  | Operation
-    -----------------------------------------
-    Space | Play/pause
-    Left  | Seek: backward
-    Right | Seek: forward
-    Down  | Seek delta: decrease
-    Up    | Seek delta: increase
-    -     | Speed: decrease
-    =     | Speed: increase
-    jj    | Jump to a time
+| Keys    | Operation
+| ------- | ---------------------
+| `Space` | Play/pause
+| `Left`  | Seek: backward
+| `Right` | Seek: forward
+| `Down`  | Seek delta: decrease
+| `Up`    | Seek delta: increase
+| `-`     | Speed: decrease
+| `=`     | Speed: increase
+| `jj`    | Jump to a time
 
 <span class="ll-phead">Basic looping</span>. The controls in the Scratch Loop
 area allow you to loop a specific part of a video. If looping is toggled on,
@@ -100,11 +100,11 @@ the playhead reaches the end it will wrap around to the loop start; and seek
 movements will be confined to the loop boundaries. Here are the most important
 key bindings:
 
-    Keys | Operation
-    -----------------------------------------
-    [[   | Set loop start to current time
-    ]]   | Set loop end to current time
-    xx   | Toggle looping
+| Keys  | Operation
+| ----- | ------------------------------
+| `[[`  | Set loop start to current time
+| `]]`  | Set loop end to current time
+| `xx`  | Toggle looping
 
 <span class="ll-phead">Informational elements</span>. The app provides
 information in various ways.
@@ -121,15 +121,15 @@ information in various ways.
     link]). Support hover for information and click to jump.
 
 <span class="ll-phead">Gotcha: app focus</span>. If you click anywhere in the
-YouTube frame, the LoopLlama app loses focus. When that occurs, a warning is shown in
-the footer. The fix is simple: click anywhere in the app outside of the
-YouTube frame. The clickable LoopLlama timeline makes clicking in the YouTube
-frame rarely necessary.
+YouTube frame, the LoopLlama app loses focus. When that occurs, a warning is
+shown in the footer. The fix is simple: click anywhere in the app outside of
+the YouTube frame. The clickable LoopLlama timeline makes clicking in the
+YouTube frame rarely necessary.
 
 ## Entities
 
-For many users -- those who simply want to have tool to loop or change the
-speed of YT videos using an efficient user interface -- everything you need to
+For many users — those who simply want to have tool to loop or change the
+speed of YT videos using an efficient user interface — everything you need to
 know was covered in the Quick Start. But if you need to work with a video
 in-depth (for example, transcribing a musical performance) being able to
 attach additional information to the video is powerful. That information is
@@ -138,24 +138,21 @@ and loops.
 
 ### Videos
 
-The first entity is obvious: videos. Once you open a YouTube video in LoopLlama, the
-app remembers the video and how you last left it: the current playhead
-position, the playback speed, the scratch loop endpoints, and any other information
-about the entities that a video can have.
+The first entity is obvious: videos. Once you open a YouTube video in
+LoopLlama, the app remembers the video and how you last left it: the current
+playhead position, the playback speed, the scratch loop endpoints, and any
+other information about the entities that a video can have.
 
 To illustrate some video behaviors open these two URLs which will load two
 example videos into your LoopLlama data.
 
-<!-- Two shared video examples:
+| Example           | Description
+| ----------------- | --------------------------------
+| [Ex1][ex_share_1] | One song, with sections
+| [Ex2][ex_share_2] | Concert, with songs as chapters
 
-- example-video-1: song with no metadata yet
-- example-video-2: basic song with sections
-- example-video-3: concert video with song/chapters.
-
--->
-
-**Open**. You can open a video you've already loaded into LoopLlama via `vo`. Give
-that a try with the example videos.
+**Open**. You can open a video you've already loaded into LoopLlama via `vo`.
+Give that a try with the example videos.
 
 <!-- Info notice. Key bindings. Most LoopLlama bindings follow a two-character
 system, where the first letter is a prefix for the type of entity involved
@@ -167,7 +164,7 @@ two-character bindings. -->
 
 **Edit**. By default the video name is set to the title provided by the YT
 player. You can use `ve` to edit the name to something else. The edit
-operation can also be used to set custom start and end times for the video --
+operation can also be used to set custom start and end times for the video —
 for example, to exclude filler material at the beginning or ending of the
 video that you rarely need to watch.
 
@@ -196,7 +193,7 @@ Verse, Chorus, Solo; someone studying a lecture might label them by topic; a
 language learner might use them to mark speaker turns.
 
 **Create**. Creating a section is done by positioning the playhead at it start
-and pressing `ss` -- that's it. The section now exists (notice the visual
+and pressing `ss` — that's it. The section now exists (notice the visual
 change in the timeline). The section end is inferred from the start of the
 next section (or the video end).
 
@@ -225,7 +222,7 @@ on the current section (via `sz`). Use `sz` again to toggle the section-zoom
 off (or `az` to turn off any kind of zooming).
 
 **Fix end**. Although rarely needed, this operation allows you to set a
-section's endpoint explicitly -- in other words, fix the section's end point
+section's endpoint explicitly — in other words, fix the section's end point
 (via `sf`) sooner than the end that would be inferred from the next section's
 start (or the video end). This feature is needed only if you want to organize
 a video into sections, but don't want the entire video to be exhaustively
@@ -237,7 +234,7 @@ covered by the sections you define.
 "Delete..." and "Jump..." have a trailing elipses. That conveys that the
 operations will occur though an interactive picker where you first select the
 section to be deleted or jumped to. The other menu items have no elipses,
-because they operate on the current section -- meaning the one where the
+because they operate on the current section — meaning the one where the
 playhead sits. -->
 
 ### Chapters
@@ -261,7 +258,7 @@ you are not required to follow that model.
 
 ### Marks
 
-Marks are the simplest entities -- nothing more than a time point. The are
+Marks are the simplest entities — nothing more than a time point. The are
 displayed visually as yellow dots in the timeline, below the
 sections/chapters. The operations and key bindings are simple and follow the
 conventions already established for sections and chapters (see the Mark menu).
@@ -310,10 +307,10 @@ Although the terminology is idiosyncratic, the app's menu labeling and key
 binding scheme benefit from keeping a clear distinction between saved loops
 and the scratch loop.
 
-    Operations   | Menu    | Key binding prefix
-    --------------------------------------------
-    Saved loop   | Loop    | l
-    Scratch loop | Scratch | x
+| Loop type     | Menu      | Binding prefix
+| ------------- | --------- | --------------
+| Saved loop    | Loop      | l
+| Scratch loop  | Scratch   | x
 
 #### Scratch loop edit mode
 
@@ -326,10 +323,15 @@ After the mode is invoked, the scratch loop's start point will have focus
 (notice the yellow border). In the message footer, the available key bindings
 are listed, but the most important controls are the following:
 
-    left/right | Decrease/increase the active bound
-    down/up    | Decrease/increase the delta (size of left/right adjustment)
-    tab        | Toggle focus between start and end
-    enter/esc  | Exit edit mode
+| Key           | Operation
+| ------------- | ------------------------------
+| left          | Decrease active bound
+| right         | Increase active bound
+| down          | Decrease left/right delta
+| up            | Increase left/right delta
+| tab           | Toggle focus between start/end
+| enter         | Exit edit mode
+| esc           | Exit edit mode
 
 Within scratch edit mode, the `space` will play the video near the boundary
 that currently has focus. The purpose is to allow you to adjust a boundary,
@@ -345,41 +347,44 @@ convention: `[` is the prefix for start, `]` for end. See the nudge key
 bindings for a full listing (add link), but the most commonly used bindings
 are these four:
 
-    [- [= | Start: nudge decrease/increase
-    ]- ]= | End: nudge decrease/increase
+| Key    | Operation
+| ------ | ---------------------
+| `[-`   | Start: nudge decrease
+| `[=`   | Start: nudge increase
+| `]-`   | End: nudge decrease
+| `]=`   | End: nudge increase
 
 The nudge operation has one special wrinkle to support the rapid creation of
-loops. This behavior is best explained via a simple example. Initially, the
-scratch loop start and end are a short distance apart, near the beginning of a
-video, and the playhead is near the video end:
+loops. This behavior is best explained via a simple example.
 
-    ---------------------------------------
-      S     E                     ^
+1. Initially, the scratch loop start and end are a short distance apart, near
+   the beginning of a video. The playhead is near the video end.
 
-To create a short loop starting at the playhead, you can press `[[`. Now the
-situation looks like this:
+2. To create a short loop starting at the playhead, you can press `[[` to set
+   the scratch loop start.
 
-    ---------------------------------------
-            E                     S
+3. Consider what happens if the user presses `]=` to perform a nudge increase
+   on the end. A *regular nudge* would shift the end to the right, leaving an
+   invalid loop (assume the delta is at a typical value like 5s).
 
-Consider what happens if the user presses `]=` to perform a nudge increase on
-the end. A *regular nudge* would shift the end to the right, leaving an
-invalid loop (assume the delta is at a typical value like 5s).
+4. But a *relative nudge* is different: it applies the delta relative to the
+   loop's other bound. In our example, the end nudge would be applied relative
+   to the start. The result would be a legal loop, so the app would apply this
+   nudge.
 
-    Regular nudge
+        _____________________________
+          S     E              ^        (1) Initial
 
-    ---------------------------------------
-                E                 S
+        _____________________________
+                E              S        (2) Set start
 
-But a *relative nudge* is different: it applies the delta relative to the
-loop's other bound. In our example, the end nudge would be applied relative to
-the start. The result would be a legal loop, so the app would apply this
-nudge:
 
-    Relative nudge
+        _____________________________
+                    E          S        (3) Regular nudge: invalid loop
 
-    ---------------------------------------
-                                  S   E
+
+        _____________________________
+                               S   E    (4) Relative nudge: valid loop
 
 The key intuition is that nudges have a bias toward creating legal loops. The
 app calculates the result for both regular and relative nudges and stops at
@@ -448,14 +453,14 @@ marks, and loops — hover to display time and name information.
 
 The app supports various time input styles:
 
-    Format          | Example | Equivalent or note
-    ----------------------------------------------
-    mm:ss           | 32:45   | .
-    hh:mm:ss        | 1:13:28 | .
-    condensed forms | 73:44   | 1:13:44
-    raw seconds     | 245     | 4:05
-    decimal seconds | 34:43.2 | 1 digit max
-    forward slash   | 7/44    | 7:44
+| Format           | Example   | Note
+| ---------------- | --------- | -----------
+| mm:ss            | 32:45     | .
+| hh:mm:ss         | 1:13:28   | .
+| condensed forms  | 73:44     | 1:13:44
+| raw seconds      | 245       | 4:05
+| decimal seconds  | 34:43.2   | 1 digit max
+| forward slash    | 7/44      | 7:44
 
 ## Navigation: other operations
 
@@ -611,18 +616,16 @@ Hosting. The project is hosted by GitHub, as part of its GitHub Pages feature.
 YouTube handles the videos. YouTube provides and streams all video content via
 its standard embed API. LoopLlama simply uses that API.
 
-Browser storage by default. By default, your LoopLLama data is stored only in
-your web browser, in
-[localStorage][https://en.wikipedia.org/wiki/Web_storage]. The app does not
-use cookies.
+Browser storage by default. Your LoopLLama data is stored only in your web
+browser, in [localStorage][localStorage]. The app does not use cookies.
 
 Transparent. The data that LoopLlama stores can be viewed directly via the
 `de` binding (Data => Export). The resulting JSON file provides an accurate
 representation of your LoopLLama data.
 
 Cloud backup is optional. If you sign-in via Google or GitHub, LoopLLama backs
-up your data in the cloud, using [Supabase][https://supabase.com/], which
-offers a free database service for small projects like LoopLLama.
+up your data in the cloud, using [Supabase][supabase], which offers a free
+database service for small projects like LoopLLama.
 
 Authentication via known, reliable third-parties. LoopLLama does not manage
 user authentication or know anything about your credentials. Those details are
@@ -695,10 +698,8 @@ using LoopLlama, you agree to these terms:
 ## Contact
 
 If you have questions, comments, problems to report, or features to request
-you can file an issue via the project's [GitHub
-codebase][https://github.com/hindman/hindman.github.io]. You can also contact
-Monty Hindman directly, as [detailed here][
-https://hindman.github.io/about/#contact].
+you can file an issue via the project's [GitHub codebase][github_code]. You
+can also contact Monty Hindman directly, as [detailed here][mh_contact].
 
 ## The LoopLlama Banner
 
@@ -740,4 +741,14 @@ a phenomenon of the right, but recent anti-democratic movements have come
 predominantly from the populist right. The LoopLlama banner is intended as a
 symbolic gesture of resistance — to authoritarianism generally, and to its
 modern rightwing variants specifically.
+
+--------
+
+[ex_share_1]: http://localhost:5173/loopllama/v2/?share=1NvB_OhZMm
+[ex_share_2]: http://localhost:5173/loopllama/v2/?share=ohrMVWSxww
+[localStorage]: https://en.wikipedia.org/wiki/Web_storage
+[supabase]: https://supabase.com/
+[github_code]: https://github.com/hindman/hindman.github.io
+[mh_contact]: https://hindman.github.io/about/#contact
+
 

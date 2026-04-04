@@ -148,9 +148,10 @@ const MENUS = [
       { label: 'Toggle timeline', action: 'toggleZone2', hint: 'at · t'  },
       { label: 'Zoom off',        action: 'zoomOff',     hint: 'az · z'  },
       { type: 'divider' },
-      { label: 'Options',      action: 'options',     hint: 'ao · o' },
-      { label: 'Help',         action: 'helpGeneral', hint: 'ah · h' },
-      { label: 'Key bindings', action: 'helpKeys',    hint: 'ak · k' },
+      { label: 'Options',       action: 'options',      hint: 'ao · o' },
+      { label: 'Help',          action: 'helpGeneral',  hint: 'ah · h' },
+      { label: 'Key bindings',  action: 'helpKeys',     hint: 'ak · k' },
+      { label: 'Load examples', action: 'loadExamples', hint: 'ae'     },
     ],
   },
 ];

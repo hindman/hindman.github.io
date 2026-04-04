@@ -140,8 +140,9 @@ export const BINDINGS = {
     'z': { handler: 'zoomOff',     desc: 'Zoom off' },
     'm': { handler: 'msgRecall',   desc: 'Recall last message' },
     'o': { handler: 'options',     desc: 'Options' },
-    'h': { handler: 'helpGeneral', desc: 'General help' },
-    'k': { handler: 'helpKeys',    desc: 'Key bindings' },
+    'h': { handler: 'helpGeneral',  desc: 'General help' },
+    'k': { handler: 'helpKeys',     desc: 'Key bindings' },
+    'e': { handler: 'loadExamples', desc: 'Load example videos' },
   }},
 
   'm': { completions: {

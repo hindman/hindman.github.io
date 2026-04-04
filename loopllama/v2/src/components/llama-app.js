@@ -16,6 +16,7 @@ import {
   propagateEntityChange, validateEntityChange,
   nudgeLoopStart, nudgeLoopEnd,
 } from '../state.js';
+import { EXAMPLES } from '../examples.js';
 import { load, save, exportAll, parseImport, migrateVideo,
          loadFromCloud, saveToCloud, deleteFromCloud } from '../storage.js';
 import { logSessionStart, logVideoLoad } from '../analytics.js';
@@ -1146,6 +1147,21 @@ class LlamaApp extends LitElement {
       dataSave:      () => this._dataSave(),
       dataRead:      () => this._dataRead(),
       dataCompare:   () => this._dataCompare(),
+      loadExamples:  () => {
+        let added = 0;
+        for (const video of EXAMPLES) {
+          if (!this._appState.videos.find(v => v.id === video.id)) {
+            this._appState.videos.push(video);
+            added++;
+          }
+        }
+        const skipped = EXAMPLES.length - added;
+        if (added > 0) {
+          this.videos = [...this._appState.videos];
+          this._save();
+        }
+        this.statusMsg = `Example videos: ${added} loaded; ${skipped} already in library.`;
+      },
       msgRecall:     () => {
         if (!this._lastMsg) { this._setWarning('No recent message.'); return; }
         const { text, type } = this._lastMsg;

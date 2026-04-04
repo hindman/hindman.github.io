@@ -1,43 +1,44 @@
 
 ## TODO: LoopLlama v2
 
+data-delete: sort of videos: alpha on name
+
+app limits on N videos
+
 User docs: help text: draft
-    - Privacy Policy
-    - Terms of Service
+    x Privacy Policy
+    x Terms of Service
+    x Example vids:
+      x create JSON
+      x check functionality
+    - MH edit text and JSON examples
     - CC top-level review
-    - MH editing pass
+    - MH edit
     - CC review
 
-Text elements: Pickers: titles
-  - video-picker: switch | delete | restore
-  - loop-picker: jump | scratch | edit | delete
-  - sections-picker: jump | edit | delete | open
-  - marks-picker: jump | edit | delete
-  - chapter-picker: jump | delete
-  - jump-history-picker: no modes (single purpose)
+Text elements: Pickers:
+  - video        | switch | delete  | restore | .
+  - loop         | jump   | scratch | edit    | delete
+  - sections     | jump   | edit    | delete  | open
+  - marks        | jump   | edit    | delete  | .
+  - chapter      | jump   | delete  | .       | .
+  - jump-history | .      | .       | .       | .
 
-Text elements: Modals: titles, labels, headings, placeholders, hovers.
-  Edit modals
-  - llama-edit-video-modal.js
-  - llama-edit-section-modal.js
-  - llama-edit-mark-modal.js
-  - llama-edit-chapter-modal.js
-
-  Save / input modals
-  - llama-save-loop-modal.js
-  - llama-url-input-modal.js
-  - llama-jump-time-modal.js
-
-  Action / confirmation modals
-  - llama-shared-video-conflict-modal.js   # dv conflict
-  - llama-delete-data-modal.js
-  - llama-data-op-modal.js                 # ds/dr/di conflicts: skip/replace
-
-  Info / status modals
-  - llama-options-modal.js
-  - llama-video-info-modal.js
-  - llama-cloud-status-modal.js
-  - llama-inspect-modal.js
+Text elements: Modals:
+  - edit-video
+  - edit-section
+  - edit-mark
+  - edit-chapter
+  - save-loop
+  - url-input
+  - jump-time
+  - shared-video-conflict   # dv conflict
+  - delete-data
+  - data-op                 # ds/dr/di conflicts: skip/replace
+  - options
+  - video-info
+  - cloud-status
+  - inspect
 
 Text elements: messages: info, warning, error, which-key.
 
