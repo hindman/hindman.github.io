@@ -10,6 +10,9 @@ toc_icon: 'guitar'
 
 <!--
 
+__HERE__
+<span class="ll-phead">Edit</span>. By default the video name is set to the
+
 ## What is LoopLlama?
 ## Quick start
 ## Entities
@@ -44,12 +47,20 @@ toc_icon: 'guitar'
 
 Notice syntax/styles:
 
+  - Simple marker before the target paragraph.
+
       gray/blue-gray | {: .notice}          | .
       forest/teal    | {: .notice--primary} | info items
       steel-blue     | {: .notice--info}    | .
       brown/amber    | {: .notice--warning} | .
       red            | {: .notice--danger}  | warnings
       green          | {: .notice--success} | success advice
+
+  - Enclose multiple paragraphs as the target:
+
+      <div class="notice--primary" markdown="1">
+      Blah blah
+      </div>
 
 -->
 
@@ -63,8 +74,8 @@ a musician working through a song, for instance — but the app isn't specific
 to music or any other domain.
 
 The keyboard-first design means you can drive the app efficiently:
-Vim-inspired key bindings cover nearly every operation. For those who prefer a
-mouse, the usual menus, buttons, and other controls, plus a clickable visual
+Vim-inspired key bindings cover every operation. For those who prefer a mouse,
+the usual menus, buttons, and other controls, plus a clickable visual
 timeline, provide the same access.
 
 ## Quick start
@@ -72,15 +83,13 @@ timeline, provide the same access.
 <span class="ll-phead">Load URL</span>. To load a YouTube video into
 LoopLlama, see "Load URL" on the Video menu. Also notice the two key bindings
 listed on that menu item: `vl` or `y`. You can paste either a full URL or just
-the YouTube video ID. Here's an example ID to copy if you don't have one
-handy: `QQ5XMmV7-bY`. Notice that video name and YT ID are shown in the
-Current panel.
+the YouTube video ID (an example to try: `QQ5XMmV7-bY`). Notice that video
+name and YouTube ID are shown in the Current panel.
 
 <span class="ll-phead">Basic controls</span>. The basic operations to play,
 pause, seek, and adjust the playback speed are available in familiar buttons,
-text boxes, and dropdowns in the app's main controls, specifically in the
-groups labelled Play, Speed, and Navigate. Here's a listing of the key
-bindings for the most common operations:
+text boxes, and dropdowns in the app's main controls. Key bindings for the
+most common operations are the following:
 
 | Keys    | Operation
 | ------- | ---------------------
@@ -95,12 +104,11 @@ bindings for the most common operations:
 
 <span class="ll-phead">Basic looping</span>. The controls in the Scratch Loop
 area allow you to loop a specific part of a video. If looping is toggled on,
-video playback and basic seek movements will adhere to the loop bounds: when
-the playhead reaches the end it will wrap around to the loop start; and seek
-movements will be confined to the loop boundaries. Here are the most important
-key bindings:
+video playback and seek will adhere to the loop bounds: when the playhead
+reaches the end it will wrap around to the loop start; and seek movements will
+be confined to the loop boundaries. Here are the most important key bindings:
 
-| Keys  | Operation
+| Keys  | Scratch loop operation
 | ----- | ------------------------------
 | `[[`  | Set loop start to current time
 | `]]`  | Set loop end to current time
@@ -111,25 +119,25 @@ information in various ways.
 
   - Current panel: lists current video and other information about the video.
 
-  - Control hovers: to see label and key binding.
+  - Control hovers: display label and key binding.
 
-  - Message footer: display information, warning, and error messages, along
+  - Message footer: displays information, warning, and error messages, along
     with key binding continuation information.
 
   - Timeline: Mimics the YouTube progress bar and provides a visual overview
-    of the information the user has attached to it (additional details [add
-    link]). Support hover for information and click to jump.
+    of the information the user has attached to it; supports hover for
+    information and click to jump.
 
 <span class="ll-phead">Gotcha: app focus</span>. If you click anywhere in the
-YouTube frame, the LoopLlama app loses focus. When that occurs, a warning is
-shown in the footer. The fix is simple: click anywhere in the app outside of
-the YouTube frame. The clickable LoopLlama timeline makes clicking in the
-YouTube frame rarely necessary.
+YouTube frame, the LoopLlama app loses focus and its key binding become
+inactive. When that occurs, a warning is shown in the footer. The fix is
+simple: click anywhere in the app outside of the YouTube frame. The clickable
+LoopLlama timeline makes clicking in the YouTube frame rarely necessary.
 
 ## Entities
 
 For many users — those who simply want to have tool to loop or change the
-speed of YT videos using an efficient user interface — everything you need to
+speed of YouTube videos using an efficient user interface — everything you need to
 know was covered in the Quick Start. But if you need to work with a video
 in-depth (for example, transcribing a musical performance) being able to
 attach additional information to the video is powerful. That information is
@@ -143,47 +151,50 @@ LoopLlama, the app remembers the video and how you last left it: the current
 playhead position, the playback speed, the scratch loop endpoints, and any
 other information about the entities that a video can have.
 
-To illustrate some video behaviors open these two URLs which will load two
-example videos into your LoopLlama data.
+To load some example videos pre-configured with various entities press `ae`
+(Load examples on the App menu).
 
 | Example           | Description
 | ----------------- | --------------------------------
 | [Ex1][ex_share_1] | One song, with sections
 | [Ex2][ex_share_2] | Concert, with songs as chapters
 
-**Open**. You can open a video you've already loaded into LoopLlama via `vo`.
-Give that a try with the example videos.
+<span class="ll-phead">Open</span>. You can open a video you loaded previously
+into LoopLlama via `vo`. Try with the example videos.
 
-<!-- Info notice. Key bindings. Most LoopLlama bindings follow a two-character
-system, where the first letter is a prefix for the type of entity involved
-(`v` for video) and the second letter is a mnemonic for the operation: `vo`
-for "Video => Open" or `vu` for "Video => Load URL". Some of the most common
-operations also have synonym bindings that are easier to type. Look at the
-Video menu to see examples. The help documentation will tend to use the formal
-two-character bindings. -->
+{: .notice--primary}
 
-**Edit**. By default the video name is set to the title provided by the YT
-player. You can use `ve` to edit the name to something else. The edit
-operation can also be used to set custom start and end times for the video —
-for example, to exclude filler material at the beginning or ending of the
-video that you rarely need to watch.
+**Key binding overview**. Bindings follow a 2-character system: (a) the first
+character an entity prefix; (b) the second a mmenomic for the operation. For
+example, `vo` for **Video › Open** and `ae` for **App › Open**. Th most common
+operations also have shortcut bindings for easier typing (see the Video and
+App menus for examples). The help documentation will tend to use the formal
+two-character bindings.
 
-**Zoom**. If a video has custom values for start and end, you can use `vz`
-(Zoom) to zoom the timeline view to that custom range.
+<span class="ll-phead">Edit</span>. By default the video name is set to the
+title provided by the YouTube player. You can use `ve` to edit the name to
+something else. The edit operation can also be used to set custom start and
+end times for the video — for example, to exclude filler material at the
+beginning or ending of the video that you rarely need to watch.
 
-**Scratch**. To loop an entire video (or the range defined by its custom start
-and end values) use `vx`. That performs a Scratch operation, which loads the
-start and end into the scratch loop — the app's work area for looping. The
-discussion of Looping (add link) provides more details on looping and the
-reasons behind the Scratch terminology.
+<span class="ll-phead">Zoom</span>. If a video has custom values for start and
+end, you can use `vz` (Zoom) to zoom the timeline view to that custom range.
 
-**Info**. To see all of the LoopLlama information about a video you can use `vi`
-(Info). See example-2 for an illustration.
+<span class="ll-phead">Scratch</span>. To loop an entire video (or the range
+defined by its custom start and end values) use `vx`. That performs a Scratch
+operation, which loads the start and end into the scratch loop — the app's
+work area for looping. The discussion of Looping (add link) provides more
+details on looping and the reasons behind the Scratch terminology.
 
-**Delete**. If your LoopLlama data has videos you no longer need, use `vd` to delete
-a video. The app also provide an operation to delete data in bulk (add link).
+<span class="ll-phead">Info</span>. To see all of the LoopLlama information
+about a video you can use `vi` (Info). See example-2 for an illustration.
 
-**Unstash**. See the discussion on cloud backups for details (add link).
+<span class="ll-phead">Delete</span>. If your LoopLlama data has videos you no
+longer need, use `vd` to delete a video. The app also provide an operation to
+delete data in bulk (add link).
+
+<span class="ll-phead">Unstash</span>. See the discussion on cloud backups for
+details (add link).
 
 ### Sections
 
