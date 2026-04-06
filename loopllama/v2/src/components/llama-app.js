@@ -53,12 +53,10 @@ const QUIP_INTERVAL_MS = 6000;
 
 const QUIPS = [
   "Freedom isn't free — but looping is.",
-  "Freedom to loop.",
   "How about a little something, you know, for the effort?",
-  "I have two speeds: loop and nap.",
+  "I have two speeds: loop and scratch.",
   "It's loops all the way down.",
   "Keep on loopin' in the free world!",
-  "Loop the good stuff.",
   "Time is a flat circle — so a loop.",
   "The Llama abides.",
   "Hey, baby, scratch my ears.",

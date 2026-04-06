@@ -1,10 +1,6 @@
 
 ## TODO: LoopLlama v2
 
-data-delete: sort of videos: alpha on name
-
-app limits on N videos
-
 User docs: help text: draft
     x Privacy Policy
     x Terms of Service
@@ -48,6 +44,7 @@ Text elements: Timeline: hovers [checked; OK]
 
 Code review and refactor.
   - See _notes/refactoring-prompt.md
+  - App limits on N videos?
 
 Dev docs:
   - data-schema.md

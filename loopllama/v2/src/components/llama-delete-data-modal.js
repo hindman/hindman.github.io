@@ -129,7 +129,9 @@ class LlamaDeleteDataModal extends LitElement {
     this._loops            = namedLoops ?? [];
     this._marks            = marks      ?? [];
     this._chapters         = chapters   ?? [];
-    this._videos           = videos     ?? [];
+    this._videos           = (videos ?? []).slice().sort(
+      (a, b) => (a.name || a.id).localeCompare(b.name || b.id, undefined, { sensitivity: 'base' })
+    );
     this._currentVideoId   = currentVideoId   ?? null;
     this._currentVideoName = currentVideoName ?? null;
     this._checked          = preCheckedVideoId ? { [preCheckedVideoId]: true } : {};
