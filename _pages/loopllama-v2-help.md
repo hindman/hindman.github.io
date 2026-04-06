@@ -11,39 +11,10 @@ toc_icon: 'guitar'
 <!--
 
 __HERE__
-<span class="ll-phead">Edit</span>. By default the video name is set to the
 
-## What is LoopLlama?
-## Quick start
-## Entities
-### Videos
-### Sections
-### Chapters
-### Marks
-### Loops
-#### Saved loops
-#### Scratch loop
-#### Scratch operation
-#### Scratch loop edit mode
-#### Scratch loop nudges
-#### Scratch loop sources
-## The Visual Timeline
-## Time Input Formats
-## Navigation: other operations
-## Data management
-### Sharing
-### Export, Import, Inspect.
-### Cloud Storage and Sign-In {#why-sign-in}
-### Bulk deletion
-## App menu
-### Edit history: undo/redo
-### Recall last message
-### Timeline operations
-### Options
-## Privacy Policy {#privacy-policy}
-## Terms of Service {#terms-of-service}
-## Contact
-## The LoopLlama Banner
+__MENU_ARROW__
+Video › Scratch
+
 
 Notice syntax/styles:
 
@@ -61,6 +32,19 @@ Notice syntax/styles:
       <div class="notice--primary" markdown="1">
       Blah blah
       </div>
+
+Linking:
+
+  - Link to headings:
+
+      ### Foo-bar heading {#blort-x}
+
+      Later ... blah blah, see [foo-bar](#blort-x)
+
+  - Link to raw paragraphs: must use HTML directly:
+
+      <a id="blort-x"></a> Blort-X. Blah blah
+      blah blah.
 
 -->
 
@@ -81,10 +65,11 @@ timeline, provide the same access.
 ## Quick start
 
 <span class="ll-phead">Load URL</span>. To load a YouTube video into
-LoopLlama, see "Load URL" on the Video menu. Also notice the two key bindings
-listed on that menu item: `vl` or `y`. You can paste either a full URL or just
-the YouTube video ID (an example to try: `QQ5XMmV7-bY`). Notice that video
-name and YouTube ID are shown in the Current panel.
+LoopLlama, see the **Video › Load URL** menu item. Notice its two key
+bindings: `vl` or `y`. When you run the operation, you can paste either a full
+URL or just the YouTube video ID (an example to try: `QQ5XMmV7-bY`). After the
+video loads, notice that video name and YouTube ID are shown in the Current
+panel.
 
 <span class="ll-phead">Basic controls</span>. The basic operations to play,
 pause, seek, and adjust the playback speed are available in familiar buttons,
@@ -119,14 +104,14 @@ information in various ways.
 
   - Current panel: lists current video and other information about the video.
 
-  - Control hovers: display label and key binding.
+  - Timeline: mimics the YouTube progress bar and provides a visual overview
+    of the information the user has attached to the video; supports hover for
+    information and click to jump.
+
+  - Controls: hover to display labels and key bindings.
 
   - Message footer: displays information, warning, and error messages, along
     with key binding continuation information.
-
-  - Timeline: Mimics the YouTube progress bar and provides a visual overview
-    of the information the user has attached to it; supports hover for
-    information and click to jump.
 
 <span class="ll-phead">Gotcha: app focus</span>. If you click anywhere in the
 YouTube frame, the LoopLlama app loses focus and its key binding become
@@ -137,9 +122,9 @@ LoopLlama timeline makes clicking in the YouTube frame rarely necessary.
 ## Entities
 
 For many users — those who simply want to have tool to loop or change the
-speed of YouTube videos using an efficient user interface — everything you need to
-know was covered in the Quick Start. But if you need to work with a video
-in-depth (for example, transcribing a musical performance) being able to
+speed of YouTube videos using an efficient user interface — everything you
+need to know was covered in the Quick Start. But if you need to work with a
+video in-depth (for example, transcribing a musical performance) being able to
 attach additional information to the video is powerful. That information is
 organized around five types of entities: videos, sections, chapters, marks,
 and loops.
@@ -152,49 +137,50 @@ playhead position, the playback speed, the scratch loop endpoints, and any
 other information about the entities that a video can have.
 
 To load some example videos pre-configured with various entities press `ae`
-(Load examples on the App menu).
+for **App › Load examples**.
 
-| Example           | Description
-| ----------------- | --------------------------------
-| [Ex1][ex_share_1] | One song, with sections
-| [Ex2][ex_share_2] | Concert, with songs as chapters
+| Example | Description
+| ------- | --------------------------------
+| Ex1     | One song, with sections
+| Ex2     | Concert, with songs as chapters
 
-<span class="ll-phead">Open</span>. You can open a video you loaded previously
-into LoopLlama via `vo`. Try with the example videos.
+<span class="ll-phead">Open</span>. Use `vo` for **Video › Open** to open a
+video you loaded previously into LoopLlama.
 
-{: .notice--primary}
+<div class="notice--primary" markdown="1">
 
-**Key binding overview**. Bindings follow a 2-character system: (a) the first
-character an entity prefix; (b) the second a mmenomic for the operation. For
-example, `vo` for **Video › Open** and `ae` for **App › Open**. Th most common
-operations also have shortcut bindings for easier typing (see the Video and
-App menus for examples). The help documentation will tend to use the formal
-two-character bindings.
+  **Key binding overview**. Bindings follow a 2-character system: (a) the first
+  character an entity prefix; (b) the second a mmenomic for the operation. For
+  example, `vo` for **Video › Open** and `ae` for **App › Open**. Th most common
+  operations also have shortcut bindings for easier typing (see the Video and
+  App menus for examples). The help documentation will tend to use the formal
+  two-character bindings.
+
+</div>
 
 <span class="ll-phead">Edit</span>. By default the video name is set to the
-title provided by the YouTube player. You can use `ve` to edit the name to
-something else. The edit operation can also be used to set custom start and
-end times for the video — for example, to exclude filler material at the
-beginning or ending of the video that you rarely need to watch.
+title provided by the YouTube player. Use `ve` for **Video › Edit** to change
+the name or to set custom start and end times for the video — for example, to
+exclude filler material that you rarely need to watch.
 
-<span class="ll-phead">Zoom</span>. If a video has custom values for start and
-end, you can use `vz` (Zoom) to zoom the timeline view to that custom range.
+<span class="ll-phead">Zoom</span>. If a video has custom values for start or
+end, you can use `vz` for **Video › Zoom** to focus the timeline view to that
+range.
 
-<span class="ll-phead">Scratch</span>. To loop an entire video (or the range
-defined by its custom start and end values) use `vx`. That performs a Scratch
-operation, which loads the start and end into the scratch loop — the app's
-work area for looping. The discussion of Looping (add link) provides more
-details on looping and the reasons behind the Scratch terminology.
+<span class="ll-phead">Scratch</span>. Use `vx` for **Video › Scratch** to
+loop an entire video (or the range defined by its custom start/end values).
+The [Scratch operation](#scratch-loop) loads the start and end times into the
+scratch loop — the app's work area for looping.
 
-<span class="ll-phead">Info</span>. To see all of the LoopLlama information
-about a video you can use `vi` (Info). See example-2 for an illustration.
+<span class="ll-phead">Info</span>. Use `vi` for **Video › Info** to see all
+of the LoopLlama information about a video.
 
-<span class="ll-phead">Delete</span>. If your LoopLlama data has videos you no
-longer need, use `vd` to delete a video. The app also provide an operation to
-delete data in bulk (add link).
+<span class="ll-phead">Delete</span>. Use `vd` for **Video › Delete**, which
+allows you to select a video for deletion. The app also provide an operation
+to [delete data in bulk](#bulk-delete).
 
-<span class="ll-phead">Unstash</span>. See the discussion on cloud backups for
-details (add link).
+<span class="ll-phead">Unstash</span>. See the discussion on [cloud
+backups](#unstash-operation) for details.
 
 ### Sections
 
@@ -308,7 +294,7 @@ When the scratch loop bounds produce a valid loop — meaning start less than
 end — the text boxes display the values in regular font. When the bounds are
 invalid, the font is red and the app disallows toggling looping on.
 
-#### Scratch operation
+#### Scratch operation {#scratch-loop}
 
 As mentioned in the documentation for sections, chapters, and saved loops,
 entities with a start and end support the "Scratch" operation, which loads the
@@ -442,7 +428,9 @@ If the scratch loop has a source, there are three operations available:
     scratch loop will have no connection to the source and it will behave as
     if you had set the bounds manually.
 
-## The Visual Timeline
+## Time and navigation
+
+### The visual timeline
 
 The timeline sits below the video and provides a visual overview of the
 information attached to it. It has four horizontal zones stacked top to
@@ -460,20 +448,7 @@ marks, and loops — hover to display time and name information.
   - Loop zone. Displays loops as colored line segments: blue for the scratch
     loop, brown for saved loops.
 
-## Time Input Formats
-
-The app supports various time input styles:
-
-| Format           | Example   | Note
-| ---------------- | --------- | -----------
-| mm:ss            | 32:45     | .
-| hh:mm:ss         | 1:13:28   | .
-| condensed forms  | 73:44     | 1:13:44
-| raw seconds      | 245       | 4:05
-| decimal seconds  | 34:43.2   | 1 digit max
-| forward slash    | 7/44      | 7:44
-
-## Navigation: other operations
+### More navigation
 
 Basic playback and navigation is available in the app's main controls and was
 covered in the Quick Start (link): play, pause, speed control, seeking, and
@@ -498,6 +473,19 @@ LoopLlama supports a few other navigational methods:
     to their prior location if that inadvertently perform an unwanted jump.
     The jump history operations and key bindings are listed on the App menu.
 
+### Time input formats
+
+The app supports various time input styles:
+
+| Format           | Example   | Note
+| ---------------- | --------- | -----------
+| mm:ss            | 32:45     | .
+| hh:mm:ss         | 1:13:28   | .
+| condensed forms  | 73:44     | 1:13:44
+| raw seconds      | 245       | 4:05
+| decimal seconds  | 34:43.2   | 1 digit max
+| forward slash    | 7/44      | 7:44
+
 ## Data management
 
 LoopLlama provides several ways to share your LoopLlama data with others,
@@ -513,7 +501,7 @@ use it to open the video and see the data you shared. Their version of that
 data is an indepenent copy; nothing they do will alter your LoopLlama data or affect
 the data stored to support the sharing URL.
 
-### Export, Import, Inspect.
+### Export, Import, Unstash {#unstash-operation}
 
 Export. You can export all of your LoopLlama data as a JSON file (via `de`, Export).
 If you understand how to use the app, all of the data in the file will be
@@ -530,7 +518,9 @@ situation. The default is to skip the affected videos. Alternatively, you can
 choose to replace those videos, using the older data from the JSON file.
 Additionally, any time an import overwrites a video with a different
 last-modified time, the app "stashes" a copy of the video before overwriting
-occurs. The Unstash operation (via `vu` on the Video menu) allows you to
+occurs.
+
+Unstash. The Unstash operation (via `vu` on the Video menu) allows you to
 retrive the overwritten copy in case you change your mind.
 
 Inspect. Most users don't need this, but if you're simply curious you
@@ -544,12 +534,12 @@ insurance mechanism against lost data (for example, caused by clearing your
 browser cache) and a simpler way to coordinate LoopLlama usage across multiple
 browsers or devices.
 
-LoopLlama does not attempt true multi-device sync. Cloud storage is a backup/restore
-facility, not a live sync. The correct mental model for this feature is to
-view the cloud as if it were a hard drive: the browser's localStorage is your
-working copy; the cloud is a saved copy. Multi-device users can use LoopLlama
-successfully if they treat the cloud as a hard drive and organize their ds/dr
-operations to align with their device switches.
+LoopLlama does not attempt true multi-device sync. Cloud storage is a
+backup/restore facility, not a live sync. The correct mental model for this
+feature is to view the cloud as if it were a hard drive: the browser's
+localStorage is your working copy; the cloud is a saved copy. Multi-device
+users can use LoopLlama successfully if they treat the cloud as a hard drive
+and organize their ds/dr operations to align with their device switches.
 
 - Writing to the cloud or reading data from it are diven by user operations
   (`ds` for Save to cloud, `dr` for Read from cloud, and `dc` for Compare).
@@ -561,7 +551,7 @@ operations to align with their device switches.
 
 - The Account menu allows you to sign out and delete all LoopLlama cloud data.
 
-### Bulk deletion
+### Bulk deletion {#bulk-delete}
 
 The "Delete" operation on the Data menu (via `d<bsp>`) allows you to delete
 data in bulk — either entire videos or the entities within a single video.
@@ -614,7 +604,9 @@ each setting to explain their meaning:
 - Speed delta.
 - Loop padding for sections and chapters.
 
-## Privacy Policy {#privacy-policy}
+## Miscellaneous
+
+### Privacy Policy {#privacy-policy}
 
 Personal project. LoopLlama is a personal project managed and designed by me,
 Monty Hindman. I wrote the v1 code; v2 code was written entirely by Claude
@@ -692,27 +684,22 @@ becomes prohibitively large — very unlikely — the app might need to charge f
 cloud backup in the future, but the project has every intention to avoid that
 scenario.
 
-## Terms of Service {#terms-of-service}
+### Terms of Service {#terms-of-service}
 
 LoopLlama is provided as-is, free of charge, with no warranty of any kind. By
-using LoopLlama, you agree to these terms:
+using LoopLlama, you agree to these terms: (1) the author makes no guarantees
+about uptime, data retention, or continued availability; (2) you are
+responsible for maintaining your own backups of any data you care about; and
+(3) misuse of the service — such as attempts to access other users' data — is
+prohibited.
 
-- The author makes no guarantees about uptime, data retention, or continued
-  availability.
-
-- You are responsible for maintaining your own backups of any data you care
-  about.
-
-- Misuse of the service — such as attempts to access other users' data — is
-  prohibited.
-
-## Contact
+### Contact
 
 If you have questions, comments, problems to report, or features to request
 you can file an issue via the project's [GitHub codebase][github_code]. You
 can also contact Monty Hindman directly, as [detailed here][mh_contact].
 
-## The LoopLlama Banner
+### The LoopLlama Banner
 
 The colored banner at the top of the page is a composite drawn from the visual
 traditions of movements that fought against fascism and authoritarianism. The
@@ -755,8 +742,6 @@ modern rightwing variants specifically.
 
 --------
 
-[ex_share_1]: http://localhost:5173/loopllama/v2/?share=1NvB_OhZMm
-[ex_share_2]: http://localhost:5173/loopllama/v2/?share=ohrMVWSxww
 [localStorage]: https://en.wikipedia.org/wiki/Web_storage
 [supabase]: https://supabase.com/
 [github_code]: https://github.com/hindman/hindman.github.io

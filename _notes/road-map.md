@@ -7,7 +7,8 @@ User docs: help text: draft
     x Example vids:
       x create JSON
       x check functionality
-    - MH edit text and JSON examples
+    - MH edit text
+    - MH JSON examples
     - CC top-level review
     - MH edit
     - CC review
