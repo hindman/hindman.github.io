@@ -818,7 +818,17 @@ class LlamaApp extends LitElement {
         this.looping = !this.looping;
         if (this.looping) this._seekIntoLoopIfNeeded();
       },
-      saveLoop: () => this._saveLoopModalEl?.show(),
+      saveLoop: () => {
+        if (this.loopEnd <= this.loopStart) {
+          this._setWarning('Set a valid scratch loop before saving.');
+          return;
+        }
+        this._pushUndoSnapshot('Loop created');
+        addLoop(this.namedLoops, this.loopStart, this.loopEnd);
+        this.namedLoops = [...this.namedLoops];
+        this.statusMsg = 'Loop created';
+        this._saveCurrentState();
+      },
       saveBack: () => {
         if (!this.loopSource) {
           this._setWarning('No source to save back to.');
@@ -1821,16 +1831,6 @@ class LlamaApp extends LitElement {
     deleteMarkById(this.marks, e.detail.id);
     this.marks = [...this.marks];
     this.statusMsg = 'Mark deleted';
-    this._saveCurrentState();
-  }
-
-  _onSaveLoop(e) {
-    this._pushUndoSnapshot('Loop saved');
-    const start = e.detail.start ?? this.loopStart;
-    const end   = e.detail.end   ?? this.loopEnd;
-    addLoop(this.namedLoops, start, end, e.detail.name);
-    this.namedLoops = [...this.namedLoops];
-    this.statusMsg  = 'Loop saved';
     this._saveCurrentState();
   }
 
@@ -2971,11 +2971,8 @@ class LlamaApp extends LitElement {
       ></llama-edit-video-modal>
 
       <llama-save-loop-modal
-        .loopStart=${this.loopStart}
-        .loopEnd=${this.loopEnd}
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
-        @ll-save-loop=${this._onSaveLoop}
         @ll-update-loop=${this._onUpdateLoop}
       ></llama-save-loop-modal>
 

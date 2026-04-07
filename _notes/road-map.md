@@ -2,11 +2,6 @@
 ## TODO: LoopLlama v2
 
 User docs: help text: draft
-    x Privacy Policy
-    x Terms of Service
-    x Example vids:
-      x create JSON
-      x check functionality
     - MH edit text
     - MH JSON examples
     - CC top-level review

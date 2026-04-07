@@ -11,6 +11,7 @@ toc_icon: 'guitar'
 <!--
 
 __HERE__
+### Cloud Storage and Sign-In {#why-sign-in}
 
 __MENU_ARROW__
 Video › Scratch
@@ -54,7 +55,7 @@ LoopLlama is a browser-based YouTube controller for close study of video
 content. If you want to loop a passage, slow down or speed up a video, mark
 moments to return to, or annotate a video's structure, LoopLlama is built for
 that. A common use case is learning from instructional or performance videos —
-a musician working through a song, for instance — but the app isn't specific
+a musician working through a song, for instance — but the app is not specific
 to music or any other domain.
 
 The keyboard-first design means you can drive the app efficiently:
@@ -62,7 +63,7 @@ Vim-inspired key bindings cover every operation. For those who prefer a mouse,
 the usual menus, buttons, and other controls, plus a clickable visual
 timeline, provide the same access.
 
-## Quick start
+## Quick start {#quick-start}
 
 <span class="ll-phead">Load URL</span>. To load a YouTube video into
 LoopLlama, see the **Video › Load URL** menu item. Notice its two key
@@ -71,10 +72,10 @@ URL or just the YouTube video ID (an example to try: `QQ5XMmV7-bY`). After the
 video loads, notice that video name and YouTube ID are shown in the Current
 panel.
 
-<span class="ll-phead">Basic controls</span>. The basic operations to play,
-pause, seek, and adjust the playback speed are available in familiar buttons,
-text boxes, and dropdowns in the app's main controls. Key bindings for the
-most common operations are the following:
+<span class="ll-phead">Basic controls</span>. Operations to play, pause, seek,
+and adjust the playback speed are available in familiar buttons, text boxes,
+and dropdowns in the app's main controls. Key bindings for the most common
+actions are the following:
 
 | Keys    | Operation
 | ------- | ---------------------
@@ -95,14 +96,14 @@ be confined to the loop boundaries. Here are the most important key bindings:
 
 | Keys  | Scratch loop operation
 | ----- | ------------------------------
+| `xx`  | Toggle looping
 | `[[`  | Set loop start to current time
 | `]]`  | Set loop end to current time
-| `xx`  | Toggle looping
 
 <span class="ll-phead">Informational elements</span>. The app provides
 information in various ways.
 
-  - Current panel: lists current video and other information about the video.
+  - Current panel: lists information about the current video.
 
   - Timeline: mimics the YouTube progress bar and provides a visual overview
     of the information the user has attached to the video; supports hover for
@@ -110,7 +111,7 @@ information in various ways.
 
   - Controls: hover to display labels and key bindings.
 
-  - Message footer: displays information, warning, and error messages, along
+  - Message footer: displays informational, warning, and error messages, along
     with key binding continuation information.
 
 <span class="ll-phead">Gotcha: app focus</span>. If you click anywhere in the
@@ -149,12 +150,12 @@ video you loaded previously into LoopLlama.
 
 <div class="notice--primary" markdown="1">
 
-  **Key binding overview**. Bindings follow a 2-character system: (a) the first
-  character an entity prefix; (b) the second a mmenomic for the operation. For
-  example, `vo` for **Video › Open** and `ae` for **App › Open**. Th most common
-  operations also have shortcut bindings for easier typing (see the Video and
-  App menus for examples). The help documentation will tend to use the formal
-  two-character bindings.
+  **Key binding overview**. Bindings follow a 2-character system: (a) the
+  first character an entity prefix; (b) the second a mmenomic for the
+  operation. For example, `vo` for **Video › Open** and `ae` for **App › Load
+  examples**. The most common operations also have shortcut bindings for
+  easier typing (see the Video and App menus for several examples). The help
+  documentation will tend to use the formal two-character bindings.
 
 </div>
 
@@ -189,115 +190,127 @@ those segments represent is up to you: a musician might label them Intro,
 Verse, Chorus, Solo; someone studying a lecture might label them by topic; a
 language learner might use them to mark speaker turns.
 
-**Create**. Creating a section is done by positioning the playhead at it start
-and pressing `ss` — that's it. The section now exists (notice the visual
-change in the timeline). The section end is inferred from the start of the
-next section (or the video end).
+<span class="ll-phead">Create</span>. Creating a section is done by
+positioning the playhead at it start and pressing `ss` for **Section ›
+Create**. The section now exists (notice the visual change in the timeline).
+The section end is inferred from the start of the next section (or the video
+end).
 
-<!-- Switch to example-video-1. -->
+<span class="ll-phead">Edit</span>. Use `se` for **Section › Edit**, mainly
+to give the current secton a name or to adjust its start/end values. The
+section name will appear in the timeline area, below the blue progress bar.
 
-**Edit**. Once a section exists, you can edit it, mainly to give it a name
-(via `se`). The section name will appear in the timeline area, just below the
-blue progress bar.
+<span class="ll-phead">Scratch</span>. Use `sx` for **Section › Scratch**,
+which loads the sections start and end into the scratch loop. Give that a try
+with Ex1: navigate the playhead anywhere within a section, press `sx`, and
+then press `xx` to toggle looping on.
 
-<!-- Switch to the example-video-2. -->
+<span class="ll-phead">Jump</span>. Use `sj` for **Section › Jump**, which
+allows you to select any section and jump the playhead to its start.
 
-**Scratch**. Because a section has start and end points, it provides a way to
-define a scratch loop quickly (via `sx`). Give that a try with the example
-video: navigate the playhead anywhere within a section; press `sx`; notice
-that the scratch loop end points are set to enclose the section; press `xx` to
-toggle looping on.
+<span class="ll-phead">Zoom</span>. To study a section in depth, use `sz` for
+**Section › Zoom**, which will focus the timeline on the current section.
+Use `sz` again to toggle the section-zoom off (or `az` to turn off any kind of
+zooming).
 
-<!-- Info notice. Why is the operation called "Scratch" rather than "Loop"?
-See the help documentation for loops (add anchor link). -->
+<span class="ll-phead">Fix end</span>. Use `sf` for **Section › Fix end**.
+Although rarely needed, this operation converts the current section's end
+point from an inferred value to an explicit value. This feature is needed only
+if you want to organize a video into sections, but do not want the entire
+video to be exhaustively covered by the sections you define. One consequence
+of fixing a section's end is that the section will be protected from further
+subdivision via `ss` for **Section › Create**.
 
-**Jump**. Sections can also be used for efficient navigation: try `sj` to
-jump to the start of a different section.
+<span class="ll-phead">Delete</span>. Use `sd` for **Section › Delete**,
+which allows you to select a section for deletion.
 
-**Zoom**. To study a section in depth you can zoom the timeline to focus just
-on the current section (via `sz`). Use `sz` again to toggle the section-zoom
-off (or `az` to turn off any kind of zooming).
+<div class="notice--primary" markdown="1">
 
-**Fix end**. Although rarely needed, this operation allows you to set a
-section's endpoint explicitly — in other words, fix the section's end point
-(via `sf`) sooner than the end that would be inferred from the next section's
-start (or the video end). This feature is needed only if you want to organize
-a video into sections, but don't want the entire video to be exhaustively
-covered by the sections you define.
+  **Menu elipses**. On the Section menu, notice that **Delete** and **Jump**
+  have a trailing elipses. That convention conveys that the operation will
+  occur though an interactive picker where you first select the section to be
+  deleted or jumped to. The other menu items have no elipses, because they
+  operate on the current section — meaning the one where the playhead sits.
 
-**Delete**. Finally you can delete a section (via `sd).
-
-<!-- Info notice. **Menu elipses**. Look at the Section menu. Notice that
-"Delete..." and "Jump..." have a trailing elipses. That conveys that the
-operations will occur though an interactive picker where you first select the
-section to be deleted or jumped to. The other menu items have no elipses,
-because they operate on the current section — meaning the one where the
-playhead sits. -->
+</div>
 
 ### Chapters
 
 Chapters are similar to sections: they divide a video into non-overlapping
 parts; they support the same operations; and their key bindings are directly
-parallel to the section bindings, but using the `c` prefix rather than `s`.
+parallel to the section bindings, but with the `c` prefix rather than `s`.
 
 So if you understand sections, you also understand chapters. But there are two
 differences worth pointing out:
 
-**Default timeline view**. But default, the timeline area shows sections, not
-chapters. That view can be toggled via `at` and LoopLlama will remember each video's
-most recent setting. Switch to example-video-3. Notice that regardless of the
-timeline's current display, the current chapter and section, if defined, are
-both listed in the Current panel.
+<span class="ll-phead">Default timeline view</span>. By default, the timeline
+area shows sections, not chapters. That view can be toggled via `at` and
+LoopLlama will remember each video's most recent setting. Switch to Ex2.
+Notice that regardless of the timeline's current display, the current chapter
+and section, if defined, are both listed in the Current panel.
 
-**Design intent**. The app was built with the premise that chapters are bigger
-(eg songs in a concert) and sections are smaller (eg the parts of a song), but
-you are not required to follow that model.
+<span class="ll-phead">Design intent</span>. The app was built with the
+premise that chapters are bigger (for example, songs in a concert) and
+sections are smaller (for example, the parts of a song), but you are not
+required to follow that model.
 
 ### Marks
 
-Marks are the simplest entities — nothing more than a time point. The are
-displayed visually as yellow dots in the timeline, below the
-sections/chapters. The operations and key bindings are simple and follow the
-conventions already established for sections and chapters (see the Mark menu).
+Marks are the simplest entities — nothing more than a time point. They are
+displayed as yellow dots in the timeline, below the sections/chapters. The
+operations and key bindings are simple and follow the conventions already
+established for sections and chapters (see the Mark menu).
 
 ### Loops
 
 The entity tour postponed loops until the end because they sit at the center
-of the app's mission. There are several topics to cover: saved loops, the
-scratch loop and the scratch operaton; scratch loop edit mode; nudging scratch
-loop boundaries; and scratch loop sources.
+of the app's mission. There are several sub-topics to cover.
 
 #### Saved loops
 
 Saved loops are similar to chapters and sections in that they define a range
 via their start and end. They are more generic because their purpose is not to
 partition a video into non-overlapping parts: saved loops can overlap. They
-are displayed at the bottom of the the timeline area (below sections,
-chapters, and marks) as brown line segments.
+are displayed at the bottom of the the timeline area as brown line segments
+(below sections, chapters, and marks).
 
-The key binding and menu items for saved loops are similar to those for
-sections and chapters. You can create a saved loop via `ll`. That loop's
-bounds will be the same as those currently in the scratch loop start and end
-text boxes. To edit the current saved loop — to give it a name or to adjust
-its boundaries — you can use `le`. The binding `lz` will zoom the timeline to
-the current loop's range (as usual, current is based on playhead position).
-Also, like chapters and section, you can use `lj` to jump to the start of a
-loop and `ld` to delete a loop. Finally, the Scratch operation, via `lx`, will
-load the current loop's bounds into the scratch loop — our next topic.
+The key bindings and menu items for saved loops are similar to those for
+sections and chapters.
+
+<span class="ll-phead">Create</span>. Use `ll` for **Loop › Create**, which
+creates a new saved loop using the current bounds of the scratch loop.
+
+<span class="ll-phead">Edit</span>. Use `le` for **Loop › Edit** to edit the
+current loop's name or adjust its bounds. As with other entities, current is
+defined by playhead position.
+
+<span class="ll-phead">Jump</span>. Use `lj` for **Loop › Jump**, to select
+a saved loop and move the playhead to its start.
+
+<span class="ll-phead">Zoom</span>. Use `lz` for **Loop › Zoom**, to focus
+the timeline on the bounds of the current saved loop.
+
+<span class="ll-phead">Delete</span>. Use `ld` for **Loop › Delete**, to
+select a saved loop for deletion.
+
+<span class="ll-phead">Scratch</span>. Use `lx` for **Loop › Scratch**,
+which will load the current loop's bounds into the scratch loop — our next
+topic.
 
 #### Scratch loop
 
 As noted above, the scratch loop is the active working area for looping. The
-main looping controls were convered in the Quick Start (add link).
+main looping controls were convered in the [Quick start](#quick-start).
 
 When the scratch loop bounds produce a valid loop — meaning start less than
 end — the text boxes display the values in regular font. When the bounds are
-invalid, the font is red and the app disallows toggling looping on.
+invalid, the font is red and the app disallows toggling looping on or creating
+a new saved loop based on those bounds.
 
 #### Scratch operation {#scratch-loop}
 
 As mentioned in the documentation for sections, chapters, and saved loops,
-entities with a start and end support the "Scratch" operation, which loads the
+entities with a start and end support the scratch operation, which loads the
 bounds of a saved entity into the scratch loop work area.
 
 Although the terminology is idiosyncratic, the app's menu labeling and key
@@ -313,36 +326,36 @@ and the scratch loop.
 
 Although you can edit bounds directly via the scratch loop controls, LoopLlama
 also provides a special keyboard mode to make such adjustments. The mode can
-be invoked via "Edit mode" on the "Scratch" menu or via the `xe` and `\`
-bindings.
+be invoked via `xe` for **Scratch › Edit**.
 
 After the mode is invoked, the scratch loop's start point will have focus
 (notice the yellow border). In the message footer, the available key bindings
-are listed, but the most important controls are the following:
+are listed, with the most important controls being the following:
 
 | Key           | Operation
 | ------------- | ------------------------------
-| left          | Decrease active bound
-| right         | Increase active bound
-| down          | Decrease left/right delta
-| up            | Increase left/right delta
-| tab           | Toggle focus between start/end
-| enter         | Exit edit mode
-| esc           | Exit edit mode
+| `Left`        | Decrease active bound
+| `Right`       | Increase active bound
+| `Down`        | Decrease left/right delta
+| `Up`          | Increase left/right delta
+| `Tab`         | Toggle focus between start/end
+| `Space`       | Play/pause near active bound
+| `Enter`       | Exit edit mode
+| `Esc`         | Exit edit mode
 
-Within scratch edit mode, the `space` will play the video near the boundary
-that currently has focus. The purpose is to allow you to adjust a boundary,
-then play the video to assess whether more fine-tuning is needed.
+As noted, `Space` will play/pause the video near the active bound. The purpose
+is to allow you to adjust a boundary, then play the video to assess whether
+more fine-tuning is needed.
 
 #### Scratch loop nudges
 
 In addition to scratch loop edit mode, the app also supports a coherent set of
 key bindings to make quick adjustments to the loop bounds. If you hover over
-the "Now" buttons, notice that `[[` is the binding to set the start to the
+the **Now** buttons, notice that `[[` is the binding to set the start to the
 playhead position and `]]` sets the end. The nudge key bindings build on that
-convention: `[` is the prefix for start, `]` for end. See the nudge key
-bindings for a full listing (add link), but the most commonly used bindings
-are these four:
+convention: `[` is the prefix for start, `]` for end. See the nudge [key
+bindings][/loopllama/v2/keybindings/#nudge-bindings] for a full listing. The
+most commonly used bindings are these:
 
 | Key    | Operation
 | ------ | ---------------------
@@ -352,7 +365,7 @@ are these four:
 | `]=`   | End: nudge increase
 
 The nudge operation has one special wrinkle to support the rapid creation of
-loops. This behavior is best explained via a simple example.
+loops. This behavior is best explained via an example.
 
 1. Initially, the scratch loop start and end are a short distance apart, near
    the beginning of a video. The playhead is near the video end.
@@ -391,42 +404,43 @@ in invalid loops.
 
 #### Scratch loop sources
 
-As mentioned above, the Scratch operation loads the bounds of a saved
-entity into the scratch loop. Using example-2, press `sx` to Scratch
-the current section. There are several things to notice:
+As mentioned above, the **Scratch** operation loads the bounds of a saved
+entity into the scratch loop. Using Ex2, press `sx` to scratch the current
+section. There are several things to notice:
 
-  - Looping is toggled on.
+  - <span class="ll-phead">Looping</span>. Toggled on.
 
-  - The Current panel indicates the name and range of the scratch loop source.
+  - <span class="ll-phead">Current Panel</span>. Indicates the name and range
+    of the scratch loop source.
 
-  - The scratch loop bounds are set slightly larger than the source bounds.
-    This is done to provide a small bit of lead-in and lead-out time [is
-    "lead-out" a real/correct term?] as you play the loop. Loop padding is
-    done for sections and chapters, but not for saved loops. You can adjust
-    the padding via Options (link).
+  - <span class="ll-phead">Scratch bounds larger than source</span>. The
+    scratch loop bounds are set slightly larger than the source bounds. This
+    is done to provide a small bit of lead-in and lead-out time as you play
+    the loop. Loop padding is done for sections and chapters, but not for
+    saved loops. You can adjust the padding via [Options](#app-options).
 
-  - Press `space` to play the video and then `enter` to jump to the loop
-    start. After you do that, notice that whenever the playhead sits in
-    the padded region beyond the source bounds, the relevant scratch loop
-    bound is highlighted yellow.
+  - <span class="ll-phead">Yellow bound when playhead outside source</span>.
+    Press `Space` to play the video and then `Enter` to jump to the loop
+    start. After you do that, notice that whenever the playhead sits in the
+    padded region beyond the source bounds, the relevant scratch loop bound is
+    highlighted yellow.
 
-  - If you modify the scratch loop bounds, either via a nudge operation or a
-    direct edit to one of the text boxes, notice that the time range in the
-    Current panel is displayed in yellow font, conveying that the scratch loop
-    bounds and the source bounds have diverged.
+  - <span class="ll-phead">Yellow Current Panel range when scratch and source
+    diverge</span>. If you modify the scratch loop bounds, notice that the
+    time range in the Current Panel is displayed in yellow font.
 
-If the scratch loop has a source, there are three operations available:
+When the scratch loop has a source, additional operations are available:
 
-  - Save to source. Press `xs` to update the source entity's bounds based on
-    the current scratch loop bounds (after controlling for padding, where
-    applicable).
+  - <span class="ll-phead">Save to source</span>. Press `xs` to update the
+    source entity's bounds based on the current scratch loop bounds (after
+    controlling for padding, where applicable).
 
-  - Reset to source. Press `xr` to return the scratch loop bounds to match
-    those of the source.
+  - <span class="ll-phead">Reset to source</span>. Press `xr` to return the
+    scratch loop bounds to match those of the source.
 
-  - Unlink source. Press `xu` to remove the source linkage: after that the
-    scratch loop will have no connection to the source and it will behave as
-    if you had set the bounds manually.
+  - <span class="ll-phead">Unlink source</span>. Press `xu` to remove the
+    source linkage: after that the scratch loop will have no connection to the
+    source and it will behave as if you had set the bounds manually.
 
 ## Time and navigation
 
@@ -437,45 +451,46 @@ information attached to it. It has four horizontal zones stacked top to
 bottom. Both for the progress bar and saved entities — sections, chapters,
 marks, and loops — hover to display time and name information.
 
-  - Playhead zone. Mimics the YouTube progress bar: a thick line with a dot
-    marking the playhead. The elapsed portion is blue, the remainder gray.
+<span class="ll-phead">Playhead zone</span>. Mimics the YouTube progress bar:
+a thick line with a dot marking the playhead. The elapsed portion is blue, the
+remainder gray.
 
-  - Section/chapter zone. Displays sections or chapters as shaded regions.
-    Press `at` to toggle the display.
+<span class="ll-phead">Section/chapter zone</span>. Displays sections or
+chapters as shaded regions. Press `at` for **App › Toggle timeline** to change
+the display.
 
-  - Mark zone. Displays marks as yellow dots.
+<span class="ll-phead">Mark zone</span>. Displays marks as yellow dots.
 
-  - Loop zone. Displays loops as colored line segments: blue for the scratch
-    loop, brown for saved loops.
+<span class="ll-phead">Loop zone</span>. Displays loops as colored line
+segments: blue for the scratch loop, brown for saved loops.
 
 ### More navigation
 
 Basic playback and navigation is available in the app's main controls and was
-covered in the Quick Start (link): play, pause, speed control, seeking, and
-jumping to specific times or entities.
+covered in the [Quick Start](#quick-start): play, pause, speed control,
+seeking, and jumping to specific times or entities. LoopLlama supports a few
+other navigational methods:
 
-LoopLlama supports a few other navigational methods:
+<span class="ll-phead">Jump to start</span>. Press `Enter` to jump the
+playhead to the "start", which is contextual: start of scratch loop, if
+looping; start of zoom, if zoomed; otherwise, start of video.
 
-  - Jump to start. Pressing `enter` jumps the playhead to the "start", which
-    is contextual: start of scratch loop, if looping; start of zoom, if
-    zoomed; otherwise, start of video.
+<span class="ll-phead">Jump to previous/next entity</span>. To the right of
+the app's seek controls are buttons and a dropdown to support navigation by
+entity. The dropdown (accessible via the `/` binding) controls the entity
+type. The previous/next buttons surrounding the dropdown (or the `,` and `.`
+bindings) allow you to navigate efficiently to the start of the previous/next
+chapter, section, loop, or mark.
 
-  - Jump to previous/next entity. To right of the app's seek controls are
-    buttons and a dropdown to support navigation by entity. The dropdown
-    (accessible via the `/` binding) controls the entity type. The
-    previous/next buttons next to the dropdown (or the `,` and `.` bindings)
-    allow you to navigate efficiently to the start of the previous/next
-    chapter, section, loop, or mark.
-
-  - Jump history. Navigational jumps of more than 15 seconds are stored in a
-    jump history that you can traverse. Although the history holds up to the
-    last 40 jumps for a video, the primary intent is to allow a user to return
-    to their prior location if that inadvertently perform an unwanted jump.
-    The jump history operations and key bindings are listed on the App menu.
+<span class="ll-phead">Jump history</span>. Navigational jumps of more than 15
+seconds are stored in a jump history that you can traverse. Although the
+history holds up to the last 40 jumps for a video, the primary intent is to
+allow a user to return to their prior location after an inadvertent jump. The
+jump history operations and key bindings are listed on the App menu.
 
 ### Time input formats
 
-The app supports various time input styles:
+LoopLlama supports various time input styles:
 
 | Format           | Example   | Note
 | ---------------- | --------- | -----------
@@ -494,37 +509,45 @@ devices, or perform bulk deletions.
 
 ### Sharing
 
-You can share your LoopLlama data for either a complete video (via `dv`, Share Video)
-or for a single scratch loop (via `dl`, Share Loop). Those operations copy a
-LoopLlama sharing URL to your clipboard. Give the URL to someone else and they can
-use it to open the video and see the data you shared. Their version of that
-data is an indepenent copy; nothing they do will alter your LoopLlama data or affect
-the data stored to support the sharing URL.
+You can share your LoopLlama data for either a complete video or the scratch
+loop:
+
+| Binding | Data operation
+| ------- | ------------------
+| `dv`    | Share video
+| `dx`    | Share scratch loop
+
+Those operations copy a LoopLlama sharing URL to your clipboard. Give the URL
+to someone else and they can use it to open the video and see the data you
+shared. Their version of that data is an indepenent copy: nothing they do will
+alter your LoopLlama data or affect the data stored to support the sharing
+URL.
 
 ### Export, Import, Unstash {#unstash-operation}
 
-Export. You can export all of your LoopLlama data as a JSON file (via `de`, Export).
-If you understand how to use the app, all of the data in the file will be
-understandable.
+<span class="ll-phead">Export</span>. Use `de` for **Data › Export** to save
+your your LoopLlama data as a JSON file. If you understand how to use the app,
+the data in the file will make sense.
 
-Import. A exported JSON file can be imported into the app, for example on a
-different browser or computer (via `di`, Import). To understand the import
-process, you first need to know that LoopLlama stores a last-updated time for all
-videos in your collection. During the import, LoopLlama checks whether any of the
-videos in the JSON you are trying to import have an older last-updated time
-than the corresponding time currently stored in your browser. If any cases
-like that are detected, the app prompts you to decide how to handle the
-situation. The default is to skip the affected videos. Alternatively, you can
-choose to replace those videos, using the older data from the JSON file.
-Additionally, any time an import overwrites a video with a different
-last-modified time, the app "stashes" a copy of the video before overwriting
-occurs.
+<span class="ll-phead">Import</span>. Use `di` for **Data › Import**, which
+performs that process in reverse: load the data from an exported JSON file
+into LoopLlama — for example on a different browser or computer. To
+understand the import process, you first need to know that LoopLlama stores a
+last-updated time for all videos in your collection. During the import,
+LoopLlama checks whether any of the videos in the JSON you are trying to
+import have an older last-updated time than the corresponding time currently
+stored in your browser. If any cases like that are detected, the app prompts
+you to decide how to handle the situation. The default is to skip the affected
+videos. Alternatively, you can choose to replace those videos, using the older
+data from the JSON file. Additionally, any time an import overwrites a video
+with a different last-modified time, the app "stashes" a copy of the video
+before overwriting occurs.
 
-Unstash. The Unstash operation (via `vu` on the Video menu) allows you to
-retrive the overwritten copy in case you change your mind.
+<span class="ll-phead">Unstash</span>. Use `du` for **Data › Unstash**, which
+allows you to retrieve a stashed copy (as just discussed).
 
-Inspect. Most users don't need this, but if you're simply curious you
-can view your LoopLlama data directly in the browser via `dI`, Inspect.
+<span class="ll-phead">Inspect</span>. Use `dI` for **Data › Inspect**, which
+displays your LoopLlama data directly in the browser.
 
 ### Cloud Storage and Sign-In {#why-sign-in}
 
@@ -553,7 +576,7 @@ and organize their ds/dr operations to align with their device switches.
 
 ### Bulk deletion {#bulk-delete}
 
-The "Delete" operation on the Data menu (via `d<bsp>`) allows you to delete
+The "Delete" operation on the Data menu (via `d⌫`) allows you to delete
 data in bulk — either entire videos or the entities within a single video.
 
 ## App menu
@@ -593,7 +616,7 @@ The App menu has a few items relating to the timeline:
 - Zoom off. Turns off any type of timeline zoom (video, chapter, section,
   saved loop, or scratch loop).
 
-### Options
+### Options {#app-options}
 
 LoopLlama has a few options than can be customized via the `ao` binding.
 For details, see the Options modal, which provides hover text for

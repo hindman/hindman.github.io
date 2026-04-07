@@ -78,18 +78,18 @@ toc_icon: 'guitar'
         Delete... | md
 
     Data:
-        Share video     | dv
-        Share loop      | dl
+        Share video        | dv
+        Share scratch loop | dx
         --------------------------------
-        Export          | de
-        Import          | di
-        Inspect         | dI
+        Export             | de
+        Import             | di
+        Inspect            | dI
         --------------------------------
-        Save to cloud   | ds  dd
-        Read from cloud | dr
-        Compare         | dc
+        Save to cloud      | ds  dd
+        Read from cloud    | dr
+        Compare            | dc
         --------------------------------
-        Delete...       | d<bsp>
+        Delete...          | d⌫
 
     App:
         Jump history... | jh
@@ -164,22 +164,22 @@ toc_icon: 'guitar'
         --------------------------------
         \  | xe synonym
 
-    Scratch loop bounds:
+    Scratch loop bounds: {#nudge-bindings}
 
-        [[     | Start: set now
-        [<bsp> | Start: reset to video start
-        [-     | Start: nudge: decrease
-        [=     | Start: nudge: increase
-        [\     | Start: edit
+        [[ | Start: set now
+        [⌫ | Start: reset to video start
+        [- | Start: nudge: decrease
+        [= | Start: nudge: increase
+        [\ | Start: edit
         --------------------------------
-        ]]     | End: set now
-        ]<bsp> | End: reset to video end
-        ]-     | End: nudge: decrease
-        ]=     | End: nudge: increase
-        ]\     | End: edit
+        ]] | End: set now
+        ]⌫ | End: reset to video end
+        ]- | End: nudge: decrease
+        ]= | End: nudge: increase
+        ]\ | End: edit
         --------------------------------
-        []     | Nudge_delta: activate dropdown
-        ][     | [] synonym
+        [] | Nudge_delta: activate dropdown
+        ][ | [] synonym
 
     Mark:
 
@@ -190,20 +190,20 @@ toc_icon: 'guitar'
 
     Data:
 
-        dv     | Share video
-        dl     | Share loop
+        dv | Share video
+        dx | Share scratch loop
         --------------------------------
-        de     | Export
-        di     | Import
-        dI     | Inspect
+        de | Export
+        di | Import
+        dI | Inspect
         --------------------------------
-        ds     | Save to cloud
-        dr     | Read from cloud
-        dc     | Compare
+        ds | Save to cloud
+        dr | Read from cloud
+        dc | Compare
         --------------------------------
-        d<bsp> | Delete...
+        d⌫ | Delete...
         --------------------------------
-        dd     | ds synonym
+        dd | ds synonym
 
     Jump:
 
@@ -240,7 +240,7 @@ toc_icon: 'guitar'
         <space> | Play/pause
         -       | Speed: slower
         =       | Speed: faster
-        <bsp>   | Speed: reset to 100%
+        ⌫       | Speed: reset to 100%
 
     Navigation:
 
@@ -275,7 +275,7 @@ toc_icon: 'guitar'
         <down>  | Decrease: nudge-delta
         --------------------------------
         <space> | Play/pause near start/end
-        <bsp>   | Reset: start/end
+        ⌫       | Reset: start/end
         --------------------------------
         <enter> | Exit mode
         <esc>   | Exit mode

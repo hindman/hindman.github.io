@@ -161,7 +161,7 @@ export const BINDINGS = {
     'i': { handler: 'importData',  desc: 'Import data from JSON' },
     'I': { handler: 'inspectData', desc: 'Inspect data as JSON' },
     'v': { handler: 'shareVideo',  desc: 'Share video as JSON' },
-    'l': { handler: 'shareLoop',   desc: 'Share loop via URL' },
+    'x': { handler: 'shareLoop',   desc: 'Share scratch loop via URL' },
     'Backspace': { handler: 'deleteData', desc: 'Delete data modal' },
   }},
 };

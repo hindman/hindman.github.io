@@ -119,7 +119,7 @@ const MENUS = [
     label: 'Data',
     items: [
       { label: 'Share video', action: 'shareVideo', hint: 'dv' },
-      { label: 'Share loop',  action: 'shareLoop',  hint: 'dl' },
+      { label: 'Share scratch loop',  action: 'shareLoop',  hint: 'dx' },
       { type: 'divider' },
       { label: 'Export',  action: 'exportAll',   hint: 'de' },
       { label: 'Import',  action: 'importData',  hint: 'di' },
@@ -129,7 +129,7 @@ const MENUS = [
       { label: 'Read from cloud', action: 'dataRead',    hint: 'dr'      },
       { label: 'Compare',         action: 'dataCompare', hint: 'dc'      },
       { type: 'divider' },
-      { label: 'Delete...', action: 'deleteData', hint: 'd<bsp>' },
+      { label: 'Delete...', action: 'deleteData', hint: 'd⌫' },
     ],
   },
   {

@@ -12,6 +12,10 @@
 
 import { LitElement, html, css } from 'lit';
 
+// Map event.key values to user-facing display strings.
+const KEY_DISPLAY = { 'Backspace': '⌫' };
+function displayKey(key) { return KEY_DISPLAY[key] ?? key; }
+
 class LlamaWhichkey extends LitElement {
   static styles = css`
     .bar {
@@ -133,7 +137,7 @@ class LlamaWhichkey extends LitElement {
           ${this._kbItem('←/→', 'decrease/increase')}
           ${this._kbItem('↑/↓', 'delta')}
           ${this._kbItem('Space', 'play/pause')}
-          ${this._kbItem('Bsp', 'reset')}
+          ${this._kbItem('⌫', 'reset')}
           ${this._kbItem('0-9', 'type time')}
           ${this._kbItem('Enter/Esc', 'done')}
         </div>
@@ -164,7 +168,7 @@ class LlamaWhichkey extends LitElement {
         : null;
       const items = Object.entries(this.completions).map(([key, { desc }]) => html`
         <span class="item">
-          <span class="key">${this.prefix}${key}</span>
+          <span class="key">${this.prefix}${displayKey(key)}</span>
           <span class="desc">${desc}</span>
         </span>
       `);
