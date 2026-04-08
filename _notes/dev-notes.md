@@ -660,3 +660,100 @@ Linking:
       <a id="blort-x"></a> Blort-X. Blah blah
       blah blah.
 
+## Entity actions: summary
+
+    Action    | Video | Chapter | Section | Loop | Mark
+    ----------------------------------------------------
+    Create    | .     | cc      | ss      | ll   | mm
+    Edit      | ve    | ce      | se      | le   | me
+    Scratch   | vx    | cx      | sx      | lx   | .
+    Jump...   | .     | cj      | sj      | lj   | mj
+    Zoom      | vz    | cz      | sz      | lz   | .
+    Fix-end   | .     | cf      | sf      | .    | .
+    Delete... | vd    | cd      | sd      | ld   | md
+
+## Menus
+
+    Video:
+        Load URL   | vl  y
+        Open...    | vo  vv
+        Edit       | ve
+        Scratch    | vx
+        Zoom       | vz
+        Delete...  | vd
+        Unstash... | vu
+        Info       | vi
+
+    Chapter:
+        Create    | cc
+        Edit      | ce
+        Scratch   | cx
+        Jump...   | cj
+        Zoom      | cz
+        Fix end   | cf
+        Delete... | cd
+
+    Section:
+        Create    | ss
+        Edit      | se
+        Scratch   | sx
+        Jump...   | sj
+        Zoom      | sz
+        Fix end   | sf
+        Delete... | sd
+
+    Loop:
+        Create    | ll
+        Edit      | le
+        Scratch   | lx
+        Jump...   | lj
+        Zoom      | lz
+        Delete... | ld
+
+    Scratch:
+        Toggle          | xx
+        Edit mode       | xe  \
+        Zoom            | xz
+        --------------------------------
+        Save to source  | xs
+        Reset to source | xr
+        Unlink source   | xu
+
+    Mark:
+        Create    | mm
+        Edit      | me
+        Jump...   | mj
+        Delete... | md
+
+    Data:
+        Share video        | dv
+        Share scratch loop | dx
+        --------------------------------
+        Export             | de
+        Import             | di
+        Inspect            | dI
+        --------------------------------
+        Save to cloud      | ds  dd
+        Read from cloud    | dr
+        Compare            | dc
+        --------------------------------
+        Delete...          | d⌫
+
+    App:
+        Jump history... | jh
+        Back            | jb
+        Forward         | jf
+        --------------------------------
+        Undo            | au  u
+        Redo            | ar  U
+        Recall message  | am
+        --------------------------------
+        Copy time       | ac
+        Toggle timeline | at  t
+        Zoom off        | az  z
+        --------------------------------
+        Options         | ao  o
+        Help            | ah  h
+        Key bindings    | ak  k
+        Load examples   | ae
+
