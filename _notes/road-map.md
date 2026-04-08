@@ -1,11 +1,14 @@
 
 ## TODO: LoopLlama v2
 
+vv: currently auto plays: is that YT or LL?
+
 User docs: help text: draft
-    - MH edit text
-    - MH JSON examples
+    x MH edit text
+    - Key bindings page
+    - JSON examples
     - CC top-level review
-    - MH edit
+    - Edit
     - CC review
 
 Text elements: Pickers:

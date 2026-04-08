@@ -1,5 +1,5 @@
 ---
-title: 'LoopLlama v2 — Help'
+title: 'LoopLlama Help'
 permalink: /loopllama/v2/help/
 layout: single
 published: true
@@ -10,46 +10,33 @@ toc_icon: 'guitar'
 
 <!--
 
-__HERE__
-### Cloud Storage and Sign-In {#why-sign-in}
-
-__MENU_ARROW__
-Video › Scratch
-
-
-Notice syntax/styles:
-
-  - Simple marker before the target paragraph.
-
-      gray/blue-gray | {: .notice}          | .
-      forest/teal    | {: .notice--primary} | info items
-      steel-blue     | {: .notice--info}    | .
-      brown/amber    | {: .notice--warning} | .
-      red            | {: .notice--danger}  | warnings
-      green          | {: .notice--success} | success advice
-
-  - Enclose multiple paragraphs as the target:
-
-      <div class="notice--primary" markdown="1">
-      Blah blah
-      </div>
-
-Linking:
-
-  - Link to headings:
-
-      ### Foo-bar heading {#blort-x}
-
-      Later ... blah blah, see [foo-bar](#blort-x)
-
-  - Link to raw paragraphs: must use HTML directly:
-
-      <a id="blort-x"></a> Blort-X. Blah blah
-      blah blah.
+## Quick start {#quick-start}
+## Entities
+### Videos
+### Sections
+### Chapters
+### Marks
+### Loops
+#### Saved loops
+#### Scratch loop
+#### Scratch operation {#scratch-loop}
+#### Scratch loop edit mode
+#### Scratch loop nudges
+#### Scratch loop sources
+## Time and navigation
+### The visual timeline
+### More navigation
+### Time input formats
+## Data management
+## Cloud storage and sign-in {#why-sign-in}
+## App menu
+## Miscellaneous
+### Privacy policy {#privacy-policy}
+### Terms of service {#terms-of-service}
+### Contact
+### The LoopLlama banner
 
 -->
-
-## What is LoopLlama?
 
 LoopLlama is a browser-based YouTube controller for close study of video
 content. If you want to loop a passage, slow down or speed up a video, mark
@@ -77,7 +64,7 @@ and adjust the playback speed are available in familiar buttons, text boxes,
 and dropdowns in the app's main controls. Key bindings for the most common
 actions are the following:
 
-| Keys    | Operation
+| Key     | Operation
 | ------- | ---------------------
 | `Space` | Play/pause
 | `Left`  | Seek: backward
@@ -94,7 +81,7 @@ video playback and seek will adhere to the loop bounds: when the playhead
 reaches the end it will wrap around to the loop start; and seek movements will
 be confined to the loop boundaries. Here are the most important key bindings:
 
-| Keys  | Scratch loop operation
+| Key   | Scratch loop operation
 | ----- | ------------------------------
 | `xx`  | Toggle looping
 | `[[`  | Set loop start to current time
@@ -125,8 +112,8 @@ LoopLlama timeline makes clicking in the YouTube frame rarely necessary.
 For many users — those who simply want to have tool to loop or change the
 speed of YouTube videos using an efficient user interface — everything you
 need to know was covered in the Quick Start. But if you need to work with a
-video in-depth (for example, transcribing a musical performance) being able to
-attach additional information to the video is powerful. That information is
+video in-depth (for example, transcribing a musical performance), being able
+to attach additional information to the video is powerful. That information is
 organized around five types of entities: videos, sections, chapters, marks,
 and loops.
 
@@ -180,8 +167,8 @@ of the LoopLlama information about a video.
 allows you to select a video for deletion. The app also provide an operation
 to [delete data in bulk](#bulk-delete).
 
-<span class="ll-phead">Unstash</span>. See the discussion on [cloud
-backups](#unstash-operation) for details.
+<span class="ll-phead">Unstash</span>. Replaces a local video using a stashed
+copy (see [last-modified checks](#last-modified-checks)).
 
 ### Sections
 
@@ -353,8 +340,8 @@ In addition to scratch loop edit mode, the app also supports a coherent set of
 key bindings to make quick adjustments to the loop bounds. If you hover over
 the **Now** buttons, notice that `[[` is the binding to set the start to the
 playhead position and `]]` sets the end. The nudge key bindings build on that
-convention: `[` is the prefix for start, `]` for end. See the nudge [key
-bindings][/loopllama/v2/keybindings/#nudge-bindings] for a full listing. The
+convention: `[` is the prefix for start, `]` for end. See the [nudge key
+bindings](/loopllama/v2/keybindings/#nudge-bindings) for a full listing. The
 most commonly used bindings are these:
 
 | Key    | Operation
@@ -367,20 +354,22 @@ most commonly used bindings are these:
 The nudge operation has one special wrinkle to support the rapid creation of
 loops. This behavior is best explained via an example.
 
-1. Initially, the scratch loop start and end are a short distance apart, near
-   the beginning of a video. The playhead is near the video end.
+1. <span class="ll-phead">Initial</span>. The scratch loop start and end are a
+   short distance apart, near the beginning of a video. The playhead is near
+   the video end.
 
-2. To create a short loop starting at the playhead, you can press `[[` to set
-   the scratch loop start.
+2. <span class="ll-phead">Set start</span>. To create a short loop starting at
+   the playhead, press `[[` to set the scratch loop start.
 
-3. Consider what happens if the user presses `]=` to perform a nudge increase
-   on the end. A *regular nudge* would shift the end to the right, leaving an
-   invalid loop (assume the delta is at a typical value like 5s).
+3. <span class="ll-phead">Regular nudge</span>. Consider what happens if the
+   user presses `]=` to perform a nudge increase on the end. A regular nudge
+   would shift the end to the right, leaving an invalid loop (assume the delta
+   is at a typical value like 5s).
 
-4. But a *relative nudge* is different: it applies the delta relative to the
-   loop's other bound. In our example, the end nudge would be applied relative
-   to the start. The result would be a legal loop, so the app would apply this
-   nudge.
+4. <span class="ll-phead">Relative nudge</span>. This operation applies the
+   delta relative to the loop's other bound. In our example, the end nudge
+   would be applied relative to the start. The result would be a legal loop,
+   so the app would apply this nudge.
 
         _____________________________
           S     E              ^        (1) Initial
@@ -507,23 +496,13 @@ LoopLlama provides several ways to share your LoopLlama data with others,
 backup your data to your computer, sync your data across multiple browsers and
 devices, or perform bulk deletions.
 
-### Sharing
+<span class="ll-phead">Share video</span>. Use `dv` for **Data › Share video**
+to copy a LoopLlama sharing URL to your clipboard. Anyone with the URL can get
+a copy of your data for that video loaded into their LoopLlama.
 
-You can share your LoopLlama data for either a complete video or the scratch
-loop:
-
-| Binding | Data operation
-| ------- | ------------------
-| `dv`    | Share video
-| `dx`    | Share scratch loop
-
-Those operations copy a LoopLlama sharing URL to your clipboard. Give the URL
-to someone else and they can use it to open the video and see the data you
-shared. Their version of that data is an indepenent copy: nothing they do will
-alter your LoopLlama data or affect the data stored to support the sharing
-URL.
-
-### Export, Import, Unstash {#unstash-operation}
+<span class="ll-phead">Share scratch loop</span>. Use `dx` for **Data › Share
+scratch loop**, which is like **Share video**, but the data covers only the
+scratch loop.
 
 <span class="ll-phead">Export</span>. Use `de` for **Data › Export** to save
 your your LoopLlama data as a JSON file. If you understand how to use the app,
@@ -531,183 +510,191 @@ the data in the file will make sense.
 
 <span class="ll-phead">Import</span>. Use `di` for **Data › Import**, which
 performs that process in reverse: load the data from an exported JSON file
-into LoopLlama — for example on a different browser or computer. To
-understand the import process, you first need to know that LoopLlama stores a
-last-updated time for all videos in your collection. During the import,
-LoopLlama checks whether any of the videos in the JSON you are trying to
-import have an older last-updated time than the corresponding time currently
-stored in your browser. If any cases like that are detected, the app prompts
-you to decide how to handle the situation. The default is to skip the affected
-videos. Alternatively, you can choose to replace those videos, using the older
-data from the JSON file. Additionally, any time an import overwrites a video
-with a different last-modified time, the app "stashes" a copy of the video
-before overwriting occurs.
+into LoopLlama — for example on a different browser or computer.
 
-<span class="ll-phead">Unstash</span>. Use `du` for **Data › Unstash**, which
-allows you to retrieve a stashed copy (as just discussed).
+<div class="notice--primary" markdown="1">
 
-<span class="ll-phead">Inspect</span>. Use `dI` for **Data › Inspect**, which
-displays your LoopLlama data directly in the browser.
+  <a id="last-modified-checks"></a>**Last-modified checks**. During
+  **Import**, **Save to cloud**, and **Read from cloud** operations, LoopLlama
+  takes steps to help you avoid writing older data over newer data. The app
+  stores a last-updated time for all videos in your collection. Before
+  applying these operations, LoopLlama determines the videos for which the
+  change would lead to old-replacing-new. If any cases are detected, the app
+  prompts you to decide how to handle the situation: skip the affected videos
+  (the default); or replace those videos, using the older data. Additionally,
+  any time one of these operations overwrites a video with a different
+  last-modified time, the app "stashes" a copy of the video before overwriting
+  occurs.
 
-### Cloud Storage and Sign-In {#why-sign-in}
+</div>
 
-LoopLlama does not require sign in. But signing in with Google or GitHub lets
-you back up your LoopLlama data to the cloud — providing a more convenient
-insurance mechanism against lost data (for example, caused by clearing your
-browser cache) and a simpler way to coordinate LoopLlama usage across multiple
-browsers or devices.
+<span class="ll-phead">Unstash</span>. Use `du` for **Data › Unstash**, to
+retrieve a stashed copy of a video (see [last-modified
+checks](#last-modified-checks)).
 
-LoopLlama does not attempt true multi-device sync. Cloud storage is a
-backup/restore facility, not a live sync. The correct mental model for this
-feature is to view the cloud as if it were a hard drive: the browser's
-localStorage is your working copy; the cloud is a saved copy. Multi-device
-users can use LoopLlama successfully if they treat the cloud as a hard drive
-and organize their ds/dr operations to align with their device switches.
+<span class="ll-phead">Inspect</span>. Use `dI` for **Data › Inspect**,
+which displays your LoopLlama data directly in the browser.
 
-- Writing to the cloud or reading data from it are diven by user operations
-  (`ds` for Save to cloud, `dr` for Read from cloud, and `dc` for Compare).
+<a id="bulk-delete"></a><span class="ll-phead">Bulk deletion</span>. Use `d⌫`
+**Data › Delete** to delete data in bulk — either entire videos or the
+entities within a single video.
 
-- The save and read operations use the last-modified time comparisons
-  described when disussing `di`, Data import. The app performs a
-  video-by-video check and prompts the user before overwriting any newer data.
-  And video data is stashed before being overwritten.
+## Cloud storage and sign-in {#why-sign-in}
 
-- The Account menu allows you to sign out and delete all LoopLlama cloud data.
+<span class="ll-phead">Sign-in is optional</span>. LoopLlama does not require
+sign in, but signing in with Google or GitHub lets you back up your LoopLlama
+data to the cloud — providing a more convenient insurance mechanism against
+lost data (for example, caused by clearing your browser cache) and a simpler
+way to coordinate LoopLlama usage across multiple browsers or devices.
 
-### Bulk deletion {#bulk-delete}
+<span class="ll-phead">Cloud as hard drive</span>. LoopLlama's cloud storage
+is a backup-restore facility, not a true multi-device sync. The correct mental
+model for this feature is cloud as hard drive: the browser's localStorage is
+your working copy; the cloud is a saved copy. Multi-device users can use
+LoopLlama successfully if they organize their saves and reads to align with
+their device switches.
 
-The "Delete" operation on the Data menu (via `d⌫`) allows you to delete
-data in bulk — either entire videos or the entities within a single video.
+<span class="ll-phead">Save to cloud</span>. Use `ds` for **Data › Save to
+cloud**, which writes local data to the cloud (see [last-modified
+checks](#last-modified-checks)).
+
+<span class="ll-phead">Read from cloud</span>. Use `dr` for **Data › Read
+from cloud**, which writes cloud data to local (see [last-modified
+checks](#last-modified-checks)).
+
+<span class="ll-phead">Compare</span>. Use `dc` for **Data › Compare**,
+which performs [last-modified checks](#last-modified-checks) and reports the
+results.
+
+<span class="ll-phead">Remove cloud data</span>. See **Account** menu to sign
+out and remove all of your cloud data.
 
 ## App menu
 
-The app menu is a bit of a catch-all for various operations and settings. The
-jump history operations have already been covered, and the two help items are
-self-evident.
+The **App** menu contains a variety of operations and settings. Jump history
+has already been covered, and the two help items are self-evident. The other
+are the following:
 
-### Edit history: undo/redo
-
-LoopLlama tracks edits to your data and support undo and redo operations, via the
-`au` and `ar` bindings (also `u` and `U`). Undo reverses a prior edit; redo
-reapplies it.
-
-Undo and redo support are limited to the 20 most recent edits.
-
-Undo and redo cover explicit changes to your library data — videos, chapters,
-sections, loops, and marks. They do not cover routine navigation or
+<span class="ll-phead">Undo</span>. Use `au` for **App › Undo** to reverse a
+prior edit. LoopLlama stores data snapshots for the 20 most recent edits.
+Snapshotting covers explicit changes to your library data — videos,
+chapters, sections, loops, and marks. It does not cover routine navigation or
 adjustments to playback and looping controls (current location and speed, jump
 history, navigation settings, scratch loop bounds), even though those settings
 are remembered per video.
 
-### Recall last message
+<span class="ll-phead">Redo</span>. Use `ar` for **App › Redo** to apply an
+edit that was undone.
 
-The `am` binding recalls that most recent message emitted in the message
-footer, in cases you did not have time to read it fully.
+<span class="ll-phead">Recall message</span>. Use `am` for **App › Recall
+message** to recall the most recent message emitted in the message footer.
 
-### Timeline operations
+<span class="ll-phead">Copy time</span>. Use `ac` for **App › Copy time** to
+copy the current playhead time to the clipboard.
 
-The App menu has a few items relating to the timeline:
+<span class="ll-phead">Toggle timeline</span>. Use `at` for **App › Toggle
+timeline** to change whether the timeline displays sections or chapters.
 
-- Copy time. Copies the current playhead time to the clipboard.
+<span class="ll-phead">Zoom off</span>. Use `az` for **App › Zoom off** to
+turn off any type of timeline zoom (video, chapter, section, saved loop, or
+scratch loop).
 
-- Toggle timeline. Toggles the timeline to display either chapters or
-  sections.
-
-- Zoom off. Turns off any type of timeline zoom (video, chapter, section,
-  saved loop, or scratch loop).
-
-### Options {#app-options}
-
-LoopLlama has a few options than can be customized via the `ao` binding.
-For details, see the Options modal, which provides hover text for
-each setting to explain their meaning:
-
-- Seek delta.
-- Scratch loop nudge delta.
-- Speed delta.
-- Loop padding for sections and chapters.
+<span class="ll-phead">Options</span>. Use `ao` for **App › Options** to
+customize change various settings: seek delta, scratch loop nudge delta, speed
+delta, and loop padding for sections and chapters. See the **Options** modal,
+which provides hover text for each setting to explain the details.
 
 ## Miscellaneous
 
-### Privacy Policy {#privacy-policy}
+### Privacy policy {#privacy-policy}
 
-Personal project. LoopLlama is a personal project managed and designed by me,
-Monty Hindman. I wrote the v1 code; v2 code was written entirely by Claude
-Code. Although simply a personal project, it is nonetheless serious: a great
-deal of care was put into planning its features, designing its user
-experience, and checking that the app functions correctly.
+<span class="ll-phead">Personal project</span>. LoopLlama is a personal
+project managed and designed by me, Monty Hindman. I wrote the v1 code; v2
+code was written entirely by Claude Code. Although simply a personal project,
+it is nonetheless serious: a great deal of care was put into planning its
+features, designing its user experience, and checking that the app functions
+correctly.
 
-Hosting. The project is hosted by GitHub, as part of its GitHub Pages feature.
+<span class="ll-phead">Hosting</span>. The project is hosted by GitHub, as
+part of its GitHub Pages feature.
 
-YouTube handles the videos. YouTube provides and streams all video content via
-its standard embed API. LoopLlama simply uses that API.
+<span class="ll-phead">YouTube handles the videos</span>. YouTube provides and
+streams all video content via its standard embed API. LoopLlama simply uses
+that API.
 
-Browser storage by default. Your LoopLLama data is stored only in your web
-browser, in [localStorage][localStorage]. The app does not use cookies.
+<span class="ll-phead">Browser storage by default</span>. Your LoopLLama data
+is stored only in your web browser, in [localStorage][localStorage]. The app
+does not use cookies.
 
-Transparent. The data that LoopLlama stores can be viewed directly via the
-`de` binding (Data => Export). The resulting JSON file provides an accurate
-representation of your LoopLLama data.
+<span class="ll-phead">Transparent</span>. The data that LoopLlama stores can
+be viewed directly via `de` for **Data › Export**. The resulting JSON file
+provides an accurate representation of your LoopLLama data.
 
-Cloud backup is optional. If you sign-in via Google or GitHub, LoopLLama backs
-up your data in the cloud, using [Supabase][supabase], which offers a free
-database service for small projects like LoopLLama.
+<span class="ll-phead">Cloud backup is optional</span>. If you sign-in via
+Google or GitHub, LoopLLama backs up your data in the cloud, using
+[Supabase][supabase], which offers a free database service for small projects
+like LoopLLama.
 
-Authentication via known, reliable third-parties. LoopLLama does not manage
-user authentication or know anything about your credentials. Those details are
-handled by the authentication provide you choose — either Google or GitHub.
+<span class="ll-phead">Authentication via known, reliable
+third-parties</span>. LoopLLama does not manage user authentication or know
+anything about your credentials. Those details are handled by the
+authentication provider you choose — Google or GitHub.
 
-LoopLLama does not store your email address. None of the LoopLLama database
-tables contain your email address. The table holding a backup copy of your
-LoopLLama data does have an ID which can be linked to a Supabase table holding
-your email address (Supabase needs to store that email to ensure that only the
-properly authenticated user can access your data). But the LoopLLama project
-will never issue queries linking your email address and your cloud backup
-other than to investigate problems or requests initiated by you.
+<span class="ll-phead">LoopLLama does not store your email address</span>.
+None of the LoopLLama database tables contain your email address. The table
+holding a backup copy of your LoopLLama data does have an ID that can be
+linked to a Supabase table holding your email address (Supabase needs to store
+that email to ensure that only the properly authenticated user can access your
+data). But the LoopLLama project will never issue queries linking your email
+address and your cloud backup, other than to investigate problems or requests
+initiated by you.
 
-Cloud data is not shared. The copy of your LoopLLama data stored in the cloud
-requires valid authentication to access. That means other internet users
-cannot access it, unless you share your credentials with them.
+<span class="ll-phead">Cloud data is not shared</span>. The copy of your
+LoopLLama data stored in the cloud requires valid authentication to access.
+That means other internet users cannot access it, unless you share your
+credentials with them.
 
-Cloud data can be accessed by infrastructure staff. The LoopLLama app, and
-developers on the LoopLLama project, can access your data. But the project
-commits to access this information only for the purpose of allowing the app to
-function or to investigate specific problems or requests sumitted by you to
-the LoopLLama team. Similarly, some Supabase staff can access the data in the
-LoopLLama database, but their access is governed in similar ways by Supabase
-policies.
+<span class="ll-phead">Cloud data can be accessed by infrastructure
+staff</span>. The LoopLLama app, and developers on the LoopLLama project, can
+access your data. But the project commits to access this information only for
+the purpose of allowing the app to function or to investigate specific
+problems or requests sumitted by you to the LoopLLama team. Similarly, some
+Supabase staff can access the data in the LoopLLama database, but their access
+is governed in similar ways by Supabase policies.
 
-User-driven access to your cloud data. The LoopLLama app interacts with your
-cloud data only in response to your explicit requests to save your browser
-data to the cloud or to read data from the cloud into your browser.
+<span class="ll-phead">User-driven access to your cloud data</span>. The
+LoopLLama app interacts with your cloud data only in response to your explicit
+requests to save your browser data to the cloud or to read data from the cloud
+into your browser.
 
-Cloud data can be deleted. You can delete your cloud data at any time using
-the "Sign out and remove cloud data" item on the Account menu.
+<span class="ll-phead">Cloud data can be removed</span>. You can remove your
+cloud data at any time (see the **Account** menu).
 
-No user-data tracking. LoopLLama does not use cookies and does not sell,
-share, or tranfer your data to any third parties — other than backing up your
-data in Supabase, as noted above. The application does track a some events for
-the purpose of collecting aggregate metrics for the project, specifically (1)
-when a user starts a new LoopLLama session and (2) when a user loads a new
-YouTube URL. In that data, the user is represented by a client ID, which is
-simply a random ID stored in your browser that helps us count approximate
-unique visitors. That ID is not linked to your identity. Further, in the data
-that holds the URL for newly loaded YouTube videos, the app purposely omits
-the client ID.
+<span class="ll-phead">No user-data tracking</span>. LoopLLama does not use
+cookies and does not sell, share, or tranfer your data to any third parties
+— other than backing up your data in Supabase, as noted above. The
+application does track a some events for the purpose of collecting aggregate
+metrics for the project, specifically (1) when a user starts a new LoopLLama
+session and (2) when a user loads a new YouTube URL. In that data, the user is
+represented by a client ID, which is simply a random ID stored in your browser
+that helps us count approximate unique visitors. That ID is not linked to your
+identity. Further, in the data that holds the URL for newly loaded YouTube
+videos, the app purposely omits the client ID.
 
-Shared data is publicly available, but opaque. If you ask LoopLLama to create
-a URL to share either a video or a loop, the shared data can be accessed by
-anyone with the correct URL. That URL includes a random ID generated by the
-app, so it is not something anyone can guess or tie to your identity.
+<span class="ll-phead">Shared data is publicly available, but opaque</span>.
+If you ask LoopLLama to create a URL to share either a video or a scratch
+loop, the shared data can be accessed by anyone with the correct URL. That URL
+includes a random ID generated by the app, so it is not something anyone can
+guess or tie to your identity.
 
-LoopLlama is free. We do not charge to use the app and do not rely on
-advertising. The project has no commercial relationships of any kind. Cloud
-backup is provided via a free tier from Supabase. If the volume of cloud usage
-becomes prohibitively large — very unlikely — the app might need to charge for
-cloud backup in the future, but the project has every intention to avoid that
-scenario.
+<span class="ll-phead">LoopLlama is free</span>. We do not charge to use the
+app and do not rely on advertising. The project has no commercial
+relationships of any kind. Cloud backup is provided via a free tier from
+Supabase. If the volume of cloud usage becomes prohibitively large — very
+unlikely — the app might need to charge for cloud backup in the future, but
+the project has every intention to avoid that scenario.
 
-### Terms of Service {#terms-of-service}
+### Terms of service {#terms-of-service}
 
 LoopLlama is provided as-is, free of charge, with no warranty of any kind. By
 using LoopLlama, you agree to these terms: (1) the author makes no guarantees
@@ -722,36 +709,37 @@ If you have questions, comments, problems to report, or features to request
 you can file an issue via the project's [GitHub codebase][github_code]. You
 can also contact Monty Hindman directly, as [detailed here][mh_contact].
 
-### The LoopLlama Banner
+### The LoopLlama banner
 
 The colored banner at the top of the page is a composite drawn from the visual
 traditions of movements that fought against fascism and authoritarianism. The
 color order reads as a loose narrative arc, from the darkest symbols of
-resistance toward warmer symbols of hope:
+resistance toward warmer symbols of hope.
 
-  - Black. Anarchism and anarcho-syndicalism, the oldest visual language of
-    anti-fascist organizing.
+<span class="ll-phead">Black</span>. Anarchism and anarcho-syndicalism, the
+oldest visual language of anti-fascist organizing.
 
-  - Deep red. Organized labor and the socialist left, broadly construed — a
-    color that runs through more anti-authoritarian traditions than any other.
+<span class="ll-phead">Deep red</span>. Organized labor and the socialist
+left, broadly construed — a color that runs through more anti-authoritarian
+traditions than any other.
 
-  - Purple. The Second Spanish Republic, whose defense drew volunteers from
-    dozens of countries — perhaps the broadest anti-fascist coalition before
-    World War II.
+<span class="ll-phead">Purple</span>. The Second Spanish Republic, whose
+defense drew volunteers from dozens of countries — perhaps the broadest
+anti-fascist coalition before World War II.
 
-  - White. Peace and nonviolent resistance — the center band, as a pivot
-    between the harder symbols and the warmer ones.
+<span class="ll-phead">White</span>. Peace and nonviolent resistance — the
+center band, as a pivot between the harder symbols and the warmer ones.
 
-  - Gold. The German democratic tradition — colors the Nazis rejected and the
-    Federal Republic later reclaimed.
+<span class="ll-phead">Gold</span>. The German democratic tradition — colors
+the Nazis rejected and the Federal Republic later reclaimed.
 
-  - Forest green. Pan-African resistance and the struggle against colonial and
-    racial authoritarianism.
+<span class="ll-phead">Forest green</span>. Pan-African resistance and the
+struggle against colonial and racial authoritarianism.
 
-  - Blue. The liberal democratic tradition — from the Enlightenment through
-    the American and French revolutions, upheavals that shared the conviction
-    that legitimate power derives from the consent of the governed, not the
-    will of a ruler.
+<span class="ll-phead">Blue</span>. The liberal democratic tradition — from
+the Enlightenment through the American and French revolutions, upheavals that
+shared the conviction that legitimate power derives from the consent of the
+governed, not the will of a ruler.
 
 In the past quarter century, the long trend toward democratization has slowed
 or reversed, most notably in the United States — not only my own country but
@@ -769,5 +757,4 @@ modern rightwing variants specifically.
 [supabase]: https://supabase.com/
 [github_code]: https://github.com/hindman/hindman.github.io
 [mh_contact]: https://hindman.github.io/about/#contact
-
 

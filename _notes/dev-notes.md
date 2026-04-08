@@ -629,3 +629,34 @@ Menus do not duplicate main controls
 Menu items do not perform actions that are directly available via the app's
 main controls: play/pause; toggle looping; previous/next entity; etc.
 
+## Mardown notes
+
+Notice syntax/styles:
+
+  - Simple marker before the target paragraph.
+
+      gray/blue-gray | {: .notice}          | .
+      forest/teal    | {: .notice--primary} | info items
+      steel-blue     | {: .notice--info}    | .
+      brown/amber    | {: .notice--warning} | .
+      red            | {: .notice--danger}  | warnings
+      green          | {: .notice--success} | success advice
+
+  - Enclose multiple paragraphs as the target:
+
+      <div class="notice--primary" markdown="1">
+      Blah blah
+      </div>
+
+Linking:
+
+  - Link to headings:
+
+      Anchor | ### Foo-bar heading {#blort-x}
+      Link   | [see foo-bar](#blort-x)
+
+  - Anchor on raw paragraphs: must use HTML directly:
+
+      <a id="blort-x"></a> Blort-X. Blah blah
+      blah blah.
+
