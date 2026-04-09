@@ -511,8 +511,9 @@ class LlamaControls extends LitElement {
 
   _fmt(secs) {
     if (secs == null) return '?';
-    const m = Math.floor(secs / 60);
-    const s = Math.floor(secs % 60).toString().padStart(2, '0');
+    const r = Math.round(secs);
+    const m = Math.floor(r / 60);
+    const s = (r % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
   }
 

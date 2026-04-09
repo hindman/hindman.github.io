@@ -39,39 +39,51 @@ class LlamaSaveLoopModal extends LitElement {
   `;
 
   static properties = {
-    loopStart: { type: Number },
-    loopEnd:   { type: Number },
-    _editId:   { state: true },
-    _name:     { state: true },
-    _start:    { state: true },
-    _end:      { state: true },
-    _error:    { state: true },
+    loopStart:    { type: Number },
+    loopEnd:      { type: Number },
+    _editId:      { state: true },
+    _name:        { state: true },
+    _start:       { state: true },
+    _end:         { state: true },
+    _error:       { state: true },
+    _startEdited: { state: true },
+    _endEdited:   { state: true },
   };
 
   constructor() {
     super();
-    this.loopStart = 0;
-    this.loopEnd   = 0;
-    this._editId   = null;
-    this._name     = '';
-    this._start    = '';
-    this._end      = '';
-    this._error    = '';
+    this.loopStart      = 0;
+    this.loopEnd        = 0;
+    this._editId        = null;
+    this._name          = '';
+    this._start         = '';
+    this._end           = '';
+    this._error         = '';
+    this._startEdited   = false;
+    this._endEdited     = false;
+    this._originalStart = null;
+    this._originalEnd   = null;
   }
 
   show(loop = null) {
     if (loop) {
-      this._editId = loop.id;
-      this._name   = loop.name || '';
-      this._start  = _fmtTime(loop.start);
-      this._end    = _fmtTime(loop.end);
+      this._editId        = loop.id;
+      this._name          = loop.name || '';
+      this._start         = _fmtTime(loop.start);
+      this._end           = _fmtTime(loop.end);
+      this._originalStart = loop.start;
+      this._originalEnd   = loop.end;
     } else {
-      this._editId = null;
-      this._name   = '';
-      this._start  = _fmtTime(this.loopStart);
-      this._end    = _fmtTime(this.loopEnd);
+      this._editId        = null;
+      this._name          = '';
+      this._start         = _fmtTime(this.loopStart);
+      this._end           = _fmtTime(this.loopEnd);
+      this._originalStart = this.loopStart;
+      this._originalEnd   = this.loopEnd;
     }
-    this._error = '';
+    this._error       = '';
+    this._startEdited = false;
+    this._endEdited   = false;
     this.renderRoot.querySelector('llama-modal')?.show();
   }
 
@@ -84,8 +96,8 @@ class LlamaSaveLoopModal extends LitElement {
   }
 
   _save() {
-    const start = _parseTime(this._start);
-    const end   = _parseTime(this._end);
+    const start = this._startEdited ? _parseTime(this._start) : this._originalStart;
+    const end   = this._endEdited   ? _parseTime(this._end)   : this._originalEnd;
     if (start === null || end === null) {
       this._error = 'Start and end are required.';
       return;
@@ -144,10 +156,10 @@ class LlamaSaveLoopModal extends LitElement {
             e => { this._name = e.target.value; })}
         ${this._renderField('Start', 'start', this._start,
             'm:ss',
-            e => { this._start = e.target.value; })}
+            e => { this._start = e.target.value; this._startEdited = true; })}
         ${this._renderField('End', 'end', this._end,
             'm:ss',
-            e => { this._end = e.target.value; })}
+            e => { this._end = e.target.value; this._endEdited = true; })}
         ${this._error ? html`<div class="error">${this._error}</div>` : ''}
         <div slot="footer">
           <sl-button @click=${this.hide}>Cancel</sl-button>
@@ -158,11 +170,11 @@ class LlamaSaveLoopModal extends LitElement {
   }
 }
 
-// Format seconds as m:ss.
+// Format seconds as m:ss (rounds to nearest second).
 function _fmtTime(secs) {
   if (secs == null || isNaN(secs)) return '';
-  const s = Math.floor(secs);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const r = Math.round(secs);
+  return `${Math.floor(r / 60)}:${String(r % 60).padStart(2, '0')}`;
 }
 
 customElements.define('llama-save-loop-modal', LlamaSaveLoopModal);

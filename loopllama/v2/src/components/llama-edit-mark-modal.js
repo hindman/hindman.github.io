@@ -31,25 +31,30 @@ class LlamaEditMarkModal extends LitElement {
   `;
 
   static properties = {
-    mark:   { type: Object },
-    _name:  { state: true },
-    _time:  { state: true },
+    mark:        { type: Object },
+    _name:       { state: true },
+    _time:       { state: true },
+    _timeEdited: { state: true },
   };
 
   constructor() {
     super();
-    this.mark  = null;
-    this._name = '';
-    this._time = '';
+    this.mark          = null;
+    this._name         = '';
+    this._time         = '';
+    this._timeEdited   = false;
+    this._originalTime = null;
   }
 
   show(mark) {
     const m = mark ?? this.mark;
     if (m) {
-      this.mark  = m;
-      this._name = m.name || '';
-      this._time = _fmtTime(m.time);
+      this.mark          = m;
+      this._name         = m.name || '';
+      this._time         = _fmtTime(m.time);
+      this._originalTime = m.time;
     }
+    this._timeEdited = false;
     this.renderRoot.querySelector('llama-modal')?.show();
   }
 
@@ -63,7 +68,7 @@ class LlamaEditMarkModal extends LitElement {
 
   _save() {
     if (!this.mark) return;
-    const time = _parseTime(this._time);
+    const time = this._timeEdited ? _parseTime(this._time) : this._originalTime;
     if (time === null) {
       // Leave the field highlighted; user must fix it.
       return;
@@ -101,7 +106,7 @@ class LlamaEditMarkModal extends LitElement {
             data-field="time"
             placeholder="e.g. 1:23"
             .value=${this._time}
-            @sl-input=${e => { this._time = e.target.value; }}
+            @sl-input=${e => { this._time = e.target.value; this._timeEdited = true; }}
             @keydown=${this._onKeyDown}
           ></sl-input>
         </div>
@@ -117,8 +122,8 @@ class LlamaEditMarkModal extends LitElement {
 // Format seconds as m:ss.
 function _fmtTime(secs) {
   if (secs == null || isNaN(secs)) return '';
-  const s = Math.floor(secs);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const r = Math.round(secs);
+  return `${Math.floor(r / 60)}:${String(r % 60).padStart(2, '0')}`;
 }
 
 customElements.define('llama-edit-mark-modal', LlamaEditMarkModal);

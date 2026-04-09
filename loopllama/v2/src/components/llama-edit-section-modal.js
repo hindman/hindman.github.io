@@ -44,16 +44,22 @@ class LlamaEditSectionModal extends LitElement {
     _end:         { state: true },
     _derivedEnd:  { state: true },
     _error:       { state: true },
+    _timeEdited:  { state: true },
+    _endEdited:   { state: true },
   };
 
   constructor() {
     super();
-    this.section      = null;
-    this._name        = '';
-    this._time        = '';
-    this._end         = '';
-    this._derivedEnd  = null;
-    this._error       = '';
+    this.section        = null;
+    this._name          = '';
+    this._time          = '';
+    this._end           = '';
+    this._derivedEnd    = null;
+    this._error         = '';
+    this._timeEdited    = false;
+    this._endEdited     = false;
+    this._originalTime  = null;
+    this._originalEnd   = null;
   }
 
   // derivedEnd: the end that would be used if section.end stays null
@@ -61,13 +67,17 @@ class LlamaEditSectionModal extends LitElement {
   show(section, derivedEnd = null) {
     const s = section ?? this.section;
     if (s) {
-      this.section     = s;
-      this._name       = s.name || '';
-      this._time       = _fmtTime(s.start);
-      this._end        = _fmtTime(s.end);
-      this._derivedEnd = derivedEnd;
-      this._error      = '';
+      this.section        = s;
+      this._name          = s.name || '';
+      this._time          = _fmtTime(s.start);
+      this._end           = _fmtTime(s.end);
+      this._originalTime  = s.start;
+      this._originalEnd   = s.end;
+      this._derivedEnd    = derivedEnd;
+      this._error         = '';
     }
+    this._timeEdited = false;
+    this._endEdited  = false;
     this.renderRoot.querySelector('llama-modal')?.show();
   }
 
@@ -81,14 +91,14 @@ class LlamaEditSectionModal extends LitElement {
 
   _save() {
     if (!this.section) return;
-    const start = _parseTime(this._time);
+    const start = this._timeEdited ? _parseTime(this._time) : this._originalTime;
     if (start === null) {
       this._error = 'Invalid start time.';
       return;
     }
     let end = null;
-    if (this._end.trim()) {
-      end = _parseTime(this._end);
+    if (this._endEdited ? this._end.trim() : this._originalEnd != null) {
+      end = this._endEdited ? _parseTime(this._end) : this._originalEnd;
       if (end === null) {
         this._error = 'Invalid end time.';
         return;
@@ -136,7 +146,7 @@ class LlamaEditSectionModal extends LitElement {
             data-field="time"
             placeholder="e.g. 1:23"
             .value=${this._time}
-            @sl-input=${e => { this._time = e.target.value; }}
+            @sl-input=${e => { this._time = e.target.value; this._timeEdited = true; }}
             @keydown=${this._onKeyDown}
           ></sl-input>
         </div>
@@ -146,7 +156,7 @@ class LlamaEditSectionModal extends LitElement {
             data-field="end"
             placeholder=${endPlaceholder}
             .value=${this._end}
-            @sl-input=${e => { this._end = e.target.value; }}
+            @sl-input=${e => { this._end = e.target.value; this._endEdited = true; }}
             @keydown=${this._onKeyDown}
           ></sl-input>
         </div>
@@ -160,11 +170,11 @@ class LlamaEditSectionModal extends LitElement {
   }
 }
 
-// Format seconds as m:ss.
+// Format seconds as m:ss (rounds to nearest second).
 function _fmtTime(secs) {
   if (secs == null || isNaN(secs)) return '';
-  const s = Math.floor(secs);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const r = Math.round(secs);
+  return `${Math.floor(r / 60)}:${String(r % 60).padStart(2, '0')}`;
 }
 
 customElements.define('llama-edit-section-modal', LlamaEditSectionModal);

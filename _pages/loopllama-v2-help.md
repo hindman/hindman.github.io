@@ -55,8 +55,8 @@ timeline, provide the same access.
 LoopLlama, see the **Video › Load URL** menu item. Notice its two key
 bindings: `vl` or `y`. When you run the operation, you can paste either a full
 URL or just the YouTube video ID (an example to try: `QQ5XMmV7-bY`). After the
-video loads, notice that video name and YouTube ID are shown in the Current
-panel.
+video loads, notice that video name and YouTube ID are shown in the
+**Current** panel.
 
 <span class="ll-phead">Basic controls</span>. Operations to play, pause, seek,
 and adjust the playback speed are available in familiar buttons, text boxes,
@@ -74,31 +74,32 @@ actions are the following:
 | `=`     | Speed: increase
 | `jj`    | Jump to a time
 
-<span class="ll-phead">Basic looping</span>. The controls in the Scratch Loop
-area allow you to loop a specific part of a video. If looping is toggled on,
-video playback and seek will adhere to the loop bounds: when the playhead
-reaches the end it will wrap around to the loop start; and seek movements will
-be confined to the loop boundaries. Here are the most important key bindings:
+<span class="ll-phead">Basic looping</span>. The controls in the **Scratch
+Loop** area allow you to loop a specific part of a video. If looping is
+toggled on, video playback and seek will adhere to the loop bounds: when the
+playhead reaches the end it will wrap around to the loop start; and seek
+movements will be confined to the loop boundaries. Here are the most important
+key bindings:
 
 | Key   | Scratch loop operation
 | ----- | ------------------------------
-| `xx`  | Toggle looping
+| `xx`  | Toggle looping on/off
 | `[[`  | Set loop start to current time
 | `]]`  | Set loop end to current time
 
 <span class="ll-phead">Informational elements</span>. The app provides
 information in various ways.
 
-  - Current panel: lists information about the current video.
+  - **Current panel**: lists information about the current video.
 
-  - Timeline: mimics the YouTube progress bar and provides a visual overview
-    of the information the user has attached to the video; supports hover for
-    information and click to jump.
+  - **Timeline**: mimics the YouTube progress bar and provides a visual
+    overview of the information the user has attached to the video; supports
+    hover for information and click to jump.
 
-  - Controls: hover to display labels and key bindings.
+  - **Controls**: hover to display labels and key bindings.
 
-  - Message footer: displays informational, warning, and error messages, along
-    with key binding continuation information.
+  - **Message footer**: displays informational, warning, and error messages,
+    along with key binding continuation information.
 
 <span class="ll-phead">Gotcha: app focus</span>. If you click anywhere in the
 YouTube frame, the LoopLlama app loses focus and its key binding become
@@ -121,13 +122,15 @@ LoopLlama, the app remembers the video and how you last left it: the current
 playhead position, the playback speed, the scratch loop endpoints, and any
 other information about the entities that a video can have.
 
-To load some example videos pre-configured with various entities press `ae`
-for **App › Load examples**.
+<span class="ll-phead">Load examples</span>. Use `ae` for **App › Load
+examples**, which will load two example videos pre-configured with various
+sections, chapters, marks, and loops. You can use those examples to along with
+the help documentation to learn how the app works.
 
-| Example | Description
-| ------- | --------------------------------
-| Ex1     | One song, with sections
-| Ex2     | Concert, with songs as chapters
+| Example | Video          | Description
+| ------- | -------------- | --------------------------------
+| Ex1     | Catfish blues  | Song with sections, marks, loops
+| Ex2     | Tommy Emmanuel | Concert with songs as chapters
 
 <span class="ll-phead">Open</span>. Use `vo` for **Video › Open** to open a
 video you loaded previously into LoopLlama.
@@ -143,18 +146,19 @@ video you loaded previously into LoopLlama.
 
 </div>
 
-<span class="ll-phead">Edit</span>. By default the video name is set to the
-title provided by the YouTube player. Use `ve` for **Video › Edit** to change
-the name or to set custom start and end times for the video — for example, to
-exclude filler material that you rarely need to watch.
+<span class="ll-phead">Edit</span>. Use `ve` for **Video › Edit** to change
+the video name (by default, set to the title provided by the YouTube player)
+or to set custom start and end times for the video — for example, to exclude
+filler material that you rarely need to watch.
 
-<span class="ll-phead">Zoom</span>. If a video has custom values for start or
-end, you can use `vz` for **Video › Zoom** to focus the timeline view to that
-range.
+<span class="ll-phead">Zoom</span>. Use `vz` for **Video › Zoom** to focus the
+timeline view to a video's custom start-end range, if you have set one (note
+zoom is most useful for smaller entitites like sections, chapters, and loops,
+rather than for videos).
 
 <span class="ll-phead">Scratch</span>. Use `vx` for **Video › Scratch** to
 loop an entire video (or the range defined by its custom start/end values).
-The [Scratch operation](#scratch-loop) loads the start and end times into the
+The [scratch operation](#scratch-loop) loads the start and end times into the
 scratch loop — the app's work area for looping.
 
 <span class="ll-phead">Info</span>. Use `vi` for **Video › Info** to see all
@@ -174,28 +178,24 @@ those segments represent is up to you: a musician might label them Intro,
 Verse, Chorus, Solo; someone studying a lecture might label them by topic; a
 language learner might use them to mark speaker turns.
 
-<span class="ll-phead">Create</span>. Creating a section is done by
-positioning the playhead at it start and pressing `ss` for **Section ›
-Create**. The section now exists (notice the visual change in the timeline).
-The section end is inferred from the start of the next section (or the video
-end).
+<span class="ll-phead">Create</span>. Use `ss` for **Section › Create**, which
+creates a new section with its start at the playhead position. After creating
+a section, notice the visual change in the timeline. The section end is
+inferred from the start of the next section (or the video end).
 
-<span class="ll-phead">Edit</span>. Use `se` for **Section › Edit**, mainly
-to give the current secton a name or to adjust its start/end values. The
-section name will appear in the timeline area, below the blue progress bar.
+<span class="ll-phead">Edit</span>. Use `se` for **Section › Edit**, mainly to
+give the current section a name or to adjust its start/end values. The section
+name will appear in the timeline area, below the blue progress bar.
 
 <span class="ll-phead">Scratch</span>. Use `sx` for **Section › Scratch**,
-which loads the sections start and end into the scratch loop. Give that a try
-with Ex1: navigate the playhead anywhere within a section, press `sx`, and
-then press `xx` to toggle looping on.
+which loads the section's start and end into the scratch loop.
 
 <span class="ll-phead">Jump</span>. Use `sj` for **Section › Jump**, which
 allows you to select any section and jump the playhead to its start.
 
-<span class="ll-phead">Zoom</span>. To study a section in depth, use `sz` for
-**Section › Zoom**, which will focus the timeline on the current section.
-Use `sz` again to toggle the section-zoom off (or `az` to turn off any kind of
-zooming).
+<span class="ll-phead">Zoom</span>. Use `sz` for **Section › Zoom**, which
+will focus the timeline on the current section. Use `sz` again to toggle the
+section-zoom off (or `az` to turn off any kind of zooming).
 
 <span class="ll-phead">Fix end</span>. Use `sf` for **Section › Fix end**.
 Although rarely needed, this operation converts the current section's end

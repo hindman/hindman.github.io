@@ -45,30 +45,40 @@ class LlamaEditVideoModal extends LitElement {
   `;
 
   static properties = {
-    video:  { type: Object },
-    _name:  { state: true },
-    _url:   { state: true },
-    _start: { state: true },
-    _end:   { state: true },
+    video:        { type: Object },
+    _name:        { state: true },
+    _url:         { state: true },
+    _start:       { state: true },
+    _end:         { state: true },
+    _startEdited: { state: true },
+    _endEdited:   { state: true },
   };
 
   constructor() {
     super();
-    this.video  = null;
-    this._name  = '';
-    this._url   = '';
-    this._start = '';
-    this._end   = '';
+    this.video          = null;
+    this._name          = '';
+    this._url           = '';
+    this._start         = '';
+    this._end           = '';
+    this._startEdited   = false;
+    this._endEdited     = false;
+    this._originalStart = null;
+    this._originalEnd   = null;
   }
 
   show() {
     const v = this.video;
     if (v) {
-      this._name  = v.name  || '';
-      this._url   = v.url   || '';
-      this._start = v.start > 0     ? _fmtTime(v.start) : '';
-      this._end   = v.end != null   ? _fmtTime(v.end)   : '';
+      this._name          = v.name  || '';
+      this._url           = v.url   || '';
+      this._start         = v.start > 0   ? _fmtTime(v.start) : '';
+      this._end           = v.end != null ? _fmtTime(v.end)   : '';
+      this._originalStart = v.start ?? 0;
+      this._originalEnd   = v.end   ?? null;
     }
+    this._startEdited = false;
+    this._endEdited   = false;
     this.renderRoot.querySelector('llama-modal')?.show();
   }
 
@@ -82,8 +92,10 @@ class LlamaEditVideoModal extends LitElement {
 
   _save() {
     if (!this.video) return;
-    const start = _parseTime(this._start) ?? 0;
-    const end   = this._end.trim() ? (_parseTime(this._end) ?? null) : null;
+    const start = this._startEdited ? (_parseTime(this._start) ?? 0) : this._originalStart;
+    const end   = this._endEdited
+      ? (this._end.trim() ? (_parseTime(this._end) ?? null) : null)
+      : this._originalEnd;
     this.dispatchEvent(new CustomEvent('ll-update-video', {
       detail: {
         id:    this.video.id,
@@ -141,10 +153,10 @@ class LlamaEditVideoModal extends LitElement {
             e => { this._url = e.target.value; })}
         ${this._renderField('Start', 'start', this._start,
             '0 or m:ss — effective start offset',
-            e => { this._start = e.target.value; })}
+            e => { this._start = e.target.value; this._startEdited = true; })}
         ${this._renderField('End', 'end', this._end,
             'm:ss or blank (use video duration)',
-            e => { this._end = e.target.value; })}
+            e => { this._end = e.target.value; this._endEdited = true; })}
         <div class="field-row">
           <span class="field-label">Video ID (read-only)</span>
           <div class="video-id">${this.video?.id ?? ''}</div>
@@ -161,11 +173,11 @@ class LlamaEditVideoModal extends LitElement {
   }
 }
 
-// Format seconds as m:ss.
+// Format seconds as m:ss (rounds to nearest second).
 function _fmtTime(secs) {
   if (secs == null || isNaN(secs)) return '';
-  const s = Math.floor(secs);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  const r = Math.round(secs);
+  return `${Math.floor(r / 60)}:${String(r % 60).padStart(2, '0')}`;
 }
 
 customElements.define('llama-edit-video-modal', LlamaEditVideoModal);
