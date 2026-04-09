@@ -11,18 +11,17 @@ toc_icon: 'guitar'
 <!--
 
 ## Quick start {#quick-start}
-## Entities
-### Videos
-### Sections
-### Chapters
-### Marks
-### Loops
-#### Saved loops
-#### Scratch loop
-#### Scratch operation {#scratch-loop}
-#### Scratch loop edit mode
-#### Scratch loop nudges
-#### Scratch loop sources
+## Videos
+## Sections
+## Chapters
+## Marks
+## Loops
+### Saved loops
+### Scratch loop
+### Scratch operation {#scratch-loop}
+### Scratch loop edit mode
+### Scratch loop nudges
+### Scratch loop sources
 ## Time and navigation
 ### The visual timeline
 ### More navigation
@@ -107,17 +106,15 @@ inactive. When that occurs, a warning is shown in the footer. The fix is
 simple: click anywhere in the app outside of the YouTube frame. The clickable
 LoopLlama timeline makes clicking in the YouTube frame rarely necessary.
 
-## Entities
+<span class="ll-phead">Entities: the next step</span>. For many users — those
+who simply want to have tool to loop or change the speed of YouTube videos
+using an efficient user interface — everything you need to know has been
+covered. But if you work some videos in depth (for example, transcribing a
+musical performance), being able to attach additional information to the video
+is powerful. That information is organized around five types of entities:
+videos, sections, chapters, marks, and loops.
 
-For many users — those who simply want to have tool to loop or change the
-speed of YouTube videos using an efficient user interface — everything you
-need to know was covered in the Quick Start. But if you need to work with a
-video in-depth (for example, transcribing a musical performance), being able
-to attach additional information to the video is powerful. That information is
-organized around five types of entities: videos, sections, chapters, marks,
-and loops.
-
-### Videos
+## Videos
 
 The first entity is obvious: videos. Once you open a YouTube video in
 LoopLlama, the app remembers the video and how you last left it: the current
@@ -170,7 +167,7 @@ to [delete data in bulk](#bulk-delete).
 <span class="ll-phead">Unstash</span>. Replaces a local video using a stashed
 copy (see [last-modified checks](#last-modified-checks)).
 
-### Sections
+## Sections
 
 Sections provide a way to divide a video into non-overlapping parts. What
 those segments represent is up to you: a musician might label them Intro,
@@ -221,7 +218,7 @@ which allows you to select a section for deletion.
 
 </div>
 
-### Chapters
+## Chapters
 
 Chapters are similar to sections: they divide a video into non-overlapping
 parts; they support the same operations; and their key bindings are directly
@@ -241,19 +238,19 @@ premise that chapters are bigger (for example, songs in a concert) and
 sections are smaller (for example, the parts of a song), but you are not
 required to follow that model.
 
-### Marks
+## Marks
 
 Marks are the simplest entities — nothing more than a time point. They are
 displayed as yellow dots in the timeline, below the sections/chapters. The
 operations and key bindings are simple and follow the conventions already
 established for sections and chapters (see the Mark menu).
 
-### Loops
+## Loops
 
 The entity tour postponed loops until the end because they sit at the center
 of the app's mission. There are several sub-topics to cover.
 
-#### Saved loops
+### Saved loops
 
 Saved loops are similar to chapters and sections in that they define a range
 via their start and end. They are more generic because their purpose is not to
@@ -284,7 +281,7 @@ select a saved loop for deletion.
 which will load the current loop's bounds into the scratch loop — our next
 topic.
 
-#### Scratch loop
+### Scratch loop
 
 As noted above, the scratch loop is the active working area for looping. The
 main looping controls were convered in the [Quick start](#quick-start).
@@ -294,7 +291,7 @@ end — the text boxes display the values in regular font. When the bounds are
 invalid, the font is red and the app disallows toggling looping on or creating
 a new saved loop based on those bounds.
 
-#### Scratch operation {#scratch-loop}
+### Scratch operation {#scratch-loop}
 
 As mentioned in the documentation for sections, chapters, and saved loops,
 entities with a start and end support the scratch operation, which loads the
@@ -309,7 +306,7 @@ and the scratch loop.
 | Saved loop    | Loop      | l
 | Scratch loop  | Scratch   | x
 
-#### Scratch loop edit mode
+### Scratch loop edit mode
 
 Although you can edit bounds directly via the scratch loop controls, LoopLlama
 also provides a special keyboard mode to make such adjustments. The mode can
@@ -334,7 +331,7 @@ As noted, `Space` will play/pause the video near the active bound. The purpose
 is to allow you to adjust a boundary, then play the video to assess whether
 more fine-tuning is needed.
 
-#### Scratch loop nudges
+### Scratch loop nudges
 
 In addition to scratch loop edit mode, the app also supports a coherent set of
 key bindings to make quick adjustments to the loop bounds. If you hover over
@@ -391,7 +388,7 @@ the first method that produces a valid loop. The methods are attempted in this
 order: regular, then relative, with fallback to regular if both methods result
 in invalid loops.
 
-#### Scratch loop sources
+### Scratch loop sources
 
 As mentioned above, the **Scratch** operation loads the bounds of a saved
 entity into the scratch loop. Using Ex2, press `sx` to scratch the current
