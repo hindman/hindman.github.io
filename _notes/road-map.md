@@ -1,16 +1,11 @@
 
 ## TODO: LoopLlama v2
 
-User docs: help text: draft
-    . Edit
-      x help
-      x key bindings
-      - JSON examples
-    - CC review
-    - Edit
-      - help
-      - key bindings
-      - JSON examples
+Deploy:
+  - beta message to BM
+
+User docs: final read:
+    - MH
     - CC review
 
 Text elements: Pickers:
@@ -40,6 +35,14 @@ Text elements: Modals:
 Text elements: messages: info, warning, error, which-key.
 
 Text elements: Current panel [checked; OK]
+  - Name
+  - Video ID
+  - Duration
+  - Timeline display
+  - Chapter
+  - Section
+  - Scratch loop source
+  - Zoom [if active]
 
 Text elements: Timeline: hovers [checked; OK]
 

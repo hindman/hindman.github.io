@@ -102,13 +102,13 @@ information in various ways.
     along with key binding continuation information.
 
 <span class="ll-phead">Gotcha: app focus</span>. If you click anywhere in the
-YouTube frame, the LoopLlama app loses focus and its key binding become
+YouTube frame, the LoopLlama app loses focus and its key bindings become
 inactive. When that occurs, a warning is shown in the footer. The fix is
 simple: click anywhere in the app outside of the YouTube frame. The clickable
 LoopLlama timeline makes clicking in the YouTube frame rarely necessary.
 
 <span class="ll-phead">Entities: the next step</span>. For many users — those
-who simply want to have tool to loop or change the speed of YouTube videos
+who simply want to have a tool to loop or change the speed of YouTube videos
 using an efficient user interface — everything you need to know has been
 covered. But if you work some videos in depth (for example, transcribing a
 musical performance), being able to attach additional information to the video
@@ -124,13 +124,13 @@ other information about the entities that a video can have.
 
 <span class="ll-phead">Load examples</span>. Use `ae` for **App › Load
 examples**, which will load two example videos pre-configured with various
-sections, chapters, marks, and loops. You can use those examples to along with
+sections, chapters, marks, and loops. You can use those examples along with
 the help documentation to learn how the app works.
 
 | Example | Video          | Description
-| ------- | -------------- | --------------------------------
-| Ex1     | Catfish blues  | Song with sections, marks, loops
-| Ex2     | Tommy Emmanuel | Concert with songs as chapters
+| ------- | -------------- | ------------------------------
+| Ex1     | Catfish blues  | Song with all entities
+| Ex2     | Edith Pageaud  | Concert with songs as chapters
 
 <span class="ll-phead">Open</span>. Use `vo` for **Video › Open** to open a
 video you loaded previously into LoopLlama.
@@ -138,7 +138,7 @@ video you loaded previously into LoopLlama.
 <div class="notice--primary" markdown="1">
 
   **Key binding overview**. Bindings follow a 2-character system: (a) the
-  first character an entity prefix; (b) the second a mmenomic for the
+  first character is an entity prefix; (b) the second a mnemonic for the
   operation. For example, `vo` for **Video › Open** and `ae` for **App › Load
   examples**. The most common operations also have shortcut bindings for
   easier typing (see the Video and App menus for several examples). The help
@@ -153,7 +153,7 @@ filler material that you rarely need to watch.
 
 <span class="ll-phead">Zoom</span>. Use `vz` for **Video › Zoom** to focus the
 timeline view to a video's custom start-end range, if you have set one (note
-zoom is most useful for smaller entitites like sections, chapters, and loops,
+zoom is most useful for smaller entities like sections, chapters, and loops,
 rather than for videos).
 
 <span class="ll-phead">Scratch</span>. Use `vx` for **Video › Scratch** to
@@ -165,11 +165,12 @@ scratch loop — the app's work area for looping.
 of the LoopLlama information about a video.
 
 <span class="ll-phead">Delete</span>. Use `vd` for **Video › Delete**, which
-allows you to select a video for deletion. The app also provide an operation
+allows you to select a video for deletion. The app also provides an operation
 to [delete data in bulk](#bulk-delete).
 
-<span class="ll-phead">Unstash</span>. Replaces a local video using a stashed
-copy (see [last-modified checks](#last-modified-checks)).
+<span class="ll-phead">Unstash</span>. Use `vu` for **Video › Unstash**, which
+replaces a local video using a stashed copy (see [last-modified
+checks](#last-modified-checks)).
 
 ## Sections
 
@@ -210,10 +211,10 @@ which allows you to select a section for deletion.
 
 <div class="notice--primary" markdown="1">
 
-  **Menu elipses**. On the Section menu, notice that **Delete** and **Jump**
-  have a trailing elipses. That convention conveys that the operation will
-  occur though an interactive picker where you first select the section to be
-  deleted or jumped to. The other menu items have no elipses, because they
+  **Menu ellipses**. On the Section menu, notice that **Delete** and **Jump**
+  have trailing ellipses. That convention conveys that the operation will
+  occur through an interactive picker where you first select the section to be
+  deleted or jumped to. The other menu items have no ellipses, because they
   operate on the current section — meaning the one where the playhead sits.
 
 </div>
@@ -229,9 +230,9 @@ differences worth pointing out:
 
 <span class="ll-phead">Default timeline view</span>. By default, the timeline
 area shows sections, not chapters. That view can be toggled via `at` and
-LoopLlama will remember each video's most recent setting. Switch to Ex2.
-Notice that regardless of the timeline's current display, the current chapter
-and section, if defined, are both listed in the Current panel.
+LoopLlama will remember each video's most recent setting. Regardless of the
+timeline's current display status, the current chapter and section, if
+defined, are both listed in the **Current** panel.
 
 <span class="ll-phead">Design intent</span>. The app was built with the
 premise that chapters are bigger (for example, songs in a concert) and
@@ -255,8 +256,8 @@ of the app's mission. There are several sub-topics to cover.
 Saved loops are similar to chapters and sections in that they define a range
 via their start and end. They are more generic because their purpose is not to
 partition a video into non-overlapping parts: saved loops can overlap. They
-are displayed at the bottom of the the timeline area as brown line segments
-(below sections, chapters, and marks).
+are displayed at the bottom of the timeline area as brown line segments (below
+sections, chapters, and marks).
 
 The key bindings and menu items for saved loops are similar to those for
 sections and chapters.
@@ -284,7 +285,7 @@ topic.
 ### Scratch loop
 
 As noted above, the scratch loop is the active working area for looping. The
-main looping controls were convered in the [Quick start](#quick-start).
+main looping controls were covered in the [Quick start](#quick-start).
 
 When the scratch loop bounds produce a valid loop — meaning start less than
 end — the text boxes display the values in regular font. When the bounds are
@@ -391,8 +392,8 @@ in invalid loops.
 ### Scratch loop sources
 
 As mentioned above, the **Scratch** operation loads the bounds of a saved
-entity into the scratch loop. Using Ex2, press `sx` to scratch the current
-section. There are several things to notice:
+entity into the scratch loop. Using Ex1, navigate to section "A1" and then
+press `sx` to scratch the current section. There are several things to notice:
 
   - <span class="ll-phead">Looping</span>. Toggled on.
 
@@ -411,9 +412,9 @@ section. There are several things to notice:
     padded region beyond the source bounds, the relevant scratch loop bound is
     highlighted yellow.
 
-  - <span class="ll-phead">Yellow Current Panel range when scratch and source
-    diverge</span>. If you modify the scratch loop bounds, notice that the
-    time range in the Current Panel is displayed in yellow font.
+  - <span class="ll-phead">Yellow **Current** panel range when scratch and
+    source diverge</span>. If you modify the scratch loop bounds, notice that
+    the time range in the **Current** panel is displayed in yellow font.
 
 When the scratch loop has a source, additional operations are available:
 
@@ -468,11 +469,12 @@ type. The previous/next buttons surrounding the dropdown (or the `,` and `.`
 bindings) allow you to navigate efficiently to the start of the previous/next
 chapter, section, loop, or mark.
 
-<span class="ll-phead">Jump history</span>. Navigational jumps of more than 15
-seconds are stored in a jump history that you can traverse. Although the
-history holds up to the last 40 jumps for a video, the primary intent is to
-allow a user to return to their prior location after an inadvertent jump. The
-jump history operations and key bindings are listed on the App menu.
+<a id="jump-history"></a><span class="ll-phead">Jump history</span>.
+Navigational jumps of more than 15 seconds are stored in a jump history that
+you can traverse. Although the history holds up to the last 40 jumps for a
+video, the primary intent is to allow a user to return to their prior location
+after an inadvertent jump. The jump history operations and key bindings are
+listed on the App menu.
 
 ### Time input formats
 
@@ -502,8 +504,8 @@ scratch loop**, which is like **Share video**, but the data covers only the
 scratch loop.
 
 <span class="ll-phead">Export</span>. Use `de` for **Data › Export** to save
-your your LoopLlama data as a JSON file. If you understand how to use the app,
-the data in the file will make sense.
+your LoopLlama data as a JSON file. If you understand how to use the app, the
+data in the file will make sense.
 
 <span class="ll-phead">Import</span>. Use `di` for **Data › Import**, which
 performs that process in reverse: load the data from an exported JSON file
@@ -525,7 +527,7 @@ into LoopLlama — for example on a different browser or computer.
 
 </div>
 
-<span class="ll-phead">Unstash</span>. Use `du` for **Data › Unstash**, to
+<span class="ll-phead">Unstash</span>. Use `vu` for **Video › Unstash**, to
 retrieve a stashed copy of a video (see [last-modified
 checks](#last-modified-checks)).
 
@@ -533,7 +535,7 @@ checks](#last-modified-checks)).
 which displays your LoopLlama data directly in the browser.
 
 <a id="bulk-delete"></a><span class="ll-phead">Bulk deletion</span>. Use `d⌫`
-**Data › Delete** to delete data in bulk — either entire videos or the
+for **Data › Delete** to delete data in bulk — either entire videos or the
 entities within a single video.
 
 ## Cloud storage and sign-in {#why-sign-in}
@@ -568,9 +570,9 @@ out and remove all of your cloud data.
 
 ## App menu
 
-The **App** menu contains a variety of operations and settings. Jump history
-has already been covered, and the two help items are self-evident. The other
-are the following:
+The **App** menu contains a variety of operations and settings. [Jump
+history](#jump-history) has already been covered, and the two help items are
+self-evident. The others are the following:
 
 <span class="ll-phead">Undo</span>. Use `au` for **App › Undo** to reverse a
 prior edit. LoopLlama stores data snapshots for the 20 most recent edits.
@@ -596,10 +598,11 @@ timeline** to change whether the timeline displays sections or chapters.
 turn off any type of timeline zoom (video, chapter, section, saved loop, or
 scratch loop).
 
-<span class="ll-phead">Options</span>. Use `ao` for **App › Options** to
-customize change various settings: seek delta, scratch loop nudge delta, speed
-delta, and loop padding for sections and chapters. See the **Options** modal,
-which provides hover text for each setting to explain the details.
+<a id="app-options"></a><span class="ll-phead">Options</span>. Use `ao` for
+**App › Options** to customize various settings: seek delta, scratch loop
+nudge delta, speed delta, and loop padding for sections and chapters. See the
+**Options** modal, which provides hover text for each setting to explain the
+details.
 
 ## Miscellaneous
 
@@ -655,7 +658,7 @@ credentials with them.
 staff</span>. The LoopLLama app, and developers on the LoopLLama project, can
 access your data. But the project commits to access this information only for
 the purpose of allowing the app to function or to investigate specific
-problems or requests sumitted by you to the LoopLLama team. Similarly, some
+problems or requests submitted by you to the LoopLLama team. Similarly, some
 Supabase staff can access the data in the LoopLLama database, but their access
 is governed in similar ways by Supabase policies.
 
@@ -668,15 +671,15 @@ into your browser.
 cloud data at any time (see the **Account** menu).
 
 <span class="ll-phead">No user-data tracking</span>. LoopLLama does not use
-cookies and does not sell, share, or tranfer your data to any third parties
-— other than backing up your data in Supabase, as noted above. The
-application does track a some events for the purpose of collecting aggregate
-metrics for the project, specifically (1) when a user starts a new LoopLLama
-session and (2) when a user loads a new YouTube URL. In that data, the user is
-represented by a client ID, which is simply a random ID stored in your browser
-that helps us count approximate unique visitors. That ID is not linked to your
-identity. Further, in the data that holds the URL for newly loaded YouTube
-videos, the app purposely omits the client ID.
+cookies and does not sell, share, or transfer your data to any third parties —
+other than backing up your data in Supabase, as noted above. The application
+does track some events for the purpose of collecting aggregate metrics for the
+project, specifically (1) when a user starts a new LoopLLama session and (2)
+when a user loads a new YouTube URL. In that data, the user is represented by
+a client ID, which is simply a random ID stored in your browser that helps us
+count approximate unique visitors. That ID is not linked to your identity.
+Further, in the data that holds the URL for newly loaded YouTube videos, the
+app purposely omits the client ID.
 
 <span class="ll-phead">Shared data is publicly available, but opaque</span>.
 If you ask LoopLLama to create a URL to share either a video or a scratch

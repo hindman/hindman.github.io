@@ -10,7 +10,7 @@
 //   loopSourceStart   -- unpadded start of source entity (seconds) | null
 //   loopSourceEnd     -- unpadded end of source entity (seconds) | null
 //   loopDirty         -- true when scratch-loop bounds differ from source
-//   duration, zoomLabel
+//   duration, zoomLabel, zone2Mode
 
 import { LitElement, html, css } from 'lit';
 
@@ -87,6 +87,7 @@ class LlamaCurrent extends LitElement {
     loopDirty:         { type: Boolean },
     duration:          { type: Number },
     zoomLabel:         { type: String },
+    zone2Mode:         { type: String },
   };
 
   constructor() {
@@ -102,6 +103,7 @@ class LlamaCurrent extends LitElement {
     this.loopDirty         = false;
     this.duration          = null;
     this.zoomLabel         = null;
+    this.zone2Mode         = 'sections';
   }
 
   _fmtDuration(secs) {
@@ -139,6 +141,7 @@ class LlamaCurrent extends LitElement {
           ${this._row('Name',        this.videoName)}
           ${this._row('Video ID',    this.videoId)}
           ${this._row('Duration',    this.duration != null ? this._fmtDuration(this.duration) : null)}
+          ${this._row('Timeline display', this.zone2Mode === 'sections' ? 'Sections' : 'Chapters')}
           ${this._row('Chapter',     this.chapterName)}
           ${this._row('Section',     this.sectionName)}
           <div class="current-row">

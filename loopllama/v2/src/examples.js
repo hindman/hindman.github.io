@@ -8,265 +8,244 @@
 
 export const EXAMPLES = [
 
-  // Ex1: single song, illustrating sections and saved loops.
+  // Ex1: single song, illustrating all entities.
   {
     "id": "zP4lYpsfL8c",
     "url": "https://www.youtube.com/watch?v=zP4lYpsfL8c",
     "name": "Catfish blues — daddystovepipe",
-    "last_modified": 1775284026418,
+    "last_modified": 1775858192218,
     "duration": 250.661,
-    "time": 184.51931994087218,
+    "time": 0,
     "start": 0,
     "end": null,
     "speed": 1,
-    "seek_delta": 10,
+    "seek_delta": 1,
     "nudge_delta": 1,
     "entity_type": "section",
-    "looping": false,
-    "last_opened": 1775284038381,
+    "looping": true,
+    "last_opened": 1775858168685,
     "zone2_mode": "sections",
     "chapters": [
       {
-        "id": "ez84bz8",
-        "end": 50,
-        "name": "Ch1",
-        "start": 0
+        "id": "ug9fe48",
+        "name": "Ch1: intro",
+        "start": 0,
+        "end": null
       },
       {
-        "id": "j1tmegf",
-        "end": 190,
-        "name": "Ch2",
-        "start": 50
+        "id": "icagmb1",
+        "name": "Ch2: A1-A3",
+        "start": 17,
+        "end": null
       },
       {
-        "id": "xdpdttx",
-        "end": null,
-        "name": "Ch3",
-        "start": 190
+        "id": "jqmysbg",
+        "name": "Ch3: solo",
+        "start": 127,
+        "end": null
+      },
+      {
+        "id": "k4kjfe3",
+        "name": "Ch4: A4-A5",
+        "start": 160,
+        "end": null
+      },
+      {
+        "id": "3jhycz1",
+        "name": "Ch5: outro",
+        "start": 220,
+        "end": null
       }
     ],
     "sections": [
       {
         "id": "ojt7aob",
-        "end": 30,
-        "name": "A",
+        "end": null,
+        "name": "Intro",
         "start": 0
       },
       {
-        "id": "fujw0zi",
+        "id": "kszi8qb",
+        "start": 17,
         "end": null,
-        "name": "B",
-        "start": 30
+        "name": "A1"
       },
       {
-        "id": "z3kny04",
+        "id": "xmi5snx",
+        "start": 50,
         "end": null,
-        "name": "Verse 3",
-        "start": 60
+        "name": "A2"
       },
       {
-        "id": "z78dunf",
+        "id": "nkk44dh",
+        "start": 90,
         "end": null,
-        "name": "D",
-        "start": 90
+        "name": "A3"
       },
       {
-        "id": "ir4wr87",
-        "end": 150,
-        "name": "E",
-        "start": 120
-      },
-      {
-        "id": "6oqwyko",
-        "end": 180,
-        "name": "F",
-        "start": 150
-      },
-      {
-        "id": "9hx7i5s",
+        "id": "cs046zs",
+        "start": 127,
         "end": null,
-        "name": "G",
-        "start": 180
+        "name": "Solo"
       },
       {
-        "id": "35z4eir",
+        "id": "zvrk99d",
+        "start": 160,
         "end": null,
-        "name": "H",
-        "start": 210
+        "name": "A4"
+      },
+      {
+        "id": "e36hlwi",
+        "start": 196,
+        "end": null,
+        "name": "A5"
+      },
+      {
+        "id": "l6ov0a8",
+        "start": 220,
+        "end": null,
+        "name": "Outro"
       }
     ],
     "loops": [
       {
         "id": "kf4zydo",
-        "end": 152,
+        "end": 19,
         "name": "",
-        "start": 118,
+        "start": 0,
         "source": null,
         "is_scratch": true
       },
       {
-        "id": "xrui1ho",
-        "end": 58,
-        "name": "x",
-        "start": 48,
+        "id": "m4cj7fs",
+        "name": "Section tag",
+        "start": 76.94232,
+        "end": 90.78550597138977,
         "source": null,
         "is_scratch": false
       },
       {
-        "id": "1q43g89",
-        "end": 165,
-        "name": "a",
-        "start": 133,
+        "id": "qbm6vir",
+        "name": "Solo",
+        "start": 125,
+        "end": 162,
         "source": null,
         "is_scratch": false
       },
       {
-        "id": "k523ku4",
-        "name": "New loop test",
-        "start": 174,
-        "end": 182,
+        "id": "2f0c069",
+        "name": "Outro riff",
+        "start": 225.67748203814696,
+        "end": 233.05485189318847,
         "source": null,
         "is_scratch": false
       }
     ],
     "marks": [
       {
-        "id": "7ym90tn",
-        "name": "",
-        "time": 35.88379595040894
+        "id": "6jkw6w9",
+        "time": 26.310959961853026,
+        "name": "Thumb hit"
       },
       {
-        "id": "7nf1jxv",
-        "name": "",
-        "time": 44.87840707076686
+        "id": "wqz92g0",
+        "time": 46.948387032424925,
+        "name": "E7 trill"
       },
       {
-        "id": "lhhvfvn",
-        "name": "",
-        "time": 53.775559
+        "id": "71y4hzo",
+        "time": 77.48883514305115,
+        "name": "Tag"
       },
       {
-        "id": "117t5g2",
-        "name": "",
-        "time": 80.469793
+        "id": "zszxj65",
+        "time": 127.7603690114441,
+        "name": "Bends"
       },
       {
-        "id": "tbc6hvo",
-        "name": "",
-        "time": 92.0931
-      },
-      {
-        "id": "4sjtlly",
-        "name": "",
-        "time": 104.74525299999999
-      },
-      {
-        "id": "z9u9bk4",
-        "time": 125.01302,
-        "name": ""
-      },
-      {
-        "id": "5zrwms6",
-        "time": 165.47975300000002,
-        "name": ""
-      },
-      {
-        "id": "hw51mo1",
-        "time": 191,
-        "name": "bar"
+        "id": "4mh3h4r",
+        "time": 247.388527,
+        "name": "The look"
       }
     ],
-    "jumps": [
-      108,
-      54.868793093460084,
-      197.11561489700318,
-      65.32864087220764,
-      145.09136292179872,
-      53.74954097711181,
-      138.18416102670287,
-      38.690225078201294,
-      125.01302,
-      155.3077168111725,
-      195.28111511825563,
-      135.899576,
-      135.899576,
-      195.28111511825563,
-      191.614182,
-      113.8034473244147,
-      133,
-      79.847529,
-      133,
-      48,
-      134.907023,
-      175.04630190272522,
-      177.79267208392335,
-      141.5482541525879,
-      129.08855803623962,
-      69.37245104196167,
-      122.67998902861022,
-      123.69034511634827,
-      133.47945,
-      127.03487492561341,
-      109.17357004005432,
-      127.278324,
-      130.7776689809265,
-      137.6048560114441,
-      142.93076216212464,
-      131.87534194850159,
-      17.023211062942504,
-      150,
-      120,
-      90
-    ]
+    "jumps": [ ]
   },
 
   // Ex2: concert video, illustrating chapters.
   {
-    "id": "hf91Y7-WNyw",
-    "url": "https://www.youtube.com/watch?v=hf91Y7-WNyw",
-    "name": "Tommy Emmanuel — Grey Fox Bluegrass Festival",
-    "last_modified": 1775284038380,
-    "duration": 4247.801,
-    "time": 1378.852422,
+    "id": "iZMZ_xk2big",
+    "url": "https://www.youtube.com/watch?v=iZMZ_xk2big",
+    "name": "Edith Pageaud - SiccasGuitars",
+    "last_modified": 1775858065671,
+    "duration": null,
+    "time": 865.092756,
     "start": 0,
     "end": null,
-    "speed": 0.7,
-    "seek_delta": 5,
+    "speed": 1,
+    "seek_delta": 1,
     "nudge_delta": 5,
     "entity_type": "any",
     "looping": true,
-    "last_opened": 1775284026418,
-    "zone2_mode": "sections",
-    "chapters": [],
+    "last_opened": 1775857572383,
+    "zone2_mode": "chapters",
+    "chapters": [
+      {
+        "id": "spssetk",
+        "name": "Passacaglia in B - Biber",
+        "start": 20.679577,
+        "end": null
+      },
+      {
+        "id": "iryfgek",
+        "name": "Sonata 24 - Seixas",
+        "start": 529.937977,
+        "end": null
+      },
+      {
+        "id": "qnm6whl",
+        "name": "Oblivion - Piazzolla",
+        "start": 600,
+        "end": null
+      },
+      {
+        "id": "p9dudc0",
+        "name": "Prelude in C#m - Rachmaninov",
+        "start": 866.751025,
+        "end": null
+      },
+      {
+        "id": "hiqggpp",
+        "name": "Passacaille - Tansman",
+        "start": 1154,
+        "end": null
+      },
+      {
+        "id": "uqdazzl",
+        "name": "Segovia - Presti",
+        "start": 1519,
+        "end": null
+      },
+      {
+        "id": "undm4oa",
+        "name": "Los Caujaritos - Figueredo",
+        "start": 1933.971781,
+        "end": null
+      }
+    ],
     "sections": [],
     "loops": [
       {
-        "id": "10lo1ax",
-        "end": 1788.3115020019075,
+        "id": "jo7cx6f",
         "name": "",
-        "start": 1377.4942189023438,
+        "start": 864.751025,
+        "end": 1156,
         "source": null,
         "is_scratch": true
-      },
-      {
-        "id": "a5xjuvj",
-        "end": 1788.3115020019075,
-        "name": "L1",
-        "start": 1375.4121940362397,
-        "source": null,
-        "is_scratch": false
-      },
-      {
-        "id": "zmixudu",
-        "end": 1788.3115020019075,
-        "name": "L2",
-        "start": 1652.3275259832153,
-        "source": null,
-        "is_scratch": false
       }
     ],
     "marks": [],
-    "jumps": []
-  },
+    "jumps": [ ]
+  }
 
 ];
+

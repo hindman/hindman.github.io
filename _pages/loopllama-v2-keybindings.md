@@ -36,7 +36,7 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 | ----------- | ---------------------
 | `Right`     | Seek forward (supports count)
 | `Left`      | Seek backward (supports count)
-| `Down`      | Seek delta: reduce
+| `Down`      | Seek delta: decrease
 | `Up`        | Seek delta: increase
 | `,`         | Previous entity (supports count)
 | `/`         | Entity-type dropdown
@@ -102,12 +102,12 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 
 | Key         | Operation
 | ----------- | ---------------------
-| `ll`          | Create
-| `le`          | Edit
-| `lx`          | Scratch
-| `lj`          | Jump...
-| `lz`          | Zoom
-| `ld`          | Delete...
+| `ll`        | Create
+| `le`        | Edit
+| `lx`        | Scratch
+| `lj`        | Jump...
+| `lz`        | Zoom
+| `ld`        | Delete...
 
 ## Scratch loop
 
@@ -134,7 +134,7 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 | `]-`        | End: nudge: decrease (supports count)
 | `]=`        | End: nudge: increase (supports count)
 | `]\`        | End: edit
-| `[]` · `][` | Nudge_delta: activate dropdown
+| `[]` · `][` | Nudge delta: activate dropdown
 
 ## Scratch loop edit mode
 

@@ -2313,6 +2313,7 @@ class LlamaApp extends LitElement {
 
   // Export all app data as a downloadable JSON file.
   _exportAll() {
+    this._saveCurrentState();
     const d = new Date();
     const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     _downloadJson(exportAll(this._appState), `loopllama-${date}.json`);
@@ -2941,6 +2942,7 @@ class LlamaApp extends LitElement {
           .loopDirty=${loopDirty}
           .duration=${this.duration}
           .zoomLabel=${zoomLabel}
+          .zone2Mode=${this.zone2Mode}
         ></llama-current>
       </div>
 
