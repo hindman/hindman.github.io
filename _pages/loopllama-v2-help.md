@@ -45,9 +45,9 @@ a musician working through a song, for instance — but the app is not specific
 to music or any other domain.
 
 The keyboard-first design means you can drive the app efficiently:
-Vim-inspired key bindings cover every operation. For those who prefer a mouse,
-the usual menus, buttons, and other controls, plus a clickable visual
-timeline, provide the same access.
+Vim-inspired [key bindings](/loopllama/v2/keybindings/) cover every operation.
+For those who prefer a mouse, the usual menus, buttons, and other controls,
+plus a clickable visual timeline, provide the same access.
 
 ## Quick start {#quick-start}
 
