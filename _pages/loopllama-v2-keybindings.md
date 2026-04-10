@@ -15,21 +15,32 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 | Key         | Operation
 | ----------- | ---------------------
 | `Space`     | Play/pause
-| `-`         | Speed: slower
-| `=`         | Speed: faster
+| `-`         | Speed: decrease (supports count)
+| `=`         | Speed: increase (supports count)
 | `⌫`         | Speed: reset to 100%
+
+<div class="notice--primary" markdown="1">
+
+  **Key binding counts**. Some bindings accept a Vim-style count, meaning that
+  the binding can be prefixed by a number that will multiple the effect of the
+  operation. For example, `5Right` will seek forward by an amount equal to `5`
+  times the seek-delta. The operations that support counts are: speed
+  decrease/increase; seek backward/forward; navigation to previous/next
+  entity; and scratch loop nudge decrease/increase.
+
+</div>
 
 ## Navigation
 
 | Key         | Operation
 | ----------- | ---------------------
-| `Right`     | Seek forward
-| `Left`      | Seek backward
+| `Right`     | Seek forward (supports count)
+| `Left`      | Seek backward (supports count)
 | `Down`      | Seek delta: reduce
 | `Up`        | Seek delta: increase
-| `,`         | Previous entity
+| `,`         | Previous entity (supports count)
 | `/`         | Entity-type dropdown
-| `.`         | Next entity
+| `.`         | Next entity (supports count)
 
 ## Jump
 
@@ -115,13 +126,13 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 | ----------- | ---------------------
 | `[[`        | Start: set now
 | `[⌫`        | Start: reset to video start
-| `[-`        | Start: nudge: decrease
-| `[=`        | Start: nudge: increase
+| `[-`        | Start: nudge: decrease (supports count)
+| `[=`        | Start: nudge: increase (supports count)
 | `[\`        | Start: edit
 | `]]`        | End: set now
 | `]⌫`        | End: reset to video end
-| `]-`        | End: nudge: decrease
-| `]=`        | End: nudge: increase
+| `]-`        | End: nudge: decrease (supports count)
+| `]=`        | End: nudge: increase (supports count)
 | `]\`        | End: edit
 | `[]` · `][` | Nudge_delta: activate dropdown
 
