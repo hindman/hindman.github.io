@@ -1,13 +1,6 @@
 
 ## TODO: LoopLlama v2
 
-Deploy:
-  - beta message to BM
-
-User docs: final read:
-    - MH
-    - CC review
-
 Text elements: Pickers:
   - video        | switch | delete  | restore | .
   - loop         | jump   | scratch | edit    | delete
@@ -50,18 +43,18 @@ Code review and refactor.
   - See _notes/refactoring-prompt.md
   - App limits on N videos?
 
+User docs: final read:
+    - MH
+    - CC review
+
 Dev docs:
   - data-schema.md
   - dev-notes.md
   - architecture-notes.md: have CC summarize how the code is organized and how it works
 
-Real-world usage and testing.
-
-User docs: F5 post: draft
-
-User docs: edit, wrap up (help, banner text, F5 post).
-
-Launch: Make v2 the offial version.
+Launch:
+  - User docs: F5 post: draft
+  - Make v2 the offial version.
 
 ## TODO: The Fifth Fret
 
