@@ -1,6 +1,11 @@
 
 ## TODO: LoopLlama v2
 
+ll-diff:
+  - inv
+  - improve
+  - or both
+
 Text elements: Pickers:
   - video        | switch | delete  | restore | .
   - loop         | jump   | scratch | edit    | delete
