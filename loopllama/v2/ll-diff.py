@@ -1,0 +1,154 @@
+#!/usr/bin/env python3
+"""ll-diff.py -- LoopLlama-savvy JSON diff.
+
+Usage:
+    python3 ll-diff.py <file-a> <file-b>
+
+Compares two LoopLlama export files with awareness of the data structure:
+- Top-level scalar fields (currentVideoId, schema_version, last_modified, etc.)
+- options object (field by field)
+- videos array, keyed by id (not positional)
+  - Within each video, nested arrays (loops, marks, sections, chapters, jumps)
+    are also keyed by id
+
+Ignored intentionally:
+- app_version, build_num  (differ by build, not data)
+- stashes                 (local-only, not part of sync/export comparisons)
+- video array order       (report separately, not as content diffs)
+"""
+
+import json
+import sys
+
+# Top-level keys that are not meaningful to compare.
+IGNORED_TOP = {'app_version', 'build_num', 'stashes'}
+
+# Within a video, these are nested arrays keyed by id.
+NESTED_ARRAY_KEYS = ('loops', 'marks', 'sections', 'chapters', 'jumps')
+
+
+def load(path):
+    with open(path) as f:
+        return json.load(f)
+
+
+def diff_dicts(a, b, ignore=(), path=''):
+    """Yield (path, a_val, b_val) for keys that differ."""
+    all_keys = (set(a) | set(b)) - set(ignore)
+    for k in sorted(all_keys):
+        full = f'{path}.{k}' if path else k
+        av, bv = a.get(k), b.get(k)
+        if av != bv:
+            yield full, av, bv
+
+
+def diff_nested_array(a_items, b_items, key_field, path):
+    """Diff two arrays of objects keyed by key_field. Yields diff lines."""
+    a_map = {item[key_field]: item for item in (a_items or [])
+             if isinstance(item, dict) and key_field in item}
+    b_map = {item[key_field]: item for item in (b_items or [])
+             if isinstance(item, dict) and key_field in item}
+    a_ids, b_ids = set(a_map), set(b_map)
+
+    for id_ in sorted(a_ids - b_ids):
+        yield f'  {path}[{id_}]: only in A'
+    for id_ in sorted(b_ids - a_ids):
+        yield f'  {path}[{id_}]: only in B'
+    for id_ in sorted(a_ids & b_ids):
+        for field, av, bv in diff_dicts(a_map[id_], b_map[id_], path=f'{path}[{id_}]'):
+            yield f'  {field}: A={av!r}  B={bv!r}'
+
+
+def diff_video(av, bv):
+    """Return list of human-readable diff lines for two video objects."""
+    lines = []
+    ignore_in_video = set(NESTED_ARRAY_KEYS)
+    for field, a_val, b_val in diff_dicts(av, bv, ignore=ignore_in_video, path=''):
+        lines.append(f'  {field}: A={a_val!r}  B={b_val!r}')
+    for arr_key in NESTED_ARRAY_KEYS:
+        a_arr = av.get(arr_key, [])
+        b_arr = bv.get(arr_key, [])
+        for line in diff_nested_array(a_arr, b_arr, 'id', arr_key):
+            lines.append(line)
+    return lines
+
+
+def main(path_a, path_b):
+    a = load(path_a)
+    b = load(path_b)
+
+    print(f'A: {path_a}')
+    print(f'B: {path_b}')
+    print()
+
+    # --- Top-level scalars (everything except options and videos) ---
+    top_ignore = IGNORED_TOP | {'options', 'videos'}
+    top_diffs = list(diff_dicts(a, b, ignore=top_ignore))
+    if top_diffs:
+        print('=== Top-level fields ===')
+        for field, av, bv in top_diffs:
+            print(f'  {field}: A={av!r}  B={bv!r}')
+        print()
+
+    # --- options ---
+    a_opts = a.get('options', {})
+    b_opts = b.get('options', {})
+    opt_diffs = list(diff_dicts(a_opts, b_opts))
+    if opt_diffs:
+        print('=== options ===')
+        for field, av, bv in opt_diffs:
+            print(f'  {field}: A={av!r}  B={bv!r}')
+        print()
+
+    # --- videos ---
+    a_vids = {v['id']: v for v in a.get('videos', [])}
+    b_vids = {v['id']: v for v in b.get('videos', [])}
+    a_ids = set(a_vids)
+    b_ids = set(b_vids)
+
+    if a_ids - b_ids:
+        print('=== Videos only in A ===')
+        for id_ in sorted(a_ids - b_ids):
+            print(f'  {id_}  ({a_vids[id_].get("name", "?")})')
+        print()
+
+    if b_ids - a_ids:
+        print('=== Videos only in B ===')
+        for id_ in sorted(b_ids - a_ids):
+            print(f'  {id_}  ({b_vids[id_].get("name", "?")})')
+        print()
+
+    video_diffs = {}
+    for id_ in sorted(a_ids & b_ids):
+        lines = diff_video(a_vids[id_], b_vids[id_])
+        if lines:
+            video_diffs[id_] = lines
+
+    if video_diffs:
+        print('=== Video diffs (shared videos) ===')
+        for id_, lines in video_diffs.items():
+            name = a_vids[id_].get('name', '?')
+            print(f'\n  {id_}  ({name})')
+            for line in lines:
+                print(f'  {line}')
+        print()
+
+    # --- Video order ---
+    a_order = [v['id'] for v in a.get('videos', [])]
+    b_order = [v['id'] for v in b.get('videos', [])]
+    if a_order != b_order:
+        print('=== Video array order differs ===')
+        print('  (content diffs above are not affected by order)')
+        print()
+
+    if not top_diffs and not opt_diffs and not video_diffs \
+            and not (a_ids - b_ids) and not (b_ids - a_ids):
+        order_note = ' (array order differs)' if a_order != b_order else ''
+        print(f'No content differences.{order_note}')
+
+
+if __name__ == '__main__':
+    if len(sys.argv) != 3:
+        print(f'Usage: {sys.argv[0]} <file-a> <file-b>')
+        sys.exit(1)
+    main(sys.argv[1], sys.argv[2])
