@@ -36,7 +36,6 @@ import './llama-marks-picker.js';
 import './llama-edit-mark-modal.js';
 import './llama-sections-picker.js';
 import './llama-edit-section-modal.js';
-import './llama-jump-time-modal.js';
 import './llama-chapter-picker.js';
 import './llama-edit-chapter-modal.js';
 import './llama-current.js';
@@ -349,7 +348,6 @@ class LlamaApp extends LitElement {
     this._editMarkModalEl    = null;
     this._sectionsPickerEl   = null;
     this._editSectionModalEl = null;
-    this._jumpTimeModalEl    = null;
     this._chapterPickerEl      = null;
     this._editChapterModalEl   = null;
     this._videoInfoModalEl     = null;
@@ -1247,7 +1245,6 @@ class LlamaApp extends LitElement {
     this._editMarkModalEl    = this.renderRoot.querySelector('llama-edit-mark-modal');
     this._sectionsPickerEl   = this.renderRoot.querySelector('llama-sections-picker');
     this._editSectionModalEl = this.renderRoot.querySelector('llama-edit-section-modal');
-    this._jumpTimeModalEl    = this.renderRoot.querySelector('llama-jump-time-modal');
     this._chapterPickerEl    = this.renderRoot.querySelector('llama-chapter-picker');
     this._editChapterModalEl = this.renderRoot.querySelector('llama-edit-chapter-modal');
     this._videoInfoModalEl    = this.renderRoot.querySelector('llama-video-info-modal');
@@ -1834,37 +1831,6 @@ class LlamaApp extends LitElement {
     this._saveCurrentState();
   }
 
-  _onLoadLoop(e) {
-    const loop = this.namedLoops.find(l => l.id === e.detail.id);
-    if (!loop) return;
-    this._clearZoomIfOutside(loop.start, loop.end);
-    this.loopStart       = loop.start;
-    this.loopEnd         = loop.end;
-    this.loopSource      = loop.id;
-    this.loopSourceLabel = loop.name || null;
-    this.loopSourceType  = 'loop';
-    this.loopSourceStart = loop.start;
-    this.loopSourceEnd   = loop.end;
-    this.statusMsg       = `Loop loaded: ${loop.name || 'unnamed'}`;
-    if (this.looping) {
-      this._maybePushJump(this._vc?.getCurrentTime() ?? 0, loop.start);
-      this._vc?.seekTo(loop.start);
-    }
-  }
-
-  // Handle ll-scratch-loop from loop picker (mode='scratch'): load into scratch,
-  // no padding, set source tracking. Same behavior as _onLoadLoop.
-  _onScratchLoop(e) {
-    this._onLoadLoop(e);
-  }
-
-  // Handle ll-edit-loop from loop picker (mode='edit'): open save-loop modal
-  // pre-filled with the selected loop's data.
-  _onEditLoop(e) {
-    const loop = this.namedLoops.find(l => l.id === e.detail.id);
-    if (!loop) return;
-    this._saveLoopModalEl?.show(loop);
-  }
 
   // Handle ll-update-loop from save-loop modal (edit mode): update the loop
   // in place, trigger re-render, and persist.
@@ -1881,7 +1847,7 @@ class LlamaApp extends LitElement {
   }
 
   // Handle ll-activate-loop from timeline zone click: activate named loop as
-  // scratch and always seek to its start (unlike _onLoadLoop, no looping guard).
+  // scratch and always seek to its start.
   _onActivateLoop(e) {
     const loop = this.namedLoops.find(l => l.id === e.detail.id);
     if (!loop) return;
@@ -2006,33 +1972,6 @@ class LlamaApp extends LitElement {
     this._jumpToExplicit(e.detail.time);
   }
 
-  // Handle ll-open-section from sections picker (mode='open').
-  // Loads section's range into scratch loop and seeks to section start.
-  _onOpenSection(e) {
-    const section = this.sections.find(s => s.id === e.detail.id);
-    if (!section) return;
-    const bounds = getSectionBounds(this.sections, section.start, this.duration);
-    if (!bounds || bounds.end == null) {
-      this._setWarning('Section has no end boundary.');
-      return;
-    }
-    const padStart = this._appState?.options.loop_pad_start ?? DEFAULT_OPTIONS.loop_pad_start;
-    const padEnd   = this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end;
-    const newStart = Math.max(0, bounds.start - padStart);
-    const newEnd   = bounds.end + padEnd;
-    this._clearZoomIfOutside(newStart, newEnd);
-    this.loopStart       = newStart;
-    this.loopEnd         = newEnd;
-    this.loopSource      = section.id;
-    this.loopSourceLabel = section.name || null;
-    this.loopSourceType  = 'section';
-    this.loopSourceStart = bounds.start;
-    this.loopSourceEnd   = bounds.end;
-    this._autoDisableLoopIfInvalid();
-    this._maybePushJump(this._vc?.getCurrentTime() ?? 0, bounds.start);
-    this._vc?.seekTo(bounds.start);
-    this.statusMsg = `Section: ${section.name || _fmtTimePlain(section.start)}`;
-  }
 
   // Handle ll-update-chapter from edit-chapter-modal.
   _onUpdateChapter(e) {
@@ -2061,11 +2000,6 @@ class LlamaApp extends LitElement {
       this.zoomSource = null;
     }
     this._saveCurrentState();
-  }
-
-  // Handle ll-jump-time from jump-time-modal.
-  _onJumpTime(e) {
-    this._jumpToExplicit(e.detail.time);
   }
 
   // Handle ll-jump-history from jump-history-picker.
@@ -2633,15 +2567,6 @@ class LlamaApp extends LitElement {
     this._jumpToExplicit(e.detail.start);
   }
 
-  // Handle ll-pick-section-edit from sections picker (mode='edit').
-  _onPickSectionEdit(e) {
-    const section = this.sections.find(s => s.id === e.detail.id);
-    if (!section) return;
-    const bounds     = getSectionBounds(this.sections, section.start, this.duration);
-    const derivedEnd = (section.end == null) ? (bounds?.end ?? null) : null;
-    this._editSectionModalEl?.show(section, derivedEnd);
-  }
-
   // Handle ll-update-section from edit-section-modal.
   _onUpdateSection(e) {
     const { id, name, start, end } = e.detail;
@@ -2984,9 +2909,6 @@ class LlamaApp extends LitElement {
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-jump-loop=${this._onJumpLoop}
-        @ll-load-loop=${this._onLoadLoop}
-        @ll-scratch-loop=${this._onScratchLoop}
-        @ll-edit-loop=${this._onEditLoop}
         @ll-delete-loop=${this._onDeleteLoop}
       ></llama-loop-picker>
 
@@ -3010,9 +2932,7 @@ class LlamaApp extends LitElement {
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-jump-section=${this._onJumpSection}
-        @ll-pick-section-edit=${this._onPickSectionEdit}
         @ll-delete-section=${this._onDeleteSection}
-        @ll-open-section=${this._onOpenSection}
       ></llama-sections-picker>
 
       <llama-edit-section-modal
@@ -3020,12 +2940,6 @@ class LlamaApp extends LitElement {
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-update-section=${this._onUpdateSection}
       ></llama-edit-section-modal>
-
-      <llama-jump-time-modal
-        @ll-modal-open=${() => this._kb?.disable()}
-        @ll-modal-close=${() => this._kb?.enable()}
-        @ll-jump-time=${this._onJumpTime}
-      ></llama-jump-time-modal>
 
       <llama-chapter-picker
         .chapters=${this.chapters}

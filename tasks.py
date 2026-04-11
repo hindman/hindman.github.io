@@ -46,6 +46,7 @@ PATHS = cons(
     ll_asset_patt = rf'{LL2_DIR}/assets/index-[\w\-]+\.(?:js|css)',
     ll_deployments = f'{LL2_DIR}/deployments.json',
     ll_version_file = f'{LL2_DIR}/src/version.js',
+    ll_jdiff = f'{LL2_DIR}/jdiff-ll',
 )
 
 VERSION_FMT = dedent('''
@@ -328,6 +329,14 @@ def loc(c):
     exclude = '\/(node_modules|assets)\/'
     exts = '\.(js|css|html)$'
     cmd = f"wc -l $(find {root} | ack -v '{exclude}' | ack '{exts}')"
+    c.run(cmd)
+
+@task
+def jdiff(c, base, other):
+    '''
+    Diffs two LoopLlama data exports: BASE OTHER
+    '''
+    cmd = f'{PATHS.ll_jdiff} {base} {other}'
     c.run(cmd)
 
 ####

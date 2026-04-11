@@ -2,12 +2,11 @@
 //
 // Props:
 //   marks: Array of Mark objects
-//   mode:  'jump' | 'edit' | 'delete'
+//   mode:  'jump' | 'delete'
 //
 // Events fired (composed, bubbling):
-//   ll-jump-mark       { id, time }  -- mode='jump': jump to selected mark
-//   ll-pick-mark-edit  { id }        -- mode='edit': open edit modal for mark
-//   ll-delete-mark     { id }        -- mode='delete': delete the mark
+//   ll-jump-mark   { id, time }  -- mode='jump': jump to selected mark
+//   ll-delete-mark { id }        -- mode='delete': delete the mark
 //
 // API:
 //   show(mode?) / hide()
@@ -19,7 +18,6 @@ import './llama-modal.js';
 
 const TITLES = {
   jump:   'Jump to Mark',
-  edit:   'Edit Mark',
   delete: 'Delete Mark',
 };
 
@@ -136,11 +134,6 @@ class LlamaMarksPicker extends LitElement {
     if (mode === 'jump') {
       this.dispatchEvent(new CustomEvent('ll-jump-mark', {
         detail: { id: mark.id, time: mark.time },
-        bubbles: true, composed: true,
-      }));
-    } else if (mode === 'edit') {
-      this.dispatchEvent(new CustomEvent('ll-pick-mark-edit', {
-        detail: { id: mark.id },
         bubbles: true, composed: true,
       }));
     } else if (mode === 'delete') {
