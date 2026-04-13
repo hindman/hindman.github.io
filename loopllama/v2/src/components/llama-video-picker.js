@@ -15,6 +15,7 @@
 import { LitElement, html, css } from 'lit';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 import './llama-modal.js';
 
 class LlamaVideoPicker extends LitElement {
@@ -75,8 +76,13 @@ class LlamaVideoPicker extends LitElement {
       font-size: var(--ll-text-sm, 0.85rem);
       padding: 0.5rem;
     }
-    .restore-desc {
-      margin: -0.5rem 0 1.25rem;
+    .restore-info {
+      margin: -1.25rem 0 1rem;
+    }
+    .help-icon {
+      font-size: var(--ll-text-xs, 0.75rem);
+      color: var(--ll-text-dim, #aaa);
+      cursor: default;
     }
   `;
 
@@ -234,13 +240,18 @@ class LlamaVideoPicker extends LitElement {
     const filtered   = this._filtered();
     const isDelete   = this.mode === 'delete';
     const isRestore  = this.mode === 'restore';
-    const title = isDelete ? 'Delete Video' : isRestore ? 'Unstash Video' : 'Open Video';
+    const title = isDelete ? 'Delete video' : isRestore ? 'Unstash video' : 'Open video';
     return html`
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
-        ${isRestore ? html`<p class="video-sub restore-desc">Restores a video to its prior version — before the last video replacement during a data read from cloud, data import from JSON, video share via URL, or unstash.</p>` : ''}
+        ${isRestore ? html`
+          <div class="restore-info">
+            <sl-tooltip content="Restores a video to its prior version — before the last video replacement during a data import from JSON, data read from cloud, video load from a share URL, or video unstash.">
+              <span class="help-icon">ⓘ</span>
+            </sl-tooltip>
+          </div>` : ''}
         <div class="filter-wrap">
           <sl-input autocomplete="off"
-            placeholder="Filter by name…"
+            placeholder="Filter by name or ID"
             .value=${this._filter}
             @sl-input=${this._onFilterInput}
             @keydown=${this._onFilterKeyDown}
@@ -263,9 +274,6 @@ class LlamaVideoPicker extends LitElement {
                 </div>
               `)
             : html`<div class="empty">No videos match.</div>`}
-        </div>
-        <div slot="footer">
-          <sl-button @click=${this.hide}>Cancel</sl-button>
         </div>
       </llama-modal>
     `;

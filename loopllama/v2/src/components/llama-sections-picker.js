@@ -17,8 +17,8 @@ import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
 
 const TITLES = {
-  jump:   'Jump to Section',
-  delete: 'Delete Section',
+  jump:   'Jump to section',
+  delete: 'Delete section',
 };
 
 class LlamaSectionsPicker extends LitElement {
@@ -171,7 +171,7 @@ class LlamaSectionsPicker extends LitElement {
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="filter-wrap">
           <sl-input autocomplete="off"
-            placeholder="Filter by name or time…"
+            placeholder="Filter by name or time"
             .value=${this._filter}
             @sl-input=${this._onFilterInput}
             @keydown=${this._onFilterKeyDown}
@@ -196,9 +196,6 @@ class LlamaSectionsPicker extends LitElement {
                 </div>
               `)
             : html`<div class="empty">No sections${this._filter ? ' match.' : ' set.'}</div>`}
-        </div>
-        <div slot="footer">
-          <sl-button @click=${this.hide}>Cancel</sl-button>
         </div>
       </llama-modal>
     `;

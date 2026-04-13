@@ -91,7 +91,7 @@ class LlamaSharedVideoConflictModal extends LitElement {
   render() {
     const showDates = this._localModified || this._sharedModified;
     return html`
-      <llama-modal label="Video already in library"
+      <llama-modal label="Review conflict: shared video"
         @ll-modal-close=${this._onAfterHide}
         @ll-modal-initial-focus=${this._onInitialFocus}
       >

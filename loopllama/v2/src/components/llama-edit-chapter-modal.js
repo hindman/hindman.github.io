@@ -131,7 +131,7 @@ class LlamaEditChapterModal extends LitElement {
   }
 
   render() {
-    const title = 'Edit Chapter';
+    const title = 'Edit chapter';
     const endPlaceholder = (this._derivedEnd != null)
       ? `${_fmtTime(this._derivedEnd)} (derived — leave blank to keep open-ended)`
       : 'Leave blank to derive from next chapter';

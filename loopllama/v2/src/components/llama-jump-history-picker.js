@@ -51,10 +51,6 @@ class LlamaJumpHistoryPicker extends LitElement {
       font-size: var(--ll-text-base, 1.05rem);
       font-variant-numeric: tabular-nums;
     }
-    .jump-idx {
-      font-size: var(--ll-text-sm, 0.85rem);
-      color: var(--ll-text-dim, #aaa);
-    }
     .empty {
       color: var(--ll-text-muted, #666);
       font-size: var(--ll-text-sm, 0.85rem);
@@ -130,7 +126,7 @@ class LlamaJumpHistoryPicker extends LitElement {
   _filtered() {
     // Reverse so newest is at top; include original index for display.
     const reversed = [...this.jumps]
-      .map((time, idx) => ({ time, idx }))
+      .map(time => ({ time }))
       .reverse();
     const q = this._filter.trim().toLowerCase();
     if (!q) return reversed;
@@ -140,10 +136,10 @@ class LlamaJumpHistoryPicker extends LitElement {
   render() {
     const items = this._filtered();
     return html`
-      <llama-modal label="Jump History" @ll-modal-initial-focus=${this._onInitialFocus}>
+      <llama-modal label="Jump history" @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="filter-wrap">
           <sl-input autocomplete="off"
-            placeholder="Filter by time…"
+            placeholder="Filter by time"
             .value=${this._filter}
             @sl-input=${this._onFilterInput}
             @keydown=${this._onFilterKeyDown}
@@ -159,13 +155,9 @@ class LlamaJumpHistoryPicker extends LitElement {
                   @click=${() => this._select(entry)}
                 >
                   <span class="jump-time">${_fmtTime(entry.time)}</span>
-                  <span class="jump-idx">#${entry.idx + 1}</span>
                 </div>
               `)
             : html`<div class="empty">No jump history${this._filter ? ' matches.' : '.'}</div>`}
-        </div>
-        <div slot="footer">
-          <sl-button @click=${this.hide}>Cancel</sl-button>
         </div>
       </llama-modal>
     `;

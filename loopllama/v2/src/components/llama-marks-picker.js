@@ -17,8 +17,8 @@ import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
 
 const TITLES = {
-  jump:   'Jump to Mark',
-  delete: 'Delete Mark',
+  jump:   'Jump to mark',
+  delete: 'Delete mark',
 };
 
 class LlamaMarksPicker extends LitElement {
@@ -162,7 +162,7 @@ class LlamaMarksPicker extends LitElement {
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="filter-wrap">
           <sl-input autocomplete="off"
-            placeholder="Filter by name or time…"
+            placeholder="Filter by name or time"
             .value=${this._filter}
             @sl-input=${this._onFilterInput}
             @keydown=${this._onFilterKeyDown}
@@ -177,16 +177,13 @@ class LlamaMarksPicker extends LitElement {
                   class="mark-row ${isDelete ? 'mode-delete' : ''} ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(m)}
                 >
-                  <div class="mark-primary">${_fmtTime(m.time)}</div>
+                  <div class="mark-primary">${m.name || _fmtTime(m.time)}</div>
                   ${m.name
-                    ? html`<div class="mark-sub">${m.name}</div>`
+                    ? html`<div class="mark-sub">${_fmtTime(m.time)}</div>`
                     : ''}
                 </div>
               `)
             : html`<div class="empty">No marks${this._filter ? ' match.' : ' set.'}</div>`}
-        </div>
-        <div slot="footer">
-          <sl-button @click=${this.hide}>Cancel</sl-button>
         </div>
       </llama-modal>
     `;

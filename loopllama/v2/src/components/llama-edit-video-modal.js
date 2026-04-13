@@ -144,7 +144,7 @@ class LlamaEditVideoModal extends LitElement {
 
   render() {
     return html`
-      <llama-modal label="Edit Video" @ll-modal-initial-focus=${this._onInitialFocus}>
+      <llama-modal label="Edit video" @ll-modal-initial-focus=${this._onInitialFocus}>
         ${this._renderField('Name', 'name', this._name,
             'Short label (e.g. "Autumn Leaves")',
             e => { this._name = e.target.value; })}

@@ -147,7 +147,7 @@ class LlamaSaveLoopModal extends LitElement {
   }
 
   render() {
-    const title  = this._editId ? 'Edit Loop' : 'Save Loop';
+    const title  = this._editId ? 'Edit loop' : 'Save loop';
     const btnLabel = this._editId ? 'Update' : 'Save';
     return html`
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>

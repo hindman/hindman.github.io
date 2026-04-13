@@ -87,7 +87,7 @@ class LlamaCloudStatusModal extends LitElement {
     const d = this._data;
     return html`
       <llama-modal
-        label="Local vs Cloud"
+        label="Compare data: local and cloud"
         width="44rem"
         @ll-modal-initial-focus=${this._onInitialFocus}
       >

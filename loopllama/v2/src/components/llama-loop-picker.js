@@ -18,8 +18,8 @@ import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
 
 const TITLES = {
-  jump:   'Jump to Loop',
-  delete: 'Delete Loop',
+  jump:   'Jump to loop',
+  delete: 'Delete loop',
 };
 
 class LlamaLoopPicker extends LitElement {
@@ -159,20 +159,14 @@ class LlamaLoopPicker extends LitElement {
     const q = this._filter.trim().toLowerCase();
     if (!q) return this.namedLoops;
     return this.namedLoops.filter(l =>
-      (l.name || '').toLowerCase().includes(q)
+      (l.name || '').toLowerCase().includes(q) ||
+      _fmtRange(l.start, l.end).includes(q)
     );
   }
 
-  // Display label: name if present, otherwise positional rank "#N" by start.
-  _displayLabel(loop) {
-    if (loop.name) return loop.name;
-    const rank = this.namedLoops.indexOf(loop) + 1;
-    return `#${rank}`;
-  }
-
-  // Sub-label: start–end range as m:ss–m:ss.
-  _subLabel(loop) {
-    return `${_fmtTime(loop.start)} – ${_fmtTime(loop.end)}`;
+  // Range as m:ss – m:ss.
+  _range(loop) {
+    return _fmtRange(loop.start, loop.end);
   }
 
   render() {
@@ -183,7 +177,7 @@ class LlamaLoopPicker extends LitElement {
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="filter-wrap">
           <sl-input autocomplete="off"
-            placeholder="Filter by name…"
+            placeholder="Filter by name or time"
             .value=${this._filter}
             @sl-input=${this._onFilterInput}
             @keydown=${this._onFilterKeyDown}
@@ -201,14 +195,13 @@ class LlamaLoopPicker extends LitElement {
                     ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(l)}
                 >
-                  <div class="loop-primary">${this._displayLabel(l)}</div>
-                  <div class="loop-sub">${this._subLabel(l)}</div>
+                  <div class="loop-primary">${l.name || this._range(l)}</div>
+                  ${l.name
+                    ? html`<div class="loop-sub">${this._range(l)}</div>`
+                    : ''}
                 </div>
               `)
             : html`<div class="empty">No loops${this._filter ? ' match.' : ' saved.'}</div>`}
-        </div>
-        <div slot="footer">
-          <sl-button @click=${this.hide}>Cancel</sl-button>
         </div>
       </llama-modal>
     `;
@@ -220,6 +213,10 @@ function _fmtTime(secs) {
   if (secs == null || isNaN(secs)) return '?';
   const s = Math.floor(secs);
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+}
+
+function _fmtRange(start, end) {
+  return `${_fmtTime(start)} – ${_fmtTime(end)}`;
 }
 
 customElements.define('llama-loop-picker', LlamaLoopPicker);

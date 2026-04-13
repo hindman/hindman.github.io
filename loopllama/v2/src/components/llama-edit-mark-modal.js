@@ -89,7 +89,7 @@ class LlamaEditMarkModal extends LitElement {
 
   render() {
     return html`
-      <llama-modal label="Edit Mark" @ll-modal-initial-focus=${this._onInitialFocus}>
+      <llama-modal label="Edit mark" @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="field-row">
           <span class="field-label">Name</span>
           <sl-input autocomplete="off"

@@ -17,8 +17,8 @@ import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
 
 const TITLES = {
-  delete: 'Delete Chapter',
-  jump:   'Jump to Chapter',
+  delete: 'Delete chapter',
+  jump:   'Jump to chapter',
 };
 
 class LlamaChapterPicker extends LitElement {
@@ -51,6 +51,13 @@ class LlamaChapterPicker extends LitElement {
       border-color: var(--ll-accent, #7ec8e3);
       outline: none;
     }
+    .chapter-row.active {
+      border-color: var(--ll-accent-warm, #e3a857);
+    }
+    .chapter-row.active.selected {
+      border-color: var(--ll-accent-warm, #e3a857);
+      box-shadow: 0 0 0 1px var(--ll-accent, #7ec8e3);
+    }
     .chapter-row.mode-delete:hover,
     .chapter-row.mode-delete.selected {
       border-color: var(--sl-color-danger-600, #c0392b);
@@ -71,18 +78,20 @@ class LlamaChapterPicker extends LitElement {
   `;
 
   static properties = {
-    chapters: { type: Array },
-    mode:     { type: String },
-    _filter:  { state: true },
-    _selIdx:  { state: true },
+    chapters:        { type: Array },
+    mode:            { type: String },
+    activeChapterId: { type: String },
+    _filter:         { state: true },
+    _selIdx:         { state: true },
   };
 
   constructor() {
     super();
-    this.chapters = [];
-    this.mode     = 'jump';
-    this._filter  = '';
-    this._selIdx  = 0;
+    this.chapters        = [];
+    this.mode            = 'jump';
+    this.activeChapterId = null;
+    this._filter         = '';
+    this._selIdx         = 0;
   }
 
   show(mode) {
@@ -149,7 +158,7 @@ class LlamaChapterPicker extends LitElement {
     if (!q) return this.chapters;
     return this.chapters.filter(c =>
       (c.name || '').toLowerCase().includes(q) ||
-      _fmtRange(c.start, c.end).includes(q)
+      _fmtTime(c.start).includes(q)
     );
   }
 
@@ -161,7 +170,7 @@ class LlamaChapterPicker extends LitElement {
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="filter-wrap">
           <sl-input autocomplete="off"
-            placeholder="Filter by name or time…"
+            placeholder="Filter by name or time"
             .value=${this._filter}
             @sl-input=${this._onFilterInput}
             @keydown=${this._onFilterKeyDown}
@@ -175,19 +184,17 @@ class LlamaChapterPicker extends LitElement {
                 <div
                   class="chapter-row
                     ${isDelete ? 'mode-delete' : ''}
+                    ${c.id === this.activeChapterId ? 'active' : ''}
                     ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(c)}
                 >
-                  <div class="chapter-primary">${c.name || _fmtRange(c.start, c.end)}</div>
+                  <div class="chapter-primary">${c.name || _fmtTime(c.start)}</div>
                   ${c.name
-                    ? html`<div class="chapter-sub">${_fmtRange(c.start, c.end)}</div>`
+                    ? html`<div class="chapter-sub">${_fmtTime(c.start)}</div>`
                     : ''}
                 </div>
               `)
             : html`<div class="empty">No chapters${this._filter ? ' match.' : ' set.'}</div>`}
-        </div>
-        <div slot="footer">
-          <sl-button @click=${this.hide}>Cancel</sl-button>
         </div>
       </llama-modal>
     `;
@@ -200,8 +207,5 @@ function _fmtTime(secs) {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
 
-function _fmtRange(start, end) {
-  return `${_fmtTime(start)} → ${_fmtTime(end)}`;
-}
 
 customElements.define('llama-chapter-picker', LlamaChapterPicker);

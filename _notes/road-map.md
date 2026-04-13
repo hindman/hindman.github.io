@@ -1,34 +1,42 @@
 
 ## TODO: LoopLlama v2
 
-Text elements: pickers: [inventory correct]
-  - video-open
-  - video-delete
-  - video-unstash
-  - chapter-jump
-  - chapter-delete
-  - section-jump
-  - section-delete
-  - loop-jump
-  - loop-delete
-  - mark-jump
-  - mark-delete
-  - jump-history
+Text elements: pickers:
 
-Text elements: modals: [inventory correct]
-  - video-load-url
-  - video-edit
-  - video-info
-  - chapter-edit
-  - section-edit
-  - loop-edit
-  - mark-edit
-  - data-inspect
-  - data-compare
-  - data-delete-bulk
-  - shared-video-conflict (dv conflict)
-  - data-op (ds/dr/di conflict)
-  - app-options
+  video-open     | Open video      | .
+  video-delete   | Delete video    | .
+  video-unstash  | Unstash video   | .
+  chapter-jump   | Jump to chapter | .
+  chapter-delete | Delete chapter  | .
+  section-jump   | Jump to section | .
+  section-delete | Delete section  | .
+  loop-jump      | Jump to loop    | .
+  loop-delete    | Delete loop     | .
+  mark-jump      | Jump to mark    | .
+  mark-delete    | Delete mark     | .
+  jump-history   | Jump history    | .
+
+Text elements: modals:
+
+  video-load-url        | Load Video                    | .
+  video-edit            | Edit Video                    | .
+  video-info            | Video Info                    | .
+  chapter-edit          | Edit Chapter                  | .
+  section-edit          | Edit Section                  | .
+  loop-edit             | Edit Loop                     | .
+  mark-edit             | Edit Mark                     | .
+  data-inspect          | Inspect data                  | .
+  data-compare          | Compare data: local and cloud | .
+  data-delete-bulk      | Delete data                   | .
+  app-options           | Options                       | .
+  shared-video-conflict | Review conflict: shared video | .
+  data-op (di)          | Review conflict: import data  | .
+  data-op (dr)          | Review conflict: cloud read   | .
+  data-op (ds)          | Review conflict: cloud save   | .
+
+  - Notes:
+    - shared-video-conflict | dv conflict: Ex URL: http://localhost:5173/loopllama/v2/?share=9J3X8AB_yP
+    - data-op               | ds/dr/di conflict
 
 Text elements: messages:
 

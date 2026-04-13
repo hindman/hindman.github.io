@@ -68,7 +68,7 @@ class LlamaUrlInputModal extends LitElement {
   render() {
     return html`
       <llama-modal
-        label="Load Video"
+        label="Load video"
         @ll-modal-initial-focus=${this._onInitialFocus}
       >
         <sl-input autocomplete="off"

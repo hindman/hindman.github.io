@@ -316,7 +316,7 @@ class LlamaDeleteDataModal extends LitElement {
   render() {
     const count = this._getSelectedCount();
     return html`
-      <llama-modal label="Delete Video Data" @ll-modal-close=${this._onModalClose}>
+      <llama-modal label="Delete data" @ll-modal-close=${this._onModalClose}>
         <div class="mode-toggle">
           <button
             class="mode-btn ${this._mode === 'current' ? 'active' : ''}"

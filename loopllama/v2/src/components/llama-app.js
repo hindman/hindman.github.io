@@ -2087,7 +2087,7 @@ class LlamaApp extends LitElement {
 
     if (conflicts.length > 0 || orphans.length > 0) {
       const result = await this._showDataOp({
-        operation:        'Save to cloud',
+        operation:        'cloud save',
         conflicts:        conflicts.map(v => v.name || v.id),
         orphans:          orphans.map(v => v.name || v.id),
         conflictsHeader:  'Cloud newer',
@@ -2188,7 +2188,7 @@ class LlamaApp extends LitElement {
 
     if (conflicts.length > 0 || orphans.length > 0) {
       const result = await this._showDataOp({
-        operation:        'Read from cloud',
+        operation:        'cloud read',
         conflicts:        conflicts.map(v => v.name || v.id),
         orphans:          orphans.map(v => v.name || v.id),
         conflictsHeader:  'Local newer',
@@ -2331,7 +2331,7 @@ class LlamaApp extends LitElement {
 
     if (conflicts.length > 0 || orphans.length > 0) {
       const result = await this._showDataOp({
-        operation:        'Import JSON',
+        operation:        'import data',
         conflicts:        conflicts.map(v => v.name || v.id),
         orphans:          orphans.map(v => v.name || v.id),
         conflictsHeader:  'Local newer',
@@ -2467,7 +2467,7 @@ class LlamaApp extends LitElement {
       });
       if (!replace) {
         this.statusMsg = `Skipped: "${displayName}" already in your library.`;
-        return;
+        return false;
       }
       // Stash the current version before replacing.
       this._appState.stashes[video.id] = JSON.parse(JSON.stringify(video));
@@ -2501,6 +2501,7 @@ class LlamaApp extends LitElement {
     this._save();
     logVideoLoad(video.id);
     this.statusMsg = `Shared video loaded: ${displayName}`;
+    return true;
   }
 
   // Check for a Supabase share (?share=id) or legacy loop URL (?v=id&s=start&e=end).
@@ -2508,17 +2509,18 @@ class LlamaApp extends LitElement {
   async _handleStartupShare() {
     const shareId = shareIdFromUrl();
     if (shareId) {
+      let applied = false;
       try {
         const share = await fetchShare(shareId);
-        if (share.share_type === 'loop')  this._applyLoopShare(share.payload);
-        if (share.share_type === 'video') await this._applyVideoShare(share.payload);
+        if (share.share_type === 'loop')  { this._applyLoopShare(share.payload); applied = true; }
+        if (share.share_type === 'video') applied = await this._applyVideoShare(share.payload) ?? false;
       } catch (err) {
         this.errorMsg = `Could not load shared content: ${err.message}`;
       }
       const clean = new URL(window.location.href);
       clean.searchParams.delete('share');
       history.replaceState(null, '', clean.toString());
-      return true;
+      return applied;
     }
 
     // Legacy: ?v=id&s=start&e=end
@@ -2943,6 +2945,7 @@ class LlamaApp extends LitElement {
 
       <llama-chapter-picker
         .chapters=${this.chapters}
+        .activeChapterId=${nearestChapterLeft(this.chapters, this.currentTime)?.id ?? null}
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-jump-chapter=${this._onJumpChapter}

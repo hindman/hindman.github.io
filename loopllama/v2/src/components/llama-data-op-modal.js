@@ -204,8 +204,8 @@ class LlamaDataOpModal extends LitElement {
 
   render() {
     const title = this._operation
-      ? `${this._operation}: review changes`
-      : 'Review changes';
+      ? `Review conflict: ${this._operation}`
+      : 'Review conflict';
     return html`
       <llama-modal
         label=${title}

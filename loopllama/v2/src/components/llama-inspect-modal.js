@@ -66,7 +66,7 @@ class LlamaInspectModal extends LitElement {
   render() {
     return html`
       <llama-modal
-        label="Inspect App Data"
+        label="Inspect data"
         width="60vw"
         @ll-modal-initial-focus=${this._onInitialFocus}
       >

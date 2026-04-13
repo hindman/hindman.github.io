@@ -259,7 +259,7 @@ class LlamaVideoInfoModal extends LitElement {
 
   render() {
     return html`
-      <llama-modal label="Video Info" @ll-modal-close=${this._onModalClose}>
+      <llama-modal label="Video info" @ll-modal-close=${this._onModalClose}>
         <div class="content">
           <div class="section-heading">Video</div>
           ${this._renderVideo()}

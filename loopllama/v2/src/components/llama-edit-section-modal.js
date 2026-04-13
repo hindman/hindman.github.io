@@ -129,7 +129,7 @@ class LlamaEditSectionModal extends LitElement {
       : 'Leave blank to derive from next section';
 
     return html`
-      <llama-modal label="Edit Section" @ll-modal-initial-focus=${this._onInitialFocus}>
+      <llama-modal label="Edit section" @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="field-row">
           <span class="field-label">Name</span>
           <sl-input autocomplete="off"
