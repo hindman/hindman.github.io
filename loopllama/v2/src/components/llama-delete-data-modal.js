@@ -50,11 +50,6 @@ class LlamaDeleteDataModal extends LitElement {
       font-size: var(--ll-text-sm, 0.85rem);
       padding: 0.5rem 0;
     }
-    .current-video-label {
-      font-size: var(--ll-text-sm, 0.85rem);
-      color: var(--ll-text-dim, #aaa);
-      margin-bottom: 0.75rem;
-    }
     .group {
       margin-bottom: 0.85rem;
     }
@@ -75,15 +70,19 @@ class LlamaDeleteDataModal extends LitElement {
     }
     .item-row {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 0.5rem;
       font-size: var(--ll-text-sm, 0.85rem);
+    }
+    .item-text {
+      min-width: 0;
     }
     .item-label {
       color: var(--ll-text, #e0e0e0);
     }
     .item-sub {
       color: var(--ll-text-dim, #aaa);
+      margin-left: 0.3em;
     }
     input[type="checkbox"] {
       cursor: pointer;
@@ -103,7 +102,6 @@ class LlamaDeleteDataModal extends LitElement {
     _chapters:         { state: true },
     _videos:           { state: true },
     _currentVideoId:   { state: true },
-    _currentVideoName: { state: true },
   };
 
   constructor() {
@@ -116,7 +114,6 @@ class LlamaDeleteDataModal extends LitElement {
     this._chapters         = [];
     this._videos           = [];
     this._currentVideoId   = null;
-    this._currentVideoName = null;
     this._keyHandler       = null;
   }
 
@@ -133,7 +130,6 @@ class LlamaDeleteDataModal extends LitElement {
       (a, b) => (a.name || a.id).localeCompare(b.name || b.id, undefined, { sensitivity: 'base' })
     );
     this._currentVideoId   = currentVideoId   ?? null;
-    this._currentVideoName = currentVideoName ?? null;
     this._checked          = preCheckedVideoId ? { [preCheckedVideoId]: true } : {};
     this.renderRoot.querySelector('llama-modal')?.show();
     this._addKeyHandler();
@@ -231,21 +227,18 @@ class LlamaDeleteDataModal extends LitElement {
       return html`<div class="empty-msg">Current video has no entities to delete.</div>`;
     }
     return html`
-      <div class="current-video-label">
-        Video: ${this._currentVideoName || this._currentVideoId}
-      </div>
+${this._renderGroup('Chapters', this._chapters,
+          c => html`<span class="item-label">${c.name || ''}</span>
+                    <span class="item-sub">${_fmtTime(c.start)}</span>`)}
       ${this._renderGroup('Sections', this._sections,
           s => html`<span class="item-label">${s.name || ''}</span>
-                    <span class="item-sub">@${_fmtTime(s.start)}</span>`)}
+                    <span class="item-sub">${_fmtTime(s.start)}</span>`)}
       ${this._renderGroup('Loops', this._loops,
           l => html`<span class="item-label">${l.name || ''}</span>
                     <span class="item-sub">${_fmtTime(l.start)} – ${_fmtTime(l.end)}</span>`)}
       ${this._renderGroup('Marks', this._marks,
           m => html`<span class="item-label">${m.name || ''}</span>
-                    <span class="item-sub">@${_fmtTime(m.time)}</span>`)}
-      ${this._renderGroup('Chapters', this._chapters,
-          c => html`<span class="item-label">${c.name || ''}</span>
-                    <span class="item-sub">${_fmtTime(c.start)} – ${_fmtTime(c.end)}</span>`)}
+                    <span class="item-sub">${_fmtTime(m.time)}</span>`)}
     `;
   }
 
@@ -263,7 +256,7 @@ class LlamaDeleteDataModal extends LitElement {
             .indeterminate=${state === 'some'}
             @change=${() => this._onGroupChange(this._videos)}
           >
-          <span>All videos (${this._videos.length})</span>
+          <span>Videos (${this._videos.length})</span>
         </div>
         <div class="group-items">
           ${this._videos.map(v => html`
@@ -273,8 +266,7 @@ class LlamaDeleteDataModal extends LitElement {
                 .checked=${this._isChecked(v.id)}
                 @change=${() => this._toggle(v.id)}
               >
-              <span class="item-label">${v.name || v.id}</span>
-              ${v.name ? html`<span class="item-sub">${v.id}</span>` : ''}
+              <div class="item-text"><span class="item-label">${v.name || v.id}</span>${v.name ? html`<span class="item-sub">${v.id}</span>` : ''}</div>
             </div>
           `)}
         </div>

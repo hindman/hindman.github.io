@@ -3,52 +3,32 @@
 
 Text elements: modals:
 
-  video-load-url        | Load Video                    | .
-  video-edit            | Edit Video                    | .
-  video-info            | Video Info                    | .
-  chapter-edit          | Edit Chapter                  | .
-  section-edit          | Edit Section                  | .
-  loop-edit             | Edit Loop                     | .
-  mark-edit             | Edit Mark                     | .
-  data-inspect          | Inspect data                  | .
-  data-compare          | Compare data: local and cloud | .
-  data-delete-bulk      | Delete data                   | .
+  video-load-url        | Load Video                    | done
+  video-edit            | Edit Video                    | done
+  video-info            | Video Info                    | done
+  chapter-edit          | Edit Chapter                  | done
+  section-edit          | Edit Section                  | done
+  loop-edit             | Edit Loop                     | done
+  mark-edit             | Edit Mark                     | done
+  data-inspect          | Inspect data                  | done
+  data-compare          | Compare data: local and cloud | done
+  data-delete-bulk      | Delete data                   | done
   app-options           | Options                       | .
   shared-video-conflict | Review conflict: shared video | .
   data-op (di)          | Review conflict: import data  | .
   data-op (dr)          | Review conflict: cloud read   | .
   data-op (ds)          | Review conflict: cloud save   | .
 
-  - DONE:
-
-    video-load-url | Load Video
-    video-edit     | Edit Video
-    video-info     | Video Info
-    chapter-edit   | Edit Chapter
-    section-edit   | Edit Section
-    loop-edit      | Edit Loop
-    mark-edit      | Edit Mark
-    data-inspect   | Inspect data
-    data-compare   | Compare data: local and cloud
-
   - TODO:
 
-    data-delete-bulk      | Delete data
-      - .
     app-options           | Options
-      - .
     shared-video-conflict | Review conflict: shared video
-      - .
     data-op (di)          | Review conflict: import data
-      - .
     data-op (dr)          | Review conflict: cloud read
-      - .
     data-op (ds)          | Review conflict: cloud save
-      - .
 
-  - Notes:
-    - shared-video-conflict | dv conflict: Ex URL: http://localhost:5173/loopllama/v2/?share=9J3X8AB_yP
-    - data-op               | ds/dr/di conflict
+    - shared-video-conflict URL:
+      http://localhost:5173/loopllama/v2/?share=9J3X8AB_yP
 
 Text elements: messages:
 
