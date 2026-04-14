@@ -44,9 +44,11 @@ class LlamaCloudStatusModal extends LitElement {
     .status-empty {
       color: var(--ll-text-muted, #888);
       font-style: italic;
+      padding-left: 0.75rem;
     }
     .status-count {
       color: var(--ll-text-muted, #888);
+      padding-left: 0.75rem;
     }
   `;
 
@@ -93,10 +95,10 @@ class LlamaCloudStatusModal extends LitElement {
       >
         ${d ? html`
           <div class="status-body">
-            ${this._renderSection('Local only (not in cloud)', d.localOnly)}
-            ${this._renderSection('Local is newer', d.localNewer)}
-            ${this._renderSection('Cloud only (not in local)', d.cloudOnly)}
-            ${this._renderSection('Cloud is newer', d.cloudNewer)}
+            ${this._renderSection('Local only', d.localOnly)}
+            ${this._renderSection('Local newer', d.localNewer)}
+            ${this._renderSection('Cloud only', d.cloudOnly)}
+            ${this._renderSection('Cloud newer', d.cloudNewer)}
             <div class="status-section">
               <div class="status-label">In sync</div>
               <div class="status-count">
@@ -106,7 +108,7 @@ class LlamaCloudStatusModal extends LitElement {
           </div>
         ` : ''}
         <div slot="footer">
-          <sl-button @click=${() => this.hide()}>Close</sl-button>
+          <sl-button variant="primary" @click=${() => this.hide()}>Close</sl-button>
         </div>
       </llama-modal>
     `;

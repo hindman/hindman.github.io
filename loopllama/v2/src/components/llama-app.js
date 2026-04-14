@@ -1535,12 +1535,11 @@ class LlamaApp extends LitElement {
 
   // Handle ll-update-video from the edit-video-modal.
   _onUpdateVideo(e) {
-    const { id, name, url, start, end } = e.detail;
+    const { id, name, start, end } = e.detail;
     const video = this._appState?.videos.find(v => v.id === id);
     if (!video) return;
     this._pushUndoSnapshot('Video updated');
     video.name  = name;
-    video.url   = url;
     video.start = start;
     video.end   = end;
     this.videos = [...this._appState.videos];

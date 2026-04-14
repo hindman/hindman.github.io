@@ -147,23 +147,22 @@ class LlamaSaveLoopModal extends LitElement {
   }
 
   render() {
-    const title  = this._editId ? 'Edit loop' : 'Save loop';
-    const btnLabel = this._editId ? 'Update' : 'Save';
+    const title = this._editId ? 'Edit loop' : 'Save loop';
     return html`
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
-        ${this._renderField('Name (optional)', 'name', this._name,
-            'Short label (e.g. "outro lick")',
+        ${this._renderField('Name', 'name', this._name,
+            'Name',
             e => { this._name = e.target.value; })}
         ${this._renderField('Start', 'start', this._start,
-            'm:ss',
+            'Start',
             e => { this._start = e.target.value; this._startEdited = true; })}
         ${this._renderField('End', 'end', this._end,
-            'm:ss',
+            'End',
             e => { this._end = e.target.value; this._endEdited = true; })}
-        ${this._error ? html`<div class="error">${this._error}</div>` : ''}
+        <div class="error" style=${this._error ? '' : 'visibility: hidden'}>${this._error || '\u00a0'}</div>
         <div slot="footer">
           <sl-button @click=${this.hide}>Cancel</sl-button>
-          <sl-button variant="primary" @click=${this._save}>${btnLabel}</sl-button>
+          <sl-button variant="primary" @click=${this._save}>Save</sl-button>
         </div>
       </llama-modal>
     `;

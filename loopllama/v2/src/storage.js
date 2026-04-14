@@ -1,6 +1,6 @@
 // storage.js -- localStorage persistence, JSON export/import, and Supabase cloud sync.
 
-import { APP_VERSION, SCHEMA_VERSION } from './state.js';
+import { APP_VERSION, SCHEMA_VERSION, canonicalVideoUrl } from './state.js';
 import { BUILD_NUM } from './version.js';
 import { supabase } from './supabase.js';
 
@@ -25,6 +25,8 @@ export function migrateVideo(video) {
   }
   // Strip any lingering schema_version from the video object.
   delete video.schema_version;
+  // Standardize URL to canonical form.
+  if (video.id) video.url = canonicalVideoUrl(video.id);
   return video;
 }
 
@@ -100,6 +102,13 @@ function _migrateAppState(state) {
   if ((state.schema_version ?? 0) < 9) {
     if (!state.stashes) state.stashes = {};
     state.schema_version = 9;
+  }
+  // v9 → v10: standardize video URLs to canonical form.
+  if ((state.schema_version ?? 0) < 10) {
+    for (const video of state.videos ?? []) {
+      video.url = canonicalVideoUrl(video.id);
+    }
+    state.schema_version = 10;
   }
   return state;
 }

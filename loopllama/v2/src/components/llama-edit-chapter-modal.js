@@ -132,21 +132,21 @@ class LlamaEditChapterModal extends LitElement {
 
   render() {
     const title = 'Edit chapter';
-    const endPlaceholder = (this._derivedEnd != null)
-      ? `${_fmtTime(this._derivedEnd)} (derived — leave blank to keep open-ended)`
-      : 'Leave blank to derive from next chapter';
+    const endPlaceholder = this._derivedEnd != null
+      ? `${_fmtTime(this._derivedEnd)} (derived)`
+      : '';
     return html`
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
-        ${this._renderField('Name (optional)', 'name', this._name,
-            'e.g. "Verse", "Bridge"',
+        ${this._renderField('Name', 'name', this._name,
+            'Name',
             e => { this._name = e.target.value; })}
         ${this._renderField('Start', 'start', this._start,
-            'm:ss',
+            'Start',
             e => { this._start = e.target.value; this._startEdited = true; })}
-        ${this._renderField('End — optional', 'end', this._end,
+        ${this._renderField('End', 'end', this._end,
             endPlaceholder,
             e => { this._end = e.target.value; this._endEdited = true; })}
-        ${this._error ? html`<div class="error">${this._error}</div>` : ''}
+        <div class="error" style=${this._error ? '' : 'visibility: hidden'}>${this._error || '\u00a0'}</div>
         <div slot="footer">
           <sl-button @click=${this.hide}>Cancel</sl-button>
           <sl-button variant="primary" @click=${this._save}>Save</sl-button>

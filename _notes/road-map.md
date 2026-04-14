@@ -1,21 +1,6 @@
 
 ## TODO: LoopLlama v2
 
-Text elements: pickers:
-
-  video-open     | Open video      | .
-  video-delete   | Delete video    | .
-  video-unstash  | Unstash video   | .
-  chapter-jump   | Jump to chapter | .
-  chapter-delete | Delete chapter  | .
-  section-jump   | Jump to section | .
-  section-delete | Delete section  | .
-  loop-jump      | Jump to loop    | .
-  loop-delete    | Delete loop     | .
-  mark-jump      | Jump to mark    | .
-  mark-delete    | Delete mark     | .
-  jump-history   | Jump history    | .
-
 Text elements: modals:
 
   video-load-url        | Load Video                    | .
@@ -33,6 +18,33 @@ Text elements: modals:
   data-op (di)          | Review conflict: import data  | .
   data-op (dr)          | Review conflict: cloud read   | .
   data-op (ds)          | Review conflict: cloud save   | .
+
+  - DONE:
+
+    video-load-url | Load Video
+    video-edit     | Edit Video
+    video-info     | Video Info
+    chapter-edit   | Edit Chapter
+    section-edit   | Edit Section
+    loop-edit      | Edit Loop
+    mark-edit      | Edit Mark
+    data-inspect   | Inspect data
+    data-compare   | Compare data: local and cloud
+
+  - TODO:
+
+    data-delete-bulk      | Delete data
+      - .
+    app-options           | Options
+      - .
+    shared-video-conflict | Review conflict: shared video
+      - .
+    data-op (di)          | Review conflict: import data
+      - .
+    data-op (dr)          | Review conflict: cloud read
+      - .
+    data-op (ds)          | Review conflict: cloud save
+      - .
 
   - Notes:
     - shared-video-conflict | dv conflict: Ex URL: http://localhost:5173/loopllama/v2/?share=9J3X8AB_yP
@@ -230,6 +242,21 @@ Text elements: messages:
   5. The `"Shared loop loaded:"` message appears in two contexts: the modern
      Supabase share system (startup) and the legacy `?v=&s=&e=` URL params —
      both produce the same prefix but different formatting of the time range.
+
+Text elements: pickers: [done]
+
+  video-open     | Open video      | .
+  video-delete   | Delete video    | .
+  video-unstash  | Unstash video   | .
+  chapter-jump   | Jump to chapter | .
+  chapter-delete | Delete chapter  | .
+  section-jump   | Jump to section | .
+  section-delete | Delete section  | .
+  loop-jump      | Jump to loop    | .
+  loop-delete    | Delete loop     | .
+  mark-jump      | Jump to mark    | .
+  mark-delete    | Delete mark     | .
+  jump-history   | Jump history    | .
 
 Text elements: Current panel [checked; OK]
   - Name

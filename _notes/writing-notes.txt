@@ -35,3 +35,31 @@ Why most guitar players should focus:
     Justin Sandercoe
     https://www.youtube.com/watch?v=Gse5EuM_HWU
 
+Craftsmanship and an the case for AI optimism
+
+    https://longreads.com/2026/03/26/craft-in-defiance-of-ai-peter-wayne-moe/
+
+    I can relate very much to the quest for craftsmanship in the essay but all of
+    the talk about AI and academia strikes me as backwards. For two reasons:
+
+    (1) Most students have long had other priorities. I did all of the academic
+    things, worked at universities for two decades. I can assure you that most
+    college students in my history classes in the 80s and 90s were largely checked
+    out — well before smart phones, AI, or whatever the next bogeyman will be.
+    Academically interested and capable students, willing to take the material
+    seriously — maybe 10% of my students in the mid-90s. Those are just anecdotes,
+    but they're mine, so I tend to believe them.
+
+    (2) LLMs have made me wish I were 27 again. I started a PhD in history in
+    1992. LLMs like Claude Code would have assisted my learning (as a student) and
+    supercharged my research agenda (on my dissertation). It's certainly possible
+    to use an LLM to take the lazy way out: I'm sure the author is reporting true
+    observations of what many students are doing with the technology to write
+    papers, do homework, etc — in effect, the cheat themselves, mostly, out of an
+    education. But you don't have to do it that way. I'm just about to finish a
+    piece of technical writing. I did the writing myself in the narrow sense — no
+    cheating involve. But Claude Code was a valuable consultant along the way:
+    like having a pretty good writing advisor who never sleeps on speed-dial. Need
+    some alternative phrasing ideas? Thinking of 3 ways to say something and want
+    to bounce the options off of somebody else? LLMs helpful at that stuff.
+

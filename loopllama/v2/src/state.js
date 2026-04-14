@@ -5,7 +5,7 @@
 // Mutation functions will be added in later stages as needed.
 
 export const APP_VERSION    = 2;
-export const SCHEMA_VERSION = 9;
+export const SCHEMA_VERSION = 10;
 
 export const JUMP_HISTORY_MAX = 40;   // max persisted jump entries per video
 export const JUMP_THRESHOLD   = 15;   // seconds; smaller moves are not stored
@@ -40,10 +40,14 @@ export function createAppState() {
 // Create a new Video object.
 // youtubeId: the bare YouTube video ID (e.g., "zP4lYpsfL8c").
 // url: the full URL as supplied by the user (kept for display/export).
+export function canonicalVideoUrl(id) {
+  return `https://www.youtube.com/watch?v=${id}`;
+}
+
 export function createVideo(url, youtubeId) {
   return {
     id:          youtubeId,
-    url,
+    url:         canonicalVideoUrl(youtubeId),
     duration:    null,    // set by the YouTube API after loading
     time:        0,       // last-known playback position; used to resume
     start:       0,       // user-adjustable effective start

@@ -4,8 +4,7 @@
 //   video: Video object | null  -- the current video to edit
 //
 // Events fired (composed, bubbling):
-//   ll-update-video  { id, name, url, start, end }
-//   ll-delete-video  { id }
+//   ll-update-video  { id, name, start, end }
 //
 // API:
 //   show() / hide()
@@ -37,17 +36,11 @@ class LlamaEditVideoModal extends LitElement {
       font-size: var(--ll-text-sm, 0.85rem);
       padding: 0.2rem 0;
     }
-    .delete-row {
-      margin-top: 0.75rem;
-      padding-top: 0.5rem;
-      border-top: 1px solid var(--ll-border, #444);
-    }
   `;
 
   static properties = {
     video:        { type: Object },
     _name:        { state: true },
-    _url:         { state: true },
     _start:       { state: true },
     _end:         { state: true },
     _startEdited: { state: true },
@@ -58,7 +51,6 @@ class LlamaEditVideoModal extends LitElement {
     super();
     this.video          = null;
     this._name          = '';
-    this._url           = '';
     this._start         = '';
     this._end           = '';
     this._startEdited   = false;
@@ -71,7 +63,6 @@ class LlamaEditVideoModal extends LitElement {
     const v = this.video;
     if (v) {
       this._name          = v.name  || '';
-      this._url           = v.url   || '';
       this._start         = v.start > 0   ? _fmtTime(v.start) : '';
       this._end           = v.end != null ? _fmtTime(v.end)   : '';
       this._originalStart = v.start ?? 0;
@@ -100,20 +91,9 @@ class LlamaEditVideoModal extends LitElement {
       detail: {
         id:    this.video.id,
         name:  this._name.trim(),
-        url:   this._url.trim(),
         start,
         end,
       },
-      bubbles: true,
-      composed: true,
-    }));
-    this.hide();
-  }
-
-  _delete() {
-    if (!this.video) return;
-    this.dispatchEvent(new CustomEvent('ll-delete-video', {
-      detail: { id: this.video.id },
       bubbles: true,
       composed: true,
     }));
@@ -146,23 +126,17 @@ class LlamaEditVideoModal extends LitElement {
     return html`
       <llama-modal label="Edit video" @ll-modal-initial-focus=${this._onInitialFocus}>
         ${this._renderField('Name', 'name', this._name,
-            'Short label (e.g. "Autumn Leaves")',
+            'Name',
             e => { this._name = e.target.value; })}
-        ${this._renderField('URL', 'url', this._url,
-            'YouTube URL or video ID',
-            e => { this._url = e.target.value; })}
         ${this._renderField('Start', 'start', this._start,
-            '0 or m:ss — effective start offset',
+            'Custom start',
             e => { this._start = e.target.value; this._startEdited = true; })}
         ${this._renderField('End', 'end', this._end,
-            'm:ss or blank (use video duration)',
+            'Custom end',
             e => { this._end = e.target.value; this._endEdited = true; })}
         <div class="field-row">
-          <span class="field-label">Video ID (read-only)</span>
+          <span class="field-label">Video ID</span>
           <div class="video-id">${this.video?.id ?? ''}</div>
-        </div>
-        <div class="delete-row">
-          <sl-button variant="danger" @click=${this._delete}>Delete Video</sl-button>
         </div>
         <div slot="footer">
           <sl-button @click=${this.hide}>Cancel</sl-button>

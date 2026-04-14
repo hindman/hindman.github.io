@@ -181,8 +181,7 @@ class LlamaVideoInfoModal extends LitElement {
   _renderVideo() {
     const v = this.video;
     if (!v) return html`<div class="empty">No video loaded.</div>`;
-    const dur   = this.duration ?? v.duration;
-    const speed = v.speed ?? 1.0;
+    const dur = this.duration ?? v.duration;
     return html`
       <div class="info-grid">
         <span class="info-label">ID</span>
@@ -195,8 +194,6 @@ class LlamaVideoInfoModal extends LitElement {
         <span class="info-value">${v.url || '—'}</span>
         <span class="info-label">Duration</span>
         <span class="info-value">${dur != null ? this._fmt(dur) : '—'}</span>
-        <span class="info-label">Speed</span>
-        <span class="info-value">${(speed * 100).toFixed(0)}%</span>
       </div>
     `;
   }
@@ -208,7 +205,7 @@ class LlamaVideoInfoModal extends LitElement {
         ${this.chapters.map(c => html`
           <div class="entity-row">
             <span class="entity-name ${c.name ? '' : 'dim'}">${c.name || '—'}</span>
-            <span class="entity-time">${this._fmt(c.start)} – ${this._fmt(c.end)}</span>
+            <span class="entity-time">${this._fmt(c.start)}</span>
           </div>
         `)}
       </div>

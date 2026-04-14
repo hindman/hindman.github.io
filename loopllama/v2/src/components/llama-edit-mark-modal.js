@@ -28,6 +28,11 @@ class LlamaEditMarkModal extends LitElement {
       font-size: var(--ll-text-sm, 0.85rem);
       color: var(--ll-text-dim, #aaa);
     }
+    .error {
+      font-size: var(--ll-text-sm, 0.85rem);
+      color: var(--ll-danger, #e05a5a);
+      margin-bottom: 0.5rem;
+    }
   `;
 
   static properties = {
@@ -35,6 +40,7 @@ class LlamaEditMarkModal extends LitElement {
     _name:       { state: true },
     _time:       { state: true },
     _timeEdited: { state: true },
+    _error:      { state: true },
   };
 
   constructor() {
@@ -43,6 +49,7 @@ class LlamaEditMarkModal extends LitElement {
     this._name         = '';
     this._time         = '';
     this._timeEdited   = false;
+    this._error        = '';
     this._originalTime = null;
   }
 
@@ -55,6 +62,7 @@ class LlamaEditMarkModal extends LitElement {
       this._originalTime = m.time;
     }
     this._timeEdited = false;
+    this._error      = '';
     this.renderRoot.querySelector('llama-modal')?.show();
   }
 
@@ -70,9 +78,10 @@ class LlamaEditMarkModal extends LitElement {
     if (!this.mark) return;
     const time = this._timeEdited ? _parseTime(this._time) : this._originalTime;
     if (time === null) {
-      // Leave the field highlighted; user must fix it.
+      this._error = 'Time is required.';
       return;
     }
+    this._error = '';
     this.dispatchEvent(new CustomEvent('ll-update-mark', {
       detail: { id: this.mark.id, name: this._name.trim(), time },
       bubbles: true, composed: true,
@@ -94,22 +103,23 @@ class LlamaEditMarkModal extends LitElement {
           <span class="field-label">Name</span>
           <sl-input autocomplete="off"
             data-field="name"
-            placeholder="Optional label (e.g. "Bridge start")"
+            placeholder="Name"
             .value=${this._name}
             @sl-input=${e => { this._name = e.target.value; }}
             @keydown=${this._onKeyDown}
           ></sl-input>
         </div>
         <div class="field-row">
-          <span class="field-label">Time (m:ss)</span>
+          <span class="field-label">Time</span>
           <sl-input autocomplete="off"
             data-field="time"
-            placeholder="e.g. 1:23"
+            placeholder="Time"
             .value=${this._time}
             @sl-input=${e => { this._time = e.target.value; this._timeEdited = true; }}
             @keydown=${this._onKeyDown}
           ></sl-input>
         </div>
+        <div class="error" style=${this._error ? '' : 'visibility: hidden'}>${this._error || '\u00a0'}</div>
         <div slot="footer">
           <sl-button @click=${this.hide}>Cancel</sl-button>
           <sl-button variant="primary" @click=${this._save}>Save</sl-button>

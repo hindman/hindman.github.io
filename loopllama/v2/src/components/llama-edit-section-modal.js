@@ -93,7 +93,7 @@ class LlamaEditSectionModal extends LitElement {
     if (!this.section) return;
     const start = this._timeEdited ? _parseTime(this._time) : this._originalTime;
     if (start === null) {
-      this._error = 'Invalid start time.';
+      this._error = 'Start is required.';
       return;
     }
     let end = null;
@@ -125,8 +125,8 @@ class LlamaEditSectionModal extends LitElement {
 
   render() {
     const endPlaceholder = this._derivedEnd != null
-      ? `${_fmtTime(this._derivedEnd)} (derived — leave blank to keep open-ended)`
-      : 'Leave blank to derive from next section';
+      ? `${_fmtTime(this._derivedEnd)} (derived)`
+      : '';
 
     return html`
       <llama-modal label="Edit section" @ll-modal-initial-focus=${this._onInitialFocus}>
@@ -134,24 +134,24 @@ class LlamaEditSectionModal extends LitElement {
           <span class="field-label">Name</span>
           <sl-input autocomplete="off"
             data-field="name"
-            placeholder="Optional label (e.g. &quot;Verse&quot;, &quot;Solo&quot;)"
+            placeholder="Name"
             .value=${this._name}
             @sl-input=${e => { this._name = e.target.value; }}
             @keydown=${this._onKeyDown}
           ></sl-input>
         </div>
         <div class="field-row">
-          <span class="field-label">Start (m:ss)</span>
+          <span class="field-label">Start</span>
           <sl-input autocomplete="off"
             data-field="time"
-            placeholder="e.g. 1:23"
+            placeholder="Start"
             .value=${this._time}
             @sl-input=${e => { this._time = e.target.value; this._timeEdited = true; }}
             @keydown=${this._onKeyDown}
           ></sl-input>
         </div>
         <div class="field-row">
-          <span class="field-label">End (m:ss) — optional</span>
+          <span class="field-label">End</span>
           <sl-input autocomplete="off"
             data-field="end"
             placeholder=${endPlaceholder}
@@ -160,7 +160,7 @@ class LlamaEditSectionModal extends LitElement {
             @keydown=${this._onKeyDown}
           ></sl-input>
         </div>
-        ${this._error ? html`<div class="error">${this._error}</div>` : ''}
+        <div class="error" style=${this._error ? '' : 'visibility: hidden'}>${this._error || '\u00a0'}</div>
         <div slot="footer">
           <sl-button @click=${this.hide}>Cancel</sl-button>
           <sl-button variant="primary" @click=${this._save}>Save</sl-button>

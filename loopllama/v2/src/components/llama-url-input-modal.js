@@ -13,13 +13,6 @@ import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
 
 class LlamaUrlInputModal extends LitElement {
-  static styles = css`
-    .url-hint {
-      margin-top: 0.4rem;
-      font-size: 0.8rem;
-      color: var(--sl-color-neutral-400);
-    }
-  `;
 
   static properties = {
     _value: { state: true },
@@ -78,8 +71,6 @@ class LlamaUrlInputModal extends LitElement {
           @keydown=${this._onKeyDown}
           clearable
         ></sl-input>
-        <p class="url-hint">Paste a URL or bare video ID (e.g. dQw4w9WgXcQ)</p>
-
         <div slot="footer">
           <sl-button @click=${this.hide}>Cancel</sl-button>
           <sl-button variant="primary" @click=${this._submit}>Load</sl-button>
