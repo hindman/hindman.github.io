@@ -11,7 +11,6 @@ import { LitElement, html, css } from 'lit';
 import { DEFAULT_OPTIONS } from '../state.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
-import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 import './llama-modal.js';
 
 class LlamaOptionsModal extends LitElement {
@@ -36,12 +35,6 @@ class LlamaOptionsModal extends LitElement {
       margin: 0.8rem 0 0.4rem;
       border-bottom: 1px solid var(--ll-border, #444);
       padding-bottom: 0.2rem;
-    }
-    .help-icon {
-      font-size: var(--ll-text-xs, 0.75rem);
-      color: var(--ll-text-dim, #aaa);
-      cursor: default;
-      user-select: none;
     }
     .error-msg {
       color: var(--ll-error, #f87171);
@@ -190,12 +183,7 @@ class LlamaOptionsModal extends LitElement {
     return html`
       <llama-modal label="Options" @ll-modal-initial-focus=${this._onInitialFocus}>
 
-        <div class="section-heading">
-          Seek delta
-          <sl-tooltip content="How far the seek keys jump (seconds). Default is the starting value; choices are the steps available in the dropdown.">
-            <span class="help-icon">ⓘ</span>
-          </sl-tooltip>
-        </div>
+        <div class="section-heading">Seek delta</div>
 
         <div class="field-row">
           <span class="field-label">Default</span>
@@ -215,12 +203,7 @@ class LlamaOptionsModal extends LitElement {
           ></sl-input>
         </div>
 
-        <div class="section-heading">
-          Loop nudge delta
-          <sl-tooltip content="How far the loop start/end points move when nudged (seconds). Default is the starting value; choices are the steps available in the dropdown.">
-            <span class="help-icon">ⓘ</span>
-          </sl-tooltip>
-        </div>
+        <div class="section-heading">Loop nudge delta</div>
 
         <div class="field-row">
           <span class="field-label">Default</span>
@@ -239,12 +222,7 @@ class LlamaOptionsModal extends LitElement {
           ></sl-input>
         </div>
 
-        <div class="section-heading">
-          Speed
-          <sl-tooltip content="Percentage point change applied each time you speed up or slow down.">
-            <span class="help-icon">ⓘ</span>
-          </sl-tooltip>
-        </div>
+        <div class="section-heading">Speed</div>
 
         <div class="field-row">
           <span class="field-label">Delta</span>
@@ -255,12 +233,7 @@ class LlamaOptionsModal extends LitElement {
           ></sl-input>
         </div>
 
-        <div class="section-heading">
-          Loop pad
-          <sl-tooltip content="Extra seconds added before and after a section or chapter when you loop it.">
-            <span class="help-icon">ⓘ</span>
-          </sl-tooltip>
-        </div>
+        <div class="section-heading">Loop pad</div>
 
         <div class="field-row">
           <span class="field-label">Start</span>

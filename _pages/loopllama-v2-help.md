@@ -599,10 +599,27 @@ turn off any type of timeline zoom (video, chapter, section, saved loop, or
 scratch loop).
 
 <a id="app-options"></a><span class="ll-phead">Options</span>. Use `ao` for
-**App › Options** to customize various settings: seek delta, scratch loop
-nudge delta, speed delta, and loop padding for sections and chapters. See the
-**Options** modal, which provides hover text for each setting to explain the
-details.
+**App › Options** to customize various settings. Three of the settings are
+per-video defaults: applied when you first load a new video, then remembered
+per video.
+
+  - Seek delta default: the number of seconds used when seeking
+    backward/forward.
+
+  - Loop nudge delta default: the number of seconds used when nudging the
+    bounds of the scratch loop.
+
+  - Speed delta default: the number of percentage points applied when
+    decreasing/increasing playback speed.
+
+The other options are global:
+
+  - Seek delta choices: the values in the seek delta dropdown.
+
+  - Loop nudge delta choices: the values in the loop nudge delta dropdown.
+
+  - Loop pad start/end: the number of extra seconds added before and after a
+    section or chapter when you load it into the scratch loop.
 
 ## Miscellaneous
 

@@ -13,19 +13,17 @@ Text elements: modals:
   data-inspect          | Inspect data                  | done
   data-compare          | Compare data: local and cloud | done
   data-delete-bulk      | Delete data                   | done
-  app-options           | Options                       | .
-  shared-video-conflict | Review conflict: shared video | .
+  app-options           | Options                       | done
+  shared-video-conflict | Review conflict: shared video | done
   data-op (di)          | Review conflict: import data  | .
   data-op (dr)          | Review conflict: cloud read   | .
   data-op (ds)          | Review conflict: cloud save   | .
 
   - TODO:
 
-    app-options           | Options
-    shared-video-conflict | Review conflict: shared video
-    data-op (di)          | Review conflict: import data
-    data-op (dr)          | Review conflict: cloud read
-    data-op (ds)          | Review conflict: cloud save
+    data-op (di) | Review conflict: import data
+    data-op (dr) | Review conflict: cloud read
+    data-op (ds) | Review conflict: cloud save
 
     - shared-video-conflict URL:
       http://localhost:5173/loopllama/v2/?share=9J3X8AB_yP

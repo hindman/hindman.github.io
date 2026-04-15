@@ -18,27 +18,40 @@ import './llama-modal.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 
+const TOOLTIP = 'Skip does nothing, leaving your local copy in place. '
+  + 'Replace first stashes a copy of your local video before loading the '
+  + 'shared copy into your library. Later, you can restore the prior local '
+  + 'copy using vu (Video \u203a Unstash).';
+
 class LlamaSharedVideoConflictModal extends LitElement {
   static styles = css`
-    .video-name {
-      font-weight: 500;
-    }
-    .dates {
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-      font-size: var(--ll-text-sm, 0.85rem);
-      color: var(--ll-text-muted, #888);
-      margin-top: 0.25rem;
-    }
-    .stash-note {
-      font-size: var(--ll-text-sm, 0.85rem);
-      color: var(--ll-text-muted, #888);
+    .top-info {
+      margin: -1.25rem 0 1rem;
     }
     .help-icon {
       font-size: var(--ll-text-xs, 0.75rem);
       color: var(--ll-text-dim, #aaa);
       cursor: default;
+      user-select: none;
+    }
+    .section-heading {
+      font-size: var(--ll-text-sm, 0.85rem);
+      font-weight: bold;
+      color: var(--ll-accent, #7ec8e3);
+      margin-bottom: 0.25rem;
+    }
+    .video-name {
+      font-weight: 500;
+      padding-left: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .dates {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 0.15rem 0.6rem;
+      font-size: var(--ll-text-sm, 0.85rem);
+      padding-left: 1rem;
+      margin-bottom: 0.75rem;
     }
   `;
 
@@ -76,6 +89,10 @@ class LlamaSharedVideoConflictModal extends LitElement {
     this._skipRef.value?.focus();
   }
 
+  _onKeyDown(e) {
+    if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); this._onSkip(); }
+  }
+
   _onAfterHide() {
     const event = this._answer === 'replace'
       ? 'll-share-conflict-replace'
@@ -94,27 +111,28 @@ class LlamaSharedVideoConflictModal extends LitElement {
       <llama-modal label="Review conflict: shared video"
         @ll-modal-close=${this._onAfterHide}
         @ll-modal-initial-focus=${this._onInitialFocus}
+        @keydown=${this._onKeyDown}
       >
-        <p><span class="video-name">${this._videoName}</span> is already in your library.
-        Replace your copy with the shared version?</p>
+        <div class="top-info">
+          <sl-tooltip content=${TOOLTIP}>
+            <span class="help-icon">ⓘ</span>
+          </sl-tooltip>
+        </div>
+
+        <div class="section-heading">Video</div>
+        <div class="video-name">${this._videoName}</div>
 
         ${showDates ? html`
+          <div class="section-heading">Last modified</div>
           <div class="dates">
-            ${this._localModified  ? html`<span>Your copy: ${this._fmtDate(this._localModified)}</span>`    : ''}
-            ${this._sharedModified ? html`<span>Shared copy: ${this._fmtDate(this._sharedModified)}</span>` : ''}
+            ${this._localModified  ? html`<span>Local</span><span>${this._fmtDate(this._localModified)}</span>`   : ''}
+            ${this._sharedModified ? html`<span>Shared</span><span>${this._fmtDate(this._sharedModified)}</span>` : ''}
           </div>
         ` : ''}
 
-        <p class="stash-note">
-          Replacing stashes the current version for recovery
-          <sl-tooltip content="Open the video and press vu (Video > Unstash) to restore the prior version.">
-            <span class="help-icon">ⓘ</span>
-          </sl-tooltip>
-        </p>
-
         <div slot="footer" style="display:flex; gap:0.5rem; justify-content:flex-end">
-          <sl-button variant="primary" @click=${this._onReplace}>Replace</sl-button>
-          <sl-button ${ref(this._skipRef)} @click=${this._onSkip}>Skip</sl-button>
+          <sl-button variant="primary" ${ref(this._skipRef)} @click=${this._onSkip}>Skip</sl-button>
+          <sl-button @click=${this._onReplace}>Replace</sl-button>
         </div>
       </llama-modal>
     `;
