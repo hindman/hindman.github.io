@@ -1,35 +1,34 @@
-// llama-data-op-modal.js -- unified data-operation prompt for ds/dr/di.
+// llama-data-op-modal.js -- unified data-operation review for ds/dr/di.
 //
 // API:
-//   show({ operation, conflicts, orphans, conflictsHeader?, orphansHeader?,
-//          conflictsTooltip?, orphansTooltip? })
-//     operation:        Label for modal title (e.g. 'Save to cloud').
-//     conflicts:        Array of video name strings with version conflicts.
-//     orphans:          Array of video name strings present only at destination.
-//     conflictsHeader:  Optional section heading. Default: 'Version conflicts'
-//     orphansHeader:    Optional section heading. Default: 'Destination-only videos'
-//     conflictsTooltip: Optional tooltip text for the conflicts heading icon.
-//     orphansTooltip:   Optional tooltip text for the orphans heading icon.
-//
-//   Each section is only rendered when its array is non-empty. Caller
-//   should ensure at least one array is non-empty before calling show().
+//   show({ operation, srcLabel, destLabel,
+//          srcOnly, srcNewer, destOnly, destNewer, same })
+//     operation:  Label for modal title (e.g. 'import data').
+//     srcLabel:   Source label for headings (e.g. 'Import').
+//     destLabel:  Destination label for headings (e.g. 'Local').
+//     srcOnly:    Array of video name strings present only in source.
+//     srcNewer:   Array of video name strings where source is newer.
+//     destOnly:   Array of video name strings present only in destination.
+//     destNewer:  Array of video name strings where destination is newer.
+//     same:       Array of video name strings with equal last-modified.
 //
 //   hide()
 //
 // Event fired (bubbles + composed) after dialog closes:
 //   ll-data-op-result
-//     detail: { conflictChoice: 'replace'|'skip', orphanChoice: 'delete'|'keep' }
+//     detail: { addSrcOnly, replaceSrcNewer, deleteDestOnly,
+//               replaceDestNewer, replaceSame } (all booleans)
 //             or null if user cancelled.
 //
-//   conflictChoice defaults to 'skip'; orphanChoice defaults to 'keep'.
-//   If a section is not shown its choice still carries the default value.
+//   Default choices:
+//     addSrcOnly: true, replaceSrcNewer: true, deleteDestOnly: false,
+//     replaceDestNewer: false, replaceSame: false.
 
 import { LitElement, html, css } from 'lit';
 import { createRef, ref } from 'lit/directives/ref.js';
 import './llama-modal.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/switch/switch.js';
-import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 
 class LlamaDataOpModal extends LitElement {
   static styles = css`
@@ -37,30 +36,16 @@ class LlamaDataOpModal extends LitElement {
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
-      max-height: 80vh;
-      overflow-y: auto;
     }
-    .section {
+    .group {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
-    .section-heading {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
+    .group-header {
       font-size: var(--ll-text-sm, 0.85rem);
-      color: var(--ll-text-muted, #888);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .help-icon {
-      font-size: var(--ll-text-xs, 0.75rem);
-      color: var(--ll-text-dim, #aaa);
-    }
-    .section-heading sl-tooltip::part(body) {
-      text-transform: none;
-      letter-spacing: normal;
+      font-weight: bold;
+      color: var(--ll-accent, #7ec8e3);
     }
     .name-list {
       list-style: disc;
@@ -69,60 +54,78 @@ class LlamaDataOpModal extends LitElement {
       display: flex;
       flex-direction: column;
       gap: 0.1rem;
-      max-height: 16rem;
-      overflow-y: auto;
     }
     .name-list li {
       color: var(--ll-text, #e0e0e0);
       font-size: 0.9rem;
     }
+    .section-empty {
+      color: var(--ll-text-muted, #888);
+      font-style: italic;
+      padding-left: 0.75rem;
+      font-size: var(--ll-text-sm, 0.85rem);
+    }
   `;
 
   static properties = {
-    _operation:       { state: true },
-    _conflicts:       { state: true },
-    _orphans:         { state: true },
-    _conflictsHeader: { state: true },
-    _orphansHeader:   { state: true },
-    _conflictsTooltip: { state: true },
-    _orphansTooltip:  { state: true },
-    _conflictChoice:  { state: true },
-    _orphanChoice:    { state: true },
+    _operation:        { state: true },
+    _srcLabel:         { state: true },
+    _destLabel:        { state: true },
+    _srcOnly:          { state: true },
+    _srcNewer:         { state: true },
+    _destOnly:         { state: true },
+    _destNewer:        { state: true },
+    _same:             { state: true },
+    _addSrcOnly:       { state: true },
+    _replaceSrcNewer:  { state: true },
+    _deleteDestOnly:   { state: true },
+    _replaceDestNewer: { state: true },
+    _replaceSame:      { state: true },
   };
 
   constructor() {
     super();
     this._operation        = '';
-    this._conflicts        = [];
-    this._orphans          = [];
-    this._conflictsHeader  = 'Version conflicts';
-    this._orphansHeader    = 'Destination-only videos';
-    this._conflictsTooltip = '';
-    this._orphansTooltip   = '';
-    this._conflictChoice   = 'skip';
-    this._orphanChoice     = 'keep';
+    this._srcLabel         = 'Source';
+    this._destLabel        = 'Destination';
+    this._srcOnly          = [];
+    this._srcNewer         = [];
+    this._destOnly         = [];
+    this._destNewer        = [];
+    this._same             = [];
+    this._addSrcOnly       = true;
+    this._replaceSrcNewer  = true;
+    this._deleteDestOnly   = false;
+    this._replaceDestNewer = false;
+    this._replaceSame      = false;
     this._answer           = null;
+    this._applyRef         = createRef();
     this._cancelRef        = createRef();
   }
 
   show({
-    operation        = '',
-    conflicts        = [],
-    orphans          = [],
-    conflictsHeader  = 'Version conflicts',
-    orphansHeader    = 'Destination-only videos',
-    conflictsTooltip = '',
-    orphansTooltip   = '',
+    operation  = '',
+    srcLabel   = 'Source',
+    destLabel  = 'Destination',
+    srcOnly    = [],
+    srcNewer   = [],
+    destOnly   = [],
+    destNewer  = [],
+    same       = [],
   }) {
     this._operation        = operation;
-    this._conflicts        = conflicts;
-    this._orphans          = orphans;
-    this._conflictsHeader  = conflictsHeader;
-    this._orphansHeader    = orphansHeader;
-    this._conflictsTooltip = conflictsTooltip;
-    this._orphansTooltip   = orphansTooltip;
-    this._conflictChoice   = 'skip';
-    this._orphanChoice     = 'keep';
+    this._srcLabel         = srcLabel;
+    this._destLabel        = destLabel;
+    this._srcOnly          = srcOnly;
+    this._srcNewer         = srcNewer;
+    this._destOnly         = destOnly;
+    this._destNewer        = destNewer;
+    this._same             = same;
+    this._addSrcOnly       = true;
+    this._replaceSrcNewer  = true;
+    this._deleteDestOnly   = false;
+    this._replaceDestNewer = false;
+    this._replaceSame      = false;
     this._answer           = null;
     this.renderRoot.querySelector('llama-modal')?.show();
   }
@@ -131,10 +134,23 @@ class LlamaDataOpModal extends LitElement {
     this.renderRoot.querySelector('llama-modal')?.hide();
   }
 
+  get _affectedCount() {
+    let n = 0;
+    if (this._addSrcOnly)       n += this._srcOnly.length;
+    if (this._replaceSrcNewer)  n += this._srcNewer.length;
+    if (this._deleteDestOnly)   n += this._destOnly.length;
+    if (this._replaceDestNewer) n += this._destNewer.length;
+    if (this._replaceSame)      n += this._same.length;
+    return n;
+  }
+
   _onApply() {
     this._answer = {
-      conflictChoice: this._conflictChoice,
-      orphanChoice:   this._orphanChoice,
+      addSrcOnly:       this._addSrcOnly,
+      replaceSrcNewer:  this._replaceSrcNewer,
+      deleteDestOnly:   this._deleteDestOnly,
+      replaceDestNewer: this._replaceDestNewer,
+      replaceSame:      this._replaceSame,
     };
     this.hide();
   }
@@ -145,7 +161,7 @@ class LlamaDataOpModal extends LitElement {
   }
 
   _onInitialFocus() {
-    this._cancelRef.value?.focus();
+    this._applyRef.value?.focus();
   }
 
   _onAfterHide() {
@@ -157,68 +173,70 @@ class LlamaDataOpModal extends LitElement {
     this._answer = null;
   }
 
-  _renderHeading(label, tooltip) {
+  _renderGroup(label, names, checked, onChange, actionLabel) {
     return html`
-      <div class="section-heading">
-        ${label}
-        ${tooltip ? html`
-          <sl-tooltip content=${tooltip}>
-            <span class="help-icon">ⓘ</span>
-          </sl-tooltip>
-        ` : ''}
-      </div>
-    `;
-  }
-
-  _renderConflictsSection() {
-    if (this._conflicts.length === 0) return '';
-    return html`
-      <div class="section">
-        ${this._renderHeading(this._conflictsHeader, this._conflictsTooltip)}
-        <sl-switch
-          ?checked=${this._conflictChoice === 'replace'}
-          @sl-change=${e => { this._conflictChoice = e.target.checked ? 'replace' : 'skip'; }}
-        >Replace</sl-switch>
-        <ul class="name-list">
-          ${this._conflicts.map(n => html`<li>${n}</li>`)}
-        </ul>
-      </div>
-    `;
-  }
-
-  _renderOrphansSection() {
-    if (this._orphans.length === 0) return '';
-    return html`
-      <div class="section">
-        ${this._renderHeading(this._orphansHeader, this._orphansTooltip)}
-        <sl-switch
-          ?checked=${this._orphanChoice === 'delete'}
-          @sl-change=${e => { this._orphanChoice = e.target.checked ? 'delete' : 'keep'; }}
-        >Delete</sl-switch>
-        <ul class="name-list">
-          ${this._orphans.map(n => html`<li>${n}</li>`)}
-        </ul>
+      <div class="group">
+        <div class="group-header">${label} (${names.length})</div>
+        ${names.length > 0 ? html`
+          <sl-switch
+            ?checked=${checked}
+            @sl-change=${e => onChange(e.target.checked)}
+          >${actionLabel}</sl-switch>
+          <ul class="name-list">
+            ${names.map(n => html`<li>${n}</li>`)}
+          </ul>
+        ` : html`<div class="section-empty">None</div>`}
       </div>
     `;
   }
 
   render() {
-    const title = this._operation
-      ? `Review conflict: ${this._operation}`
-      : 'Review conflict';
+    const s = this._srcLabel;
+    const d = this._destLabel;
+    const count = this._affectedCount;
     return html`
       <llama-modal
-        label=${title}
+        label="Review: ${this._operation}"
         width="47.5rem"
         @ll-modal-close=${this._onAfterHide}
         @ll-modal-initial-focus=${this._onInitialFocus}
       >
         <div class="body">
-          ${this._renderConflictsSection()}
-          ${this._renderOrphansSection()}
+          ${this._renderGroup(
+            `${s} only`, this._srcOnly,
+            this._addSrcOnly,
+            v => { this._addSrcOnly = v; },
+            'Add'
+          )}
+          ${this._renderGroup(
+            `${s} newer`, this._srcNewer,
+            this._replaceSrcNewer,
+            v => { this._replaceSrcNewer = v; },
+            'Replace'
+          )}
+          ${this._renderGroup(
+            `${d} only`, this._destOnly,
+            this._deleteDestOnly,
+            v => { this._deleteDestOnly = v; },
+            'Delete'
+          )}
+          ${this._renderGroup(
+            `${d} newer`, this._destNewer,
+            this._replaceDestNewer,
+            v => { this._replaceDestNewer = v; },
+            'Replace'
+          )}
+          ${this._renderGroup(
+            'Same last-modified', this._same,
+            this._replaceSame,
+            v => { this._replaceSame = v; },
+            'Replace'
+          )}
         </div>
         <div slot="footer" style="display:flex; gap:0.5rem; justify-content:flex-end">
-          <sl-button variant="primary" @click=${this._onApply}>Apply</sl-button>
+          <sl-button ${ref(this._applyRef)} variant="primary" ?disabled=${count === 0} @click=${this._onApply}>
+            Apply${count > 0 ? ` (${count})` : ''}
+          </sl-button>
           <sl-button ${ref(this._cancelRef)} @click=${this._onCancel}>Cancel</sl-button>
         </div>
       </llama-modal>

@@ -19,37 +19,17 @@ Text elements: modals:
   data-op (dr)          | Review conflict: cloud read   | .
   data-op (ds)          | Review conflict: cloud save   | .
 
-
   - TODO:
-    data-compare | Compare data: local and cloud | done
-      - Add bullets, like data-op
-      - headings: switch to blue with N at the end like data-delete-bulk?
 
     data-op (di) | Review conflict: import data
     data-op (dr) | Review conflict: cloud read
     data-op (ds) | Review conflict: cloud save
 
-      - Redesign to use blue headings with tallies.
-      - Show all 5 categories.
-      - List vids in every category (bullets, as we currently do)
-      - Toggle for every category.
+    data-compare | Compare data: local and cloud | done
+      - Add bullets, like data-op
+      - headings: switch to blue with N at the end like data-delete-bulk?
 
-        Category      | Toggle  | Default
-        -----------------------------------
-        src-only      | Add     | ON
-        src-newer     | Replace | ON
-        src-dest-same | Replace | OFF
-        dest-newer    | Replace | OFF
-        dest-only     | Delete  | OFF
-      
-      - Help docs: explain the logic of ds/dr/di more precisely.
-
-    ds                      | dr                              | di
-    -----------------------------------------------------------------------------------------
-    Cloud newer             | Local newer                     | Local newer
-    Cloud only              | Local only                      | Local only
-    cloud is more recent    | local is more recent            | local is more recent
-    exist only in the cloud | exist only in the local library | exist only in the local library
+    Help docs: explain the logic of ds/dr/di more precisely.
 
 Text elements: messages:
 

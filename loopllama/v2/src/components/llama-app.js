@@ -2049,8 +2049,8 @@ class LlamaApp extends LitElement {
     this._cloudStatusModalEl?.show({ localOnly, localNewer, cloudOnly, cloudNewer, sameCount });
   }
 
-  // ds: save local state to cloud. Checks for cloud videos strictly newer
-  // than their local counterpart and prompts before overwriting.
+  // ds: save local state to cloud. Categorizes all videos into 5 buckets
+  // (local = source, cloud = dest) and always prompts for review.
   async _dataSave() {
     const userId = this.currentUser?.id;
     if (!userId) {
@@ -2063,71 +2063,76 @@ class LlamaApp extends LitElement {
       this._setError('Cloud request failed.');
       return;
     }
-    const cloudMap   = new Map((cloudState?.videos ?? []).map(v => [v.id, v]));
-    const localIds   = new Set(this._appState.videos.map(v => v.id));
+    const cloudMap = new Map((cloudState?.videos ?? []).map(v => [v.id, v]));
+    const localMap = new Map(this._appState.videos.map(v => [v.id, v]));
+    const localIds = new Set(localMap.keys());
 
-    // Conflict: cloud video is newer than its local counterpart.
-    const conflicts = [];
-    for (const [id, cv] of cloudMap) {
-      const lv = this._appState.videos.find(v => v.id === id);
-      if (lv && (cv.last_modified ?? 0) > (lv.last_modified ?? 0)) {
-        conflicts.push(cv);
+    // Categorize all videos into 5 buckets (local = source, cloud = dest).
+    const srcOnly   = [];  // local vids not in cloud
+    const srcNewer  = [];  // local vids newer than cloud counterpart
+    const destOnly  = [];  // cloud vids not in local
+    const destNewer = [];  // cloud vids newer than local counterpart
+    const same      = [];  // vids in both with equal timestamps
+
+    for (const lv of this._appState.videos) {
+      const cv = cloudMap.get(lv.id);
+      if (!cv) {
+        srcOnly.push(lv);
+      } else if ((lv.last_modified ?? 0) > (cv.last_modified ?? 0)) {
+        srcNewer.push(lv);
+      } else if ((cv.last_modified ?? 0) > (lv.last_modified ?? 0)) {
+        destNewer.push(cv);
+      } else {
+        same.push(lv);
       }
     }
-
-    // Orphan: cloud video has no local counterpart.
-    const orphans = [];
     for (const [id, cv] of cloudMap) {
-      if (!localIds.has(id)) orphans.push(cv);
+      if (!localIds.has(id)) destOnly.push(cv);
     }
 
-    let conflictChoice = 'skip';
-    let orphanChoice   = 'keep';
+    const result = await this._showDataOp({
+      operation: 'cloud save',
+      srcLabel:  'Library',
+      destLabel: 'Cloud',
+      srcOnly:   srcOnly.map(v => v.name || v.id),
+      srcNewer:  srcNewer.map(v => v.name || v.id),
+      destOnly:  destOnly.map(v => v.name || v.id),
+      destNewer: destNewer.map(v => v.name || v.id),
+      same:      same.map(v => v.name || v.id),
+    });
+    if (result === null) return;
 
-    if (conflicts.length > 0 || orphans.length > 0) {
-      const result = await this._showDataOp({
-        operation:        'cloud save',
-        conflicts:        conflicts.map(v => v.name || v.id),
-        orphans:          orphans.map(v => v.name || v.id),
-        conflictsHeader:  'Cloud newer',
-        orphansHeader:    'Cloud only',
-        conflictsTooltip: 'The cloud copy of these videos is more recent than the local copy. Replace overwrites cloud with local.',
-        orphansTooltip:   'These videos exist only in the cloud, not the local library. Delete removes them.',
-      });
-      if (result === null) return;
-      conflictChoice = result.conflictChoice;
-      orphanChoice   = result.orphanChoice;
-    }
-
-    const skipIds   = conflictChoice === 'skip' ? new Set(conflicts.map(v => v.id)) : new Set();
-    const orphanIds = new Set(orphans.map(v => v.id));
-
-    // Build merged video list: start with cloud videos (minus deleted orphans),
-    // then apply local videos. Skipped videos keep their cloud version.
+    // Build merged video list for cloud upload.
     let added = 0, updated = 0, unchanged = 0, skipped = 0, deleted = 0;
     const mergedVideos = [];
+
     for (const cv of cloudMap.values()) {
-      if (orphanIds.has(cv.id) && orphanChoice === 'delete') {
-        deleted++;
+      const lv = localMap.get(cv.id);
+      if (!lv) {
+        // destOnly: cloud-only
+        if (!result.deleteDestOnly) mergedVideos.push(cv);
+        else deleted++;
       } else {
-        mergedVideos.push(cv);
+        const cvTs = cv.last_modified ?? 0;
+        const lvTs = lv.last_modified ?? 0;
+        if (cvTs > lvTs) {
+          // destNewer: cloud newer than local
+          if (result.replaceDestNewer) { mergedVideos.push(lv); updated++; }
+          else { mergedVideos.push(cv); skipped++; }
+        } else if (lvTs > cvTs) {
+          // srcNewer: local newer than cloud
+          if (result.replaceSrcNewer) { mergedVideos.push(lv); updated++; }
+          else { mergedVideos.push(cv); skipped++; }
+        } else {
+          // same
+          if (result.replaceSame) { mergedVideos.push(lv); updated++; }
+          else { mergedVideos.push(cv); unchanged++; }
+        }
       }
     }
-    for (const lv of this._appState.videos) {
-      const idx = mergedVideos.findIndex(v => v.id === lv.id);
-      if (idx !== -1) {
-        if (skipIds.has(lv.id)) {
-          skipped++;
-        } else if ((lv.last_modified ?? 0) !== (mergedVideos[idx].last_modified ?? 0)) {
-          mergedVideos[idx] = lv;
-          updated++;
-        } else {
-          unchanged++;
-        }
-      } else {
-        mergedVideos.push(lv);
-        added++;
-      }
+    for (const lv of srcOnly) {
+      if (result.addSrcOnly) { mergedVideos.push(lv); added++; }
+      else skipped++;
     }
 
     // stashes are local-only; exclude from cloud upload.
@@ -2143,9 +2148,8 @@ class LlamaApp extends LitElement {
     }
   }
 
-  // dr: read cloud state into local. Checks for local videos strictly newer
-  // than their cloud counterpart (conflicts) and local-only videos absent from
-  // cloud (orphans), then prompts when either condition is present.
+  // dr: read cloud state into local. Categorizes all videos into 5 buckets
+  // (cloud = source, local = dest) and always prompts for review.
   async _dataRead() {
     const userId = this.currentUser?.id;
     if (!userId) {
@@ -2167,68 +2171,85 @@ class LlamaApp extends LitElement {
     const cloudVideos = (cloudState.videos ?? []).map(migrateVideo);
     const cloudMap    = new Map(cloudVideos.map(v => [v.id, v]));
 
-    // Conflict: local video is newer than its cloud counterpart.
-    const conflicts = [];
-    for (const [id, lv] of localMap) {
-      const cv = cloudMap.get(id);
-      if (cv && (lv.last_modified ?? 0) > (cv.last_modified ?? 0)) {
-        conflicts.push(lv);
+    // Categorize all videos into 5 buckets (cloud = source, local = dest).
+    const srcOnly   = [];  // cloud vids not in local
+    const srcNewer  = [];  // cloud vids newer than local counterpart
+    const destOnly  = [];  // local vids not in cloud
+    const destNewer = [];  // local vids newer than cloud counterpart
+    const same      = [];  // vids in both with equal timestamps
+
+    for (const [id, cv] of cloudMap) {
+      const lv = localMap.get(id);
+      if (!lv) {
+        srcOnly.push(cv);
+      } else if ((cv.last_modified ?? 0) > (lv.last_modified ?? 0)) {
+        srcNewer.push(cv);
+      } else if ((lv.last_modified ?? 0) > (cv.last_modified ?? 0)) {
+        destNewer.push(lv);
+      } else {
+        same.push(cv);
       }
     }
-
-    // Orphan: local video has no cloud counterpart.
-    const orphans = [];
     for (const [id, lv] of localMap) {
-      if (!cloudMap.has(id)) orphans.push(lv);
+      if (!cloudMap.has(id)) destOnly.push(lv);
     }
 
-    let conflictChoice = 'skip';
-    let orphanChoice   = 'keep';
+    const result = await this._showDataOp({
+      operation: 'cloud read',
+      srcLabel:  'Cloud',
+      destLabel: 'Library',
+      srcOnly:   srcOnly.map(v => v.name || v.id),
+      srcNewer:  srcNewer.map(v => v.name || v.id),
+      destOnly:  destOnly.map(v => v.name || v.id),
+      destNewer: destNewer.map(v => v.name || v.id),
+      same:      same.map(v => v.name || v.id),
+    });
+    if (result === null) return;
 
-    if (conflicts.length > 0 || orphans.length > 0) {
-      const result = await this._showDataOp({
-        operation:        'cloud read',
-        conflicts:        conflicts.map(v => v.name || v.id),
-        orphans:          orphans.map(v => v.name || v.id),
-        conflictsHeader:  'Local newer',
-        orphansHeader:    'Local only',
-        conflictsTooltip: 'The local copy of these videos is more recent than the cloud copy. Replace overwrites local with cloud; the prior version is stashed for recovery (vr).',
-        orphansTooltip:   'These videos exist only in the local library, not the cloud. Delete removes them.',
-      });
-      if (result === null) return;
-      conflictChoice = result.conflictChoice;
-      orphanChoice   = result.orphanChoice;
-    }
+    // Apply choices: merge cloud into local.
+    let added = 0, updated = 0, unchanged = 0, skipped = 0, deleted = 0;
 
-    const skipIds   = conflictChoice === 'skip' ? new Set(conflicts.map(v => v.id)) : new Set();
-    const orphanIds = new Set(orphans.map(v => v.id));
-
-    // Remove local-only videos if user chose to delete orphans.
-    let deleted = 0;
-    if (orphanChoice === 'delete') {
+    // Remove destOnly (local-only) if user chose to delete.
+    if (result.deleteDestOnly) {
+      const destOnlyIds = new Set(destOnly.map(v => v.id));
       const before = this._appState.videos.length;
-      this._appState.videos = this._appState.videos.filter(v => !orphanIds.has(v.id));
+      this._appState.videos = this._appState.videos.filter(v => !destOnlyIds.has(v.id));
       deleted = before - this._appState.videos.length;
     }
 
-    // Merge: cloud videos replace or add into local. Skip overwrite when
-    // last_modified matches exactly, or when video is in the skip set.
-    let added = 0, updated = 0, unchanged = 0, skipped = 0;
+    // Merge cloud videos into local.
     for (const cv of cloudMap.values()) {
-      if (skipIds.has(cv.id)) { skipped++; continue; }
       const idx = this._appState.videos.findIndex(v => v.id === cv.id);
-      if (idx !== -1) {
-        const lv = this._appState.videos[idx];
-        if ((cv.last_modified ?? 0) !== (lv.last_modified ?? 0)) {
-          this._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
-          this._appState.videos[idx] = cv;
-          updated++;
-        } else {
-          unchanged++;
-        }
+      if (idx === -1) {
+        // srcOnly
+        if (result.addSrcOnly) { this._appState.videos.push(cv); added++; }
+        else skipped++;
       } else {
-        this._appState.videos.push(cv);
-        added++;
+        const lv   = this._appState.videos[idx];
+        const cvTs = cv.last_modified ?? 0;
+        const lvTs = lv.last_modified ?? 0;
+        if (cvTs > lvTs) {
+          // srcNewer
+          if (result.replaceSrcNewer) {
+            this._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
+            this._appState.videos[idx] = cv;
+            updated++;
+          } else skipped++;
+        } else if (lvTs > cvTs) {
+          // destNewer
+          if (result.replaceDestNewer) {
+            this._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
+            this._appState.videos[idx] = cv;
+            updated++;
+          } else skipped++;
+        } else {
+          // same
+          if (result.replaceSame) {
+            this._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
+            this._appState.videos[idx] = cv;
+            updated++;
+          } else unchanged++;
+        }
       }
     }
 
@@ -2299,7 +2320,8 @@ class LlamaApp extends LitElement {
     reader.readAsText(file);
   }
 
-  // Conflict-aware JSON import: mirrors dr logic with the file as the source.
+  // JSON import: categorizes all videos into 5 buckets
+  // (import = source, local = dest) and always prompts for review.
   async _importFromJson(jsonStr) {
     let incoming;
     try {
@@ -2310,67 +2332,89 @@ class LlamaApp extends LitElement {
     }
 
     const localMap  = new Map(this._appState.videos.map(v => [v.id, v]));
-    const importIds = new Set(incoming.map(v => v.id));
+    const importIds = new Set(incoming.filter(v => v.id).map(v => v.id));
 
-    // Conflict: local video is newer than its imported counterpart.
-    const conflicts = [];
+    // Categorize all videos into 5 buckets (import = source, local = dest).
+    const srcOnly   = [];  // import vids not in local
+    const srcNewer  = [];  // import vids newer than local counterpart
+    const destOnly  = [];  // local vids not in import
+    const destNewer = [];  // local vids newer than import counterpart
+    const same      = [];  // vids in both with equal timestamps
+
     for (const iv of incoming) {
+      if (!iv.id) continue;
       const lv = localMap.get(iv.id);
-      if (lv && (lv.last_modified ?? 0) > (iv.last_modified ?? 0)) conflicts.push(lv);
+      if (!lv) {
+        srcOnly.push(iv);
+      } else if ((iv.last_modified ?? 0) > (lv.last_modified ?? 0)) {
+        srcNewer.push(iv);
+      } else if ((lv.last_modified ?? 0) > (iv.last_modified ?? 0)) {
+        destNewer.push(lv);
+      } else {
+        same.push(iv);
+      }
     }
-
-    // Orphan: local video has no counterpart in the import file.
-    const orphans = [];
     for (const [id, lv] of localMap) {
-      if (!importIds.has(id)) orphans.push(lv);
+      if (!importIds.has(id)) destOnly.push(lv);
     }
 
-    let conflictChoice = 'skip';
-    let orphanChoice   = 'keep';
+    const result = await this._showDataOp({
+      operation: 'import data',
+      srcLabel:  'File',
+      destLabel: 'Library',
+      srcOnly:   srcOnly.map(v => v.name || v.id),
+      srcNewer:  srcNewer.map(v => v.name || v.id),
+      destOnly:  destOnly.map(v => v.name || v.id),
+      destNewer: destNewer.map(v => v.name || v.id),
+      same:      same.map(v => v.name || v.id),
+    });
+    if (result === null) return;
 
-    if (conflicts.length > 0 || orphans.length > 0) {
-      const result = await this._showDataOp({
-        operation:        'import data',
-        conflicts:        conflicts.map(v => v.name || v.id),
-        orphans:          orphans.map(v => v.name || v.id),
-        conflictsHeader:  'Local newer',
-        orphansHeader:    'Local only',
-        conflictsTooltip: 'The local copy of these videos is more recent than the imported copy. Replace overwrites local with imported; the prior version is stashed for recovery (vr).',
-        orphansTooltip:   'These videos exist only in the local library, not the import file. Delete removes them.',
-      });
-      if (result === null) return;
-      conflictChoice = result.conflictChoice;
-      orphanChoice   = result.orphanChoice;
-    }
+    // Apply choices: merge import into local.
+    let added = 0, updated = 0, unchanged = 0, skipped = 0, deleted = 0;
 
-    const skipIds   = conflictChoice === 'skip' ? new Set(conflicts.map(v => v.id)) : new Set();
-    const orphanIds = new Set(orphans.map(v => v.id));
-
-    // Remove local-only videos if user chose to delete orphans.
-    let deleted = 0;
-    if (orphanChoice === 'delete') {
+    // Remove destOnly (local-only) if user chose to delete.
+    if (result.deleteDestOnly) {
+      const destOnlyIds = new Set(destOnly.map(v => v.id));
       const before = this._appState.videos.length;
-      this._appState.videos = this._appState.videos.filter(v => !orphanIds.has(v.id));
+      this._appState.videos = this._appState.videos.filter(v => !destOnlyIds.has(v.id));
       deleted = before - this._appState.videos.length;
     }
 
-    let added = 0, updated = 0, unchanged = 0, skipped = 0;
+    // Merge import videos into local.
     for (const iv of incoming) {
       if (!iv.id) continue;
-      if (skipIds.has(iv.id)) { skipped++; continue; }
       const idx = this._appState.videos.findIndex(v => v.id === iv.id);
-      if (idx !== -1) {
-        const lv = this._appState.videos[idx];
-        if ((iv.last_modified ?? 0) !== (lv.last_modified ?? 0)) {
-          this._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
-          this._appState.videos[idx] = iv;
-          updated++;
-        } else {
-          unchanged++;
-        }
+      if (idx === -1) {
+        // srcOnly
+        if (result.addSrcOnly) { this._appState.videos.push(iv); added++; }
+        else skipped++;
       } else {
-        this._appState.videos.push(iv);
-        added++;
+        const lv   = this._appState.videos[idx];
+        const ivTs = iv.last_modified ?? 0;
+        const lvTs = lv.last_modified ?? 0;
+        if (ivTs > lvTs) {
+          // srcNewer
+          if (result.replaceSrcNewer) {
+            this._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
+            this._appState.videos[idx] = iv;
+            updated++;
+          } else skipped++;
+        } else if (lvTs > ivTs) {
+          // destNewer
+          if (result.replaceDestNewer) {
+            this._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
+            this._appState.videos[idx] = iv;
+            updated++;
+          } else skipped++;
+        } else {
+          // same
+          if (result.replaceSame) {
+            this._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
+            this._appState.videos[idx] = iv;
+            updated++;
+          } else unchanged++;
+        }
       }
     }
 
