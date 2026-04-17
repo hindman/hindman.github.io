@@ -509,27 +509,28 @@ data in the file will make sense.
 
 <span class="ll-phead">Import</span>. Use `di` for **Data › Import**, which
 performs that process in reverse: load the data from an exported JSON file
-into LoopLlama — for example on a different browser or computer.
+into LoopLlama — for example on a different browser or computer (see [data
+review](#data-review)).
 
 <div class="notice--primary" markdown="1">
 
-  <a id="last-modified-checks"></a>**Last-modified checks**. During
-  **Import**, **Save to cloud**, and **Read from cloud** operations, LoopLlama
-  takes steps to help you avoid writing older data over newer data. The app
-  stores a last-updated time for all videos in your collection. Before
-  applying these operations, LoopLlama determines the videos for which the
-  change would lead to old-replacing-new. If any cases are detected, the app
-  prompts you to decide how to handle the situation: skip the affected videos
-  (the default); or replace those videos, using the older data. Additionally,
-  any time one of these operations overwrites a video with a different
-  last-modified time, the app "stashes" a copy of the video before overwriting
-  occurs.
+  <a id="data-review"></a>**Data review**. Before applying **Import**, **Save
+  to cloud**, and **Read from cloud**, LoopLlama opens a review dialog with a
+  full inventory of your videos. Each video is classified into one of five
+  categories based on whether it exists in the source, the destination, or
+  both — and if both, which copy carries the more recent last-modified
+  timestamp: source only, source newer, destination only, destination newer,
+  and same last-modified. Each category has a toggle controlling whether the
+  operation acts on those videos, with defaults biased toward keeping newer
+  data over older. You can review, adjust any toggle, and apply the operation
+  or cancel. Any time the operation replaces a video, LoopLlama stashes a copy
+  of the prior version for recovery. To retrieve a prior version use `vu` for
+  **Video › Unstash**.
 
 </div>
 
 <span class="ll-phead">Unstash</span>. Use `vu` for **Video › Unstash**, to
-retrieve a stashed copy of a video (see [last-modified
-checks](#last-modified-checks)).
+retrieve a stashed copy of a video (see [data review](#data-review)).
 
 <span class="ll-phead">Inspect</span>. Use `dI` for **Data › Inspect**,
 which displays your LoopLlama data directly in the browser.
@@ -554,16 +555,17 @@ LoopLlama successfully if they organize their saves and reads to align with
 their device switches.
 
 <span class="ll-phead">Save to cloud</span>. Use `ds` for **Data › Save to
-cloud**, which writes local data to the cloud (see [last-modified
-checks](#last-modified-checks)).
+cloud**, which writes library data to the cloud (see [data
+review](#data-review)).
 
 <span class="ll-phead">Read from cloud</span>. Use `dr` for **Data › Read
-from cloud**, which writes cloud data to local (see [last-modified
-checks](#last-modified-checks)).
+from cloud**, which writes cloud data to your library (see [data
+review](#data-review)).
 
-<span class="ll-phead">Compare</span>. Use `dc` for **Data › Compare**,
-which performs [last-modified checks](#last-modified-checks) and reports the
-results.
+<span class="ll-phead">Compare</span>. Use `dc` for **Data › Compare**, which
+opens an informational review showing an inventory of your videos across the
+same five categories as the [data review](#data-review) — without any toggles
+or action.
 
 <span class="ll-phead">Remove cloud data</span>. See **Account** menu to sign
 out and remove all of your cloud data.

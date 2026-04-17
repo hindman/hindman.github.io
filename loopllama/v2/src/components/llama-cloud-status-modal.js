@@ -1,9 +1,8 @@
 // llama-cloud-status-modal.js -- read-only modal comparing local vs cloud state.
 //
 // API:
-//   show({ localOnly, localNewer, cloudOnly, cloudNewer, sameCount })
-//     Each of localOnly/localNewer/cloudOnly/cloudNewer is an array of
-//     display name strings. sameCount is an integer.
+//   show({ localOnly, localNewer, cloudOnly, cloudNewer, same })
+//     Each array contains display name strings.
 //   hide()
 
 import { LitElement, html, css } from 'lit';
@@ -12,43 +11,38 @@ import './llama-modal.js';
 
 class LlamaCloudStatusModal extends LitElement {
   static styles = css`
-    .status-body {
+    .body {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      max-height: 65vh;
-      overflow-y: auto;
+      gap: 1.25rem;
     }
-    .status-section {
+    .group {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: 0.4rem;
     }
-    .status-label {
+    .group-header {
       font-size: var(--ll-text-sm, 0.85rem);
-      color: var(--ll-text-muted, #888);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      font-weight: bold;
+      color: var(--ll-accent, #7ec8e3);
     }
-    .status-list {
-      list-style: none;
+    .name-list {
+      list-style: disc;
       margin: 0;
-      padding: 0 0 0 0.75rem;
+      padding: 0 0 0 1.4rem;
       display: flex;
       flex-direction: column;
       gap: 0.1rem;
     }
-    .status-list li {
+    .name-list li {
       color: var(--ll-text, #e0e0e0);
+      font-size: 0.9rem;
     }
-    .status-empty {
+    .section-empty {
       color: var(--ll-text-muted, #888);
       font-style: italic;
       padding-left: 0.75rem;
-    }
-    .status-count {
-      color: var(--ll-text-muted, #888);
-      padding-left: 0.75rem;
+      font-size: var(--ll-text-sm, 0.85rem);
     }
   `;
 
@@ -74,13 +68,13 @@ class LlamaCloudStatusModal extends LitElement {
     this.renderRoot.querySelector('sl-button')?.focus();
   }
 
-  _renderSection(label, names) {
+  _renderGroup(label, names) {
     return html`
-      <div class="status-section">
-        <div class="status-label">${label}</div>
+      <div class="group">
+        <div class="group-header">${label} (${names.length})</div>
         ${names.length > 0
-          ? html`<ul class="status-list">${names.map(n => html`<li>${n}</li>`)}</ul>`
-          : html`<div class="status-empty">None</div>`}
+          ? html`<ul class="name-list">${names.map(n => html`<li>${n}</li>`)}</ul>`
+          : html`<div class="section-empty">None</div>`}
       </div>
     `;
   }
@@ -89,22 +83,17 @@ class LlamaCloudStatusModal extends LitElement {
     const d = this._data;
     return html`
       <llama-modal
-        label="Compare data: local and cloud"
+        label="Compare: library and cloud"
         width="44rem"
         @ll-modal-initial-focus=${this._onInitialFocus}
       >
         ${d ? html`
-          <div class="status-body">
-            ${this._renderSection('Local only', d.localOnly)}
-            ${this._renderSection('Local newer', d.localNewer)}
-            ${this._renderSection('Cloud only', d.cloudOnly)}
-            ${this._renderSection('Cloud newer', d.cloudNewer)}
-            <div class="status-section">
-              <div class="status-label">In sync</div>
-              <div class="status-count">
-                ${d.sameCount} video${d.sameCount !== 1 ? 's' : ''}
-              </div>
-            </div>
+          <div class="body">
+            ${this._renderGroup('Library only', d.localOnly)}
+            ${this._renderGroup('Library newer', d.localNewer)}
+            ${this._renderGroup('Cloud only', d.cloudOnly)}
+            ${this._renderGroup('Cloud newer', d.cloudNewer)}
+            ${this._renderGroup('Same last-modified', d.same)}
           </div>
         ` : ''}
         <div slot="footer">

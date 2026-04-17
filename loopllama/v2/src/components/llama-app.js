@@ -2026,7 +2026,7 @@ class LlamaApp extends LitElement {
     const localOnly  = [];
     const localNewer = [];
     const cloudNewer = [];
-    let   sameCount  = 0;
+    const same       = [];
 
     for (const lv of this._appState.videos) {
       const cv = cloudMap.get(lv.id);
@@ -2037,7 +2037,7 @@ class LlamaApp extends LitElement {
       } else if ((cv.last_modified ?? 0) > (lv.last_modified ?? 0)) {
         cloudNewer.push(_name(lv));
       } else {
-        sameCount++;
+        same.push(_name(lv));
       }
     }
 
@@ -2046,7 +2046,7 @@ class LlamaApp extends LitElement {
       if (!localMap.has(cv.id)) cloudOnly.push(_name(cv));
     }
 
-    this._cloudStatusModalEl?.show({ localOnly, localNewer, cloudOnly, cloudNewer, sameCount });
+    this._cloudStatusModalEl?.show({ localOnly, localNewer, cloudOnly, cloudNewer, same });
   }
 
   // ds: save local state to cloud. Categorizes all videos into 5 buckets

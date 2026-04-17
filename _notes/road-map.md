@@ -1,36 +1,6 @@
 
 ## TODO: LoopLlama v2
 
-Text elements: modals:
-
-  video-load-url        | Load Video                    | done
-  video-edit            | Edit Video                    | done
-  video-info            | Video Info                    | done
-  chapter-edit          | Edit Chapter                  | done
-  section-edit          | Edit Section                  | done
-  loop-edit             | Edit Loop                     | done
-  mark-edit             | Edit Mark                     | done
-  data-inspect          | Inspect data                  | done
-  data-compare          | Compare data: local and cloud | done
-  data-delete-bulk      | Delete data                   | done
-  app-options           | Options                       | done
-  shared-video-conflict | Review conflict: shared video | done http://localhost:5173/loopllama/v2/?share=9J3X8AB_yP
-  data-op (di)          | Review conflict: import data  | .
-  data-op (dr)          | Review conflict: cloud read   | .
-  data-op (ds)          | Review conflict: cloud save   | .
-
-  - TODO:
-
-    data-op (di) | Review conflict: import data
-    data-op (dr) | Review conflict: cloud read
-    data-op (ds) | Review conflict: cloud save
-
-    data-compare | Compare data: local and cloud | done
-      - Add bullets, like data-op
-      - headings: switch to blue with N at the end like data-delete-bulk?
-
-    Help docs: explain the logic of ds/dr/di more precisely.
-
 Text elements: messages:
 
   ```
@@ -238,6 +208,24 @@ Text elements: pickers: [done]
   mark-jump      | Jump to mark    | .
   mark-delete    | Delete mark     | .
   jump-history   | Jump history    | .
+
+Text elements: modals: [done]
+
+  video-load-url        | Load Video                    | done
+  video-edit            | Edit Video                    | done
+  video-info            | Video Info                    | done
+  chapter-edit          | Edit Chapter                  | done
+  section-edit          | Edit Section                  | done
+  loop-edit             | Edit Loop                     | done
+  mark-edit             | Edit Mark                     | done
+  data-inspect          | Inspect data                  | done
+  data-compare          | Compare data: local and cloud | done
+  data-delete-bulk      | Delete data                   | done
+  app-options           | Options                       | done
+  shared-video-conflict | Review conflict: shared video | done http://localhost:5173/loopllama/v2/?share=9J3X8AB_yP
+  data-op (di)          | Review conflict: import data  | done
+  data-op (dr)          | Review conflict: cloud read   | done
+  data-op (ds)          | Review conflict: cloud save   | done
 
 Text elements: Current panel [checked; OK]
   - Name
