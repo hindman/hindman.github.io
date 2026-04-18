@@ -20,6 +20,9 @@ ST-SC error        | E    | Could not load share URL[: {error_message}].
 ST-SL bad URL      | E    | Invalid URL: shared loop.
 ST-SV bad URL      | E    | Invalid URL: shared video.
 SIGN IN            | I    | Signed in.
+SIGN OUT           | I    | [NEW: feasible? should we add?] Signed out.
+CLOUD DELETED      | I    | [NEW: feasible? should we add?] Cloud data: deleted.
+CLOUD DELETED      | E    | [NEW: feasible? should we add?] Delete of cloud data failed.
 SIGN IN (no vids)  | I    | [DROP] Signed in. No local videos — use dr to load from cloud.
 WINDOW FOCUS LOST  | W    | Key bindings inactive.
 ------------------------------------------------------------------
@@ -167,7 +170,6 @@ Policy:
 
     - Messages should:
       - End with periods.
-      - Be compact/brief.
       - Be consistent across similar operations.
       - Be restructured to avoid the need for pluralization logic.
 
@@ -179,15 +181,17 @@ Policy:
         import/export, sharing), err toward keeping confirmation messages even
         when the outcome has visual indicators.
 
-    - But without those, drop messages that:
-      - Are pure narration without supplying additional info (eg which entity).
+    - But without those features, drop messages that:
+      - Are pure narration without additional info (eg which entity).
       - Or that have their own obvious and complete visual consequences.
 
     - Message structures: use when feasible:
 
-      Info    | "ENTITY: PAST-VERB" | Chapter: created.
-      Warning | "COMPACT_REASON"    | No chapters.
-      Warning | "CANNOT[: REASON]"  | Cannot fix chapter end: video duration is unknown.
+          Info    | "ENTITY: VERB"      | Chapter: created.
+          Warning | "PROBLEM-BRIEF"     | No chapters.
+          Warning | "PROBLEM[: REASON]" | Cannot fix chapter end: video duration is unknown.
+
+      - For warning/error, avoid structures that scan like "ENTITY: VERB".
 
 Context:
 
