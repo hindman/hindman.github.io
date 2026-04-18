@@ -3,196 +3,222 @@
 
 Text elements: messages:
 
-  ```
+```
 
-  Context                         | Type      | Message
-  ------------------------------------------------------------------
-  --- SYSTEM ---
-  STARTUP                         | info      | Initializing...
-  PLAYER READY                    | info      | Player ready. Enter a YouTube URL or video ID above.
-  STARTUP: prior video restored   | info      | Video cued: {name or id}
-  VIDEO SWITCH                    | info      | Loading: {id}
-  VIDEO ENDED                     | info      | Ended
+Context            | Type | Message
+------------------------------------------------------------------
+ST                 | I    | [DROP] Initializing...
+PLAYER READY       | I    | [DROP] Player ready. Enter a YouTube URL or video ID above.
+ST: prior video    | I    | [DROP] Video cued: {name or id}
+VIDEO SWITCH       | I    | [DROP] Loading: {id}
+VIDEO ENDED        | I    | [DROP] Ended
+------------------------------------------------------------------
+ST-SL              | I    | Shared loop loaded.
+ST: old v2 share   | I    | Shared loop loaded.
+ST-SV              | I    | Shared video loaded.
+ST-SV, skipped     | I    | [DROP] Skipped: "{name}" already in your library.
+ST-SC error        | E    | Share URL: could not load[: {error_message}]
+ST-SL bad URL      | E    | Shared loop: invalid URL.
+ST-SV bad URL      | E    | Shared video: invalid URL.
+SIGN IN            | I    | Signed in.
+SIGN IN (no vids)  | I    | [DROP] Signed in. No local videos — use dr to load from cloud.
+WINDOW FOCUS LOST  | W    | Key bindings inactive.
+------------------------------------------------------------------
+cc                 | I    | Chapter: created.
+cc (fixed chapter) | W    | Cannot create chapter: inside a fixed chapter.
+ce (no chapter)    | W    | No current chapter.
+ce (modal confirm) | I    | Chapter: edited.
+ce (modal confirm) | W    | [IN_MODAL] Edit would eliminate a neighbor chapter.
+cx (no bounds)     | W    | No current chapter.
+cx                 | I    | Chapter: scratched.
+cj (no chapters)   | W    | No chapters.
+cz (no bounds)     | W    | No current chapter.
+cz (was off)       | I    | Chapter: zoomed.
+cz (was on)        | I    | Zoom: off.
+cf (no chapter)    | W    | No current chapter.
+cf (no duration)   | E    | Cannot fix chapter end: video duration unknown.
+cf                 | I    | Chapter: end {fixed           | unfixed}.
+cd (no chapters)   | W    | No chapters.
+cd                 | I    | Chapter: deleted.
+==================================================================       ## __HERE__
+ss                 | I    | Section created
+ss (fixed section) | W    | Cannot set section inside a fixed section.
+se (modal confirm) | I    | Section updated
+se (no section)    | W    | No section at current position.
+se (modal confirm) | W    | Edit would eliminate a neighbor section.
+sx                 | I    | Scratch: section.
+sx (no section)    | W    | No section at current position.
+sj (no sections)   | W    | No sections set.
+sz (was on)        | I    | Section zoom off.
+sz (was off)       | I    | Section zoom on.
+sf (end was fixed) | I    | Section end unfixed.
+sf (end was float) | I    | Section end fixed.
+sz (no section)    | W    | No section at current position.
+sf (no duration)   | E    | Video duration not yet known.
+sf (no section)    | W    | No section at current position.
+sd                 | I    | Section deleted
+sd (no sections)   | W    | No sections set.
+------------------------------------------------------------------
+vo (no videos)     | W    | No videos.
+vv (no videos)     | W    | No videos.
+vd (no videos)     | W    | No videos.
+vr (no stashes)    | W    | No stashed videos.
+vl                 | W    | Invalid YouTube URL or ID.
+y                  | W    | Invalid YouTube URL or ID.
+Space (no video)   | W    | No video loaded.
+xx (no video)      | W    | No video loaded.
+vz (no video)      | W    | No video loaded.
+vz (no offsets)    | W    | Video zoom: no custom start/end times.
+vx (no duration)   | E    | Video scratch: duration not yet known.
+vx                 | I    | Scratch: full video.
+vz (was on)        | I    | Video zoom off.
+vz (was off)       | I    | Video zoom on.
+vd                 | I    | Video deleted.
+vr                 | I    | Restored: "{name}".
+------------------------------------------------------------------
+jb (no history)    | W    | No jump history.
+jb (at oldest)     | W    | At oldest jump.
+jf (at newest)     | W    | At current position.
+jb                 | I    | Jump back: {m:ss}
+jf                 | I    | Jump forward: {m:ss}
+jf (to oldest)     | I    | Returned to current position.
+------------------------------------------------------------------
+xx                 | W    | Invalid loop range: start must be before end.
+ll (bad range)     | W    | Set a valid scratch loop before saving.
+EXPLICIT_JUMP      | I    | Looping off.
+ll                 | I    | Loop created
+lj (no loops)      | W    | No saved loops.
+ld (no loops)      | W    | No saved loops.
+le                 | W    | No saved loop at current position.
+lx                 | W    | No saved loop at current position.
+le (modal confirm) | I    | Loop updated.
+ld                 | I    | Loop deleted
+------------------------------------------------------------------
+lx                 | I    | Scratch: loop[ – {name}].
+xs (no source)     | W    | No source to save back to.
+xs (bad range)     | W    | Scratch loop is invalid (start must be before end).
+xs (source gone)   | W    | Source loop not found.
+xs (source gone)   | W    | Source section not found.
+xs (source gone)   | W    | Source chapter not found.
+xs                 | W    | Padded range too small — cannot compute valid entity bounds.
+xs (neighbor elim) | W    | Save-back would eliminate a neighbor section.
+xs (neighbor elim) | W    | Save-back would eliminate a neighbor chapter.
+xs (loop → loop)   | I    | Loop updated
+xs (section)       | I    | Section saved back.
+xs (chapter)       | I    | Chapter saved back.
+xr (no source)     | W    | No source to reset to.
+xr                 | I    | Loop reset to source.
+xu (no source)     | W    | No source to unlink.
+xu                 | I    | Loop source unlinked.
+lz (bad range)     | W    | No valid scratch loop to zoom.
+lz (full video)    | W    | Loop spans full video; zoom has no effect.
+lz (was on)        | I    | Loop zoom off.
+lz (was off)       | I    | Loop zoom on.
+------------------------------------------------------------
+mm (dup time)      | W    | Mark already exists at this time.
+me (no mark)       | W    | No mark at or before current position.
+mj                 | W    | No marks set.
+md                 | W    | No marks set.
+mm                 | I    | Mark created
+md                 | I    | Mark deleted
+me (modal confirm) | I    | Mark updated
+------------------------------------------------------------------
+zo (no zoom)       | W    | No zoom active.
+zo                 | I    | Zoom off.
+------------------------------------------------------------------
+u (nothing)        | W    | Nothing to undo.
+U (nothing)        | W    | Nothing to redo.
+u                  | I    | Undone: {description}
+U                  | I    | Redone: {description}
+------------------------------------------------------------------
+ac (CB OK)         | I    | Time copied: {m:ss}
+ac (CB blocked)    | W    | Clipboard write failed.
+am (no prior)      | W    | No recent message.
+ao (confirm)       | I    | Options saved.
+ae                 | I    | Example videos: {N} loaded; {N} already in library.
+at                 | I    | Timeline displaying: sections | chapters.
+LOOP START/END     | W    | Invalid time format.
+------------------------------------------------------------------
+ds (not signed in) | W    | Sign in to save data to cloud.
+ds (cloud error)   | E    | Cloud save failed.
+ds                 | I    | Saved to cloud: {N} added, {N} updated, {N} unchanged[, {N} skipped][, {N} deleted].
+dr (not signed in) | W    | Sign in to read data from cloud.
+dr (cloud error)   | E    | Cloud request failed.
+dr (no cloud data) | W    | No cloud data found.
+dr                 | I    | Read from cloud: {N} added, {N} updated, {N} unchanged[, {N} skipped][, {N} deleted].
+dc (not signed in) | W    | Sign in to compare local vs cloud data.
+dc (cloud error)   | E    | Cloud request failed — compare unavailable.
+de                 | I    | Exported all data.
+di (parse error)   | E    | Import failed: {error message}
+di                 | I    | Imported: {N} added, {N} updated, {N} unchanged[, {N} skipped][, {N} deleted].
+d⌫ (delete videos) | I    | Deleted {N} video[s].
+d⌫ (delete items)  | I    | Deleted {N} item[s].
+------------------------------------------------------------------
+dv (no video)      | W    | No video loaded.
+dv (CB OK)         | I    | Video share URL copied to clipboard.
+dv (CB blocked)    | I    | Video share URL ready (clipboard unavailable).
+dv (error)         | E    | Share failed: {error message}
+dx (no video)      | W    | No video loaded.
+dx (bad range)     | W    | Set a valid scratch loop first.
+dx (CB OK)         | I    | Loop share URL copied to clipboard.
+dx (CB blocked)    | I    | Loop share URL ready (clipboard unavailable).
+dx (error)         | E    | Share failed: {error message}
+------------------------------------------------------------------
+EDIT SCRATCH       | WK   | Edit scratch loop bindings
+PREFIX KEY         | WK   | Completions for current prefix
+COUNT DIGIT TYPED  | WK   | Count: {N}
 
-  --- VIDEO ---
-  vo · vv · vd (no videos)        | warning   | No videos saved.
-  vr (no stashes)                 | warning   | No stashed videos.
-  vl · y / URL input (bad URL)    | warning   | Could not parse a YouTube video ID from that input.
-  Space · xx (no video)           | warning   | No video loaded.
-  vz (no video)                   | warning   | No video loaded.
-  vz (no offsets set)             | warning   | Video has no start/end offsets set; zoom has no effect.
-  vx (no duration yet)            | error     | Video duration not yet known.
-  vx                              | info      | Scratch: full video.
-  vz (was on)                     | info      | Video zoom off.
-  vz (was off)                    | info      | Video zoom on.
-  vd                              | info      | Video deleted.
-  vr                              | info      | Restored: "{name}".
+Policy:
 
-  --- JUMP ---
-  jb (no history)                 | warning   | No jump history.
-  jb (at oldest)                  | warning   | At oldest jump.
-  jf (not in history)             | warning   | At current position.
-  SEEK: outside active loop       | warning   | Outside active loop range.
-  jb                              | info      | Jump back: {m:ss}
-  jf                              | info      | Jump forward: {m:ss}
-  jf (return from oldest)         | info      | Returned to current position.
+    - Messages should:
+      - End with periods.
+      - Be compact/brief.
+      - Be consistent across similar operations.
+      - Be restructured to avoid the need for pluralization logic.
 
-  --- LOOPING ---
-  xx · LOOP CHECKBOX (bad range)  | warning   | Invalid loop range: start must be before end.
-  ll (bad range)                  | warning   | Set a valid scratch loop before saving.
-  EXPLICIT NAV (see note 1)       | info      | Looping off.
-  ll                              | info      | Loop created
-  lj · ld (no loops)              | warning   | No saved loops.
-  le · lx (no loop at playhead)   | warning   | No saved loop at current position.
-  le (modal confirm)              | info      | Loop updated.
-  ld                              | info      | Loop deleted
+    - Always keep messages for:
+      - Failures/errors.
+      - Blocked actions.
+      - Mode changes.
+      - For operations with uncertain or non-obvious completion (cloud,
+        import/export, sharing), err toward keeping confirmation messages even
+        when the outcome has visual indicators.
 
-  --- SCRATCH ---
-  lx                              | info      | Scratch: loop – {name}.  [or: Scratch: loop.]
-  xs (no source)                  | warning   | No source to save back to.
-  xs (bad scratch range)          | warning   | Scratch loop is invalid (start must be before end).
-  xs (source loop gone)           | warning   | Source loop not found.
-  xs (source section gone)        | warning   | Source section not found.
-  xs (source chapter gone)        | warning   | Source chapter not found.
-  xs (padded range too small)     | warning   | Padded range too small — cannot compute valid entity bounds.
-  xs (neighbor elim: section)     | warning   | Save-back would eliminate a neighbor section.
-  xs (neighbor elim: chapter)     | warning   | Save-back would eliminate a neighbor chapter.
-  xs (loop → loop)                | info      | Loop updated
-  xs (loop → section)             | info      | Section saved back.
-  xs (loop → chapter)             | info      | Chapter saved back.
-  xr (no source)                  | warning   | No source to reset to.
-  xr                              | info      | Loop reset to source.
-  xu (no source)                  | warning   | No source to unlink.
-  xu                              | info      | Loop source unlinked.
-  lz (bad scratch range)          | warning   | No valid scratch loop to zoom.
-  lz (full video span)            | warning   | Loop spans full video; zoom has no effect.
-  lz (was on)                     | info      | Loop zoom off.
-  lz (was off)                    | info      | Loop zoom on.
+    - But without those, drop messages that:
+      - Are pure narration without supplying additional info (eg which entity).
+      - Or that have their own obvious and complete visual consequences.
 
-  --- SECTION ---
-  ss (inside fixed section)       | warning   | Cannot set section inside a fixed section.
-  se (no section)                 | warning   | No section at current position.
-  sx (no bounds)                  | warning   | No section at current position.
-  sf (no section)                 | warning   | No section at current position.
-  sz (no bounds)                  | warning   | No section at current position.
-  sf (no duration)                | error     | Video duration not yet known.
-  sj · sd (no sections)           | warning   | No sections set.
-  ss                              | info      | Section created
-  sx                              | info      | Scratch: section.
-  sf (end was fixed → float)      | info      | Section end unfixed.
-  sf (end was float → fixed)      | info      | Section end fixed.
-  sd                              | info      | Section deleted
-  sz (was on)                     | info      | Section zoom off.
-  sz (was off)                    | info      | Section zoom on.
-  se (modal confirm)              | info      | Section updated
+    - Message structures: use when feasible:
 
-  --- CHAPTER ---
-  cc (inside fixed chapter)       | warning   | Cannot set chapter inside a fixed chapter.
-  ce (no chapter)                 | warning   | No chapter at current position.
-  cx (no bounds)                  | warning   | No chapter at current position.
-  cf (no chapter)                 | warning   | No chapter at current position.
-  cz (no bounds)                  | warning   | No chapter at current position.
-  cf (no duration)                | error     | Video duration not yet known.
-  cj · cd (no chapters)           | warning   | No chapters set.
-  cc                              | info      | Chapter created
-  cx                              | info      | Scratch: chapter.
-  cf (end was fixed → float)      | info      | Chapter end unfixed.
-  cf (end was float → fixed)      | info      | Chapter end fixed.
-  cd                              | info      | Chapter deleted
-  cz (was on)                     | info      | Chapter zoom off.
-  cz (was off)                    | info      | Chapter zoom on.
-  ce (modal confirm)              | info      | Chapter updated
+      Info    | "ENTITY: PAST-VERB" | Chapter: created.
+      Warning | "COMPACT_REASON"    | No chapters.
+      Warning | "CANNOT[: REASON]"  | Cannot fix chapter end: video duration is unknown.
 
-  --- MARK ---
-  mm (duplicate time)             | warning   | Mark already exists at this time.
-  me (no mark at or before)       | warning   | No mark at or before current position.
-  mj · md (no marks)              | warning   | No marks set.
-  mm                              | info      | Mark created
-  md                              | info      | Mark deleted
-  me (modal confirm)              | info      | Mark updated
+Context:
 
-  --- ZOOM ---
-  zo (no zoom active)             | warning   | No zoom active.
-  zo                              | info      | Zoom off.
+    ST    | STARTUP
+    ST-SL | STARTUP shared loop
+    ST-SV | STARTUP shared video
+    ST-SC | STARTUP shared content
+    CB    | Clipboard
 
-  --- UNDO/REDO ---
-  u (nothing)                     | warning   | Nothing to undo.
-  U (nothing)                     | warning   | Nothing to redo.
-  u                               | info      | Undone: {description}
-  U                               | info      | Redone: {description}
+Message types:
 
-  --- APP / MISC ---
-  ac (clipboard OK)               | info      | Time copied: {m:ss}
-  ac (clipboard blocked)          | warning   | Clipboard write failed.
-  am (no prior message)           | warning   | No recent message.
-  ao (confirm)                    | info      | Options saved.
-  ae                              | info      | Example videos: {N} loaded; {N} already in library.
-  at · t                          | info      | Timeline displaying: sections.  [or: ...chapters.]
-  LOOP START/END INPUT: bad value | warning   | Invalid time format.
+    I     | Info
+    W     | Warning
+    E     | Error
+    WK    | Which key (regular, edit-scratch-loop, or count-prefix)
 
-  --- DATA ---
-  ds (not signed in)              | warning   | Sign in to save data to cloud.
-  ds (cloud error)                | error     | Cloud request failed.
-  ds                              | info      | Saved to cloud: {N} added, {N} updated, {N} unchanged[, {N} skipped][, {N} deleted].
-  dr (not signed in)              | warning   | Sign in to read data from cloud.
-  dr (cloud error)                | error     | Cloud request failed.
-  dr (no cloud data)              | warning   | No cloud data found.
-  dr                              | info      | Read from cloud: {N} added, {N} updated, {N} unchanged[, {N} skipped][, {N} deleted].
-  dc (not signed in)              | warning   | Sign in to compare local vs cloud data.
-  dc (cloud error)                | error     | Cloud request failed — compare unavailable.
-  de                              | info      | Exported all data.
-  di (parse error)                | error     | Import failed: {error message}
-  di                              | info      | Imported: {N} added, {N} updated, {N} unchanged[, {N} skipped][, {N} deleted].
-  d⌫ (delete videos)              | info      | Deleted {N} video[s].
-  d⌫ (delete current-video items) | info      | Deleted {N} item[s].
+Message:
 
-  --- SHARE ---
-  dv (no video)                   | warning   | No video loaded.
-  dv (clipboard OK)               | info      | Video share URL copied to clipboard.
-  dv (clipboard blocked)          | info      | Video share URL ready (clipboard unavailable).
-  dv (error)                      | error     | Share failed: {error message}
-  dx (no video)                   | warning   | No video loaded.
-  dx (bad scratch range)          | warning   | Set a valid scratch loop first.
-  dx (clipboard OK)               | info      | Loop share URL copied to clipboard.
-  dx (clipboard blocked)          | info      | Loop share URL ready (clipboard unavailable).
-  dx (error)                      | error     | Share failed: {error message}
-  STARTUP: shared loop            | info      | Shared loop loaded: {name or time range}
-  STARTUP: legacy ?v=&s=&e= URL   | info      | Shared loop loaded: {m:ss} → {m:ss}
-  STARTUP: shared video           | info      | Shared video loaded: {name}
-  STARTUP: shared video, skipped  | info      | Skipped: "{name}" already in your library.
-  STARTUP: shared content error   | error     | Could not load shared content: {error message}
-  STARTUP: shared loop bad URL    | error     | Shared loop: could not parse video URL.
-  STARTUP: shared video bad URL   | error     | Shared video: could not parse video URL.
-  SIGN IN (no local videos)       | info      | Signed in. No local videos — use dr to load from cloud.
+    [DROP] | Drop the message.
 
-  --- FOOTER BAR STATE ---
-  WINDOW FOCUS LOST               | warning   | Key bindings inactive
-  EDIT SCRATCH ACTIVE             | other     | "Edit Loop" cheatsheet (Tab / ←→ / ↑↓ / Space / ⌫ / 0-9 / Enter·Esc)
-  PREFIX KEY (after 300ms)        | which-key | Completions for current prefix
-  COUNT DIGIT TYPED               | other     | Count: {N}
+Other Notes:
 
-  ```
+  - EXPLICIT_JUMP: fires when looping=true and user requests an explicit jump
+    outside the loop.
 
-  **Notes:**
-
-  1. EXPLICIT NAV: "Looping off." fires from `,` (prevEntity), `.`
-     (nextEntity), and all picker-based jump handlers (`cj`, `sj`, `lj`, `mj`)
-     when looping was active.
-
-  2. "Video duration not yet known." appears for `vx`, `sf`, and `cf` — all
-     operations that need a known duration to compute an endpoint.
-
-  3. Inconsistent trailing periods: create/delete messages (`Loop created`,
-     `Mark deleted`, etc.) have no period; most status confirmations do.
-     Probably worth standardizing.
-
-  4. "Loop updated" (no period) is from `xs` saving scratch back to a named
-     loop; "Loop updated." (with period) is from the `le` edit modal. Same
-     surface message, different punctuation.
-
-  5. The `"Shared loop loaded:"` message appears in two contexts: the modern
-     Supabase share system (startup) and the legacy `?v=&s=&e=` URL params —
-     both produce the same prefix but different formatting of the time range.
+```
 
 Text elements: pickers: [done]
 

@@ -1605,20 +1605,11 @@ class LlamaApp extends LitElement {
     this.errorMsg = msg;
   }
 
-  _flashLoopViolation() {
-    this._setWarning('Outside active loop range.');
-  }
-
-  // Clamp to zoom, enforce loop boundaries, then seek. Used by all
-  // user-initiated jumps (seek delta, timeline clicks).
+  // Clamp to zoom, then seek. Used by all user-initiated jumps
+  // (seek delta, timeline clicks).
   _jumpTo(t) {
     if (this.zoomSource) {
       t = Math.max(this.zoomSource.start, Math.min(this.zoomSource.end, t));
-    }
-    if (this.looping && this.loopStart < this.loopEnd
-        && (t < this.loopStart || t > this.loopEnd)) {
-      this._flashLoopViolation();
-      return;
     }
     this._maybePushJump(this._vc?.getCurrentTime() ?? 0, t);
     this._vc?.seekTo(t);
@@ -1845,22 +1836,11 @@ class LlamaApp extends LitElement {
     this._saveCurrentState();
   }
 
-  // Handle ll-activate-loop from timeline zone click: activate named loop as
-  // scratch and always seek to its start.
+  // Handle ll-activate-loop from timeline zone click: jump to loop start.
   _onActivateLoop(e) {
     const loop = this.namedLoops.find(l => l.id === e.detail.id);
     if (!loop) return;
-    this._clearZoomIfOutside(loop.start, loop.end);
-    this.loopStart       = loop.start;
-    this.loopEnd         = loop.end;
-    this.loopSource      = loop.id;
-    this.loopSourceLabel = loop.name || null;
-    this.loopSourceType  = 'loop';
-    this.loopSourceStart = loop.start;
-    this.loopSourceEnd   = loop.end;
-    this.statusMsg       = `Loop loaded: ${loop.name || 'unnamed'}`;
-    this._maybePushJump(this._vc?.getCurrentTime() ?? 0, loop.start);
-    this._vc?.seekTo(loop.start);
+    this._jumpToExplicit(loop.start);
   }
 
   // Handle ll-jump-loop from loop picker (mode='jump').
@@ -2723,9 +2703,7 @@ class LlamaApp extends LitElement {
   async _handleSignIn(user) {
     this._appState.options.cloud_backup = true;
     save(this._appState);
-    if (this._appState.videos.length === 0) {
-      this.statusMsg = 'Signed in. No local videos — use dr to load from cloud.';
-    }
+    this.statusMsg = 'Signed in.';
   }
 
   // Sign out and remove the user's cloud data.
