@@ -99,7 +99,7 @@ const MENUS = [
     items: [
       { label: 'Toggle',          action: 'toggleLoop',        hint: 'xx'      },
       { label: 'Edit mode',       action: 'editScratch',       hint: 'xe · \\' },
-      { label: 'Zoom',            action: 'zoomLoop',          hint: 'xz'      },
+      { label: 'Zoom',            action: 'zoomScratch',        hint: 'xz'      },
       { type: 'divider' },
       { label: 'Save to source',  action: 'saveBack',          hint: 'xs'      },
       { label: 'Reset to source', action: 'resetLoopToSource', hint: 'xr'      },

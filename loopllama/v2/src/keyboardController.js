@@ -95,7 +95,7 @@ export const BINDINGS = {
   'x': { completions: {
     'x': { handler: 'toggleLoop',        desc: 'Toggle looping' },
     'e': { handler: 'editScratch',        desc: 'Edit scratch loop' },
-    'z': { handler: 'zoomLoop',           desc: 'Toggle loop zoom' },
+    'z': { handler: 'zoomScratch',         desc: 'Toggle scratch loop zoom' },
     's': { handler: 'saveBack',           desc: 'Save scratch loop back to source' },
     'r': { handler: 'resetLoopToSource',  desc: 'Reset scratch loop to source' },
     'u': { handler: 'unlinkLoopSource',   desc: 'Unlink loop source' },

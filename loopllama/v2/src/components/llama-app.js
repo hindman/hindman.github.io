@@ -330,6 +330,7 @@ class LlamaApp extends LitElement {
     this._quipDeck           = [];
     this._quipPos            = 0;
     this._quipInterval       = null;
+    this._pendingNewVideoId  = null;
     this._warnTimeout        = null;
     this._statusTimeout      = null;
     this._errorTimeout       = null;
@@ -715,7 +716,10 @@ class LlamaApp extends LitElement {
         if (!this._appState?.videos.length) { this._setWarning('No videos saved.'); return; }
         this._videoPickerEl?.show('switch', 'alpha');
       },
-      editVideo:     () => this._editVideoModalEl?.show(),
+      editVideo: () => {
+        if (!this.currentVideoId) { this._setWarning('No videos.'); return; }
+        this._editVideoModalEl?.show();
+      },
       scratchVideo: () => {
         if (this.duration == null) {
           this._setError('Video duration not yet known.');
@@ -946,7 +950,27 @@ class LlamaApp extends LitElement {
       zoomLoop: () => {
         if (this.zoomSource?.trigger === 'loop') {
           this.zoomSource = null;
-          this.statusMsg  = 'Loop zoom off.';
+          this.statusMsg  = 'Zoom: off.';
+          return;
+        }
+        const loop = this.namedLoops.find(l =>
+          this.currentTime >= l.start && this.currentTime <= l.end);
+        if (!loop) {
+          this._setWarning('No loop at current position.');
+          return;
+        }
+        if (loop.start === 0 && loop.end === this.duration) {
+          this._setWarning('Loop spans full video; zoom has no effect.');
+          return;
+        }
+        this.zoomSource = { start: loop.start, end: loop.end, trigger: 'loop' };
+        this.statusMsg  = 'Loop: zoomed.';
+        this._seekIntoZoomIfNeeded();
+      },
+      zoomScratch: () => {
+        if (this.zoomSource?.trigger === 'scratch') {
+          this.zoomSource = null;
+          this.statusMsg  = 'Zoom: off.';
           return;
         }
         if (!this._isLoopValid()) {
@@ -954,11 +978,11 @@ class LlamaApp extends LitElement {
           return;
         }
         if (this.loopStart === 0 && this.loopEnd === this.duration) {
-          this._setWarning('Loop spans full video; zoom has no effect.');
+          this._setWarning('Scratch loop spans full video; zoom has no effect.');
           return;
         }
-        this.zoomSource = { start: this.loopStart, end: this.loopEnd, trigger: 'loop' };
-        this.statusMsg  = 'Loop zoom on.';
+        this.zoomSource = { start: this.loopStart, end: this.loopEnd, trigger: 'scratch' };
+        this.statusMsg  = 'Scratch: zoomed.';
         this._seekIntoZoomIfNeeded();
       },
       zoomSection: () => {
@@ -1197,6 +1221,15 @@ class LlamaApp extends LitElement {
     const container = this.renderRoot.querySelector('#player-container');
 
     this._vc = createVideoController({
+      onError: () => {
+        this._setError('Video: failed to load.');
+        if (this._pendingNewVideoId) {
+          this._appState.videos = this._appState.videos.filter(
+            v => v.id !== this._pendingNewVideoId);
+          this.videos = [...this._appState.videos];
+          this._pendingNewVideoId = null;
+        }
+      },
       onReady: () => {
         this.statusMsg = 'Player ready. Enter a YouTube URL or video ID above.';
       },
@@ -1516,6 +1549,9 @@ class LlamaApp extends LitElement {
       video = createVideo(raw, parsed.id);
       this._appState.videos.push(video);
       this.videos = [...this._appState.videos];
+      this._pendingNewVideoId = parsed.id;
+    } else {
+      this._pendingNewVideoId = null;
     }
 
     this._loadVideoObject(video, parsed.startTime);
@@ -1543,6 +1579,7 @@ class LlamaApp extends LitElement {
     video.start = start;
     video.end   = end;
     this.videos = [...this._appState.videos];
+    this.statusMsg = 'Video: edited.';
     this._save();
   }
 
@@ -2773,7 +2810,11 @@ class LlamaApp extends LitElement {
       if (!this.zoomSource) return null;
       const { trigger, start, end } = this.zoomSource;
       if (trigger === 'loop') {
-        return `Loop: ${_fmtTimePlain(start)} – ${_fmtTimePlain(end)}`;
+        const loop = this.namedLoops.find(l => l.start === start && l.end === end);
+        return loop?.name ? `Loop: ${loop.name}` : `Loop: ${_fmtTimePlain(start)} – ${_fmtTimePlain(end)}`;
+      }
+      if (trigger === 'scratch') {
+        return `Scratch loop: ${_fmtTimePlain(start)} – ${_fmtTimePlain(end)}`;
       }
       if (trigger === 'section') {
         const sec = nearestSectionLeft(this.sections, start);

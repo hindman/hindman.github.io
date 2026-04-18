@@ -5,7 +5,7 @@
 //   await vc.initialize(containerElement);
 //   vc.loadVideo('zP4lYpsfL8c');
 
-export function createVideoController({ onReady, onStateChange } = {}) {
+export function createVideoController({ onReady, onStateChange, onError } = {}) {
   let player = null;
   let durationReady = false;
 
@@ -38,6 +38,9 @@ export function createVideoController({ onReady, onStateChange } = {}) {
           onReady: () => {
             onReady?.();
             resolve();
+          },
+          onError: (event) => {
+            onError?.(event.data);
           },
           onStateChange: (event) => {
             // Duration bug fix: getDuration() returns unreliable values
