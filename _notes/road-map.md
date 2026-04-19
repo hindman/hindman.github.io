@@ -1,170 +1,17 @@
 
-## TODO: LoopLlama v2
+## TODO: Text elements: messages
 
-Text elements: messages:
+Implementation stages:
 
-```
+    x. **Mechanical text pass** — DROP, NEW, WAS_INFO, and basic text changes.
 
-Context            | Type | Message
-------------------------------------------------------------------
-ST                 | I    | [DROP] Initializing...
-PLAYER READY       | I    | [DROP] Player ready. Enter a YouTube URL or video ID above.
-ST: prior video    | I    | [DROP] Video cued: {name or id}
-VIDEO ENDED        | I    | [DROP] Ended
-------------------------------------------------------------------
-ST-SL              | I    | Shared loop: loaded.
-ST: old v2 share   | I    | Shared loop: loaded.
-ST-SV              | I    | Shared video: loaded.
-ST-SV, skipped     | I    | [DROP] Skipped: "{name}" already in your library.
-ST-SC error        | E    | Could not load share URL[: {error_message}].
-ST-SL bad URL      | E    | Invalid URL: shared loop.
-ST-SV bad URL      | E    | Invalid URL: shared video.
-SIGN IN            | I    | Signed in.
-SIGN OUT           | I    | [NEW: feasible? should we add?] Signed out.
-CLOUD DELETED      | I    | [NEW: feasible? should we add?] Cloud data: deleted.
-CLOUD DELETED      | E    | [NEW: feasible? should we add?] Delete of cloud data failed.
-SIGN IN (no vids)  | I    | [DROP] Signed in. No local videos — use dr to load from cloud.
-WINDOW FOCUS LOST  | W    | Key bindings inactive.
-------------------------------------------------------------------
-vl                 | I    | Video: loaded.
-vl                 | W    | Invalid YouTube URL or ID.
-vl                 | E    | YouTube failed to load video.
-vo                 | I    | Video: opened.
-vo (no videos)     | W    | No videos.
-ve                 | I    | Video: edited.
-ve                 | W    | No videos.
-vx                 | I    | Video: scratched.
-vx (no duration)   | E    | Cannot scratch video: video duration unknown.
-vz (was off)       | I    | Video: zoomed.
-vz (was on)        | I    | Zoom: off.
-vz (no video)      | W    | No current video.
-vz (full video)    | W    | Cannot zoom a range spanning entire video.
-vd                 | I    | Video: deleted.
-vd (no videos)     | W    | No videos.
-vu                 | I    | Video: unstashed.
-vu (no stashes)    | W    | No stashed videos.
-------------------------------------------------------------------
-cc                 | I    | Chapter: created.
-cc (fixed chapter) | W    | Cannot create chapter: inside a fixed chapter.
-ce (no chapter)    | W    | No current chapter.
-ce (modal confirm) | I    | Chapter: edited.
-ce (modal confirm) | W    | [IN_MODAL] Edit would eliminate a neighbor chapter.
-cx (no bounds)     | W    | No current chapter.
-cx                 | I    | Chapter: scratched.
-cj (no chapters)   | W    | No chapters.
-cz (was off)       | I    | Chapter: zoomed.
-cz (was on)        | I    | Zoom: off.
-cz (no chapter)    | W    | No current chapter.
-cf                 | I    | Chapter: end {fixed/unfixed}.
-cf (no chapter)    | W    | No current chapter.
-cf (no duration)   | E    | Cannot fix chapter end: video duration unknown.
-cd                 | I    | Chapter: deleted.
-cd (no chapters)   | W    | No chapters.
-------------------------------------------------------------------
-ss                 | I    | Section: created.
-ss (fixed section) | W    | Cannot create section: inside a fixed section.
-se (no section)    | W    | No current section.
-se (modal confirm) | I    | Section: edited.
-se (modal confirm) | W    | [IN_MODAL] Edit would eliminate a neighbor section.
-sx                 | I    | Section: scratched.
-sj (no sections)   | W    | No sections.
-sx (no section)    | W    | No current section.
-sz (was off)       | I    | Section: zoomed.
-sz (was on)        | I    | Zoom: off.
-sz (no section)    | W    | No current section.
-sf (end was fixed) | I    | Section: end {fixed/unfixed}.
-sf (no section)    | W    | No current section.
-sf (no duration)   | E    | Cannot fix section end: video duration unknown.
-sd                 | I    | Section deleted
-sd (no sections)   | W    | No sections.
-------------------------------------------------------------------
-ll                 | I    | Loop: created.
-ll (bad range)     | W    | Cannot create loop: invalid range.
-le (modal confirm) | I    | Loop: edited.
-le                 | W    | No current loop.
-lx                 | I    | Loop: scratched.
-lx                 | W    | No current loop.
-lj (no loops)      | W    | No loops.
-lz (was off)       | I    | Loop: zoomed.
-lz (was on)        | I    | Zoom: off.
-lz (no loop)       | W    | No current loop.
-lz (full video)    | W    | Cannot zoom a range spanning entire video.
-ld                 | I    | Loop: deleted.
-ld (no loops)      | W    | No loops.
-------------------------------------------------------------
-mm                 | I    | Mark: created
-mm (dup time)      | W    | Cannot create mark: mark exists at current time.
-me (modal confirm) | I    | Mark: edited.
-me (no mark)       | W    | No current mark.
-mj                 | W    | No marks.
-md                 | I    | Mark: deleted.
-md                 | W    | No marks.
-------------------------------------------------------------------
-xx                 | I    | Scratch loop: {on/off}.
-xx                 | W    | Cannot activate scratch loop: invalid range.
-xx (no video)      | W    | No video loaded.
-xz (was off)       | I    | Scratch loop: zoomed.
-xz (was on)        | I    | Zoom: off.
-xz (bad loop)      | W    | Cannot zoom scratch loop: invalid range.
-xz (full video)    | W    | Cannot zoom a range spanning entire video.
-xs                 | I    | Scratch loop: saved back to source.
-xs (no source)     | W    | Cannot save back: no scratch loop source.
-xs (bad range)     | W    | Cannot save back: invalid range.
-xs (source gone)   | W    | Cannot save back: source not found.
-xs (too small)     | W    | Cannot save back: invalid range.
-xs (neighbor elim) | W    | Cannot save back: would eliminate a neighboring source.
-xr                 | I    | Scratch loop: reset to source.
-xr (no source)     | W    | Cannot reset to scratch loop source: no source.
-xu                 | I    | Scratch loop: source unlinked.
-xu (no source)     | W    | Cannot unlink scratch loop source: no source.
-==================================================================       ## __HERE__
-------------------------------------------------------------------
-ds (not signed in) | W    | Sign in to save data to cloud.
-ds (cloud error)   | E    | Cloud save failed.
-ds                 | I    | Saved to cloud: {N} added, {N} updated, {N} unchanged[, {N} skipped][, {N} deleted].
-dr (not signed in) | W    | Sign in to read data from cloud.
-dr (cloud error)   | E    | Cloud request failed.
-dr (no cloud data) | W    | No cloud data found.
-dr                 | I    | Read from cloud: {N} added, {N} updated, {N} unchanged[, {N} skipped][, {N} deleted].
-dc (not signed in) | W    | Sign in to compare local vs cloud data.
-dc (cloud error)   | E    | Cloud request failed — compare unavailable.
-de                 | I    | Exported all data.
-di (parse error)   | E    | Import failed: {error message}
-di                 | I    | Imported: {N} added, {N} updated, {N} unchanged[, {N} skipped][, {N} deleted].
-d⌫ (delete videos) | I    | Deleted {N} video[s].
-d⌫ (delete items)  | I    | Deleted {N} item[s].
-dv (no video)      | W    | No video loaded.
-dv (CB OK)         | I    | Video share URL copied to clipboard.
-dv (CB blocked)    | I    | Video share URL ready (clipboard unavailable).
-dv (error)         | E    | Share failed: {error message}
-dx (no video)      | W    | No video loaded.
-dx (bad range)     | W    | Set a valid scratch loop first.
-dx (CB OK)         | I    | Loop share URL copied to clipboard.
-dx (CB blocked)    | I    | Loop share URL ready (clipboard unavailable).
-dx (error)         | E    | Share failed: {error message}
-------------------------------------------------------------------
-jb (no history)    | W    | No jump history.
-jb (at oldest)     | W    | At oldest jump.
-jf (at newest)     | W    | At current position.
-jb                 | I    | Jump back: {m:ss}
-jf                 | I    | Jump forward: {m:ss}
-jf (to oldest)     | I    | Returned to current position.
-zo (no zoom)       | W    | No zoom active.
-zo                 | I    | Zoom off.
-u (nothing)        | W    | Nothing to undo.
-U (nothing)        | W    | Nothing to redo.
-u                  | I    | Undone: {description}
-U                  | I    | Redone: {description}
-ac (CB OK)         | I    | Time copied: {m:ss}
-ac (CB blocked)    | W    | Clipboard write failed.
-am (no prior)      | W    | No recent message.
-ao (confirm)       | I    | Options saved.
-ae                 | I    | Example videos: {N} loaded; {N} already in library.
-at                 | I    | Timeline displaying: sections | chapters.
-------------------------------------------------------------------
-NO_VIDEO           | W    | No current video.
-EXPLICIT_JUMP      | I    | Looping off.
-BAD_TIME           | W    | Invalid time.
+    2. **Undo/redo rework** — change `_pushUndoSnapshot` to read
+       `this.statusMsg`, reorder ~20 call sites. Isolated structural change,
+       easy to verify independently.
+
+    3. **[IN_MODAL] ce/se** — move the neighbor-elimination warnings into
+       modal validation. This touches both the modal components and the app
+       logic, and is the most complex of the three.
 
 Policy:
 
@@ -187,13 +34,15 @@ Policy:
 
     - Message structures: use when feasible:
 
+          Type    | Structure           | Example
+          -----------------------------------------------------------------
           Info    | "ENTITY: VERB"      | Chapter: created.
-          Warning | "PROBLEM-BRIEF"     | No chapters.
+          Warning | "BRIEF_PROBLEM"     | No chapters.
           Warning | "PROBLEM[: REASON]" | Cannot fix chapter end: video duration is unknown.
 
       - For warning/error, avoid structures that scan like "ENTITY: VERB".
 
-Context:
+Context: abbreviations:
 
     ST       | STARTUP
     ST-SL    | STARTUP shared loop
@@ -207,12 +56,11 @@ Message types:
     W     | Warning
     E     | Error
 
-Message:
+Message: abbreviations:
 
-    [DROP] | Drop the message.
-    [NEW]  | New message.
+    [IN_MODAL] | Move message into the modal validation process.
 
-Other Notes:
+Other codes:
 
   - EXPLICIT_JUMP: fires when looping=true and user requests an explicit jump
     outside the loop.
@@ -225,6 +73,158 @@ Other Notes:
     (current time, scratch loop bounds).
 
 ```
+Context            | Type | Message
+------------------------------------------------------------------
+ST-SL              | I    | Shared loop: loaded.
+ST: old v2 share   | I    | Shared loop: loaded.
+ST-SV              | I    | Shared video: loaded.
+ST-SC: error       | E    | Could not load share URL[: {error_message}].
+ST-SL: bad URL     | E    | Invalid URL: shared loop.
+ST-SV: bad URL     | E    | Invalid URL: shared video.
+SIGN-IN            | I    | Signed in.
+SIGN-OUT           | I    | Signed out.
+CLOUD: deleted     | I    | Cloud data: deleted.
+CLOUD: deleted     | E    | Cannot delete cloud data: {err_message}.
+APP: focus lost    | W    | Key bindings inactive.
+NO_VIDEO           | W    | No current video.
+EXPLICIT_JUMP      | I    | Looping off.
+BAD_TIME           | W    | Invalid time.
+------------------------------------------------------------------
+vl                 | I    | Video: loaded.
+vl                 | W    | Invalid YouTube URL or ID.
+vl                 | E    | YouTube failed to load video.
+vo                 | I    | Video: opened.
+vo: no videos      | W    | No videos.
+ve                 | I    | Video: edited.
+ve                 | W    | No videos.
+vx                 | I    | Video: scratched.
+vx: no duration    | E    | Cannot scratch video: video duration unknown.
+vz: was off        | I    | Video: zoomed.
+vz: was on         | I    | Zoom: off.
+vz: no video       | W    | No current video.
+vz: full video     | W    | Cannot zoom a range spanning entire video.
+vd                 | I    | Video: deleted.
+vd: no videos      | W    | No videos.
+vu                 | I    | Video: unstashed.
+vu: no stashes     | W    | No stashed videos.
+------------------------------------------------------------------
+cc                 | I    | Chapter: created.
+cc: fixed chap     | W    | Cannot create chapter: inside a fixed chapter.
+ce                 | I    | Chapter: edited.
+ce: no chapter     | W    | No current chapter.
+ce                 | W    | [IN_MODAL] Edit would eliminate a neighbor chapter.
+cx                 | I    | Chapter: scratched.
+cx                 | W    | No current chapter.
+cj: no chapters    | W    | No chapters.
+cz: was off        | I    | Chapter: zoomed.
+cz: was on         | I    | Zoom: off.
+cz: no chapter     | W    | No current chapter.
+cf                 | I    | Chapter: end {fixed/unfixed}.
+cf: no chapter     | W    | No current chapter.
+cf: no duration    | E    | Cannot fix chapter end: video duration unknown.
+cd                 | I    | Chapter: deleted.
+cd: no chapters    | W    | No chapters.
+------------------------------------------------------------------
+ss                 | I    | Section: created.
+ss                 | W    | Cannot create section: inside a fixed section.
+se                 | I    | Section: edited.
+se: no section     | W    | No current section.
+se                 | W    | [IN_MODAL] Edit would eliminate a neighbor section.
+sx                 | I    | Section: scratched.
+sx: no section     | W    | No current section.
+sj: no sections    | W    | No sections.
+sz: was off        | I    | Section: zoomed.
+sz: was on         | I    | Zoom: off.
+sz: no section     | W    | No current section.
+sf                 | I    | Section: end {fixed/unfixed}.
+sf: no section     | W    | No current section.
+sf: no duration    | E    | Cannot fix section end: video duration unknown.
+sd                 | I    | Section: deleted.
+sd: no sections    | W    | No sections.
+------------------------------------------------------------------
+ll                 | I    | Loop: created.
+ll: bad range      | W    | Cannot create loop: invalid range.
+le                 | I    | Loop: edited.
+le                 | W    | No current loop.
+lx                 | I    | Loop: scratched.
+lx                 | W    | No current loop.
+lj: no loops       | W    | No loops.
+lz: was off        | I    | Loop: zoomed.
+lz: was on         | I    | Zoom: off.
+lz: no loop        | W    | No current loop.
+lz: full video     | W    | Cannot zoom a range spanning entire video.
+ld                 | I    | Loop: deleted.
+ld: no loops       | W    | No loops.
+------------------------------------------------------------------
+xx                 | I    | Scratch loop: {on/off}.
+xx                 | W    | Cannot activate scratch loop: invalid range.
+xx: no video       | W    | No current video.
+xz: was off        | I    | Scratch loop: zoomed.
+xz: was on         | I    | Zoom: off.
+xz: bad loop       | W    | Cannot zoom scratch loop: invalid range.
+xz: full video     | W    | Cannot zoom a range spanning entire video.
+xs                 | I    | Scratch loop: saved back to source.
+xs: no source      | W    | Cannot save: no scratch loop source.
+xs: bad range      | W    | Cannot save: invalid scratch loop range.
+xs: source gone    | W    | Cannot save: scratch loop source not found.
+xs: too small      | W    | Cannot save: invalid scratch loop range.
+xs: neighbor elim  | W    | Cannot save: would eliminate a neighboring source.
+xr                 | I    | Scratch loop: reset to source.
+xr: no source      | W    | Cannot reset: no scratch loop source.
+xu                 | I    | Scratch loop: source unlinked.
+xu: no source      | W    | Cannot unlink: no scratch loop source.
+------------------------------------------------------------
+mm                 | I    | Mark: created.
+mm: dup time       | W    | Cannot create mark: mark exists at current time.
+me                 | I    | Mark: edited.
+me: no mark        | W    | No current mark.
+mj                 | W    | No marks.
+md                 | I    | Mark: deleted.
+md                 | W    | No marks.
+------------------------------------------------------------------
+dv                 | I    | Shared video: URL copied to clipboard.
+dv: no video       | W    | No current video.
+dv: CB blocked     | E    | Cannot provide shared video URL: clipboard blocked.
+dv: error          | E    | Cannot provide shared video URL: {err_message}.
+dx                 | I    | Shared scratch loop: URL copied to clipboard.
+dx: no video       | W    | No current video.
+dx: bad range      | W    | Cannot provide shared scratch loop URL: invalid range.
+dx: CB blocked     | E    | Cannot provide shared scratch loop URL: clipboard blocked.
+dx: error          | E    | Cannot provide shared scratch loop URL: {err_message}.
+de                 | I    | Data: exported.
+di                 | I    | Data: imported.
+di: parse error    | E    | Cannot import data: {err_message}.
+ds                 | I    | Data: saved to cloud.
+ds: not signed in  | W    | Cannot save data to cloud: you must be signed in.
+ds: cloud error    | E    | Cannot save data to cloud: {err_message}.
+dr                 | I    | Data: read from cloud.
+dr: not signed in  | W    | Cannot read data from cloud: you must be signed in.
+dr: no cloud data  | W    | Cannot read data from cloud: no cloud data found.
+dr: cloud error    | E    | Cannot read data from cloud: {err_message}.
+dc: not signed in  | W    | Cannot compare local and cloud data: you must be signed in.
+dc: cloud error    | E    | Cannot compare local and cloud data: {err_message}.
+d⌫:                | I    | Data: deleted.
+------------------------------------------------------------------
+jh                 | W    | No jump history.
+jb: no history     | W    | Cannot jump: no jump history.
+jb: at oldest      | W    | Cannot jump: at oldest position.
+jf: no history     | W    | Cannot jump: no jump history.
+jf: at newest      | W    | Cannot jump: at newest position.
+au                 | I    | Undone: ({prior_edit_msg}).
+au: nothing        | W    | Cannot undo.
+ar                 | I    | Redone: ({prior_edit_msg}).
+ar: nothing        | W    | Cannot redo.
+am: no prior       | W    | No recent message.
+ac                 | I    | Time copied: {time}.
+ac: CB blocked     | W    | Cannot copy current time: clipboard blocked.
+at                 | I    | Timeline displaying: {sections/chapters}.
+az                 | I    | Zoom: off.
+az: no zoom        | W    | No current zoom.
+ao                 | I    | Options: saved.
+ae                 | I    | Examples: loaded.
+```
+
+## TODO: LoopLlama v2
 
 Text elements: which-key:
 

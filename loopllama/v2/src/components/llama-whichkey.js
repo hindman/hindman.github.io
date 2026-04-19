@@ -119,7 +119,7 @@ class LlamaWhichkey extends LitElement {
         <div class="bar">
           <div class="row">
             <span class="warning">
-              Key bindings inactive
+              Key bindings inactive.
             </span>
           </div>
         </div>

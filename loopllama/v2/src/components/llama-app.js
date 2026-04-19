@@ -46,6 +46,7 @@ import './llama-delete-data-modal.js';
 import './llama-inspect-modal.js';
 import './llama-cloud-status-modal.js';
 import './llama-data-op-modal.js';
+import './llama-load-examples-modal.js';
 
 
 const QUIP_INTERVAL_MS = 6000;
@@ -304,7 +305,8 @@ class LlamaApp extends LitElement {
     this.namedLoops    = [];
     this.jumps         = [];
     this.loopSource    = null;
-    this.statusMsg     = 'Initializing...';
+    this.statusMsg     = null;
+    this._skipSignOutMsg = false;
     this.wkPrefix            = null;
     this.wkCompletions       = null;
     this.wkCount             = null;
@@ -485,11 +487,11 @@ class LlamaApp extends LitElement {
     this._appState.options = options;
     this._applyOptions(options);
     this._save();
-    this.statusMsg = 'Options saved.';
+    this.statusMsg = 'Options: saved.';
   }
 
   // Load a Video object: save current state, switch to new video, restore state.
-  _loadVideoObject(video, startTime = null) {
+  _loadVideoObject(video, startTime = null, loadMsg = 'Video: loaded.') {
     this._saveCurrentState();
     video.last_opened = Date.now();
     this._appState.currentVideoId = video.id;
@@ -498,7 +500,7 @@ class LlamaApp extends LitElement {
     const _startAt = startTime ?? (this.looping && this.loopStart < this.loopEnd ? this.loopStart : video.time ?? 0);
     this._vc.loadVideo(video.id, _startAt);
     this.duration  = null;
-    this.statusMsg = `Loading: ${video.id}`;
+    this.statusMsg = loadMsg;
     this._save();
     logVideoLoad(video.id);
   }
@@ -598,7 +600,7 @@ class LlamaApp extends LitElement {
 
   _undo() {
     if (!this._undoStack.length) {
-      this._setWarning('Nothing to undo.');
+      this._setWarning('Cannot undo.');
       return;
     }
     const snap = this._undoStack.pop();
@@ -609,7 +611,7 @@ class LlamaApp extends LitElement {
 
   _redo() {
     if (!this._redoStack.length) {
-      this._setWarning('Nothing to redo.');
+      this._setWarning('Cannot redo.');
       return;
     }
     const snap = this._redoStack.pop();
@@ -625,7 +627,7 @@ class LlamaApp extends LitElement {
     // action should be blocked (no current video).
     const noVideo = () => {
       if (this.currentVideoId) return false;
-      this._setWarning('No video loaded.');
+      this._setWarning('No current video.');
       return true;
     };
     return {
@@ -699,8 +701,8 @@ class LlamaApp extends LitElement {
         const s = Math.floor(t % 60).toString().padStart(2, '0');
         const text = `${m}:${s}`;
         navigator.clipboard.writeText(text).then(
-          ()  => { this.statusMsg = `Time copied: ${text}`; },
-          ()  => this._setWarning('Clipboard write failed.'),
+          ()  => { this.statusMsg = `Time copied: ${text}.`; },
+          ()  => this._setWarning('Cannot copy current time: clipboard blocked.'),
         );
       },
       undo:          () => this._undo(),
@@ -709,11 +711,11 @@ class LlamaApp extends LitElement {
       options:       () => this._optionsModalEl?.show(this._appState?.options),
       videoUrl:      () => this._urlInputModalEl?.show(),
       videoPickerRecent: () => {
-        if (!this._appState?.videos.length) { this._setWarning('No videos saved.'); return; }
+        if (!this._appState?.videos.length) { this._setWarning('No videos.'); return; }
         this._videoPickerEl?.show('switch', 'recent');
       },
       videoPickerAlpha: () => {
-        if (!this._appState?.videos.length) { this._setWarning('No videos saved.'); return; }
+        if (!this._appState?.videos.length) { this._setWarning('No videos.'); return; }
         this._videoPickerEl?.show('switch', 'alpha');
       },
       editVideo: () => {
@@ -722,7 +724,7 @@ class LlamaApp extends LitElement {
       },
       scratchVideo: () => {
         if (this.duration == null) {
-          this._setError('Video duration not yet known.');
+          this._setError('Cannot scratch video: video duration unknown.');
           return;
         }
         const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
@@ -737,28 +739,28 @@ class LlamaApp extends LitElement {
         this.loopSourceType  = null;
         this.loopSourceStart = start;
         this.loopSourceEnd   = end;
-        this.statusMsg       = 'Scratch: full video.';
+        this.statusMsg       = 'Video: scratched.';
       },
       zoomVideo: () => {
         if (this.zoomSource?.trigger === 'video') {
           this.zoomSource = null;
-          this.statusMsg  = 'Video zoom off.';
+          this.statusMsg  = 'Zoom: off.';
           return;
         }
         const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
-        if (!video) { this._setWarning('No video loaded.'); return; }
+        if (!video) { this._setWarning('No current video.'); return; }
         const start = video.start ?? 0;
         const end   = video.end   ?? this.duration;
         if (start === 0 && (end == null || end >= this.duration)) {
-          this._setWarning('Video has no start/end offsets set; zoom has no effect.');
+          this._setWarning('Cannot zoom a range spanning entire video.');
           return;
         }
         this.zoomSource = { start, end, trigger: 'video' };
-        this.statusMsg  = 'Video zoom on.';
+        this.statusMsg  = 'Video: zoomed.';
         this._seekIntoZoomIfNeeded();
       },
       deleteVideo: () => {
-        if (!this._appState?.videos.length) { this._setWarning('No videos saved.'); return; }
+        if (!this._appState?.videos.length) { this._setWarning('No videos.'); return; }
         this._videoPickerEl?.show('delete');
       },
       restoreVideo: () => {
@@ -770,9 +772,12 @@ class LlamaApp extends LitElement {
       jumpLoop:      () => { this._openLoopsPicker('jump'); },
       jumpMark:      () => { this._openMarksPicker('jump'); },
       jumpChapter:   () => { this._openChapterPicker('jump'); },
-      jumpHistory:   () => { this._jumpHistoryPickerEl?.show(); },
-      jumpBack: () => {
+      jumpHistory:   () => {
         if (!this.jumps.length) { this._setWarning('No jump history.'); return; }
+        this._jumpHistoryPickerEl?.show();
+      },
+      jumpBack: () => {
+        if (!this.jumps.length) { this._setWarning('Cannot jump: no jump history.'); return; }
         if (this._jumpIdx === -1) {
           // First jb: save current position, go to most recent entry.
           this._jumpFromTime = this._vc?.getCurrentTime() ?? 0;
@@ -780,24 +785,23 @@ class LlamaApp extends LitElement {
         } else if (this._jumpIdx > 0) {
           this._jumpIdx--;
         } else {
-          this._setWarning('At oldest jump.'); return;
+          this._setWarning('Cannot jump: at oldest position.'); return;
         }
         const t = this.jumps[this._jumpIdx];
         this._suppressJumpPush = true;
         this._vc?.seekTo(t);
         this._suppressJumpPush = false;
-        this.statusMsg = `Jump back: ${_fmtTimePlain(t)}`;
         this._flash('time');
       },
       jumpForward: () => {
-        if (this._jumpIdx === -1) { this._setWarning('At current position.'); return; }
+        if (!this.jumps.length) { this._setWarning('Cannot jump: no jump history.'); return; }
+        if (this._jumpIdx === -1) { this._setWarning('Cannot jump: at newest position.'); return; }
         if (this._jumpIdx < this.jumps.length - 1) {
           this._jumpIdx++;
           const t = this.jumps[this._jumpIdx];
           this._suppressJumpPush = true;
           this._vc?.seekTo(t);
           this._suppressJumpPush = false;
-          this.statusMsg = `Jump forward: ${_fmtTimePlain(t)}`;
           this._flash('time');
         } else {
           // At most recent entry; jump forward to where jb was first invoked.
@@ -807,44 +811,44 @@ class LlamaApp extends LitElement {
           this._suppressJumpPush = true;
           this._vc?.seekTo(t);
           this._suppressJumpPush = false;
-          this.statusMsg = 'Returned to current position.';
           this._flash('time');
         }
       },
       toggleLoop: () => {
         if (noVideo()) return;
         if (!this.looping && !this._isLoopValid()) {
-          this._setWarning('Invalid loop range: start must be before end.');
+          this._setWarning('Cannot activate scratch loop: invalid range.');
           return;
         }
         this.looping = !this.looping;
         if (this.looping) this._seekIntoLoopIfNeeded();
+        this.statusMsg = `Scratch loop: ${this.looping ? 'on' : 'off'}.`;
       },
       saveLoop: () => {
         if (this.loopEnd <= this.loopStart) {
-          this._setWarning('Set a valid scratch loop before saving.');
+          this._setWarning('Cannot create loop: invalid range.');
           return;
         }
         this._pushUndoSnapshot('Loop created');
         addLoop(this.namedLoops, this.loopStart, this.loopEnd);
         this.namedLoops = [...this.namedLoops];
-        this.statusMsg = 'Loop created';
+        this.statusMsg = 'Loop: created.';
         this._saveCurrentState();
       },
       saveBack: () => {
         if (!this.loopSource) {
-          this._setWarning('No source to save back to.');
+          this._setWarning('Cannot save: no scratch loop source.');
           return;
         }
         if (this.loopStart >= this.loopEnd) {
-          this._setWarning('Scratch loop is invalid (start must be before end).');
+          this._setWarning('Cannot save: invalid scratch loop range.');
           return;
         }
 
         if (this.loopSourceType === 'loop') {
           const idx = this.namedLoops.findIndex(l => l.id === this.loopSource);
           if (idx === -1) {
-            this._setWarning('Source loop not found.');
+            this._setWarning('Cannot save: scratch loop source not found.');
             return;
           }
           this._pushUndoSnapshot('Loop updated');
@@ -853,7 +857,7 @@ class LlamaApp extends LitElement {
           this.namedLoops        = [...this.namedLoops];
           this.loopSourceStart   = this.loopStart;
           this.loopSourceEnd     = this.loopEnd;
-          this.statusMsg         = 'Loop updated';
+          this.statusMsg         = 'Scratch loop: saved back to source.';
           this._saveCurrentState();
           return;
         }
@@ -864,7 +868,7 @@ class LlamaApp extends LitElement {
           const entities  = isSection ? this.sections : this.chapters;
           const idx       = entities.findIndex(e => e.id === this.loopSource);
           if (idx === -1) {
-            this._setWarning(`Source ${label} not found.`);
+            this._setWarning('Cannot save: scratch loop source not found.');
             return;
           }
 
@@ -874,12 +878,12 @@ class LlamaApp extends LitElement {
           const newEnd   = this.loopEnd   - padEnd;
 
           if (newStart >= newEnd) {
-            this._setWarning('Padded range too small — cannot compute valid entity bounds.');
+            this._setWarning('Cannot save: invalid scratch loop range.');
             return;
           }
 
           if (!validateEntityChange(entities, idx, newStart, newEnd, this.duration)) {
-            this._setWarning(`Save-back would eliminate a neighbor ${label}.`);
+            this._setWarning('Cannot save: would eliminate a neighboring source.');
             return;
           }
 
@@ -892,16 +896,16 @@ class LlamaApp extends LitElement {
           }
           this.loopSourceStart = newStart;
           this.loopSourceEnd   = newEnd;
-          this.statusMsg = `${isSection ? 'Section' : 'Chapter'} saved back.`;
+          this.statusMsg = 'Scratch loop: saved back to source.';
           this._saveCurrentState();
           return;
         }
 
-        this._setWarning('No source to save back to.');
+        this._setWarning('Cannot save: no scratch loop source.');
       },
       resetLoopToSource: () => {
         if (!this.loopSource) {
-          this._setWarning('No source to reset to.');
+          this._setWarning('Cannot reset: no scratch loop source.');
           return;
         }
         const padStart = (this.loopSourceType !== 'loop')
@@ -912,11 +916,11 @@ class LlamaApp extends LitElement {
         this.loopEnd   = this.loopSourceEnd + padEnd;
         this._clearZoomIfOutside(this.loopStart, this.loopEnd);
         this._autoDisableLoopIfInvalid();
-        this.statusMsg = 'Loop reset to source.';
+        this.statusMsg = 'Scratch loop: reset to source.';
       },
       unlinkLoopSource: () => {
         if (!this.loopSource) {
-          this._setWarning('No source to unlink.');
+          this._setWarning('Cannot unlink: no scratch loop source.');
           return;
         }
         this.loopSource      = null;
@@ -924,17 +928,17 @@ class LlamaApp extends LitElement {
         this.loopSourceType  = null;
         this.loopSourceStart = null;
         this.loopSourceEnd   = null;
-        this.statusMsg = 'Loop source unlinked.';
+        this.statusMsg = 'Scratch loop: source unlinked.';
       },
       editScratch: () => this._enterEditScratch(),
       editLoop: () => {
         const loop = this.namedLoops.find(l => this.currentTime >= l.start && this.currentTime <= l.end);
-        if (!loop) { this._setWarning('No saved loop at current position.'); return; }
+        if (!loop) { this._setWarning('No current loop.'); return; }
         this._saveLoopModalEl?.show(loop);
       },
       scratchLoop: () => {
         const loop = this.namedLoops.find(l => this.currentTime >= l.start && this.currentTime <= l.end);
-        if (!loop) { this._setWarning('No saved loop at current position.'); return; }
+        if (!loop) { this._setWarning('No current loop.'); return; }
         this._clearZoomIfOutside(loop.start, loop.end);
         this.loopStart       = loop.start;
         this.loopEnd         = loop.end;
@@ -944,7 +948,7 @@ class LlamaApp extends LitElement {
         this.loopSourceType  = 'loop';
         this.loopSourceStart = loop.start;
         this.loopSourceEnd   = loop.end;
-        this.statusMsg       = `Scratch: loop${loop.name ? ' \u2013 ' + loop.name : ''}.`;
+        this.statusMsg       = 'Loop: scratched.';
       },
       deleteLoop: () => this._openLoopsPicker('delete'),
       zoomLoop: () => {
@@ -956,11 +960,11 @@ class LlamaApp extends LitElement {
         const loop = this.namedLoops.find(l =>
           this.currentTime >= l.start && this.currentTime <= l.end);
         if (!loop) {
-          this._setWarning('No loop at current position.');
+          this._setWarning('No current loop.');
           return;
         }
         if (loop.start === 0 && loop.end === this.duration) {
-          this._setWarning('Loop spans full video; zoom has no effect.');
+          this._setWarning('Cannot zoom a range spanning entire video.');
           return;
         }
         this.zoomSource = { start: loop.start, end: loop.end, trigger: 'loop' };
@@ -974,49 +978,49 @@ class LlamaApp extends LitElement {
           return;
         }
         if (!this._isLoopValid()) {
-          this._setWarning('No valid scratch loop to zoom.');
+          this._setWarning('Cannot zoom scratch loop: invalid range.');
           return;
         }
         if (this.loopStart === 0 && this.loopEnd === this.duration) {
-          this._setWarning('Scratch loop spans full video; zoom has no effect.');
+          this._setWarning('Cannot zoom a range spanning entire video.');
           return;
         }
         this.zoomSource = { start: this.loopStart, end: this.loopEnd, trigger: 'scratch' };
-        this.statusMsg  = 'Scratch: zoomed.';
+        this.statusMsg  = 'Scratch loop: zoomed.';
         this._seekIntoZoomIfNeeded();
       },
       zoomSection: () => {
         if (this.zoomSource?.trigger === 'section') {
           this.zoomSource = null;
-          this.statusMsg  = 'Section zoom off.';
+          this.statusMsg  = 'Zoom: off.';
           return;
         }
         const bounds = getSectionBounds(this.sections, this.currentTime, this.duration);
         if (!bounds || bounds.end == null) {
-          this._setWarning('No section at current position.');
+          this._setWarning('No current section.');
           return;
         }
         this.zoomSource = { start: bounds.start, end: bounds.end, trigger: 'section' };
-        this.statusMsg  = 'Section zoom on.';
+        this.statusMsg  = 'Section: zoomed.';
       },
       setSection: () => {
         const time = this._vc?.getCurrentTime() ?? 0;
         const containing = nearestSectionLeft(this.sections, time);
         if (containing && containing.end != null && time <= containing.end) {
-          this._setWarning('Cannot set section inside a fixed section.');
+          this._setWarning('Cannot create section: inside a fixed section.');
           return;
         }
         this._pushUndoSnapshot('Section created');
         addSection(this.sections, time);
         this.sections = [...this.sections];
-        this.statusMsg = 'Section created';
+        this.statusMsg = 'Section: created.';
         this._saveCurrentState();
       },
       editSection:   () => this._editCurrentSection(),
       scratchSection: () => {
         const bounds = getSectionBounds(this.sections, this.currentTime, this.duration);
         if (!bounds || bounds.end == null) {
-          this._setWarning('No section at current position.');
+          this._setWarning('No current section.');
           return;
         }
         const section    = nearestSectionLeft(this.sections, this.currentTime);
@@ -1033,27 +1037,27 @@ class LlamaApp extends LitElement {
         this.loopSourceType  = 'section';
         this.loopSourceStart = bounds.start;
         this.loopSourceEnd   = bounds.end;
-        this.statusMsg       = 'Scratch: section.';
+        this.statusMsg       = 'Section: scratched.';
       },
       deleteSection: () => this._openSectionsPicker('delete'),
       fixSection: () => {
         const section = nearestSectionLeft(this.sections, this.currentTime);
         if (!section) {
-          this._setWarning('No section at current position.');
+          this._setWarning('No current section.');
           return;
         }
         if (section.end != null) {
           this._pushUndoSnapshot('Section end unfixed');
           section.end = null;
-          this.statusMsg = 'Section end unfixed.';
+          this.statusMsg = 'Section: end unfixed.';
         } else {
           if (this.duration == null) {
-            this._setError('Video duration not yet known.');
+            this._setError('Cannot fix section end: video duration unknown.');
             return;
           }
           this._pushUndoSnapshot('Section end fixed');
           fixSectionEnd(this.sections, section.id, this.duration);
-          this.statusMsg = 'Section end fixed.';
+          this.statusMsg = 'Section: end fixed.';
         }
         this.sections = [...this.sections];
         this._saveCurrentState();
@@ -1061,12 +1065,12 @@ class LlamaApp extends LitElement {
       setMark: () => {
         const time = this._vc?.getCurrentTime() ?? 0;
         if (!addMark(this.marks, time)) {
-          this._setWarning('Mark already exists at this time.');
+          this._setWarning('Cannot create mark: mark exists at current time.');
           return;
         }
         this._pushUndoSnapshot('Mark created');
         this.marks = [...this.marks];
-        this.statusMsg = 'Mark created';
+        this.statusMsg = 'Mark: created.';
         this._saveCurrentState();
       },
       editMark:   () => this._editCurrentMark(),
@@ -1075,20 +1079,20 @@ class LlamaApp extends LitElement {
         const time = this._vc?.getCurrentTime() ?? 0;
         const containing = nearestChapterLeft(this.chapters, time);
         if (containing && containing.end != null && time <= containing.end) {
-          this._setWarning('Cannot set chapter inside a fixed chapter.');
+          this._setWarning('Cannot create chapter: inside a fixed chapter.');
           return;
         }
         this._pushUndoSnapshot('Chapter created');
         addChapterDivider(this.chapters, time);
         this.chapters = [...this.chapters];
-        this.statusMsg = 'Chapter created';
+        this.statusMsg = 'Chapter: created.';
         this._saveCurrentState();
       },
       editChapter:   () => this._editCurrentChapter(),
       scratchChapter: () => {
         const bounds = getChapterBounds(this.chapters, this.currentTime, this.duration);
         if (!bounds || bounds.end == null) {
-          this._setWarning('No chapter at current position.');
+          this._setWarning('No current chapter.');
           return;
         }
         const chapter    = nearestChapterLeft(this.chapters, this.currentTime);
@@ -1105,27 +1109,27 @@ class LlamaApp extends LitElement {
         this.loopSourceType  = 'chapter';
         this.loopSourceStart = bounds.start;
         this.loopSourceEnd   = bounds.end;
-        this.statusMsg       = 'Scratch: chapter.';
+        this.statusMsg       = 'Chapter: scratched.';
       },
       deleteChapter: () => this._openChapterPicker('delete'),
       fixChapter: () => {
         const chapter = nearestChapterLeft(this.chapters, this.currentTime);
         if (!chapter) {
-          this._setWarning('No chapter at current position.');
+          this._setWarning('No current chapter.');
           return;
         }
         if (chapter.end != null) {
           this._pushUndoSnapshot('Chapter end unfixed');
           chapter.end = null;
-          this.statusMsg = 'Chapter end unfixed.';
+          this.statusMsg = 'Chapter: end unfixed.';
         } else {
           if (this.duration == null) {
-            this._setError('Video duration not yet known.');
+            this._setError('Cannot fix chapter end: video duration unknown.');
             return;
           }
           this._pushUndoSnapshot('Chapter end fixed');
           fixChapterEnd(this.chapters, chapter.id, this.duration);
-          this.statusMsg = 'Chapter end fixed.';
+          this.statusMsg = 'Chapter: end fixed.';
         }
         this.chapters = [...this.chapters];
         this._saveCurrentState();
@@ -1138,22 +1142,22 @@ class LlamaApp extends LitElement {
       zoomChapter: () => {
         if (this.zoomSource?.trigger === 'chapter') {
           this.zoomSource = null;
-          this.statusMsg  = 'Chapter zoom off.';
+          this.statusMsg  = 'Zoom: off.';
           return;
         }
         const bounds = getChapterBounds(this.chapters, this.currentTime, this.duration);
         if (!bounds || bounds.end == null) {
-          this._setWarning('No chapter at current position.');
+          this._setWarning('No current chapter.');
           return;
         }
         this.zoomSource = { start: bounds.start, end: bounds.end, trigger: 'chapter' };
-        this.statusMsg  = 'Chapter zoom on.';
+        this.statusMsg  = 'Chapter: zoomed.';
         this._seekIntoZoomIfNeeded();
       },
       zoomOff: () => {
-        if (!this.zoomSource) { this._setWarning('No zoom active.'); return; }
+        if (!this.zoomSource) { this._setWarning('No current zoom.'); return; }
         this.zoomSource = null;
-        this.statusMsg  = 'Zoom off.';
+        this.statusMsg  = 'Zoom: off.';
       },
       videoInfo:     () => this._videoInfoModalEl?.show(),
       helpGeneral:   () => window.open(`${_siteOrigin()}/loopllama/v2/help/`, '_blank'),
@@ -1178,19 +1182,35 @@ class LlamaApp extends LitElement {
       dataRead:      () => this._dataRead(),
       dataCompare:   () => this._dataCompare(),
       loadExamples:  () => {
-        let added = 0;
-        for (const video of EXAMPLES) {
-          if (!this._appState.videos.find(v => v.id === video.id)) {
-            this._appState.videos.push(video);
-            added++;
+        const newVideos      = EXAMPLES.filter(e => !this._appState.videos.find(v => v.id === e.id));
+        const existingVideos = EXAMPLES.filter(e =>  this._appState.videos.find(v => v.id === e.id));
+        this._loadExamplesResolve = null;
+        const p = new Promise(resolve => { this._loadExamplesResolve = resolve; });
+        this._loadExamplesModalEl?.show({
+          newVideos:      newVideos.map(e => e.name),
+          existingVideos: existingVideos.map(e => e.name),
+        });
+        p.then(result => {
+          if (!result) return;
+          let changed = false;
+          if (result.addNew) {
+            for (const video of newVideos) {
+              this._appState.videos.push(video);
+              changed = true;
+            }
           }
-        }
-        const skipped = EXAMPLES.length - added;
-        if (added > 0) {
-          this.videos = [...this._appState.videos];
-          this._save();
-        }
-        this.statusMsg = `Example videos: ${added} loaded; ${skipped} already in library.`;
+          if (result.replaceExisting) {
+            for (const video of existingVideos) {
+              const idx = this._appState.videos.findIndex(v => v.id === video.id);
+              if (idx !== -1) { this._appState.videos[idx] = video; changed = true; }
+            }
+          }
+          if (changed) {
+            this.videos = [...this._appState.videos];
+            this._save();
+          }
+          this.statusMsg = 'Examples: loaded.';
+        });
       },
       msgRecall:     () => {
         if (!this._lastMsg) { this._setWarning('No recent message.'); return; }
@@ -1222,7 +1242,7 @@ class LlamaApp extends LitElement {
 
     this._vc = createVideoController({
       onError: () => {
-        this._setError('Video: failed to load.');
+        this._setError('YouTube failed to load video.');
         if (this._pendingNewVideoId) {
           this._appState.videos = this._appState.videos.filter(
             v => v.id !== this._pendingNewVideoId);
@@ -1230,13 +1250,9 @@ class LlamaApp extends LitElement {
           this._pendingNewVideoId = null;
         }
       },
-      onReady: () => {
-        this.statusMsg = 'Player ready. Enter a YouTube URL or video ID above.';
-      },
+      onReady: () => {},
       onStateChange: (state) => {
-        // Only surface the Ended state; all others are visible/audible
-        // to the user or are internal transitions not worth reporting.
-        if (state === 0) this.statusMsg = 'Ended';
+        // Suppress state-change messages; outcomes are visually obvious.
 
         // Auto-name: on the first PLAYING or CUED event after a video loads,
         // grab the YT title and store it if the video has no name yet.
@@ -1288,6 +1304,7 @@ class LlamaApp extends LitElement {
     this._cloudStatusModalEl  = this.renderRoot.querySelector('llama-cloud-status-modal');
     this._sharedVideoConflictModalEl = this.renderRoot.querySelector('llama-shared-video-conflict-modal');
     this._dataOpModalEl       = this.renderRoot.querySelector('llama-data-op-modal');
+    this._loadExamplesModalEl = this.renderRoot.querySelector('llama-load-examples-modal');
     this._fileInputEl         = this.renderRoot.querySelector('#import-file-input');
 
     // Sync delta values from persisted options (may differ from compile-time defaults).
@@ -1303,6 +1320,10 @@ class LlamaApp extends LitElement {
       const wasSignedOut = !this.currentUser;
       this.currentUser = user;
       if (user && wasSignedOut) await this._handleSignIn(user);
+      if (!user && !wasSignedOut) {
+        if (!this._skipSignOutMsg) this.statusMsg = 'Signed out.';
+        this._skipSignOutMsg = false;
+      }
     });
 
     // Check for a share URL (?share=id) or legacy loop URL (?v=id&s=start&e=end).
@@ -1316,7 +1337,6 @@ class LlamaApp extends LitElement {
         this._syncFromVideo(video);
         const _startAt = this.looping && this.loopStart < this.loopEnd ? this.loopStart : video.time ?? 0;
         this._vc.cueVideo(video.id, _startAt);
-        this.statusMsg = `Video cued: ${video.name || video.id}`;
       }
     }
 
@@ -1539,7 +1559,7 @@ class LlamaApp extends LitElement {
 
     const parsed = this._parseVideoInput(raw);
     if (!parsed) {
-      this._setWarning('Could not parse a YouTube video ID from that input.');
+      this._setWarning('Invalid YouTube URL or ID.');
       return;
     }
 
@@ -1565,7 +1585,7 @@ class LlamaApp extends LitElement {
   _onPickVideo(e) {
     const video = this._appState?.videos.find(v => v.id === e.detail.videoId);
     if (!video) return;
-    this._loadVideoObject(video);
+    this._loadVideoObject(video, null, 'Video: opened.');
     this.videos = [...this._appState.videos];
   }
 
@@ -1606,7 +1626,7 @@ class LlamaApp extends LitElement {
       this.loopSourceStart = null;
       this.loopSourceEnd   = null;
       this.duration        = null;
-      this.statusMsg       = 'Video deleted.';
+      this.statusMsg       = 'Video: deleted.';
     }
     this.videos = [...this._appState.videos];
     this._save();
@@ -1629,7 +1649,7 @@ class LlamaApp extends LitElement {
     this.videos  = [...this._appState.videos];
     if (this.currentVideoId === id) this._syncFromVideo(stash);
     this._save();
-    this.statusMsg = `Restored: "${stash.name || stash.id}".`;
+    this.statusMsg = 'Video: unstashed.';
   }
 
   // Show a transient warning; auto-clears after 4 seconds (via updated()).
@@ -1749,11 +1769,12 @@ class LlamaApp extends LitElement {
   _onToggleLoop() {
     if (!this.currentVideoId) return;
     if (!this.looping && !this._isLoopValid()) {
-      this._setWarning('Invalid loop range: start must be before end.');
+      this._setWarning('Cannot activate scratch loop: invalid range.');
       return;
     }
     this.looping = !this.looping;
     if (this.looping) this._seekIntoLoopIfNeeded();
+    this.statusMsg = `Scratch loop: ${this.looping ? 'on' : 'off'}.`;
   }
 
   _onSetLoopStartNow() {
@@ -1820,13 +1841,13 @@ class LlamaApp extends LitElement {
     const time = this._vc?.getCurrentTime() ?? 0;
     const containing = nearestSectionLeft(this.sections, time);
     if (containing && containing.end != null && time <= containing.end) {
-      this._setWarning('Cannot set section inside a fixed section.');
+      this._setWarning('Cannot create section: inside a fixed section.');
       return;
     }
     this._pushUndoSnapshot('Section created');
     addSection(this.sections, time);
     this.sections = [...this.sections];
-    this.statusMsg = 'Section created';
+    this.statusMsg = 'Section: created.';
     this._saveCurrentState();
   }
 
@@ -1834,19 +1855,19 @@ class LlamaApp extends LitElement {
     this._pushUndoSnapshot('Section deleted');
     deleteSectionById(this.sections, e.detail.id);
     this.sections = [...this.sections];
-    this.statusMsg = 'Section deleted';
+    this.statusMsg = 'Section: deleted.';
     this._saveCurrentState();
   }
 
   _onSetMark() {
     const time = this._vc?.getCurrentTime() ?? 0;
     if (!addMark(this.marks, time)) {
-      this._setWarning('Mark already exists at this time.');
+      this._setWarning('Cannot create mark: mark exists at current time.');
       return;
     }
     this._pushUndoSnapshot('Mark created');
     this.marks = [...this.marks];
-    this.statusMsg = 'Mark created';
+    this.statusMsg = 'Mark: created.';
     this._saveCurrentState();
   }
 
@@ -1854,7 +1875,7 @@ class LlamaApp extends LitElement {
     this._pushUndoSnapshot('Mark deleted');
     deleteMarkById(this.marks, e.detail.id);
     this.marks = [...this.marks];
-    this.statusMsg = 'Mark deleted';
+    this.statusMsg = 'Mark: deleted.';
     this._saveCurrentState();
   }
 
@@ -1869,7 +1890,7 @@ class LlamaApp extends LitElement {
       end:   e.detail.end,
     });
     this.namedLoops = [...this.namedLoops];
-    this.statusMsg  = 'Loop updated.';
+    this.statusMsg  = 'Loop: edited.';
     this._saveCurrentState();
   }
 
@@ -1894,14 +1915,14 @@ class LlamaApp extends LitElement {
     deleteLoopById(this.namedLoops, e.detail.id);
     this.namedLoops = [...this.namedLoops];
     if (this.loopSource === e.detail.id) { this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this.loopSourceStart = null; this.loopSourceEnd = null; }
-    this.statusMsg = 'Loop deleted';
+    this.statusMsg = 'Loop: deleted.';
     this._saveCurrentState();
   }
 
   // Open the loop picker in the given mode, with a guard for empty list.
   _openLoopsPicker(mode) {
     if (!this.namedLoops.length) {
-      this._setWarning('No saved loops.');
+      this._setWarning('No loops.');
       return;
     }
     this._loopPickerEl?.show(mode);
@@ -1910,7 +1931,7 @@ class LlamaApp extends LitElement {
   // Open the marks picker in the given mode, with a guard for empty list.
   _openMarksPicker(mode) {
     if (!this.marks.length) {
-      this._setWarning('No marks set.');
+      this._setWarning('No marks.');
       return;
     }
     this._marksPickerEl?.show(mode);
@@ -1924,7 +1945,7 @@ class LlamaApp extends LitElement {
   // Edit the current mark (me): find mark nearest to left, open edit modal.
   _editCurrentMark() {
     const mark = nearestMarkLeft(this.marks, this.currentTime);
-    if (!mark) { this._setWarning('No mark at or before current position.'); return; }
+    if (!mark) { this._setWarning('No current mark.'); return; }
     this._editMarkModalEl?.show(mark);
   }
 
@@ -1937,14 +1958,14 @@ class LlamaApp extends LitElement {
     mark.name = name;
     mark.time = time;
     this.marks = [...this.marks].sort((a, b) => a.time - b.time);
-    this.statusMsg = 'Mark updated';
+    this.statusMsg = 'Mark: edited.';
     this._saveCurrentState();
   }
 
   // Open the sections picker in the given mode, with a guard for empty list.
   _openSectionsPicker(mode) {
     if (!this.sections.length) {
-      this._setWarning('No sections set.');
+      this._setWarning('No sections.');
       return;
     }
     this._sectionsPickerEl?.show(mode);
@@ -1955,7 +1976,7 @@ class LlamaApp extends LitElement {
   _editCurrentSection() {
     const section = nearestSectionLeft(this.sections, this.currentTime);
     if (!section) {
-      this._setWarning('No section at current position.');
+      this._setWarning('No current section.');
       return;
     }
     const bounds     = getSectionBounds(this.sections, section.start, this.duration);
@@ -1966,7 +1987,7 @@ class LlamaApp extends LitElement {
   _editCurrentChapter() {
     const chapter = nearestChapterLeft(this.chapters, this.currentTime);
     if (!chapter) {
-      this._setWarning('No chapter at current position.');
+      this._setWarning('No current chapter.');
       return;
     }
     const bounds     = getChapterBounds(this.chapters, chapter.start, this.duration);
@@ -1977,7 +1998,7 @@ class LlamaApp extends LitElement {
   // Open the chapter picker in the given mode, with a guard for empty list.
   _openChapterPicker(mode) {
     if (!this.chapters.length) {
-      this._setWarning('No chapters set.');
+      this._setWarning('No chapters.');
       return;
     }
     this._chapterPickerEl?.show(mode);
@@ -2002,7 +2023,7 @@ class LlamaApp extends LitElement {
     this.chapters[idx].name = name;
     propagateEntityChange(this.chapters, idx, start, end);
     this.chapters  = [...this.chapters];
-    this.statusMsg = 'Chapter updated';
+    this.statusMsg = 'Chapter: edited.';
     this._saveCurrentState();
   }
 
@@ -2011,7 +2032,7 @@ class LlamaApp extends LitElement {
     this._pushUndoSnapshot('Chapter deleted');
     deleteChapterById(this.chapters, e.detail.id);
     this.chapters = [...this.chapters];
-    this.statusMsg = 'Chapter deleted';
+    this.statusMsg = 'Chapter: deleted.';
     if (this.zoomSource?.trigger === 'chapter') {
       this.zoomSource = null;
     }
@@ -2027,13 +2048,13 @@ class LlamaApp extends LitElement {
   async _dataCompare() {
     const userId = this.currentUser?.id;
     if (!userId) {
-      this._setWarning('Sign in to compare local vs cloud data.');
+      this._setWarning('Cannot compare local and cloud data: you must be signed in.');
       return;
     }
 
     const cloudState = await loadFromCloud(userId);
     if (cloudState === false) {
-      this._setError('Cloud request failed — compare unavailable.');
+      this._setError('Cannot compare local and cloud data: cloud request failed.');
       return;
     }
     const localMap = new Map(this._appState.videos.map(v => [v.id, v]));
@@ -2071,13 +2092,13 @@ class LlamaApp extends LitElement {
   async _dataSave() {
     const userId = this.currentUser?.id;
     if (!userId) {
-      this._setWarning('Sign in to save data to cloud.');
+      this._setWarning('Cannot save data to cloud: you must be signed in.');
       return;
     }
 
     const cloudState = await loadFromCloud(userId);
     if (cloudState === false) {
-      this._setError('Cloud request failed.');
+      this._setError('Cannot save data to cloud: cloud request failed.');
       return;
     }
     const cloudMap = new Map((cloudState?.videos ?? []).map(v => [v.id, v]));
@@ -2157,11 +2178,9 @@ class LlamaApp extends LitElement {
     const stateToUpload = { ...baseState, videos: mergedVideos };
     const ok = await saveToCloud(stateToUpload, userId);
     if (ok) {
-      const skipNote    = skipped > 0 ? `, ${skipped} skipped` : '';
-      const deletedNote = deleted > 0 ? `, ${deleted} deleted` : '';
-      this.statusMsg = `Saved to cloud: ${added} added, ${updated} updated, ${unchanged} unchanged${skipNote}${deletedNote}.`;
+      this.statusMsg = 'Data: saved to cloud.';
     } else {
-      this._setError('Cloud save failed.');
+      this._setError('Cannot save data to cloud: cloud save failed.');
     }
   }
 
@@ -2170,17 +2189,17 @@ class LlamaApp extends LitElement {
   async _dataRead() {
     const userId = this.currentUser?.id;
     if (!userId) {
-      this._setWarning('Sign in to read data from cloud.');
+      this._setWarning('Cannot read data from cloud: you must be signed in.');
       return;
     }
 
     const cloudState = await loadFromCloud(userId);
     if (cloudState === false) {
-      this._setError('Cloud request failed.');
+      this._setError('Cannot read data from cloud: cloud request failed.');
       return;
     }
     if (!cloudState) {
-      this._setWarning('No cloud data found.');
+      this._setWarning('Cannot read data from cloud: no cloud data found.');
       return;
     }
 
@@ -2277,9 +2296,7 @@ class LlamaApp extends LitElement {
     save(this._appState);
     this.videos  = [...this._appState.videos];
     this.stashes = { ...this._appState.stashes };
-    const skipNote    = skipped > 0 ? `, ${skipped} skipped` : '';
-    const deletedNote = deleted > 0 ? `, ${deleted} deleted` : '';
-    this.statusMsg = `Read from cloud: ${added} added, ${updated} updated, ${unchanged} unchanged${skipNote}${deletedNote}.`;
+    this.statusMsg = 'Data: read from cloud.';
   }
 
   // Export all app data as a downloadable JSON file.
@@ -2288,13 +2305,13 @@ class LlamaApp extends LitElement {
     const d = new Date();
     const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     _downloadJson(exportAll(this._appState), `loopllama-${date}.json`);
-    this.statusMsg = 'Exported all data.';
+    this.statusMsg = 'Data: exported.';
   }
 
 
   // Create a Supabase-backed share for the current video and surface the URL.
   async _createVideoShare() {
-    if (!this.currentVideoId) { this._setWarning('No video loaded.'); return; }
+    if (!this.currentVideoId) { this._setWarning('No current video.'); return; }
     this._saveCurrentState();
     const video   = this._appState.videos.find(v => v.id === this.currentVideoId);
     const payload = buildVideoPayload(video);
@@ -2302,17 +2319,17 @@ class LlamaApp extends LitElement {
       const id  = await createShare('video', payload, video.url, video.name || null);
       const url = shareUrl(id);
       navigator.clipboard.writeText(url)
-        .then(() => { this.statusMsg = 'Video share URL copied to clipboard.'; })
-        .catch(() => { this.statusMsg = 'Video share URL ready (clipboard unavailable).'; });
+        .then(() => { this.statusMsg = 'Shared video: URL copied to clipboard.'; })
+        .catch(() => { this._setError('Cannot provide shared video URL: clipboard blocked.'); });
     } catch (err) {
-      this.errorMsg = `Share failed: ${err.message}`;
+      this.errorMsg = `Cannot provide shared video URL: ${err.message}`;
     }
   }
 
   // Create a Supabase-backed share for the current scratch loop and surface the URL.
   async _createLoopShare() {
-    if (!this.currentVideoId) { this._setWarning('No video loaded.'); return; }
-    if (!this._isLoopValid()) { this._setWarning('Set a valid scratch loop first.'); return; }
+    if (!this.currentVideoId) { this._setWarning('No current video.'); return; }
+    if (!this._isLoopValid()) { this._setWarning('Cannot provide shared scratch loop URL: invalid range.'); return; }
     this._saveCurrentState();
     const video   = this._appState.videos.find(v => v.id === this.currentVideoId);
     const payload = buildLoopPayload(video, this.loopStart, this.loopEnd);
@@ -2320,10 +2337,10 @@ class LlamaApp extends LitElement {
       const id  = await createShare('loop', payload, video.url, video.name || null);
       const url = shareUrl(id);
       navigator.clipboard.writeText(url)
-        .then(() => { this.statusMsg = 'Loop share URL copied to clipboard.'; })
-        .catch(() => { this.statusMsg = 'Loop share URL ready (clipboard unavailable).'; });
+        .then(() => { this.statusMsg = 'Shared scratch loop: URL copied to clipboard.'; })
+        .catch(() => { this._setError('Cannot provide shared scratch loop URL: clipboard blocked.'); });
     } catch (err) {
-      this.errorMsg = `Share failed: ${err.message}`;
+      this.errorMsg = `Cannot provide shared scratch loop URL: ${err.message}`;
     }
   }
 
@@ -2344,7 +2361,7 @@ class LlamaApp extends LitElement {
     try {
       incoming = parseImport(jsonStr);
     } catch (err) {
-      this.errorMsg = `Import failed: ${err.message}`;
+      this.errorMsg = `Cannot import data: ${err.message}.`;
       return;
     }
 
@@ -2444,7 +2461,7 @@ class LlamaApp extends LitElement {
     this._save();
     const skipNote    = skipped > 0 ? `, ${skipped} skipped` : '';
     const deletedNote = deleted > 0 ? `, ${deleted} deleted` : '';
-    this.statusMsg = `Imported: ${added} added, ${updated} updated, ${unchanged} unchanged${skipNote}${deletedNote}.`;
+    this.statusMsg = 'Data: imported.';
   }
 
   // Show the shared-video conflict modal and return a Promise that resolves to
@@ -2472,12 +2489,17 @@ class LlamaApp extends LitElement {
     this._dataOpResolve = null;
   }
 
+  _onLoadExamplesResult(e) {
+    this._loadExamplesResolve?.(e.detail);
+    this._loadExamplesResolve = null;
+  }
+
   // Apply a 'loop' share payload: add the loop to the video's namedLoops and
   // load it as the active scratch loop.
   _applyLoopShare(payload) {
     const { videoUrl, videoTitle, loop, speed } = payload;
     const parsed = this._parseVideoInput(videoUrl);
-    if (!parsed) { this.errorMsg = 'Shared loop: could not parse video URL.'; return; }
+    if (!parsed) { this.errorMsg = 'Invalid URL: shared loop.'; return; }
 
     let video = this._appState.videos.find(v => v.id === parsed.id);
     if (!video) {
@@ -2505,7 +2527,7 @@ class LlamaApp extends LitElement {
     if (speed) this._vc.setPlaybackRate(speed);
     this._vc.cueVideo(video.id, loop.start);
     this._save();
-    this.statusMsg = `Shared loop loaded: ${safeName || _fmtTimePlain(loop.start) + ' → ' + _fmtTimePlain(loop.end)}`;
+    this.statusMsg = 'Shared loop: loaded.';
   }
 
   // Apply a 'video' share payload: add to registry (or replace after confirm),
@@ -2514,7 +2536,7 @@ class LlamaApp extends LitElement {
     const { videoUrl, videoTitle, sections, namedLoops, marks, chapters,
             speed, start, end } = payload;
     const parsed = this._parseVideoInput(videoUrl);
-    if (!parsed) { this.errorMsg = 'Shared video: could not parse video URL.'; return; }
+    if (!parsed) { this.errorMsg = 'Invalid URL: shared video.'; return; }
 
     const displayName = videoTitle || parsed.id;
     let video = this._appState.videos.find(v => v.id === parsed.id);
@@ -2526,7 +2548,6 @@ class LlamaApp extends LitElement {
         sharedModified: payload.last_modified ?? null,
       });
       if (!replace) {
-        this.statusMsg = `Skipped: "${displayName}" already in your library.`;
         return false;
       }
       // Stash the current version before replacing.
@@ -2560,7 +2581,7 @@ class LlamaApp extends LitElement {
     this.duration = null;
     this._save();
     logVideoLoad(video.id);
-    this.statusMsg = `Shared video loaded: ${displayName}`;
+    this.statusMsg = 'Shared video: loaded.';
     return true;
   }
 
@@ -2575,7 +2596,7 @@ class LlamaApp extends LitElement {
         if (share.share_type === 'loop')  { this._applyLoopShare(share.payload); applied = true; }
         if (share.share_type === 'video') applied = await this._applyVideoShare(share.payload) ?? false;
       } catch (err) {
-        this.errorMsg = `Could not load shared content: ${err.message}`;
+        this.errorMsg = `Could not load share URL: ${err.message}.`;
       }
       const clean = new URL(window.location.href);
       clean.searchParams.delete('share');
@@ -2611,7 +2632,7 @@ class LlamaApp extends LitElement {
     this.loopStart = start;
     this.loopEnd   = end;
     this._vc.cueVideo(video.id, start);
-    this.statusMsg = `Shared loop loaded: ${_fmtTimePlain(start)} → ${_fmtTimePlain(end)}`;
+    this.statusMsg = 'Shared loop: loaded.';
     this._save();
 
     // Remove the params from the URL bar without reloading the page.
@@ -2642,7 +2663,7 @@ class LlamaApp extends LitElement {
     this.sections[idx].name = name;
     propagateEntityChange(this.sections, idx, start, end);
     this.sections = [...this.sections];
-    this.statusMsg = 'Section updated';
+    this.statusMsg = 'Section: edited.';
     this._saveCurrentState();
   }
 
@@ -2675,7 +2696,7 @@ class LlamaApp extends LitElement {
       this.videos = [...this._appState.videos];
       this._save();
       const n = videoIds.length;
-      this.statusMsg = `Deleted ${n} video${n !== 1 ? 's' : ''}.`;
+      this.statusMsg = 'Data: deleted.';
 
     } else {
       // mode === 'current'
@@ -2695,7 +2716,7 @@ class LlamaApp extends LitElement {
       }
       this._saveCurrentState();
       const total = sections.length + loops.length + marks.length + chapters.length;
-      this.statusMsg = `Deleted ${total} item${total !== 1 ? 's' : ''}.`;
+      this.statusMsg = 'Data: deleted.';
     }
   }
 
@@ -2747,7 +2768,15 @@ class LlamaApp extends LitElement {
   // Disables cloud_backup so the user is not nudged to sign in again.
   async _signOutAndRemoveCloudData() {
     const userId = this.currentUser?.id;
-    if (userId) await deleteFromCloud(userId);
+    this._skipSignOutMsg = true;
+    if (userId) {
+      try {
+        await deleteFromCloud(userId);
+        this.statusMsg = 'Cloud data: deleted.';
+      } catch (err) {
+        this._setError(`Cannot delete cloud data: ${err.message}.`);
+      }
+    }
     this._appState.options.cloud_backup = false;
     this._save();
     await signOut();
@@ -2913,7 +2942,7 @@ class LlamaApp extends LitElement {
           @ll-prev-entity=${() => this._navigateEntity('prev')}
           @ll-next-entity=${() => this._navigateEntity('next')}
           @ll-entity-type-change=${this._onEntityTypeChange}
-          @ll-invalid-time=${() => this._setWarning('Invalid time format.')}
+          @ll-invalid-time=${() => this._setWarning('Invalid time.')}
           @ll-menu-select=${this._onMenuSelect}
           @ll-menu-open=${() => this._kb?.disable()}
           @ll-menu-close=${() => { if (!this.editScratchActive) this._kb?.enable(); }}
@@ -3080,6 +3109,12 @@ class LlamaApp extends LitElement {
         @ll-data-op-result=${this._onDataOpResult}
         @ll-modal-close=${() => this._kb?.enable()}
       ></llama-data-op-modal>
+
+      <llama-load-examples-modal
+        @ll-modal-open=${() => this._kb?.disable()}
+        @ll-load-examples-result=${this._onLoadExamplesResult}
+        @ll-modal-close=${() => this._kb?.enable()}
+      ></llama-load-examples-modal>
 
       <llama-whichkey
         .prefix=${this.wkPrefix}
