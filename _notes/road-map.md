@@ -5,9 +5,7 @@ Implementation stages:
 
     x. **Mechanical text pass** — DROP, NEW, WAS_INFO, and basic text changes.
 
-    2. **Undo/redo rework** — change `_pushUndoSnapshot` to read
-       `this.statusMsg`, reorder ~20 call sites. Isolated structural change,
-       easy to verify independently.
+    x. **Undo/redo rework** — to consistently use prior info messages.
 
     3. **[IN_MODAL] ce/se** — move the neighbor-elimination warnings into
        modal validation. This touches both the modal components and the app

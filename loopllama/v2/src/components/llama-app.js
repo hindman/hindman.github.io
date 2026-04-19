@@ -526,7 +526,8 @@ class LlamaApp extends LitElement {
   // Playback state (speed, looping, scratch loop) is not included.
   // Call before any mutation; reactive props must already be flushed to
   // _appState (they are, because every mutation ends with _saveCurrentState).
-  _pushUndoSnapshot(desc = '') {
+  _pushUndoSnapshot() {
+    const desc = (this.statusMsg ?? '').replace(/\.$/, '');
     const snap = {
       videos:         JSON.parse(JSON.stringify(this._appState.videos)),
       currentVideoId: this.currentVideoId,
@@ -606,7 +607,7 @@ class LlamaApp extends LitElement {
     const snap = this._undoStack.pop();
     this._redoStack.push({ ...this._currentSnapshot(), desc: snap.desc });
     this._applySnapshot(snap);
-    this.statusMsg = `Undone: ${snap.desc}`;
+    this.statusMsg = `Undone: (${snap.desc}).`;
   }
 
   _redo() {
@@ -617,7 +618,7 @@ class LlamaApp extends LitElement {
     const snap = this._redoStack.pop();
     this._undoStack.push({ ...this._currentSnapshot(), desc: snap.desc });
     this._applySnapshot(snap);
-    this.statusMsg = `Redone: ${snap.desc}`;
+    this.statusMsg = `Redone: (${snap.desc}).`;
   }
 
   // Handlers for Stage 5+. Core playback handlers implemented in Stage 6e.
@@ -829,10 +830,10 @@ class LlamaApp extends LitElement {
           this._setWarning('Cannot create loop: invalid range.');
           return;
         }
-        this._pushUndoSnapshot('Loop created');
+        this.statusMsg = 'Loop: created.';
+        this._pushUndoSnapshot();
         addLoop(this.namedLoops, this.loopStart, this.loopEnd);
         this.namedLoops = [...this.namedLoops];
-        this.statusMsg = 'Loop: created.';
         this._saveCurrentState();
       },
       saveBack: () => {
@@ -851,13 +852,13 @@ class LlamaApp extends LitElement {
             this._setWarning('Cannot save: scratch loop source not found.');
             return;
           }
-          this._pushUndoSnapshot('Loop updated');
+          this.statusMsg         = 'Scratch loop: saved back to source.';
+          this._pushUndoSnapshot();
           this.namedLoops[idx].start = this.loopStart;
           this.namedLoops[idx].end   = this.loopEnd;
           this.namedLoops        = [...this.namedLoops];
           this.loopSourceStart   = this.loopStart;
           this.loopSourceEnd     = this.loopEnd;
-          this.statusMsg         = 'Scratch loop: saved back to source.';
           this._saveCurrentState();
           return;
         }
@@ -887,7 +888,8 @@ class LlamaApp extends LitElement {
             return;
           }
 
-          this._pushUndoSnapshot(`${isSection ? 'Section' : 'Chapter'} updated`);
+          this.statusMsg = 'Scratch loop: saved back to source.';
+          this._pushUndoSnapshot();
           propagateEntityChange(entities, idx, newStart, newEnd);
           if (isSection) {
             this.sections = [...this.sections];
@@ -896,7 +898,6 @@ class LlamaApp extends LitElement {
           }
           this.loopSourceStart = newStart;
           this.loopSourceEnd   = newEnd;
-          this.statusMsg = 'Scratch loop: saved back to source.';
           this._saveCurrentState();
           return;
         }
@@ -1010,10 +1011,10 @@ class LlamaApp extends LitElement {
           this._setWarning('Cannot create section: inside a fixed section.');
           return;
         }
-        this._pushUndoSnapshot('Section created');
+        this.statusMsg = 'Section: created.';
+        this._pushUndoSnapshot();
         addSection(this.sections, time);
         this.sections = [...this.sections];
-        this.statusMsg = 'Section: created.';
         this._saveCurrentState();
       },
       editSection:   () => this._editCurrentSection(),
@@ -1047,17 +1048,17 @@ class LlamaApp extends LitElement {
           return;
         }
         if (section.end != null) {
-          this._pushUndoSnapshot('Section end unfixed');
-          section.end = null;
           this.statusMsg = 'Section: end unfixed.';
+          this._pushUndoSnapshot();
+          section.end = null;
         } else {
           if (this.duration == null) {
             this._setError('Cannot fix section end: video duration unknown.');
             return;
           }
-          this._pushUndoSnapshot('Section end fixed');
-          fixSectionEnd(this.sections, section.id, this.duration);
           this.statusMsg = 'Section: end fixed.';
+          this._pushUndoSnapshot();
+          fixSectionEnd(this.sections, section.id, this.duration);
         }
         this.sections = [...this.sections];
         this._saveCurrentState();
@@ -1068,9 +1069,9 @@ class LlamaApp extends LitElement {
           this._setWarning('Cannot create mark: mark exists at current time.');
           return;
         }
-        this._pushUndoSnapshot('Mark created');
-        this.marks = [...this.marks];
         this.statusMsg = 'Mark: created.';
+        this._pushUndoSnapshot();
+        this.marks = [...this.marks];
         this._saveCurrentState();
       },
       editMark:   () => this._editCurrentMark(),
@@ -1082,10 +1083,10 @@ class LlamaApp extends LitElement {
           this._setWarning('Cannot create chapter: inside a fixed chapter.');
           return;
         }
-        this._pushUndoSnapshot('Chapter created');
+        this.statusMsg = 'Chapter: created.';
+        this._pushUndoSnapshot();
         addChapterDivider(this.chapters, time);
         this.chapters = [...this.chapters];
-        this.statusMsg = 'Chapter: created.';
         this._saveCurrentState();
       },
       editChapter:   () => this._editCurrentChapter(),
@@ -1119,17 +1120,17 @@ class LlamaApp extends LitElement {
           return;
         }
         if (chapter.end != null) {
-          this._pushUndoSnapshot('Chapter end unfixed');
-          chapter.end = null;
           this.statusMsg = 'Chapter: end unfixed.';
+          this._pushUndoSnapshot();
+          chapter.end = null;
         } else {
           if (this.duration == null) {
             this._setError('Cannot fix chapter end: video duration unknown.');
             return;
           }
-          this._pushUndoSnapshot('Chapter end fixed');
-          fixChapterEnd(this.chapters, chapter.id, this.duration);
           this.statusMsg = 'Chapter: end fixed.';
+          this._pushUndoSnapshot();
+          fixChapterEnd(this.chapters, chapter.id, this.duration);
         }
         this.chapters = [...this.chapters];
         this._saveCurrentState();
@@ -1594,12 +1595,12 @@ class LlamaApp extends LitElement {
     const { id, name, start, end } = e.detail;
     const video = this._appState?.videos.find(v => v.id === id);
     if (!video) return;
-    this._pushUndoSnapshot('Video updated');
+    this.statusMsg = 'Video: edited.';
+    this._pushUndoSnapshot();
     video.name  = name;
     video.start = start;
     video.end   = end;
     this.videos = [...this._appState.videos];
-    this.statusMsg = 'Video: edited.';
     this._save();
   }
 
@@ -1608,7 +1609,8 @@ class LlamaApp extends LitElement {
     const { id } = e.detail;
     const idx = this._appState?.videos.findIndex(v => v.id === id);
     if (idx == null || idx === -1) return;
-    this._pushUndoSnapshot('Video deleted');
+    this.statusMsg = 'Video: deleted.';
+    this._pushUndoSnapshot();
     this._appState.videos.splice(idx, 1);
     if (this.currentVideoId === id) {
       this._vc?.pause();
@@ -1626,7 +1628,6 @@ class LlamaApp extends LitElement {
       this.loopSourceStart = null;
       this.loopSourceEnd   = null;
       this.duration        = null;
-      this.statusMsg       = 'Video: deleted.';
     }
     this.videos = [...this._appState.videos];
     this._save();
@@ -1641,7 +1642,8 @@ class LlamaApp extends LitElement {
     if (!stash) return;
     const idx = this._appState.videos.findIndex(v => v.id === id);
     if (idx === -1) return;
-    this._pushUndoSnapshot('Video restored');
+    this.statusMsg = 'Video: unstashed.';
+    this._pushUndoSnapshot();
     const current = JSON.parse(JSON.stringify(this._appState.videos[idx]));
     this._appState.stashes[id] = current;
     this._appState.videos[idx] = stash;
@@ -1649,7 +1651,6 @@ class LlamaApp extends LitElement {
     this.videos  = [...this._appState.videos];
     if (this.currentVideoId === id) this._syncFromVideo(stash);
     this._save();
-    this.statusMsg = 'Video: unstashed.';
   }
 
   // Show a transient warning; auto-clears after 4 seconds (via updated()).
@@ -1844,18 +1845,18 @@ class LlamaApp extends LitElement {
       this._setWarning('Cannot create section: inside a fixed section.');
       return;
     }
-    this._pushUndoSnapshot('Section created');
+    this.statusMsg = 'Section: created.';
+    this._pushUndoSnapshot();
     addSection(this.sections, time);
     this.sections = [...this.sections];
-    this.statusMsg = 'Section: created.';
     this._saveCurrentState();
   }
 
   _onDeleteSection(e) {
-    this._pushUndoSnapshot('Section deleted');
+    this.statusMsg = 'Section: deleted.';
+    this._pushUndoSnapshot();
     deleteSectionById(this.sections, e.detail.id);
     this.sections = [...this.sections];
-    this.statusMsg = 'Section: deleted.';
     this._saveCurrentState();
   }
 
@@ -1865,17 +1866,17 @@ class LlamaApp extends LitElement {
       this._setWarning('Cannot create mark: mark exists at current time.');
       return;
     }
-    this._pushUndoSnapshot('Mark created');
-    this.marks = [...this.marks];
     this.statusMsg = 'Mark: created.';
+    this._pushUndoSnapshot();
+    this.marks = [...this.marks];
     this._saveCurrentState();
   }
 
   _onDeleteMark(e) {
-    this._pushUndoSnapshot('Mark deleted');
+    this.statusMsg = 'Mark: deleted.';
+    this._pushUndoSnapshot();
     deleteMarkById(this.marks, e.detail.id);
     this.marks = [...this.marks];
-    this.statusMsg = 'Mark: deleted.';
     this._saveCurrentState();
   }
 
@@ -1883,14 +1884,14 @@ class LlamaApp extends LitElement {
   // Handle ll-update-loop from save-loop modal (edit mode): update the loop
   // in place, trigger re-render, and persist.
   _onUpdateLoop(e) {
-    this._pushUndoSnapshot('Loop updated');
+    this.statusMsg = 'Loop: edited.';
+    this._pushUndoSnapshot();
     updateLoop(this.namedLoops, e.detail.id, {
       name:  e.detail.name,
       start: e.detail.start,
       end:   e.detail.end,
     });
     this.namedLoops = [...this.namedLoops];
-    this.statusMsg  = 'Loop: edited.';
     this._saveCurrentState();
   }
 
@@ -1911,11 +1912,11 @@ class LlamaApp extends LitElement {
   }
 
   _onDeleteLoop(e) {
-    this._pushUndoSnapshot('Loop deleted');
+    this.statusMsg = 'Loop: deleted.';
+    this._pushUndoSnapshot();
     deleteLoopById(this.namedLoops, e.detail.id);
     this.namedLoops = [...this.namedLoops];
     if (this.loopSource === e.detail.id) { this.loopSource = null; this.loopSourceLabel = null; this.loopSourceType = null; this.loopSourceStart = null; this.loopSourceEnd = null; }
-    this.statusMsg = 'Loop: deleted.';
     this._saveCurrentState();
   }
 
@@ -1951,14 +1952,14 @@ class LlamaApp extends LitElement {
 
   // Handle ll-update-mark from edit-mark-modal.
   _onUpdateMark(e) {
-    this._pushUndoSnapshot('Mark updated');
     const { id, name, time } = e.detail;
     const mark = this.marks.find(m => m.id === id);
     if (!mark) return;
+    this.statusMsg = 'Mark: edited.';
+    this._pushUndoSnapshot();
     mark.name = name;
     mark.time = time;
     this.marks = [...this.marks].sort((a, b) => a.time - b.time);
-    this.statusMsg = 'Mark: edited.';
     this._saveCurrentState();
   }
 
@@ -2019,20 +2020,20 @@ class LlamaApp extends LitElement {
       this._setWarning('Edit would eliminate a neighbor chapter.');
       return;
     }
-    this._pushUndoSnapshot('Chapter updated');
+    this.statusMsg = 'Chapter: edited.';
+    this._pushUndoSnapshot();
     this.chapters[idx].name = name;
     propagateEntityChange(this.chapters, idx, start, end);
     this.chapters  = [...this.chapters];
-    this.statusMsg = 'Chapter: edited.';
     this._saveCurrentState();
   }
 
   // Handle ll-delete-chapter from chapter picker (mode='delete').
   _onDeleteChapter(e) {
-    this._pushUndoSnapshot('Chapter deleted');
+    this.statusMsg = 'Chapter: deleted.';
+    this._pushUndoSnapshot();
     deleteChapterById(this.chapters, e.detail.id);
     this.chapters = [...this.chapters];
-    this.statusMsg = 'Chapter: deleted.';
     if (this.zoomSource?.trigger === 'chapter') {
       this.zoomSource = null;
     }
@@ -2659,11 +2660,11 @@ class LlamaApp extends LitElement {
       this._setWarning('Edit would eliminate a neighbor section.');
       return;
     }
-    this._pushUndoSnapshot('Section updated');
+    this.statusMsg = 'Section: edited.';
+    this._pushUndoSnapshot();
     this.sections[idx].name = name;
     propagateEntityChange(this.sections, idx, start, end);
     this.sections = [...this.sections];
-    this.statusMsg = 'Section: edited.';
     this._saveCurrentState();
   }
 
@@ -2673,7 +2674,8 @@ class LlamaApp extends LitElement {
 
     if (mode === 'videos') {
       const { videoIds } = e.detail;
-      this._pushUndoSnapshot(`Video${videoIds.length !== 1 ? 's' : ''} deleted`);
+      this.statusMsg = 'Data: deleted.';
+      this._pushUndoSnapshot();
       this._appState.videos = this._appState.videos.filter(v => !videoIds.includes(v.id));
       if (videoIds.includes(this.currentVideoId)) {
         this._vc?.pause();
@@ -2695,13 +2697,12 @@ class LlamaApp extends LitElement {
       }
       this.videos = [...this._appState.videos];
       this._save();
-      const n = videoIds.length;
-      this.statusMsg = 'Data: deleted.';
 
     } else {
       // mode === 'current'
       const { sections, loops, marks, chapters } = e.detail;
-      this._pushUndoSnapshot('Data deleted');
+      this.statusMsg = 'Data: deleted.';
+      this._pushUndoSnapshot();
       this.sections   = this.sections.filter(s => !sections.includes(s.id));
       this.namedLoops = this.namedLoops.filter(l => !loops.includes(l.id));
       this.marks      = this.marks.filter(m => !marks.includes(m.id));
@@ -2715,8 +2716,6 @@ class LlamaApp extends LitElement {
         this.loopSourceEnd   = null;
       }
       this._saveCurrentState();
-      const total = sections.length + loops.length + marks.length + chapters.length;
-      this.statusMsg = 'Data: deleted.';
     }
   }
 
