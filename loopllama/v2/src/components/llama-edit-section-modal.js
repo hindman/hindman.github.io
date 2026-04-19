@@ -60,11 +60,14 @@ class LlamaEditSectionModal extends LitElement {
     this._endEdited     = false;
     this._originalTime  = null;
     this._originalEnd   = null;
+    this._validator     = null;
   }
 
   // derivedEnd: the end that would be used if section.end stays null
   // (i.e. next section's start, or video duration). Used for placeholder hint.
-  show(section, derivedEnd = null) {
+  // validator: optional (start, end) => boolean — called on save; returns false
+  //   to block with an inline error message.
+  show(section, derivedEnd = null, validator = null) {
     const s = section ?? this.section;
     if (s) {
       this.section        = s;
@@ -78,6 +81,7 @@ class LlamaEditSectionModal extends LitElement {
     }
     this._timeEdited = false;
     this._endEdited  = false;
+    this._validator  = validator;
     this.renderRoot.querySelector('llama-modal')?.show();
   }
 
@@ -107,6 +111,10 @@ class LlamaEditSectionModal extends LitElement {
         this._error = 'End must be after start.';
         return;
       }
+    }
+    if (this._validator && !this._validator(start, end)) {
+      this._error = 'Edit would eliminate a neighbor section.';
+      return;
     }
     this._error = '';
     this.dispatchEvent(new CustomEvent('ll-update-section', {

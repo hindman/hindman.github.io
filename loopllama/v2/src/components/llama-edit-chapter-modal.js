@@ -55,11 +55,14 @@ class LlamaEditChapterModal extends LitElement {
     this._endEdited     = false;
     this._originalStart = null;
     this._originalEnd   = null;
+    this._validator     = null;
   }
 
   // derivedEnd: the end that would be used if chapter.end stays null
   // (i.e. next chapter's start, or video duration). Used for placeholder hint.
-  showEdit(chapter, derivedEnd = null) {
+  // validator: optional (start, end) => boolean — called on save; returns false
+  //   to block with an inline error message.
+  showEdit(chapter, derivedEnd = null, validator = null) {
     this._mode          = 'edit';
     this._id            = chapter.id;
     this._name          = chapter.name || '';
@@ -71,6 +74,7 @@ class LlamaEditChapterModal extends LitElement {
     this._error         = '';
     this._startEdited   = false;
     this._endEdited     = false;
+    this._validator     = validator;
     this.renderRoot.querySelector('llama-modal')?.show();
   }
 
@@ -99,6 +103,10 @@ class LlamaEditChapterModal extends LitElement {
         this._error = 'End must be after start.';
         return;
       }
+    }
+    if (this._validator && !this._validator(start, end)) {
+      this._error = 'Edit would eliminate a neighbor chapter.';
+      return;
     }
     this._error = '';
     this.dispatchEvent(new CustomEvent('ll-update-chapter', {

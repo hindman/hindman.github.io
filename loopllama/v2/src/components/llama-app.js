@@ -720,7 +720,7 @@ class LlamaApp extends LitElement {
         this._videoPickerEl?.show('switch', 'alpha');
       },
       editVideo: () => {
-        if (!this.currentVideoId) { this._setWarning('No videos.'); return; }
+        if (!this.currentVideoId) { this._setWarning('No current video.'); return; }
         this._editVideoModalEl?.show();
       },
       scratchVideo: () => {
@@ -1982,7 +1982,9 @@ class LlamaApp extends LitElement {
     }
     const bounds     = getSectionBounds(this.sections, section.start, this.duration);
     const derivedEnd = (section.end == null) ? (bounds?.end ?? null) : null;
-    this._editSectionModalEl?.show(section, derivedEnd);
+    const idx        = this.sections.findIndex(s => s.id === section.id);
+    const validator  = (start, end) => validateEntityChange(this.sections, idx, start, end, this.duration);
+    this._editSectionModalEl?.show(section, derivedEnd, validator);
   }
 
   _editCurrentChapter() {
@@ -1993,7 +1995,9 @@ class LlamaApp extends LitElement {
     }
     const bounds     = getChapterBounds(this.chapters, chapter.start, this.duration);
     const derivedEnd = (chapter.end == null) ? (bounds?.end ?? null) : null;
-    this._editChapterModalEl?.showEdit(chapter, derivedEnd);
+    const idx        = this.chapters.findIndex(c => c.id === chapter.id);
+    const validator  = (start, end) => validateEntityChange(this.chapters, idx, start, end, this.duration);
+    this._editChapterModalEl?.showEdit(chapter, derivedEnd, validator);
   }
 
   // Open the chapter picker in the given mode, with a guard for empty list.
@@ -2016,10 +2020,6 @@ class LlamaApp extends LitElement {
     const { id, name, start, end } = e.detail;
     const idx = this.chapters.findIndex(c => c.id === id);
     if (idx === -1) return;
-    if (!validateEntityChange(this.chapters, idx, start, end, this.duration)) {
-      this._setWarning('Edit would eliminate a neighbor chapter.');
-      return;
-    }
     this.statusMsg = 'Chapter: edited.';
     this._pushUndoSnapshot();
     this.chapters[idx].name = name;
@@ -2181,7 +2181,7 @@ class LlamaApp extends LitElement {
     if (ok) {
       this.statusMsg = 'Data: saved to cloud.';
     } else {
-      this._setError('Cannot save data to cloud: cloud save failed.');
+      this._setError('Cannot save data to cloud: cloud request failed.');
     }
   }
 
@@ -2323,7 +2323,7 @@ class LlamaApp extends LitElement {
         .then(() => { this.statusMsg = 'Shared video: URL copied to clipboard.'; })
         .catch(() => { this._setError('Cannot provide shared video URL: clipboard blocked.'); });
     } catch (err) {
-      this.errorMsg = `Cannot provide shared video URL: ${err.message}`;
+      this.errorMsg = `Cannot provide shared video URL: ${err.message}.`;
     }
   }
 
@@ -2341,7 +2341,7 @@ class LlamaApp extends LitElement {
         .then(() => { this.statusMsg = 'Shared scratch loop: URL copied to clipboard.'; })
         .catch(() => { this._setError('Cannot provide shared scratch loop URL: clipboard blocked.'); });
     } catch (err) {
-      this.errorMsg = `Cannot provide shared scratch loop URL: ${err.message}`;
+      this.errorMsg = `Cannot provide shared scratch loop URL: ${err.message}.`;
     }
   }
 
@@ -2656,10 +2656,6 @@ class LlamaApp extends LitElement {
     const { id, name, start, end } = e.detail;
     const idx = this.sections.findIndex(s => s.id === id);
     if (idx === -1) return;
-    if (!validateEntityChange(this.sections, idx, start, end, this.duration)) {
-      this._setWarning('Edit would eliminate a neighbor section.');
-      return;
-    }
     this.statusMsg = 'Section: edited.';
     this._pushUndoSnapshot();
     this.sections[idx].name = name;
