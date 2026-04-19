@@ -66,14 +66,14 @@ export const BINDINGS = {
 
   'v': { completions: {
     'l': { handler: 'videoUrl',          desc: 'Load URL' },
-    'o': { handler: 'videoPickerRecent', desc: 'Open video picker' },
-    'v': { handler: 'videoPickerRecent', desc: 'Open video picker (synonym: vo)' },
-    'e': { handler: 'editVideo',         desc: 'Edit video attributes' },
-    'i': { handler: 'videoInfo',         desc: 'Video info' },
-    'd': { handler: 'deleteVideo',       desc: 'Delete current video' },
-    'u': { handler: 'restoreVideo',      desc: 'Unstash video' },
-    'x': { handler: 'scratchVideo',      desc: 'Scratch: full video as scratch loop' },
-    'z': { handler: 'zoomVideo',         desc: 'Toggle video zoom' },
+    'o': { handler: 'videoPickerRecent', desc: 'Open...' },
+    'v': { handler: 'videoPickerRecent', desc: 'Open...' },
+    'e': { handler: 'editVideo',         desc: 'Edit' },
+    'x': { handler: 'scratchVideo',      desc: 'Scratch' },
+    'z': { handler: 'zoomVideo',         desc: 'Zoom' },
+    'd': { handler: 'deleteVideo',       desc: 'Delete...' },
+    'u': { handler: 'restoreVideo',      desc: 'Unstash...' },
+    'i': { handler: 'videoInfo',         desc: 'Info' },
   }},
 
   'j': { completions: {
