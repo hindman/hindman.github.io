@@ -1042,3 +1042,28 @@ ao                 | I    | Options: saved.
 ae                 | I    | Examples: loaded.
 ```
 
+## LoopLlama: library scale and performance
+
+Rough performance envelope for the video library (localStorage-based storage):
+
+  - Comfortable range: up to ~500 videos. No noticeable issues expected.
+
+  - Caution zone: 500-1000 videos. Probably fine, but some users might notice
+    sluggishness on saves/edits, especially on slower hardware.
+
+  - Hard ceiling: ~5000 videos at ~1KB average per video (localStorage 5MB
+    limit), but real-world friction sets in well before that.
+
+The primary bottleneck in the 500-1000+ range is _saveCurrentState(), which
+serializes and writes the entire app state on every save. Per-video
+localStorage keys (storing each video under its own key) would be the
+highest-leverage fix if this becomes a complaint: only the changed video gets
+rewritten. Debouncing saves is a lower-effort complementary improvement.
+
+The more likely user complaint at scale is UI usability: a modal or picker
+with 500+ videos becomes unwieldy even if not technically slow. The existing
+recency sort helps, and pickers at least have the advantage of filtering to
+winnow the universe quickly. The modals that list many videos would be the
+biggest UI problem at scale: data delete, data export/import, cloud
+save/read/compare, and data inspect.
+

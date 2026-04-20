@@ -1,28 +1,31 @@
 
 ## TODO: LoopLlama v2
 
-scratch source:
-  - why yellow sometimes in current panel?
-  - ex: jaggs, section 1 (yellow); section 2 (not)
-
 Dev docs:
-  - dev-notes.md
-    - Editing pass.
+
+  - dev-notes.md: edit
+
   - architecture-notes.md
     - Create.
     - How the code is organized and how it works.
     - Up to date info on data schema.
       - Then delete: data-schema.md
-  - check repo for other dev docs
+
+  - dev-docs:
+
+        Document                    | Audience | Note
+        --------------------------------------------------------------------------------
+        loopllama-v2-help.md        | user     | Help docs
+        loopllama-v2-keybindings.md | user     | Key bindings
+        dev-notes.md                | dev      | Project notes
+        architecture-notes.md       | dev      | Notes on software, architecture, etc
+        create_db.sql               | dev      | Create/configure Supabase tables
+        deployments.json            | dev      | Build numbers and artifacts for deployments
+        jdiff-ll                    | dev      | Python to smart-diff LL data exports
+        select_user_video_count.sql | dev      | SQL snippets for manual queries in Supabase
 
 Code review and refactor.
   - See _notes/refactoring-prompt.md
-    - create_db.sql
-    - dev-notes.md
-    - architecture-notes.md
-    - loopllama-v2-help.md
-    - loopllama-v2-keybindings.md
-  - App limits on N videos?
 
 User docs: final read:
     - MH
