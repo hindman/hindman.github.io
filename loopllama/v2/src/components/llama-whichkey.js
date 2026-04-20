@@ -51,7 +51,8 @@ class LlamaWhichkey extends LitElement {
     }
     .row {
       display: flex;
-      gap: 1.5rem;
+      column-gap: 1.5rem;
+      row-gap: 0.15rem;
       flex-wrap: wrap;
       align-items: baseline;
     }
