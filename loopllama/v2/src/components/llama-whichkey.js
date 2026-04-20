@@ -16,6 +16,22 @@ import { LitElement, html, css } from 'lit';
 const KEY_DISPLAY = { 'Backspace': '⌫' };
 function displayKey(key) { return KEY_DISPLAY[key] ?? key; }
 
+// Context labels shown at the left of which-key completions rows.
+const PREFIX_LABELS = {
+  v: 'Video',
+  c: 'Chapter',
+  s: 'Section',
+  l: 'Loop',
+  x: 'Scratch',
+  m: 'Mark',
+  d: 'Data',
+  j: 'Jump',
+  a: 'App',
+  '`': 'Menus',
+  '[': 'Scratch start',
+  ']': 'Scratch end',
+};
+
 class LlamaWhichkey extends LitElement {
   static styles = css`
     .bar {
@@ -65,6 +81,11 @@ class LlamaWhichkey extends LitElement {
     .cheat-label {
       color: #e3a857;
       font-weight: bold;
+    }
+    .prefix-label {
+      color: #e3a857;
+      font-weight: bold;
+      margin-right: 0.25rem;
     }
     .status {
       color: var(--ll-text-dim, #aaa);
@@ -132,14 +153,16 @@ class LlamaWhichkey extends LitElement {
     if (this.editScratchActive) {
       const cheatRow = html`
         <div class="row">
-          <span class="cheat-label">Edit Loop</span>
-          ${this._kbItem('Tab', 'toggle focus')}
-          ${this._kbItem('←/→', 'decrease/increase')}
-          ${this._kbItem('↑/↓', 'delta')}
-          ${this._kbItem('Space', 'play/pause')}
-          ${this._kbItem('⌫', 'reset')}
-          ${this._kbItem('0-9', 'type time')}
-          ${this._kbItem('Enter/Esc', 'done')}
+          <span class="cheat-label">Scratch edit</span>
+          ${this._kbItem('Tab', 'Toggle focus')}
+          ${this._kbItem('Left', 'Decrease')}
+          ${this._kbItem('Right', 'Increase')}
+          ${this._kbItem('Down', 'Delta decrease')}
+          ${this._kbItem('Up', 'Delta increase')}
+          ${this._kbItem('⌫', 'Reset')}
+          ${this._kbItem('Space', 'Play/pause')}
+          ${this._kbItem('0-9', 'Time')}
+          ${this._kbItem('Enter/Esc', 'Exit')}
         </div>
       `;
       if (this.warningMsg) {
@@ -163,6 +186,10 @@ class LlamaWhichkey extends LitElement {
 
     // Priority 5: which-key completions (with optional count prefix).
     if (this.prefix && this.completions) {
+      const label = PREFIX_LABELS[this.prefix];
+      const labelItem = label
+        ? html`<span class="prefix-label">${label}</span>`
+        : null;
       const countItem = this.count != null
         ? html`<span class="item"><span class="key">Count:</span><span class="state-val">${this.count}</span></span>`
         : null;
@@ -172,7 +199,7 @@ class LlamaWhichkey extends LitElement {
           <span class="desc">${desc}</span>
         </span>
       `);
-      return html`<div class="bar"><div class="row">${countItem}${items}</div></div>`;
+      return html`<div class="bar"><div class="row">${labelItem}${countItem}${items}</div></div>`;
     }
 
     // Priority 6: count only (digits typed, awaiting command key).

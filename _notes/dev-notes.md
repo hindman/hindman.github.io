@@ -813,6 +813,26 @@ Elements:
   - Marks.
   - Loops.
 
+### Which-key
+
+Elements:
+  - Scratch-edit mode.
+  - Count prefix.
+  - Binding prefixes:
+
+        v | Video
+        c | Chapter
+        s | Section
+        l | Loop
+        x | Scratch
+        m | Mark
+        d | Data
+        a | App
+        j | Jump
+        ` | Open menu
+        [ | Loop start
+        ] | Loop end
+
 ### Messages
 
 Policy:

@@ -1,6 +1,6 @@
 
 -- ============================================================
--- Drop existing objects (safe to run before re-creating)
+-- Drop existing objects.
 -- ============================================================
 
 -- Tables: policies and triggers drop automatically with the table.

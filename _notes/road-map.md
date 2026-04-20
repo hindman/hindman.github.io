@@ -1,37 +1,33 @@
 
 ## TODO: LoopLlama v2
 
-Text elements: which-key:
-
-  - Scratch-edit mode.
-  - Count prefix.
-  - Prefixes:
-
-        v | Video       # Mimics menu. Decide about ellipses.
-        j | Jump
-        l | Loop
-        x | Scratch
-        c | Chapter
-        s | Section
-        m | Mark
-        d | Data
-        a | App
-        ` | Open menu
-        [ | Loop start
-        ] | Loop end
+Dev docs:
+  - dev-notes.md
+    - Editing pass.
+  - architecture-notes.md
+    - Create.
+    - How the code is organized and how it works.
+    - Up to date info on data schema.
+      - Then delete: data-schema.md
+  - check repo for other dev docs
 
 Code review and refactor.
   - See _notes/refactoring-prompt.md
+    - create_db.sql
+    - dev-notes.md
+    - architecture-notes.md
+    - loopllama-v2-help.md
+    - loopllama-v2-keybindings.md
   - App limits on N videos?
 
 User docs: final read:
     - MH
     - CC review
 
-Dev docs:
+Dev docs: final edits:
   - data-schema.md
   - dev-notes.md
-  - architecture-notes.md: have CC summarize how the code is organized and how it works
+  - architecture-notes.md
 
 Launch:
   - User docs: F5 post: draft
