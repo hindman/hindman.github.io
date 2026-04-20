@@ -914,7 +914,7 @@ class LlamaApp extends LitElement {
         const padEnd = (this.loopSourceType !== 'loop')
           ? (this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end)   : 0;
         this.loopStart = Math.max(0, this.loopSourceStart - padStart);
-        this.loopEnd   = this.loopSourceEnd + padEnd;
+        this.loopEnd   = Math.min(this.duration ?? Infinity, this.loopSourceEnd + padEnd);
         this._clearZoomIfOutside(this.loopStart, this.loopEnd);
         this._autoDisableLoopIfInvalid();
         this.statusMsg = 'Scratch loop: reset to source.';
@@ -1028,7 +1028,7 @@ class LlamaApp extends LitElement {
         const padStart   = this._appState?.options.loop_pad_start ?? DEFAULT_OPTIONS.loop_pad_start;
         const padEnd     = this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end;
         const newStart   = Math.max(0, bounds.start - padStart);
-        const newEnd     = bounds.end + padEnd;
+        const newEnd     = Math.min(this.duration ?? Infinity, bounds.end + padEnd);
         this._clearZoomIfOutside(newStart, newEnd);
         this.loopStart       = newStart;
         this.loopEnd         = newEnd;
@@ -1100,7 +1100,7 @@ class LlamaApp extends LitElement {
         const padStart   = this._appState?.options.loop_pad_start ?? DEFAULT_OPTIONS.loop_pad_start;
         const padEnd     = this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end;
         const newStart   = Math.max(0, bounds.start - padStart);
-        const newEnd     = bounds.end + padEnd;
+        const newEnd     = Math.min(this.duration ?? Infinity, bounds.end + padEnd);
         this._clearZoomIfOutside(newStart, newEnd);
         this.loopStart       = newStart;
         this.loopEnd         = newEnd;
@@ -2821,8 +2821,9 @@ class LlamaApp extends LitElement {
       ? (this._appState?.options.loop_pad_start ?? DEFAULT_OPTIONS.loop_pad_start) : 0;
     const padEnd = (this.loopSourceType !== 'loop')
       ? (this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end)   : 0;
-    return this.loopStart !== (this.loopSourceStart - padStart)
-        || this.loopEnd   !== (this.loopSourceEnd   + padEnd);
+    const expectedStart = Math.max(0, this.loopSourceStart - padStart);
+    const expectedEnd   = Math.min(this.duration ?? Infinity, this.loopSourceEnd + padEnd);
+    return this.loopStart !== expectedStart || this.loopEnd !== expectedEnd;
   }
 
   render() {

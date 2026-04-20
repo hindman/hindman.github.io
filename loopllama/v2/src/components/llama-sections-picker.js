@@ -159,7 +159,7 @@ class LlamaSectionsPicker extends LitElement {
     if (!q) return this.sections;
     return this.sections.filter(s =>
       (s.name || '').toLowerCase().includes(q) ||
-      _fmtTime(s.start).includes(q)
+      (!s.name && _fmtTime(s.start).includes(q))
     );
   }
 

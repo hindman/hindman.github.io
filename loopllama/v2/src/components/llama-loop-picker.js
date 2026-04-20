@@ -160,7 +160,7 @@ class LlamaLoopPicker extends LitElement {
     if (!q) return this.namedLoops;
     return this.namedLoops.filter(l =>
       (l.name || '').toLowerCase().includes(q) ||
-      _fmtRange(l.start, l.end).includes(q)
+      (!l.name && _fmtRange(l.start, l.end).includes(q))
     );
   }
 

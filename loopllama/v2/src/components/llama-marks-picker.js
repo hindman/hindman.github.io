@@ -150,7 +150,7 @@ class LlamaMarksPicker extends LitElement {
     if (!q) return this.marks;
     return this.marks.filter(m =>
       (m.name || '').toLowerCase().includes(q) ||
-      _fmtTime(m.time).includes(q)
+      (!m.name && _fmtTime(m.time).includes(q))
     );
   }
 

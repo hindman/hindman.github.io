@@ -158,7 +158,7 @@ class LlamaChapterPicker extends LitElement {
     if (!q) return this.chapters;
     return this.chapters.filter(c =>
       (c.name || '').toLowerCase().includes(q) ||
-      _fmtTime(c.start).includes(q)
+      (!c.name && _fmtTime(c.start).includes(q))
     );
   }
 

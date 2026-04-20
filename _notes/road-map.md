@@ -1,6 +1,10 @@
 
 ## TODO: LoopLlama v2
 
+scratch source:
+  - why yellow sometimes in current panel?
+  - ex: jaggs, section 1 (yellow); section 2 (not)
+
 Dev docs:
   - dev-notes.md
     - Editing pass.
