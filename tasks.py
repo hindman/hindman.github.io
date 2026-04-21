@@ -16,6 +16,7 @@
 #   inv deploy
 #   inv builds [--limit N]
 #   inv loc
+#   inv test
 #
 ####
 
@@ -81,6 +82,7 @@ APPS = cons(
     ll = cons(
         name      = 'loopllama',
         cmd       = 'npm run dev',
+        test_cmd  = 'npm test',
         cd        = 'loopllama/v2',
         log_file  = 'loopllama/v2/logs/ll.log.txt',
         pid_file  = 'loopllama/v2/logs/ll.pid.txt',
@@ -104,7 +106,7 @@ def serve(c, f5 = False, ll = False):
     '''
     # Setup.
     dry = c.config.run.dry
-    apps = get_apps(f5, ll)
+    apps = get_apps(f5 = f5, ll = ll)
 
     # Serve each app: (1) start the app, sending output
     # to a log file; (2) write a PID file.
@@ -150,7 +152,7 @@ def kill(c, f5 = False, ll = False, keep = False):
     '''
     # Setup.
     dry = c.config.run.dry
-    apps = get_apps(f5, ll)
+    apps = get_apps(f5 = f5, ll = ll)
 
     # Kill each app.
     for a in apps:
@@ -183,7 +185,7 @@ def follow(c, f5 = False, ll = False):
     Follows log files: [--f5] [--ll]
     '''
     # Get the apps and open their log files.
-    apps = get_apps(f5, ll)
+    apps = get_apps(f5 = f5, ll = ll)
     app_handles = []
     for a in apps:
         p = Path(a.log_file)
@@ -212,7 +214,7 @@ def status(c, f5 = False, ll = False):
     '''
     Shows app status: PID + ps: [--f5] [--ll]
     '''
-    apps = get_apps(f5, ll)
+    apps = get_apps(f5 = f5, ll = ll)
     for a in apps:
         print_app_heading(a)
         c.run(f'cat {a.pid_file} 2>&1 | ack -v "No such file"', warn = True)
@@ -223,7 +225,7 @@ def clear(c, f5 = False, ll = False):
     '''
     Deletes log and PID files: [--f5] [--ll]
     '''
-    apps = get_apps(f5, ll)
+    apps = get_apps(f5 = f5, ll = ll)
     for a in apps:
         for path in (a.log_file, a.pid_file):
             c.run(f'rm -f {path}')
@@ -339,6 +341,15 @@ def jdiff(c, base, other):
     cmd = f'{PATHS.ll_jdiff} {base} {other}'
     c.run(cmd)
 
+@task
+def test(c):
+    '''
+    Tests LoopLlama
+    '''
+    a = get_apps(ll = True)[0]
+    with cd(a.cd):
+        c.run(a.test_cmd)
+
 ####
 # Helpers.
 ####
@@ -358,7 +369,9 @@ def write_json(path, d):
     with open(path, 'w') as fh:
         json.dump(d, fh, indent = 2)
 
-def get_apps(f5, ll):
+def get_apps(f5 = False, ll = False):
+    # Returns a list of APPS values: both apps for
+    # True/True or False/False; otherwise, just one.
     return (
         APPS.values() if ll == f5 else
         [APPS.ll] if ll else

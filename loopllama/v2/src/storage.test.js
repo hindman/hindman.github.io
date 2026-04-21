@@ -5,7 +5,8 @@
 // exercised indirectly through importData, which calls it on all incoming
 // videos.
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+vi.mock('./supabase.js', () => ({ supabase: {} }));
 import { importData } from './storage.js';
 
 // Minimal valid app state to merge into.
