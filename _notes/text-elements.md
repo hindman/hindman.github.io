@@ -267,6 +267,7 @@ vu: no stashes     | W    | No stashed videos.
 ------------------------------------------------------------------
 cc                 | I    | Chapter: created.
 cc: fixed chap     | W    | Cannot create chapter: inside a fixed chapter.
+ss                 | W    | Cannot create chapter: too close to an existing one.
 ce                 | I    | Chapter: edited.
 ce: no chapter     | W    | No current chapter.
 cx                 | I    | Chapter: scratched.
@@ -283,6 +284,7 @@ cd: no chapters    | W    | No chapters.
 ------------------------------------------------------------------
 ss                 | I    | Section: created.
 ss                 | W    | Cannot create section: inside a fixed section.
+ss                 | W    | Cannot create section: too close to an existing one.
 se                 | I    | Section: edited.
 se: no section     | W    | No current section.
 sx                 | I    | Section: scratched.

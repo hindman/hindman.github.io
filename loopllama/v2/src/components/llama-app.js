@@ -1011,9 +1011,13 @@ class LlamaApp extends LitElement {
           this._setWarning('Cannot create section: inside a fixed section.');
           return;
         }
+        const section = addSection(this.sections, time);
+        if (!section) {
+          this._setWarning('Cannot create section: too close to an existing one.');
+          return;
+        }
         this.statusMsg = 'Section: created.';
         this._pushUndoSnapshot();
-        addSection(this.sections, time);
         this.sections = [...this.sections];
         this._saveCurrentState();
       },
@@ -1083,9 +1087,13 @@ class LlamaApp extends LitElement {
           this._setWarning('Cannot create chapter: inside a fixed chapter.');
           return;
         }
+        const chapter = addChapterDivider(this.chapters, time);
+        if (!chapter) {
+          this._setWarning('Cannot create chapter: too close to an existing one.');
+          return;
+        }
         this.statusMsg = 'Chapter: created.';
         this._pushUndoSnapshot();
-        addChapterDivider(this.chapters, time);
         this.chapters = [...this.chapters];
         this._saveCurrentState();
       },
@@ -1845,9 +1853,13 @@ class LlamaApp extends LitElement {
       this._setWarning('Cannot create section: inside a fixed section.');
       return;
     }
+    const section = addSection(this.sections, time);
+    if (!section) {
+      this._setWarning('Cannot create section: too close to an existing one.');
+      return;
+    }
     this.statusMsg = 'Section: created.';
     this._pushUndoSnapshot();
-    addSection(this.sections, time);
     this.sections = [...this.sections];
     this._saveCurrentState();
   }

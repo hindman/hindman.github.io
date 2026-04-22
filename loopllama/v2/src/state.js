@@ -10,6 +10,10 @@ export const SCHEMA_VERSION = 10;
 export const JUMP_HISTORY_MAX = 40;   // max persisted jump entries per video
 export const JUMP_THRESHOLD   = 15;   // seconds; smaller moves are not stored
 
+// Minimum distance (seconds) between two dividers or two marks.
+// Guards against accidental creation when the playhead is near an existing entity.
+export const MIN_ENTITY_GAP = 1;
+
 function createId() {
   return Math.random().toString(36).slice(2, 9);
 }
@@ -102,30 +106,78 @@ export function createMark(time, name = '') {
   return { id: createId(), time, name };
 }
 
-// Remove a chapter by id.
-export function deleteChapterById(chapters, id) {
-  const idx = chapters.findIndex(c => c.id === id);
-  if (idx !== -1) chapters.splice(idx, 1);
+// ---------------------------------------------------------------------------
+// Shared divider helpers
+//
+// Sections and chapters share the same divider-based range model:
+// { id, name, start, end? }. These private helpers implement the common
+// logic; the public type-specific functions below are thin wrappers.
+// ---------------------------------------------------------------------------
+
+// Find the entity with the largest start at or before time.
+// Returns the entity or null. Assumes entities are sorted by start.
+function nearestDividerLeft(entities, time) {
+  let result = null;
+  for (const e of entities) {
+    if (e.start <= time) result = e;
+    else break;
+  }
+  return result;
 }
 
-// Update chapter fields by id. fields: { name?, start?, end? }
-export function updateChapter(chapters, id, fields) {
-  const chapter = chapters.find(c => c.id === id);
-  if (!chapter) return;
-  Object.assign(chapter, fields);
-  chapters.sort((a, b) => a.start - b.start);
+// Get the effective start/end bounds of the divider range containing time.
+// Returns { start, end } or null if time is before the first divider or in
+// a gap zone (past an explicit entity.end, before the next divider).
+// videoDuration: used as end fallback for the last open-ended range.
+function getDividerBounds(entities, time, videoDuration) {
+  if (!entities.length) return null;
+
+  let left  = null;
+  let right = null;
+  for (const e of entities) {
+    if (e.start <= time) left = e;
+    else { right = e; break; }
+  }
+
+  if (!left) return null;   // before first divider
+
+  // Stored explicit end overrides derived end.
+  const derivedEnd = right ? right.start : (videoDuration ?? null);
+  const entityEnd  = (left.end != null) ? left.end : derivedEnd;
+
+  // Gap zone: time is past the explicit end, before the next divider.
+  if (left.end != null && time > left.end) return null;
+
+  return { start: left.start, end: entityEnd };
 }
 
-// Add a mark at the given time to the marks array (sorted by time).
-// Returns the new mark, or null if a mark at the same second already exists.
-export function addMark(marks, time, name = '') {
-  const rounded = Math.round(time);
-  if (marks.some(m => Math.round(m.time) === rounded)) return null;
-  const mark = createMark(time, name);
-  marks.push(mark);
-  marks.sort((a, b) => a.time - b.time);
-  return mark;
+// Set entities[id].end to its derived end (next entity's start, or videoDuration).
+// Returns true if found and updated, false if not found.
+function fixDividerEnd(entities, id, videoDuration) {
+  const idx = entities.findIndex(e => e.id === id);
+  if (idx === -1) return false;
+  const next = entities[idx + 1];
+  entities[idx].end = next ? next.start : (videoDuration ?? null);
+  return true;
 }
+
+// Add a divider at the given time (sorted by start).
+// Rejects if time falls inside a fixed range (entity with explicit end) or
+// if any existing divider starts within MIN_ENTITY_GAP seconds of time.
+// Returns the new entity { id, name, start, end }, or null if rejected.
+function addDivider(entities, time, name = '') {
+  const containing = nearestDividerLeft(entities, time);
+  if (containing && containing.end != null && time <= containing.end) return null;
+  if (entities.some(e => Math.abs(e.start - time) < MIN_ENTITY_GAP)) return null;
+  const entity = { id: createId(), name, start: time, end: null };
+  entities.push(entity);
+  entities.sort((a, b) => a.start - b.start);
+  return entity;
+}
+
+// ---------------------------------------------------------------------------
+// Mark functions
+// ---------------------------------------------------------------------------
 
 // Remove the mark with the given id from the marks array.
 export function deleteMarkById(marks, markId) {
@@ -144,18 +196,23 @@ export function nearestMarkLeft(marks, time) {
   return result;
 }
 
-// Add a section divider at the given time (sorted by start).
-// Rejects if the time falls inside a fixed section (one with an explicit end),
-// or if any existing divider starts within 2 seconds of the new time.
-// Returns the new section, or null if rejected.
+// Add a mark at the given time to the marks array (sorted by time).
+// Returns the new mark, or null if a mark within MIN_ENTITY_GAP seconds already exists.
+export function addMark(marks, time, name = '') {
+  if (marks.some(m => Math.abs(m.time - time) < MIN_ENTITY_GAP)) return null;
+  const mark = createMark(time, name);
+  marks.push(mark);
+  marks.sort((a, b) => a.time - b.time);
+  return mark;
+}
+
+// ---------------------------------------------------------------------------
+// Section functions
+// ---------------------------------------------------------------------------
+
+// Add a section divider at the given time. Returns the new section or null.
 export function addSection(sections, time, name = '') {
-  const containing = nearestSectionLeft(sections, time);
-  if (containing && containing.end != null && time <= containing.end) return null;
-  if (sections.some(s => Math.abs(s.start - time) < 2)) return null;
-  const section = createSection(time, name);
-  sections.push(section);
-  sections.sort((a, b) => a.start - b.start);
-  return section;
+  return addDivider(sections, time, name);
 }
 
 // Remove the section with the given id from the sections array.
@@ -164,16 +221,27 @@ export function deleteSectionById(sections, sectionId) {
   if (idx !== -1) sections.splice(idx, 1);
 }
 
-// Find the section divider with the largest start at or before the given time.
+// Find the section divider with the largest start at or before time.
 // Returns the section or null. Assumes sections are sorted by start.
 export function nearestSectionLeft(sections, time) {
-  let result = null;
-  for (const s of sections) {
-    if (s.start <= time) result = s;
-    else break;
-  }
-  return result;
+  return nearestDividerLeft(sections, time);
 }
+
+// Get the effective start/end bounds of the section containing time.
+// Returns { start, end } or null. See getDividerBounds for full semantics.
+export function getSectionBounds(sections, time, videoDuration) {
+  return getDividerBounds(sections, time, videoDuration);
+}
+
+// Set a section's end to its derived end (next section's start, or videoDuration).
+// Returns true if found and updated, false if not found.
+export function fixSectionEnd(sections, id, videoDuration) {
+  return fixDividerEnd(sections, id, videoDuration);
+}
+
+// ---------------------------------------------------------------------------
+// Loop functions
+// ---------------------------------------------------------------------------
 
 // Returns the named loop whose start is <= time and greatest, or null.
 // Assumes loops are sorted by start.
@@ -254,85 +322,50 @@ export function nudgeLoopEnd(delta, { loopStart, loopEnd, duration }) {
   return regular;
 }
 
-// Get the effective start/end bounds of the section containing the given time.
-// Returns { start, end } or null if the playhead is outside any section
-// (before the first divider, or in a gap zone created by an explicit section.end).
-// videoDuration: used as end fallback for the last open-ended section.
-export function getSectionBounds(sections, time, videoDuration) {
-  if (!sections.length) return null;
+// ---------------------------------------------------------------------------
+// Chapter functions
+// ---------------------------------------------------------------------------
 
-  let left  = null;
-  let right = null;
-  for (const s of sections) {
-    if (s.start <= time) left = s;
-    else { right = s; break; }
-  }
-
-  if (!left) return null;   // before first divider
-
-  // Compute end: stored explicit end overrides derived end.
-  const derivedEnd  = right ? right.start : (videoDuration ?? null);
-  const sectionEnd  = (left.end != null) ? left.end : derivedEnd;
-
-  // If time is in a gap zone (past the section's explicit end, before the
-  // next divider), there is no current section.
-  if (left.end != null && time > left.end) return null;
-
-  return { start: left.start, end: sectionEnd };
+// Remove a chapter by id.
+export function deleteChapterById(chapters, id) {
+  const idx = chapters.findIndex(c => c.id === id);
+  if (idx !== -1) chapters.splice(idx, 1);
 }
 
-// Find the chapter divider with the largest start at or before the given time.
+// Update chapter fields by id. fields: { name?, start?, end? }
+export function updateChapter(chapters, id, fields) {
+  const chapter = chapters.find(c => c.id === id);
+  if (!chapter) return;
+  Object.assign(chapter, fields);
+  chapters.sort((a, b) => a.start - b.start);
+}
+
+// Find the chapter divider with the largest start at or before time.
 // Returns the chapter or null. Assumes chapters are sorted by start.
 export function nearestChapterLeft(chapters, time) {
-  let result = null;
-  for (const c of chapters) {
-    if (c.start <= time) result = c;
-    else break;
-  }
-  return result;
+  return nearestDividerLeft(chapters, time);
 }
 
-// Get the effective start/end bounds of the chapter containing the given time.
-// Same divider logic as getSectionBounds.
+// Get the effective start/end bounds of the chapter containing time.
+// Returns { start, end } or null. See getDividerBounds for full semantics.
 export function getChapterBounds(chapters, time, videoDuration) {
-  if (!chapters.length) return null;
-
-  let left  = null;
-  let right = null;
-  for (const c of chapters) {
-    if (c.start <= time) left = c;
-    else { right = c; break; }
-  }
-
-  if (!left) return null;   // before first divider
-
-  const derivedEnd  = right ? right.start : (videoDuration ?? null);
-  const chapterEnd  = (left.end != null) ? left.end : derivedEnd;
-
-  if (left.end != null && time > left.end) return null;
-
-  return { start: left.start, end: chapterEnd };
-}
-
-// Set a section's end to its derived end (next section's start, or videoDuration).
-// Returns true if found and updated, false if not found.
-export function fixSectionEnd(sections, id, videoDuration) {
-  const idx = sections.findIndex(s => s.id === id);
-  if (idx === -1) return false;
-  const next = sections[idx + 1];
-  sections[idx].end = next ? next.start : (videoDuration ?? null);
-  return true;
+  return getDividerBounds(chapters, time, videoDuration);
 }
 
 // Set a chapter's end to its derived end (next chapter's start, or videoDuration).
 // Returns true if found and updated, false if not found.
 export function fixChapterEnd(chapters, id, videoDuration) {
-  const idx = chapters.findIndex(c => c.id === id);
-  if (idx === -1) return false;
-  const next = chapters[idx + 1];
-  chapters[idx].end = next ? next.start : (videoDuration ?? null);
-  return true;
+  return fixDividerEnd(chapters, id, videoDuration);
 }
+
+// Add a chapter divider at the given time. Returns the new chapter or null.
+export function addChapterDivider(chapters, time, name = '') {
+  return addDivider(chapters, time, name);
+}
+
+// ---------------------------------------------------------------------------
+// Entity validation and propagation (shared by sections and chapters)
+// ---------------------------------------------------------------------------
 
 // Validate a proposed start/end change for entities[idx].
 // Returns false if the change would eliminate an immediate neighbor:
@@ -387,18 +420,4 @@ export function propagateEntityChange(entities, idx, newStart, newEnd) {
     }
     entity.end = newEnd;
   }
-}
-
-// Add a chapter divider at the given time (sorted by start).
-// Rejects if the time falls inside a fixed chapter (one with an explicit end),
-// or if any existing divider starts within 2 seconds of the new time.
-// Returns the new chapter, or null if rejected.
-export function addChapterDivider(chapters, time, name = '') {
-  const containing = nearestChapterLeft(chapters, time);
-  if (containing && containing.end != null && time <= containing.end) return null;
-  if (chapters.some(c => Math.abs(c.start - time) < 2)) return null;
-  const chapter = createChapter(name, time, null);
-  chapters.push(chapter);
-  chapters.sort((a, b) => a.start - b.start);
-  return chapter;
 }

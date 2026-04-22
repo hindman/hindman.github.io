@@ -375,8 +375,8 @@ Risk: None.
 
 ## Implementation
 
-Session 1 | state.js         | Items 2, 9
-Session 2 | llama-app.js     | Items 1, 3, 4, 5, 7, 11
-Session 3 | Modal files      | Items 6, 10
-Session 4 | llama-controls   | Item 8
+Session 1 | state.js       | Items 2, 9              | done
+Session 2 | llama-app.js   | Items 1, 3, 4, 5, 7, 11 | .
+Session 3 | Modal files    | Items 6, 10             | .
+Session 4 | llama-controls | Item 8                  | .
 

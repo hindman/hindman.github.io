@@ -511,6 +511,12 @@ class LlamaControls extends LitElement {
 
   _fmt(secs) {
     if (secs == null) return '?';
+    if (this.seekDelta < 1) {
+      const rounded = Math.round(secs * 10) / 10;
+      const m = Math.floor(rounded / 60);
+      const rawS = rounded % 60;
+      return `${m}:${rawS.toFixed(1).padStart(4, '0')}`;
+    }
     const r = Math.round(secs);
     const m = Math.floor(r / 60);
     const s = (r % 60).toString().padStart(2, '0');
@@ -532,7 +538,10 @@ class LlamaControls extends LitElement {
       const rawS = rounded % 60;
       return `${m}:${rawS.toFixed(1).padStart(4, '0')}`;
     }
-    return this._fmt(secs);
+    const r = Math.round(secs);
+    const m = Math.floor(r / 60);
+    const s = (r % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
   }
 
   _parseTime(str) { return parseTime(str); }
@@ -561,7 +570,8 @@ class LlamaControls extends LitElement {
   // Time input is only synced when not focused (user may be mid-edit).
   // Loop endpoint inputs are guarded similarly via blur/submit handlers.
   updated(changedProps) {
-    if (changedProps.has('currentTime') && this._timeRef.value && !this._timeFocused) {
+    if ((changedProps.has('currentTime') || changedProps.has('seekDelta'))
+        && this._timeRef.value && !this._timeFocused) {
       this._timeRef.value.value = this._fmt(this.currentTime);
     }
     if ((changedProps.has('loopStart') || changedProps.has('loopNudgeDelta'))
