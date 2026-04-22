@@ -1,8 +1,8 @@
 
 ## TODO: LoopLlama v2
 
-Code review and refactor.
-  - See _notes/refactoring-prompt.md
+Code review and refactor:
+  - refactoring-assessment.md
 
 User docs: final read:
     - MH
