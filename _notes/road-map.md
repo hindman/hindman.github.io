@@ -1,13 +1,10 @@
 
-We are implementing our plan in refactoring-assessment.md. Next up is Session
-4: Items 8.
-
-Let's solidify the plan for this issue.
-
 ## TODO: LoopLlama v2
 
 Code refactor:
   x refactoring-assessment.md
+  x round 1
+  - round 2
   - app: basic tests: all operations
 
 User docs: final read:

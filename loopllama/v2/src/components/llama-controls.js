@@ -38,120 +38,151 @@ import { LitElement, html, css } from 'lit';
 import { createRef, ref } from 'lit/directives/ref.js';
 import { parseTime } from '../parseTime.js';
 import { DEFAULT_OPTIONS } from '../state.js';
+import { BINDINGS } from '../keyboardController.js';
 import './llama-dropdown.js';
 import '@shoelace-style/shoelace/dist/components/switch/switch.js';
 import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 
+// Render special keys as display symbols for menu hints.
+const KEY_DISPLAY = { 'Backspace': '⌫' };
+
+function displayKey(k) {
+  return KEY_DISPLAY[k] ?? k;
+}
+
+// Return the menu hint string for a handler, derived from BINDINGS.
+// Ordering: two-key completions first (in BINDINGS insertion order),
+// then single-key synonyms. Within each group, BINDINGS insertion order
+// determines display order -- so keep primary bindings before synonyms
+// within each prefix block and in the single-key section.
+function hintFor(handler) {
+  const formal   = [];
+  const synonyms = [];
+  for (const [key, def] of Object.entries(BINDINGS)) {
+    if (def.handler === handler) {
+      synonyms.push(displayKey(key));
+    }
+    if (def.completions) {
+      for (const [sub, subDef] of Object.entries(def.completions)) {
+        if (subDef.handler === handler) {
+          formal.push(displayKey(key) + displayKey(sub));
+        }
+      }
+    }
+  }
+  return [...formal, ...synonyms].join(' · ');
+}
+
 // Menu definitions for the seven action menus.
 // Each item: { label, action, hint? } or { type: 'divider' }.
-// hint: key binding shown right-aligned (matches BINDINGS in keyboardController.js).
+// hint: derived from BINDINGS via hintFor().
 const MENUS = [
   {
     label: 'Video',
     items: [
-      { label: 'Load URL',   action: 'videoUrl',          hint: 'vl · y'  },
-      { label: 'Open...',    action: 'videoPickerRecent',  hint: 'vo · vv' },
-      { label: 'Edit',       action: 'editVideo',          hint: 've'      },
-      { label: 'Scratch',    action: 'scratchVideo',       hint: 'vx'      },
-      { label: 'Zoom',       action: 'zoomVideo',          hint: 'vz'      },
-      { label: 'Delete...',  action: 'deleteVideo',        hint: 'vd'      },
-      { label: 'Unstash...', action: 'restoreVideo',       hint: 'vu'      },
-      { label: 'Info',       action: 'videoInfo',          hint: 'vi'      },
+      { label: 'Load URL',   action: 'videoUrl',          hint: hintFor('videoUrl')          },
+      { label: 'Open...',    action: 'videoPickerRecent',  hint: hintFor('videoPickerRecent') },
+      { label: 'Edit',       action: 'editVideo',          hint: hintFor('editVideo')         },
+      { label: 'Scratch',    action: 'scratchVideo',       hint: hintFor('scratchVideo')      },
+      { label: 'Zoom',       action: 'zoomVideo',          hint: hintFor('zoomVideo')         },
+      { label: 'Delete...',  action: 'deleteVideo',        hint: hintFor('deleteVideo')       },
+      { label: 'Unstash...', action: 'restoreVideo',       hint: hintFor('restoreVideo')      },
+      { label: 'Info',       action: 'videoInfo',          hint: hintFor('videoInfo')         },
     ],
   },
   {
     label: 'Chapter',
     items: [
-      { label: 'Create',    action: 'setChapter',     hint: 'cc' },
-      { label: 'Edit',      action: 'editChapter',    hint: 'ce' },
-      { label: 'Scratch',   action: 'scratchChapter', hint: 'cx' },
-      { label: 'Jump...',   action: 'jumpChapter',    hint: 'cj' },
-      { label: 'Zoom',      action: 'zoomChapter',    hint: 'cz' },
-      { label: 'Fix end',   action: 'fixChapter',     hint: 'cf' },
-      { label: 'Delete...', action: 'deleteChapter',  hint: 'cd' },
+      { label: 'Create',    action: 'setChapter',     hint: hintFor('setChapter')     },
+      { label: 'Edit',      action: 'editChapter',    hint: hintFor('editChapter')    },
+      { label: 'Scratch',   action: 'scratchChapter', hint: hintFor('scratchChapter') },
+      { label: 'Jump...',   action: 'jumpChapter',    hint: hintFor('jumpChapter')    },
+      { label: 'Zoom',      action: 'zoomChapter',    hint: hintFor('zoomChapter')    },
+      { label: 'Fix end',   action: 'fixChapter',     hint: hintFor('fixChapter')     },
+      { label: 'Delete...', action: 'deleteChapter',  hint: hintFor('deleteChapter')  },
     ],
   },
   {
     label: 'Section',
     items: [
-      { label: 'Create',    action: 'setSection',     hint: 'ss' },
-      { label: 'Edit',      action: 'editSection',    hint: 'se' },
-      { label: 'Scratch',   action: 'scratchSection', hint: 'sx' },
-      { label: 'Jump...',   action: 'jumpSection',    hint: 'sj' },
-      { label: 'Zoom',      action: 'zoomSection',    hint: 'sz' },
-      { label: 'Fix end',   action: 'fixSection',     hint: 'sf' },
-      { label: 'Delete...', action: 'deleteSection',  hint: 'sd' },
+      { label: 'Create',    action: 'setSection',     hint: hintFor('setSection')     },
+      { label: 'Edit',      action: 'editSection',    hint: hintFor('editSection')    },
+      { label: 'Scratch',   action: 'scratchSection', hint: hintFor('scratchSection') },
+      { label: 'Jump...',   action: 'jumpSection',    hint: hintFor('jumpSection')    },
+      { label: 'Zoom',      action: 'zoomSection',    hint: hintFor('zoomSection')    },
+      { label: 'Fix end',   action: 'fixSection',     hint: hintFor('fixSection')     },
+      { label: 'Delete...', action: 'deleteSection',  hint: hintFor('deleteSection')  },
     ],
   },
   {
     label: 'Loop',
     items: [
-      { label: 'Create',    action: 'saveLoop',   hint: 'll' },
-      { label: 'Edit',      action: 'editLoop',   hint: 'le' },
-      { label: 'Scratch',   action: 'scratchLoop', hint: 'lx' },
-      { label: 'Jump...',   action: 'jumpLoop',   hint: 'lj' },
-      { label: 'Zoom',      action: 'zoomLoop',   hint: 'lz' },
-      { label: 'Delete...', action: 'deleteLoop', hint: 'ld' },
+      { label: 'Create',    action: 'saveLoop',    hint: hintFor('saveLoop')    },
+      { label: 'Edit',      action: 'editLoop',    hint: hintFor('editLoop')    },
+      { label: 'Scratch',   action: 'scratchLoop', hint: hintFor('scratchLoop') },
+      { label: 'Jump...',   action: 'jumpLoop',    hint: hintFor('jumpLoop')    },
+      { label: 'Zoom',      action: 'zoomLoop',    hint: hintFor('zoomLoop')    },
+      { label: 'Delete...', action: 'deleteLoop',  hint: hintFor('deleteLoop')  },
     ],
   },
   {
     label: 'Scratch',
     items: [
-      { label: 'Toggle',          action: 'toggleLoop',        hint: 'xx'      },
-      { label: 'Edit mode',       action: 'editScratch',       hint: 'xe · \\' },
-      { label: 'Zoom',            action: 'zoomScratch',        hint: 'xz'      },
+      { label: 'Toggle',          action: 'toggleLoop',        hint: hintFor('toggleLoop')        },
+      { label: 'Edit mode',       action: 'editScratch',       hint: hintFor('editScratch')       },
+      { label: 'Zoom',            action: 'zoomScratch',       hint: hintFor('zoomScratch')       },
       { type: 'divider' },
-      { label: 'Save to source',  action: 'saveBack',          hint: 'xs'      },
-      { label: 'Reset to source', action: 'resetLoopToSource', hint: 'xr'      },
-      { label: 'Unlink source',   action: 'unlinkLoopSource',  hint: 'xu'      },
+      { label: 'Save to source',  action: 'saveBack',          hint: hintFor('saveBack')          },
+      { label: 'Reset to source', action: 'resetLoopToSource', hint: hintFor('resetLoopToSource') },
+      { label: 'Unlink source',   action: 'unlinkLoopSource',  hint: hintFor('unlinkLoopSource')  },
     ],
   },
   {
     label: 'Mark',
     items: [
-      { label: 'Create',    action: 'setMark',    hint: 'mm' },
-      { label: 'Edit',      action: 'editMark',   hint: 'me' },
-      { label: 'Jump...',   action: 'jumpMark',   hint: 'mj' },
-      { label: 'Delete...', action: 'deleteMark', hint: 'md' },
+      { label: 'Create',    action: 'setMark',    hint: hintFor('setMark')    },
+      { label: 'Edit',      action: 'editMark',   hint: hintFor('editMark')   },
+      { label: 'Jump...',   action: 'jumpMark',   hint: hintFor('jumpMark')   },
+      { label: 'Delete...', action: 'deleteMark', hint: hintFor('deleteMark') },
     ],
   },
   {
     label: 'Data',
     items: [
-      { label: 'Share video', action: 'shareVideo', hint: 'dv' },
-      { label: 'Share scratch loop',  action: 'shareLoop',  hint: 'dx' },
+      { label: 'Share video',      action: 'shareVideo',  hint: hintFor('shareVideo')  },
+      { label: 'Share scratch loop', action: 'shareLoop', hint: hintFor('shareLoop')   },
       { type: 'divider' },
-      { label: 'Export',  action: 'exportAll',   hint: 'de' },
-      { label: 'Import',  action: 'importData',  hint: 'di' },
-      { label: 'Inspect', action: 'inspectData', hint: 'dI' },
+      { label: 'Export',  action: 'exportAll',   hint: hintFor('exportAll')   },
+      { label: 'Import',  action: 'importData',  hint: hintFor('importData')  },
+      { label: 'Inspect', action: 'inspectData', hint: hintFor('inspectData') },
       { type: 'divider' },
-      { label: 'Save to cloud',   action: 'dataSave',    hint: 'ds · dd' },
-      { label: 'Read from cloud', action: 'dataRead',    hint: 'dr'      },
-      { label: 'Compare',         action: 'dataCompare', hint: 'dc'      },
+      { label: 'Save to cloud',   action: 'dataSave',    hint: hintFor('dataSave')    },
+      { label: 'Read from cloud', action: 'dataRead',    hint: hintFor('dataRead')    },
+      { label: 'Compare',         action: 'dataCompare', hint: hintFor('dataCompare') },
       { type: 'divider' },
-      { label: 'Delete...', action: 'deleteData', hint: 'd⌫' },
+      { label: 'Delete...', action: 'deleteData', hint: hintFor('deleteData') },
     ],
   },
   {
     label: 'App',
     items: [
-      { label: 'Jump history...', action: 'jumpHistory', hint: 'jh' },
-      { label: 'Back',            action: 'jumpBack',    hint: 'jb' },
-      { label: 'Forward',         action: 'jumpForward', hint: 'jf' },
+      { label: 'Jump history...', action: 'jumpHistory', hint: hintFor('jumpHistory') },
+      { label: 'Back',            action: 'jumpBack',    hint: hintFor('jumpBack')    },
+      { label: 'Forward',         action: 'jumpForward', hint: hintFor('jumpForward') },
       { type: 'divider' },
-      { label: 'Undo', action: 'undo', hint: 'au · u' },
-      { label: 'Redo', action: 'redo', hint: 'ar · U' },
+      { label: 'Undo', action: 'undo', hint: hintFor('undo') },
+      { label: 'Redo', action: 'redo', hint: hintFor('redo') },
       { type: 'divider' },
-      { label: 'Recall message',  action: 'msgRecall',   hint: 'am'      },
+      { label: 'Recall message',  action: 'msgRecall',   hint: hintFor('msgRecall')   },
       { type: 'divider' },
-      { label: 'Copy time',       action: 'copyTime',    hint: 'ac'      },
-      { label: 'Toggle timeline', action: 'toggleZone2', hint: 'at · t'  },
-      { label: 'Zoom off',        action: 'zoomOff',     hint: 'az · z'  },
+      { label: 'Copy time',       action: 'copyTime',    hint: hintFor('copyTime')    },
+      { label: 'Toggle timeline', action: 'toggleZone2', hint: hintFor('toggleZone2') },
+      { label: 'Zoom off',        action: 'zoomOff',     hint: hintFor('zoomOff')     },
       { type: 'divider' },
-      { label: 'Options',       action: 'options',      hint: 'ao · o' },
-      { label: 'Help',          action: 'helpGeneral',  hint: 'ah · h' },
-      { label: 'Key bindings',  action: 'helpKeys',     hint: 'ak · k' },
-      { label: 'Load examples', action: 'loadExamples', hint: 'ae'     },
+      { label: 'Options',       action: 'options',      hint: hintFor('options')      },
+      { label: 'Help',          action: 'helpGeneral',  hint: hintFor('helpGeneral')  },
+      { label: 'Key bindings',  action: 'helpKeys',     hint: hintFor('helpKeys')     },
+      { label: 'Load examples', action: 'loadExamples', hint: hintFor('loadExamples') },
     ],
   },
 ];

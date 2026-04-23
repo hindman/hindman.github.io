@@ -6,6 +6,11 @@
 Let's perform a refactoring assessment of the LoopLlama v2 codebase. This is a
 diagnostic exercise: do not make code changes yet.
 
+We already performed this assessement once, making several changes (the
+section called "DONE: Assessment: Round 1"). But I want to repeat the
+exercise, both because prior refactoring can exposed new refactoring
+opportunities and because I added a couple more things to look for.
+
 Do not report findings file by file as you go; read everything first, then
 produce a single consolidated report. Here are the key files to read:
 
@@ -48,6 +53,16 @@ What to look for:
   7. Layer violations. Logic that has migrated to the wrong architectural
      layer (e.g., business rules inside a UI component).
 
+  8. Inconsistency in concepts/language between the code and the project's
+     primary documents (those listed in the table above). The loop-vs-scratch
+     distinction is a likely culprit, since our thinking evolved and sharpened
+     over time. There might be other areas as well, but that one is most
+     prominent in my memory.
+
+  9. Testing gaps. We have some unit tests for algorithmic, pure-function
+     operations. But a lot of coding occurred since we set that up. Are
+     any obvious targets for testing missing?
+
 What NOT to report:
 
   - Style or formatting issues.
@@ -71,9 +86,14 @@ Output format: a prioritized list of possible refactoring targets:
     cause other bugs or require extensive manual testing of the app the guard
     against that risk).
 
-## Assessment
+## DONE: Assessment: Round 1
 
----
+### Implementation
+
+Session 1 | state.js       | Items 2, 9              | done
+Session 2 | llama-app.js   | Items 1, 3, 4, 5, 7, 11 | done
+Session 3 | Modal files    | Items 6, 10             | done
+Session 4 | llama-controls | Item 8                  | done
 
 ### 1. Video categorization logic duplicated 3-4x
 
@@ -99,8 +119,6 @@ Risk: Low. The function is pure (no side effects, no state), so extracting it is
 mechanical and the result is trivially testable. The merge-application logic that
 follows the categorization step stays in each handler as it is now, since it
 differs meaningfully between operations.
-
----
 
 ### 2. Section and chapter divider model implemented twice in state.js
 
@@ -132,8 +150,6 @@ timeline component. Each call site is straightforward to update, but there are
 `.start` was already unified (that migration is in the schema history). The
 main hazard is missing a call site. A grep-based audit before and after
 provides adequate coverage.
-
----
 
 ### 3. Loop source state bundle cleared manually in 7+ places
 
@@ -168,8 +184,6 @@ updating every read site, but the reads are concentrated and the change is
 mechanical. The greatest risk in either case is an overlooked clearing site
 that leaves stale source data visible.
 
----
-
 ### 4. Dead count variables in _dataSave, _dataRead, and _importFromJson
 
 Category: Dead code
@@ -188,8 +202,6 @@ Fix: Delete the dead variables. If future messaging policy calls for a summary
 is actually wired up.
 
 Risk: None. Pure deletion of unreferenced variables.
-
----
 
 ### 5. Dead methods: _onSetSection, _onSetMark, videoPickerAlpha handler
 
@@ -213,8 +225,6 @@ Risk: Low. Confirm with a grep that nothing calls these before deleting. The
 alpha-sort picker code in llama-video-picker.js may still be worth keeping if
 alpha sort is a planned future option; only the handler and any dead picker logic
 need removal.
-
----
 
 ### 6. _fmtTime() duplicated in four edit modal files
 
@@ -244,8 +254,6 @@ dependencies. Medium for the CSS/template extraction — it requires care to
 preserve per-component behavior, and Lit's `adoptedStyleSheets` or `css`
 tagged templates make sharing styles straightforward but non-trivial to set up.
 
----
-
 ### 7. toggleLoop logic duplicated in keyboard handler and UI event handler
 
 Category: Duplicated policy logic
@@ -272,8 +280,6 @@ keyboard handler and the UI event handler call it.
 
 Risk: Low. The extraction is mechanical and the two paths are clearly
 distinguishable.
-
----
 
 ### 8. Menu hint strings not derived from BINDINGS
 
@@ -304,8 +310,6 @@ rendering pipeline and ensuring the derived format matches the existing
 display. Low for the startup assertion, which adds safety without
 behavioral change.
 
----
-
 ### 9. Inconsistent proximity threshold across dividers and marks
 
 Category: Scattered / magic values / inconsistent policy
@@ -335,8 +339,6 @@ marks) is a deliberate loosening of the guard, not a tightening, so no
 previously-valid state becomes invalid. The mark change makes the window
 symmetric and explicit rather than implicitly asymmetric.
 
----
-
 ### 10. `this._mode = 'edit'` in llama-edit-chapter-modal is dead
 
 Category: Dead code
@@ -352,8 +354,6 @@ supported both create and edit modes (the save-loop modal still does this via
 Fix: Delete the assignment.
 
 Risk: None.
-
----
 
 ### 11. Speed clamping bounds repeated in two places
 
@@ -371,12 +371,236 @@ the duplicated clamping expression from the render template.
 
 Risk: None.
 
----
+## Assessment: Round 2
 
-## Implementation
+### 1. Unit tests broken by MIN_ENTITY_GAP change
 
-Session 1 | state.js       | Items 2, 9              | done
-Session 2 | llama-app.js   | Items 1, 3, 4, 5, 7, 11 | .
-Session 3 | Modal files    | Items 6, 10             | .
-Session 4 | llama-controls | Item 8                  | .
+Category: Testing gap (broken tests)
+Severity: High
+
+Description: Round 1 Item 9 changed the proximity threshold from 2 seconds to
+`MIN_ENTITY_GAP = 1` and changed marks from `Math.round` equality to
+`Math.abs(x - time) < MIN_ENTITY_GAP`. The implementation is correct, but the
+unit tests in `state.test.js` were never updated to match.
+
+Broken tests:
+
+- `addSection`: "rejects a section within 2 seconds of an existing divider start"
+  — tests `addSection(sections, 31)` and `addSection(sections, 29)` (both 1 second
+  away from start=30), expecting `toBeNull()`. With `< 1`, `Math.abs(30-31) = 1`,
+  `1 < 1` is false, so these return non-null. Test FAILS.
+
+- `addSection`: "accepts a section exactly 2 seconds away" — tests at distance 2.
+  With new threshold, distance 1 would be the boundary. Tests pass but the
+  description is wrong and the critical boundary (distance=1) is untested.
+
+- `addChapterDivider`: same pattern — tests at 1-second distances expecting null
+  rejection; both FAIL with the new threshold.
+
+- `addMark`: tests pass, but "rejects a mark within 0.5s that rounds to the same
+  second" describes the old `Math.round` mechanism. The actual reason for
+  rejection is now `0.4 < MIN_ENTITY_GAP = 1`. The description is stale and the
+  old Math.round edge cases are no longer tested.
+
+Fix: Update test descriptions and boundary values to match `MIN_ENTITY_GAP = 1`.
+For section/chapter: test at 0.5-second distances (should reject), test at exactly
+1.0s (boundary: should NOT reject), test at 1.5s (should NOT reject). For marks:
+update the description and add a test explicitly at the 1.0s boundary.
+
+Risk: None. Pure test changes with no code impact.
+
+### 2. Floor-based `_fmtTime` duplicated in 7 files
+
+Category: Structural duplication (incomplete Round 1 fix)
+Severity: Medium
+
+Description: Round 1 Item 6 extracted `fmtTime` (rounds to nearest second,
+returns `''` for null) to `format.js` and updated the four edit-modal files.
+However, a second flavor — floor-based, returns `'?'` for null — was not
+extracted and remains independently defined in:
+
+- `llama-loop-picker.js`      (`_fmtTime`)
+- `llama-sections-picker.js`  (`_fmtTime`)
+- `llama-chapter-picker.js`   (`_fmtTime`)
+- `llama-marks-picker.js`     (`_fmtTime`)
+- `llama-jump-history-picker.js` (`_fmtTime`)
+- `llama-edit-mark-modal.js`  (`_fmtTime`) — also missed in Round 1
+- `llama-app.js`              (`_fmtTimePlain`, module-level, line ~2989)
+
+`llama-current.js` has `_fmtDuration()` which is functionally the same (floor,
+no null guard but used only when value is known non-null). Seven redundant
+definitions of the same function.
+
+Fix: Export `fmtTimePlain(secs)` (floor-based, returns `'?'` for null/NaN)
+from `format.js`. Replace all seven local definitions with an import.
+The distinction from `fmtTime` (round-based, `''` for null) is intentional:
+edit modals need rounding for display in text fields; pickers and message
+formatting want truncation and a visible `?` fallback.
+
+Risk: Low. Pure function with no dependencies. Verify that the rounding vs.
+floor distinction is correct for `llama-edit-mark-modal.js` — it is the only
+modal that still uses floor-based formatting, which may be an oversight from
+Round 1 (the other edit modals all use `fmtTime` from `format.js`).
+
+### 3. Section/chapter handler pairs structurally identical in llama-app.js
+
+Category: Structural duplication
+Severity: Medium
+
+Description: Now that the data-model layer was unified (Round 1 Item 2), five
+handler-layer pairs in `llama-app.js` are line-for-line identical modulo
+entity-type names:
+
+- `scratchSection` / `scratchChapter`: get bounds, apply pad, set loopStart/
+  loopEnd/looping/loopSrc, emit status.
+- `setSection` / `setChapter`: guard no-video, call addSection/addChapterDivider,
+  handle reject cases, emit status.
+- `fixSection` / `fixChapter`: find current entity, call fixSectionEnd/
+  fixChapterEnd, toggle explicit-end flag, emit status.
+- `zoomSection` / `zoomChapter`: toggle zoom based on entity bounds.
+- `_editCurrentSection` / `_editCurrentChapter`: find nearest, get bounds,
+  compute derivedEnd, find index, build validator, call show on modal.
+
+Any policy change to one of these flows — e.g., different padding behavior for
+sections vs chapters, or a new pre-condition check — requires parallel edits in
+two places with no enforcement that both are kept in sync.
+
+Fix: The most pragmatic fix is a parameterized private helper for each pair,
+e.g., `_scratchDivider(type, entities, getBoundsFn, nearestFn)`. The type name
+drives the message string and `loopSrc.type`. The function references
+(`getBoundsFn`, `nearestFn`) can be passed as arguments or resolved from a
+lookup table keyed by entity type.
+
+Risk: Medium. Each pair has subtle differences in message strings and API
+names that require careful parameterization. With ~5 helpers to extract, there
+are ~10 call sites to update. The risk is a missed special case.
+
+### 4. `loop.source` field documented but never written at runtime
+
+Category: Inconsistency between code and documentation / dead schema field
+Severity: Medium
+
+Description: `architecture-notes.md` documents the `source` field on Loop
+objects as: "ID of the Section or Loop this was loaded from, or null.
+Non-null only on the scratch loop." Both `createLoop()` and
+`createScratchLoop()` initialize it to null. No code anywhere ever assigns a
+non-null value to it — the actual source tracking is entirely in the ephemeral
+`this.loopSrc` reactive property, which is not persisted.
+
+This means: the field is in the schema (exported via JSON, stored in
+localStorage), documented as meaningful, but is always null at runtime. The
+discrepancy is a future maintenance trap: someone reading the architecture doc
+will expect `loop.source` to contain the source ID, but it never does.
+
+Fix: Either:
+a) Remove `source: null` from `createLoop` and `createScratchLoop` and update
+   the architecture doc to reflect that source tracking is ephemeral-only
+   (simpler, loses no functionality since the field is never populated).
+b) Implement the intended behavior: write `loop.source = loopSrc.id` into
+   `_saveCurrentState()` so the persisted scratch loop records its source.
+
+Risk: Low for option (a). Medium for (b) — requires validating that the source
+ID is still valid on load and handling the case where the source entity was
+deleted.
+
+### 5. `categorizeVideos` untested and in the wrong layer
+
+Category: Layer violation / testing gap
+Severity: Medium
+
+Description: `categorizeVideos(srcVideos, destVideos)` is a module-level pure
+function in `llama-app.js` (not exported) that implements a five-bucket
+comparison algorithm used by `_dataSave`, `_dataRead`, `_importFromJson`, and
+`_dataCompare`. Being inside the top-level UI component, it cannot be imported
+by `storage.test.js` and therefore has no unit tests, despite being one of
+the most policy-sensitive functions in the codebase — it determines which
+videos get overwritten during cloud sync and import.
+
+Fix: Move `categorizeVideos` to `storage.js` (or a new `dataUtils.js`) and
+export it. Add unit tests to `storage.test.js` covering the five buckets and
+the tie-breaking policy (same `last_modified` = same bucket).
+
+Risk: Low. The function is pure and the move is mechanical. The import in
+`llama-app.js` replaces the module-level definition.
+
+### 6. Picker filter/navigation behavior duplicated across 5 components
+
+Category: Structural duplication
+Severity: Medium
+
+Description: All five entity picker components
+(`llama-chapter-picker`, `llama-sections-picker`, `llama-loop-picker`,
+`llama-marks-picker`, `llama-jump-history-picker`) contain identical
+implementations of:
+
+- `_onFilterInput(e)` — clear and reset `_selIdx`
+- `_onFilterKeyDown(e)` — arrow-up/down scroll, Enter to select
+- `_scrollSelectedIntoView()` — `updateComplete.then(...)` scroll logic
+- `show(mode)` / `hide()` — delegate to `llama-modal`
+
+These ~30 lines are copy-pasted verbatim in five places, differing only in
+the CSS class names used for the list and row selectors in
+`_scrollSelectedIntoView`. Any change to the keyboard navigation policy (e.g.
+wrapping at the bottom, page-up/down support) must be applied five times.
+
+Fix: Implement a `FilterPickerMixin` (a LitElement mixin or a shared
+controller) that provides these four methods and the `_filter`/`_selIdx`
+state. Each picker extends or uses the mixin and overrides only the CSS class
+name for `_scrollSelectedIntoView`.
+
+Risk: Medium. Lit mixins are straightforward but the CSS class coupling in
+`_scrollSelectedIntoView` requires either a parameterized class name or a
+convention that all pickers use the same class names (`.list`, `.row`). A
+simpler alternative is to add a `_listSelector` / `_rowSelector` getter that
+each subclass overrides.
+
+### 7. `loopSrc` re-decomposed into individual props at the render boundary
+
+Category: Structural duplication (incomplete Round 1 fix)
+Severity: Low
+
+Description: Round 1 Item 3 collapsed five separate reactive props
+(`loopSource`, `loopSourceLabel`, `loopSourceType`, `loopSourceStart`,
+`loopSourceEnd`) into one `loopSrc` object `{id, label, type, start, end}`.
+This eliminated the scattered 5-field clearing sites. However, `render()` in
+`llama-app.js` (lines ~2761-2800) immediately decomposes `loopSrc` back into
+individual props when passing to `llama-controls` and `llama-current`:
+
+    .loopSourceType=${this.loopSrc?.type ?? null}
+    .loopSourceStart=${this.loopSrc?.start ?? null}
+    .loopSourceEnd=${this.loopSrc?.end ?? null}
+
+Both child components still receive 3-4 separate props. The object boundary is
+leaky: the simplification didn't propagate to the consumers.
+
+Fix: Change `llama-controls` and `llama-current` to accept a single `.loopSrc`
+object prop (or null). Remove the decomposition in `render()`.
+
+Risk: Low-medium. Requires updating both child components' `static properties`,
+all internal reads of the individual props, and the `render()` call site in
+`llama-app.js`. The change is mechanical but touches two more files.
+
+### 8. `showEdit` vs `show` API naming inconsistency in edit modals
+
+Category: Inconsistent naming
+Severity: Low
+
+Description: The two structurally identical edit modals for divider entities
+expose different show APIs:
+
+- `llama-edit-chapter-modal.js`: `showEdit(chapter, derivedEnd, validator)`
+- `llama-edit-section-modal.js`: `show(section, derivedEnd, validator)`
+
+The section modal also accepts the section via a reactive `section` prop
+(with `static properties` declaration); the chapter modal does not. The callers
+in `llama-app.js` use `showEdit` for chapters and `show` for sections, which
+adds an asymmetry that would confuse anyone working on both at once or
+introducing a third divider type.
+
+Fix: Rename `showEdit` to `show` in `llama-edit-chapter-modal.js` and update
+the two call sites in `llama-app.js`. Optionally align the `section`/`chapter`
+prop declaration pattern across both.
+
+Risk: None beyond the rename and two call site updates.
+
 

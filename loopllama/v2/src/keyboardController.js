@@ -15,6 +15,10 @@
 // Design rule (from plan): any key used as a prefix must NOT also have a
 // standalone binding. This keeps single-key actions instant -- no ambiguity
 // means no forced delay waiting to see if a second key is coming.
+//
+// Ordering policy for menu hints (hintFor in llama-controls.js): within each
+// prefix block, the intended primary binding must appear before any synonyms.
+// Single-key synonyms always come after two-key completions.
 export const BINDINGS = {
 
   // --- Single-key bindings ---
