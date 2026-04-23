@@ -12,6 +12,7 @@
 //   show(mode?) / hide()
 
 import { LitElement, html, css } from 'lit';
+import { fmtTimePlain } from '../format.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
@@ -150,7 +151,7 @@ class LlamaMarksPicker extends LitElement {
     if (!q) return this.marks;
     return this.marks.filter(m =>
       (m.name || '').toLowerCase().includes(q) ||
-      (!m.name && _fmtTime(m.time).includes(q))
+      (!m.name && fmtTimePlain(m.time).includes(q))
     );
   }
 
@@ -177,9 +178,9 @@ class LlamaMarksPicker extends LitElement {
                   class="mark-row ${isDelete ? 'mode-delete' : ''} ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(m)}
                 >
-                  <div class="mark-primary">${m.name || _fmtTime(m.time)}</div>
+                  <div class="mark-primary">${m.name || fmtTimePlain(m.time)}</div>
                   ${m.name
-                    ? html`<div class="mark-sub">${_fmtTime(m.time)}</div>`
+                    ? html`<div class="mark-sub">${fmtTimePlain(m.time)}</div>`
                     : ''}
                 </div>
               `)
@@ -190,11 +191,5 @@ class LlamaMarksPicker extends LitElement {
   }
 }
 
-// Format seconds as m:ss.
-function _fmtTime(secs) {
-  if (secs == null || isNaN(secs)) return '?';
-  const s = Math.floor(secs);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-}
 
 customElements.define('llama-marks-picker', LlamaMarksPicker);

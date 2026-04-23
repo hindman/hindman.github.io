@@ -12,6 +12,7 @@
 //                                       -- array of video IDs to delete
 
 import { LitElement, html, css } from 'lit';
+import { fmtTimePlain } from '../format.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import './llama-modal.js';
 
@@ -229,16 +230,16 @@ class LlamaDeleteDataModal extends LitElement {
     return html`
 ${this._renderGroup('Chapters', this._chapters,
           c => html`<span class="item-label">${c.name || ''}</span>
-                    <span class="item-sub">${_fmtTime(c.start)}</span>`)}
+                    <span class="item-sub">${fmtTimePlain(c.start)}</span>`)}
       ${this._renderGroup('Sections', this._sections,
           s => html`<span class="item-label">${s.name || ''}</span>
-                    <span class="item-sub">${_fmtTime(s.start)}</span>`)}
+                    <span class="item-sub">${fmtTimePlain(s.start)}</span>`)}
       ${this._renderGroup('Loops', this._loops,
           l => html`<span class="item-label">${l.name || ''}</span>
-                    <span class="item-sub">${_fmtTime(l.start)} – ${_fmtTime(l.end)}</span>`)}
+                    <span class="item-sub">${fmtTimePlain(l.start)} – ${fmtTimePlain(l.end)}</span>`)}
       ${this._renderGroup('Marks', this._marks,
           m => html`<span class="item-label">${m.name || ''}</span>
-                    <span class="item-sub">${_fmtTime(m.time)}</span>`)}
+                    <span class="item-sub">${fmtTimePlain(m.time)}</span>`)}
     `;
   }
 
@@ -335,11 +336,5 @@ ${this._renderGroup('Chapters', this._chapters,
   }
 }
 
-// Format seconds as m:ss.
-function _fmtTime(secs) {
-  if (secs == null || isNaN(secs)) return '?';
-  const s = Math.floor(secs);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-}
-
+/
 customElements.define('llama-delete-data-modal', LlamaDeleteDataModal);

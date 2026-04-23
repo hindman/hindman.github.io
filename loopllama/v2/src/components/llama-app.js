@@ -1,6 +1,7 @@
 // llama-app.js -- top-level component.
 
 import { LitElement, html, css } from 'lit';
+import { fmtTimePlain } from '../format.js';
 import { createVideoController }    from '../videoController.js';
 import { createKeyboardController } from '../keyboardController.js';
 import {
@@ -1948,7 +1949,7 @@ class LlamaApp extends LitElement {
     const derivedEnd = (chapter.end == null) ? (bounds?.end ?? null) : null;
     const idx        = this.chapters.findIndex(c => c.id === chapter.id);
     const validator  = (start, end) => validateEntityChange(this.chapters, idx, start, end, this.duration);
-    this._editChapterModalEl?.showEdit(chapter, derivedEnd, validator);
+    this._editChapterModalEl?.show(chapter, derivedEnd, validator);
   }
 
   // Open the chapter picker in the given mode, with a guard for empty list.
@@ -2681,22 +2682,22 @@ class LlamaApp extends LitElement {
       const { trigger, start, end } = this.zoomSource;
       if (trigger === 'loop') {
         const loop = this.namedLoops.find(l => l.start === start && l.end === end);
-        return loop?.name ? `Loop: ${loop.name}` : `Loop: ${_fmtTimePlain(start)} – ${_fmtTimePlain(end)}`;
+        return loop?.name ? `Loop: ${loop.name}` : `Loop: ${fmtTimePlain(start)} – ${fmtTimePlain(end)}`;
       }
       if (trigger === 'scratch') {
-        return `Scratch loop: ${_fmtTimePlain(start)} – ${_fmtTimePlain(end)}`;
+        return `Scratch loop: ${fmtTimePlain(start)} – ${fmtTimePlain(end)}`;
       }
       if (trigger === 'section') {
         const sec = nearestSectionLeft(this.sections, start);
-        return sec?.name ? `Section: ${sec.name}` : `Section: ${_fmtTimePlain(start)}`;
+        return sec?.name ? `Section: ${sec.name}` : `Section: ${fmtTimePlain(start)}`;
       }
       if (trigger === 'chapter') {
         const ch = this.chapters.find(c => c.start === start);
-        return ch?.name ? `Chapter: ${ch.name}` : `Chapter: ${_fmtTimePlain(start)}`;
+        return ch?.name ? `Chapter: ${ch.name}` : `Chapter: ${fmtTimePlain(start)}`;
       }
       if (trigger === 'video') {
         const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
-        return video?.name ? `Video: ${video.name}` : `Video: ${_fmtTimePlain(start)} – ${_fmtTimePlain(end)}`;
+        return video?.name ? `Video: ${video.name}` : `Video: ${fmtTimePlain(start)} – ${fmtTimePlain(end)}`;
       }
       return null;
     })();
@@ -2986,11 +2987,6 @@ function _uniqueLoopName(loops, name) {
   return base;
 }
 
-function _fmtTimePlain(secs) {
-  if (secs == null || isNaN(secs)) return '?';
-  const s = Math.floor(secs);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-}
 
 // Return the base URL for The Fifth Fret site. When running under the Vite
 // dev server (port 5173), the Jekyll site is on port 4000 instead.

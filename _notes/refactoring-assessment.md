@@ -475,33 +475,64 @@ Risk: Medium. Each pair has subtle differences in message strings and API
 names that require careful parameterization. With ~5 helpers to extract, there
 are ~10 call sites to update. The risk is a missed special case.
 
-### 4. `loop.source` field documented but never written at runtime
+### 4. Scratch loop conflated with named loops in schema and code
 
-Category: Inconsistency between code and documentation / dead schema field
+Category: Inconsistency between code and documentation / structural duplication
 Severity: Medium
 
-Description: `architecture-notes.md` documents the `source` field on Loop
-objects as: "ID of the Section or Loop this was loaded from, or null.
-Non-null only on the scratch loop." Both `createLoop()` and
-`createScratchLoop()` initialize it to null. No code anywhere ever assigns a
-non-null value to it — the actual source tracking is entirely in the ephemeral
-`this.loopSrc` reactive property, which is not persisted.
+Description: The scratch loop and named loops are fundamentally different
+entities with different data needs, different operations, and different
+semantics, but the schema conflates them into one `video.loops[]` array
+distinguished by an `is_scratch: true` flag. This created several problems:
 
-This means: the field is in the schema (exported via JSON, stored in
-localStorage), documented as meaningful, but is always null at runtime. The
-discrepancy is a future maintenance trap: someone reading the architecture doc
-will expect `loop.source` to contain the source ID, but it never does.
+- `loop.source` was documented as "ID of the Section or Loop this was loaded
+  from, or null. Non-null only on the scratch loop." Both `createLoop()` and
+  `createScratchLoop()` initialize it to null. No code ever writes a non-null
+  value — source tracking is entirely in the ephemeral `this.loopSrc` reactive
+  property, which is not persisted. The user's last scratch loop source is
+  therefore lost on page reload, violating the broader policy of remembering
+  where a user left a video.
 
-Fix: Either:
-a) Remove `source: null` from `createLoop` and `createScratchLoop` and update
-   the architecture doc to reflect that source tracking is ephemeral-only
-   (simpler, loses no functionality since the field is never populated).
-b) Implement the intended behavior: write `loop.source = loopSrc.id` into
-   `_saveCurrentState()` so the persisted scratch loop records its source.
+- Named loops don't have or need a source concept at all; the field is noise
+  on every named loop in exports.
 
-Risk: Low for option (a). Medium for (b) — requires validating that the source
-ID is still valid on load and handling the case where the source entity was
-deleted.
+- `is_scratch` guards pollute every loop-related query in the codebase
+  (`loops.filter(l => !l.is_scratch)`, `loops.find(l => l.is_scratch)`).
+
+- The scratch loop's `looping` boolean lives at the top level of the Video
+  object (`video.looping`) rather than with the scratch loop state, even
+  though it is conceptually part of that state.
+
+Fix: Separate the two entities in the data model:
+
+- `video.scratchLoop` — a single always-present object:
+  `{ start, end, looping, sourceId, sourceType }`
+  where `sourceId` and `sourceType` are persisted (replacing the ephemeral
+  `loopSrc` reactive prop's source data), and `looping` moves here from the
+  top level of the Video object.
+
+- `video.loops[]` — named loops only: `{ id, name, start, end }`.
+  No `source`, no `is_scratch`.
+
+The ephemeral `loopSrc` reactive prop (`{ id, label, type, start, end }`)
+remains in `llama-app.js` but is now derived at `_syncFromVideo()` time by
+looking up `scratchLoop.sourceId` in the appropriate entity array. If the
+source entity no longer exists (deleted since last session), `loopSrc` is set
+to null and the persisted IDs are cleared. Label and bounds are always derived
+from the live entity, so they stay current after renames or edits.
+
+Migration (SCHEMA_VERSION → 11): For each video, extract the `is_scratch`
+loop's `start`/`end` and the top-level `video.looping` into a new
+`video.scratchLoop` object (with `sourceId: null`, `sourceType: null`).
+Remove the `is_scratch` entry from `video.loops[]`. Remove top-level
+`video.looping`.
+
+Risk: Medium. Touches `state.js`, `storage.js` (migration + import/export),
+`llama-app.js` (sync, save, all handler reads), both test files, and
+`architecture-notes.md`. The changes are mechanical and localized, but the
+surface area is broad. The reactive-prop layer (`this.looping`,
+`this.loopStart`, `this.loopEnd`) absorbs most of the change invisibly —
+app code reading those props is unaffected.
 
 ### 5. `categorizeVideos` untested and in the wrong layer
 
@@ -603,4 +634,39 @@ prop declaration pattern across both.
 
 Risk: None beyond the rename and two call site updates.
 
+### Implementation
+
+    Session | Focus                    | Items            | Status
+    ----------------------------------------------------------------
+    1       | Tests + shared utilities | R2-1, R2-2, R2-8 | .
+    2       | Scratch loop separation  | R2-4, R2-7       | .
+    3       | Data layer               | R2-5             | .
+    4       | Handler pairs            | R2-3             | .
+    5       | Picker mixin             | R2-6             | .
+
+Session 1 — state.test.js fix (R2-1), fmtTimePlain extraction to format.js
+and replacement in 7 files (R2-2), showEdit→show rename in
+llama-edit-chapter-modal.js (R2-8).
+
+Session 2 — Separate scratch loop from named loops (R2-4). New
+`video.scratchLoop` object `{ start, end, looping, sourceId, sourceType }`
+replaces the `is_scratch` entry in `video.loops[]` and the top-level
+`video.looping` field. Files: state.js (factories), storage.js (migration v11
++ import/export), llama-app.js (_syncFromVideo, _saveCurrentState, handler
+reads), test files, architecture-notes.md. Also clean up the loopSrc render
+boundary (R2-7): pass `loopSrc` as a single object prop to llama-controls and
+llama-current, removing the per-field decomposition in render(). These belong
+together — both are part of the same loopSrc story and Session 2 already
+touches all the relevant files.
+
+Session 3 — Move `categorizeVideos` to storage.js, export it, add unit tests
+to storage.test.js.
+
+Session 4 — Unify the five section/chapter handler pairs in llama-app.js
+(scratchSection/Chapter, setSection/Chapter, fixSection/Chapter,
+zoomSection/Chapter, _editCurrentSection/Chapter) via parameterized private
+helpers.
+
+Session 5 — Shared filter/keyboard navigation behavior for the five picker
+components (FilterPickerMixin or equivalent).
 

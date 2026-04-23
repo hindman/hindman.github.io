@@ -12,6 +12,7 @@
 //   show(mode?) / hide()
 
 import { LitElement, html, css } from 'lit';
+import { fmtTimePlain } from '../format.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
@@ -158,7 +159,7 @@ class LlamaChapterPicker extends LitElement {
     if (!q) return this.chapters;
     return this.chapters.filter(c =>
       (c.name || '').toLowerCase().includes(q) ||
-      (!c.name && _fmtTime(c.start).includes(q))
+      (!c.name && fmtTimePlain(c.start).includes(q))
     );
   }
 
@@ -188,9 +189,9 @@ class LlamaChapterPicker extends LitElement {
                     ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(c)}
                 >
-                  <div class="chapter-primary">${c.name || _fmtTime(c.start)}</div>
+                  <div class="chapter-primary">${c.name || fmtTimePlain(c.start)}</div>
                   ${c.name
-                    ? html`<div class="chapter-sub">${_fmtTime(c.start)}</div>`
+                    ? html`<div class="chapter-sub">${fmtTimePlain(c.start)}</div>`
                     : ''}
                 </div>
               `)
@@ -200,12 +201,5 @@ class LlamaChapterPicker extends LitElement {
     `;
   }
 }
-
-function _fmtTime(secs) {
-  if (secs == null || isNaN(secs)) return '?';
-  const s = Math.floor(secs);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-}
-
 
 customElements.define('llama-chapter-picker', LlamaChapterPicker);

@@ -284,10 +284,11 @@ describe('addMark', () => {
     expect(marks).toHaveLength(1);
   });
 
-  it('rejects a mark within 0.5s that rounds to the same second', () => {
+  it('rejects a mark within 1 second of an existing mark', () => {
     const marks = [];
     addMark(marks, 30.0);
     expect(addMark(marks, 30.4)).toBeNull();
+    expect(addMark(marks, 29.7)).toBeNull();
   });
 
   it('accepts a mark 1 second away from an existing mark', () => {
@@ -361,17 +362,17 @@ describe('addSection', () => {
     expect(addSection(sections, 30)).not.toBeNull();
   });
 
-  it('rejects a section within 2 seconds of an existing divider start', () => {
+  it('rejects a section within 1 second of an existing divider start', () => {
     const sections = [{ id: 'a', start: 30, end: null, name: '' }];
-    expect(addSection(sections, 31)).toBeNull();
-    expect(addSection(sections, 29)).toBeNull();
-    expect(addSection(sections, 30)).toBeNull();
+    expect(addSection(sections, 30)).toBeNull();    // distance=0
+    expect(addSection(sections, 30.5)).toBeNull();  // distance=0.5
+    expect(addSection(sections, 29.5)).toBeNull();  // distance=0.5
   });
 
-  it('accepts a section exactly 2 seconds away from an existing divider', () => {
+  it('accepts a section exactly 1 second away from an existing divider', () => {
     const sections = [{ id: 'a', start: 30, end: null, name: '' }];
-    expect(addSection(sections, 32)).not.toBeNull();
-    expect(addSection(sections, 28)).not.toBeNull();
+    expect(addSection(sections, 31)).not.toBeNull();  // distance=1
+    expect(addSection(sections, 29)).not.toBeNull();  // distance=1
   });
 });
 
@@ -394,15 +395,17 @@ describe('addChapterDivider', () => {
     expect(addChapterDivider([], 10)).not.toBeNull();
   });
 
-  it('rejects a divider within 2 seconds of an existing divider start', () => {
+  it('rejects a divider within 1 second of an existing divider start', () => {
     const chapters = [{ id: 'a', start: 60, end: null, name: '' }];
-    expect(addChapterDivider(chapters, 61)).toBeNull();
-    expect(addChapterDivider(chapters, 59)).toBeNull();
+    expect(addChapterDivider(chapters, 60)).toBeNull();    // distance=0
+    expect(addChapterDivider(chapters, 60.5)).toBeNull();  // distance=0.5
+    expect(addChapterDivider(chapters, 59.5)).toBeNull();  // distance=0.5
   });
 
-  it('accepts a divider exactly 2 seconds away from an existing divider', () => {
+  it('accepts a divider exactly 1 second away from an existing divider', () => {
     const chapters = [{ id: 'a', start: 60, end: null, name: '' }];
-    expect(addChapterDivider(chapters, 62)).not.toBeNull();
+    expect(addChapterDivider(chapters, 61)).not.toBeNull();  // distance=1
+    expect(addChapterDivider(chapters, 59)).not.toBeNull();  // distance=1
   });
 });
 

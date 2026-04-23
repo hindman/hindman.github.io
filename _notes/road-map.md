@@ -1,4 +1,22 @@
 
+We are implementing Round 2 of our refactoring-assessment.md.
+
+Current session: 2.
+
+    Session | Focus                    | Items            | Status
+    ----------------------------------------------------------------
+    1       | Tests + shared utilities | R2-1, R2-2, R2-8 | done
+    2       | Scratch loop separation  | R2-4, R2-7       | .
+    3       | Data layer               | R2-5             | .
+    4       | Handler pairs            | R2-3             | .
+    5       | Picker mixin             | R2-6             | .
+
+Let me know if anything is unclear, needs further discussion, or
+should be subdivided into smaller stages of work. If not, please
+implement.
+
+## Assessment: Round 2
+
 ## TODO: LoopLlama v2
 
 Code refactor:

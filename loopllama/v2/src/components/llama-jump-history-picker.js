@@ -10,6 +10,7 @@
 //   show() / hide()
 
 import { LitElement, html, css } from 'lit';
+import { fmtTimePlain } from '../format.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
@@ -130,7 +131,7 @@ class LlamaJumpHistoryPicker extends LitElement {
       .reverse();
     const q = this._filter.trim().toLowerCase();
     if (!q) return reversed;
-    return reversed.filter(e => _fmtTime(e.time).includes(q));
+    return reversed.filter(e => fmtTimePlain(e.time).includes(q));
   }
 
   render() {
@@ -154,7 +155,7 @@ class LlamaJumpHistoryPicker extends LitElement {
                   class="jump-row ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(entry)}
                 >
-                  <span class="jump-time">${_fmtTime(entry.time)}</span>
+                  <span class="jump-time">${fmtTimePlain(entry.time)}</span>
                 </div>
               `)
             : html`<div class="empty">No jump history${this._filter ? ' matches.' : '.'}</div>`}
@@ -164,11 +165,5 @@ class LlamaJumpHistoryPicker extends LitElement {
   }
 }
 
-// Format seconds as m:ss.
-function _fmtTime(secs) {
-  if (secs == null || isNaN(secs)) return '?';
-  const s = Math.floor(secs);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-}
 
 customElements.define('llama-jump-history-picker', LlamaJumpHistoryPicker);

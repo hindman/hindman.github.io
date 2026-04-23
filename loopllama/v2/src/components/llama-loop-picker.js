@@ -13,6 +13,7 @@
 //   show(mode?) / hide()
 
 import { LitElement, html, css } from 'lit';
+import { fmtTimePlain } from '../format.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
@@ -208,15 +209,8 @@ class LlamaLoopPicker extends LitElement {
   }
 }
 
-// Format seconds as m:ss.
-function _fmtTime(secs) {
-  if (secs == null || isNaN(secs)) return '?';
-  const s = Math.floor(secs);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-}
-
 function _fmtRange(start, end) {
-  return `${_fmtTime(start)} – ${_fmtTime(end)}`;
+  return `${fmtTimePlain(start)} – ${fmtTimePlain(end)}`;
 }
 
 customElements.define('llama-loop-picker', LlamaLoopPicker);

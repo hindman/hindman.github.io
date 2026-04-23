@@ -12,6 +12,7 @@
 //   show(mode?) / hide()
 
 import { LitElement, html, css } from 'lit';
+import { fmtTimePlain } from '../format.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
@@ -159,7 +160,7 @@ class LlamaSectionsPicker extends LitElement {
     if (!q) return this.sections;
     return this.sections.filter(s =>
       (s.name || '').toLowerCase().includes(q) ||
-      (!s.name && _fmtTime(s.start).includes(q))
+      (!s.name && fmtTimePlain(s.start).includes(q))
     );
   }
 
@@ -189,9 +190,9 @@ class LlamaSectionsPicker extends LitElement {
                     ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(s)}
                 >
-                  <div class="section-primary">${s.name || _fmtTime(s.start)}</div>
+                  <div class="section-primary">${s.name || fmtTimePlain(s.start)}</div>
                   ${s.name
-                    ? html`<div class="section-sub">${_fmtTime(s.start)}</div>`
+                    ? html`<div class="section-sub">${fmtTimePlain(s.start)}</div>`
                     : ''}
                 </div>
               `)
@@ -202,11 +203,5 @@ class LlamaSectionsPicker extends LitElement {
   }
 }
 
-// Format seconds as m:ss.
-function _fmtTime(secs) {
-  if (secs == null || isNaN(secs)) return '?';
-  const s = Math.floor(secs);
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-}
 
 customElements.define('llama-sections-picker', LlamaSectionsPicker);

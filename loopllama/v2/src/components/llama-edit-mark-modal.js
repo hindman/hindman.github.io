@@ -11,6 +11,7 @@
 //   Pass the mark directly to show() or set the .mark prop first.
 
 import { LitElement, html, css } from 'lit';
+import { fmtTime } from '../format.js';
 import { parseTime as _parseTime } from '../parseTime.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
@@ -58,7 +59,7 @@ class LlamaEditMarkModal extends LitElement {
     if (m) {
       this.mark          = m;
       this._name         = m.name || '';
-      this._time         = _fmtTime(m.time);
+      this._time         = fmtTime(m.time);
       this._originalTime = m.time;
     }
     this._timeEdited = false;
@@ -129,11 +130,5 @@ class LlamaEditMarkModal extends LitElement {
   }
 }
 
-// Format seconds as m:ss.
-function _fmtTime(secs) {
-  if (secs == null || isNaN(secs)) return '';
-  const r = Math.round(secs);
-  return `${Math.floor(r / 60)}:${String(r % 60).padStart(2, '0')}`;
-}
 
 customElements.define('llama-edit-mark-modal', LlamaEditMarkModal);

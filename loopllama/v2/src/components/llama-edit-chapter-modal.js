@@ -1,7 +1,7 @@
 // llama-edit-chapter-modal.js -- modal to edit an existing chapter.
 //
 // API:
-//   showEdit(chapter, derivedEnd?) -- pre-filled from chapter object
+//   show(chapter, derivedEnd?) -- pre-filled from chapter object
 //   hide()
 //
 // Events fired (composed, bubbling):
@@ -48,7 +48,7 @@ class LlamaEditChapterModal extends LitElement {
   // (i.e. next chapter's start, or video duration). Used for placeholder hint.
   // validator: optional (start, end) => boolean — called on save; returns false
   //   to block with an inline error message.
-  showEdit(chapter, derivedEnd = null, validator = null) {
+  show(chapter, derivedEnd = null, validator = null) {
     this._id            = chapter.id;
     this._name          = chapter.name || '';
     this._start         = fmtTime(chapter.start);
