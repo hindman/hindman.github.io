@@ -1,4 +1,11 @@
 
+NEXT:
+
+  cl -r v2-refactor-r2.1
+
+  Decide how to handle migration robustness.
+  Add that to the plan.
+
 We are implementing Round 2 of our refactoring-assessment.md.
 
 Current session: 2.
