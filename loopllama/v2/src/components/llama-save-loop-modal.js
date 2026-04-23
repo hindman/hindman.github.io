@@ -13,30 +13,16 @@
 //   show(loop?)  -- no arg = create; loop object = edit
 //   hide()
 
-import { LitElement, html, css } from 'lit';
+import { LitElement, html } from 'lit';
 import { parseTime as _parseTime } from '../parseTime.js';
+import { fmtTime } from '../format.js';
+import { modalFieldStyles, renderField } from './modal-styles.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
 
 class LlamaSaveLoopModal extends LitElement {
-  static styles = css`
-    .field-row {
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-      margin-bottom: 0.7rem;
-    }
-    .field-label {
-      font-size: var(--ll-text-sm, 0.85rem);
-      color: var(--ll-text-dim, #aaa);
-    }
-    .error {
-      font-size: var(--ll-text-sm, 0.85rem);
-      color: var(--ll-danger, #e05a5a);
-      margin-bottom: 0.5rem;
-    }
-  `;
+  static styles = modalFieldStyles;
 
   static properties = {
     loopStart:    { type: Number },
@@ -69,15 +55,15 @@ class LlamaSaveLoopModal extends LitElement {
     if (loop) {
       this._editId        = loop.id;
       this._name          = loop.name || '';
-      this._start         = _fmtTime(loop.start);
-      this._end           = _fmtTime(loop.end);
+      this._start         = fmtTime(loop.start);
+      this._end           = fmtTime(loop.end);
       this._originalStart = loop.start;
       this._originalEnd   = loop.end;
     } else {
       this._editId        = null;
       this._name          = '';
-      this._start         = _fmtTime(this.loopStart);
-      this._end           = _fmtTime(this.loopEnd);
+      this._start         = fmtTime(this.loopStart);
+      this._end           = fmtTime(this.loopEnd);
       this._originalStart = this.loopStart;
       this._originalEnd   = this.loopEnd;
     }
@@ -131,34 +117,19 @@ class LlamaSaveLoopModal extends LitElement {
     }
   }
 
-  _renderField(label, field, value, placeholder, onInput) {
-    return html`
-      <div class="field-row">
-        <span class="field-label">${label}</span>
-        <sl-input autocomplete="off"
-          data-field=${field}
-          placeholder=${placeholder}
-          .value=${value}
-          @sl-input=${onInput}
-          @keydown=${this._onKeyDown}
-        ></sl-input>
-      </div>
-    `;
-  }
-
   render() {
     const title = this._editId ? 'Edit loop' : 'Save loop';
     return html`
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
-        ${this._renderField('Name', 'name', this._name,
+        ${renderField('Name', 'name', this._name,
             'Name',
-            e => { this._name = e.target.value; })}
-        ${this._renderField('Start', 'start', this._start,
+            e => { this._name = e.target.value; }, this._onKeyDown)}
+        ${renderField('Start', 'start', this._start,
             'Start',
-            e => { this._start = e.target.value; this._startEdited = true; })}
-        ${this._renderField('End', 'end', this._end,
+            e => { this._start = e.target.value; this._startEdited = true; }, this._onKeyDown)}
+        ${renderField('End', 'end', this._end,
             'End',
-            e => { this._end = e.target.value; this._endEdited = true; })}
+            e => { this._end = e.target.value; this._endEdited = true; }, this._onKeyDown)}
         <div class="error" style=${this._error ? '' : 'visibility: hidden'}>${this._error || '\u00a0'}</div>
         <div slot="footer">
           <sl-button @click=${this.hide}>Cancel</sl-button>
@@ -167,13 +138,6 @@ class LlamaSaveLoopModal extends LitElement {
       </llama-modal>
     `;
   }
-}
-
-// Format seconds as m:ss (rounds to nearest second).
-function _fmtTime(secs) {
-  if (secs == null || isNaN(secs)) return '';
-  const r = Math.round(secs);
-  return `${Math.floor(r / 60)}:${String(r % 60).padStart(2, '0')}`;
 }
 
 customElements.define('llama-save-loop-modal', LlamaSaveLoopModal);

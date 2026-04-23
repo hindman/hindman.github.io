@@ -12,30 +12,16 @@
 //   Pass the section directly to show(). derivedEnd (seconds | null) is used
 //   as placeholder hint text when section.end is not set explicitly.
 
-import { LitElement, html, css } from 'lit';
+import { LitElement, html } from 'lit';
 import { parseTime as _parseTime } from '../parseTime.js';
+import { fmtTime } from '../format.js';
+import { modalFieldStyles, renderField } from './modal-styles.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
 
 class LlamaEditSectionModal extends LitElement {
-  static styles = css`
-    .field-row {
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-      margin-bottom: 0.7rem;
-    }
-    .field-label {
-      font-size: var(--ll-text-sm, 0.85rem);
-      color: var(--ll-text-dim, #aaa);
-    }
-    .error {
-      font-size: var(--ll-text-sm, 0.85rem);
-      color: var(--ll-danger, #e05a5a);
-      margin-bottom: 0.5rem;
-    }
-  `;
+  static styles = modalFieldStyles;
 
   static properties = {
     section:      { type: Object },
@@ -72,8 +58,8 @@ class LlamaEditSectionModal extends LitElement {
     if (s) {
       this.section        = s;
       this._name          = s.name || '';
-      this._time          = _fmtTime(s.start);
-      this._end           = _fmtTime(s.end);
+      this._time          = fmtTime(s.start);
+      this._end           = fmtTime(s.end);
       this._originalTime  = s.start;
       this._originalEnd   = s.end;
       this._derivedEnd    = derivedEnd;
@@ -133,41 +119,17 @@ class LlamaEditSectionModal extends LitElement {
 
   render() {
     const endPlaceholder = this._derivedEnd != null
-      ? `${_fmtTime(this._derivedEnd)} (derived)`
+      ? `${fmtTime(this._derivedEnd)} (derived)`
       : '';
 
     return html`
       <llama-modal label="Edit section" @ll-modal-initial-focus=${this._onInitialFocus}>
-        <div class="field-row">
-          <span class="field-label">Name</span>
-          <sl-input autocomplete="off"
-            data-field="name"
-            placeholder="Name"
-            .value=${this._name}
-            @sl-input=${e => { this._name = e.target.value; }}
-            @keydown=${this._onKeyDown}
-          ></sl-input>
-        </div>
-        <div class="field-row">
-          <span class="field-label">Start</span>
-          <sl-input autocomplete="off"
-            data-field="time"
-            placeholder="Start"
-            .value=${this._time}
-            @sl-input=${e => { this._time = e.target.value; this._timeEdited = true; }}
-            @keydown=${this._onKeyDown}
-          ></sl-input>
-        </div>
-        <div class="field-row">
-          <span class="field-label">End</span>
-          <sl-input autocomplete="off"
-            data-field="end"
-            placeholder=${endPlaceholder}
-            .value=${this._end}
-            @sl-input=${e => { this._end = e.target.value; this._endEdited = true; }}
-            @keydown=${this._onKeyDown}
-          ></sl-input>
-        </div>
+        ${renderField('Name', 'name', this._name, 'Name',
+            e => { this._name = e.target.value; }, this._onKeyDown)}
+        ${renderField('Start', 'time', this._time, 'Start',
+            e => { this._time = e.target.value; this._timeEdited = true; }, this._onKeyDown)}
+        ${renderField('End', 'end', this._end, endPlaceholder,
+            e => { this._end = e.target.value; this._endEdited = true; }, this._onKeyDown)}
         <div class="error" style=${this._error ? '' : 'visibility: hidden'}>${this._error || '\u00a0'}</div>
         <div slot="footer">
           <sl-button @click=${this.hide}>Cancel</sl-button>
@@ -176,13 +138,6 @@ class LlamaEditSectionModal extends LitElement {
       </llama-modal>
     `;
   }
-}
-
-// Format seconds as m:ss (rounds to nearest second).
-function _fmtTime(secs) {
-  if (secs == null || isNaN(secs)) return '';
-  const r = Math.round(secs);
-  return `${Math.floor(r / 60)}:${String(r % 60).padStart(2, '0')}`;
 }
 
 customElements.define('llama-edit-section-modal', LlamaEditSectionModal);

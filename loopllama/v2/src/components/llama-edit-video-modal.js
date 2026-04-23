@@ -14,29 +14,21 @@
 
 import { LitElement, html, css } from 'lit';
 import { parseTime as _parseTime } from '../parseTime.js';
+import { fmtTime } from '../format.js';
+import { modalFieldStyles, renderField } from './modal-styles.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
 
 class LlamaEditVideoModal extends LitElement {
-  static styles = css`
-    .field-row {
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-      margin-bottom: 0.7rem;
-    }
-    .field-label {
-      font-size: var(--ll-text-sm, 0.85rem);
-      color: var(--ll-text-dim, #aaa);
-    }
+  static styles = [modalFieldStyles, css`
     .video-id {
       font-family: monospace;
       color: var(--ll-text-muted, #666);
       font-size: var(--ll-text-sm, 0.85rem);
       padding: 0.2rem 0;
     }
-  `;
+  `];
 
   static properties = {
     video:        { type: Object },
@@ -63,8 +55,8 @@ class LlamaEditVideoModal extends LitElement {
     const v = this.video;
     if (v) {
       this._name          = v.name  || '';
-      this._start         = v.start > 0   ? _fmtTime(v.start) : '';
-      this._end           = v.end != null ? _fmtTime(v.end)   : '';
+      this._start         = v.start > 0   ? fmtTime(v.start) : '';
+      this._end           = v.end != null ? fmtTime(v.end)   : '';
       this._originalStart = v.start ?? 0;
       this._originalEnd   = v.end   ?? null;
     }
@@ -107,33 +99,18 @@ class LlamaEditVideoModal extends LitElement {
     }
   }
 
-  _renderField(label, field, value, placeholder, onInput) {
-    return html`
-      <div class="field-row">
-        <span class="field-label">${label}</span>
-        <sl-input autocomplete="off"
-          data-field=${field}
-          placeholder=${placeholder}
-          .value=${value}
-          @sl-input=${onInput}
-          @keydown=${this._onKeyDown}
-        ></sl-input>
-      </div>
-    `;
-  }
-
   render() {
     return html`
       <llama-modal label="Edit video" @ll-modal-initial-focus=${this._onInitialFocus}>
-        ${this._renderField('Name', 'name', this._name,
+        ${renderField('Name', 'name', this._name,
             'Name',
-            e => { this._name = e.target.value; })}
-        ${this._renderField('Start', 'start', this._start,
+            e => { this._name = e.target.value; }, this._onKeyDown)}
+        ${renderField('Start', 'start', this._start,
             'Custom start',
-            e => { this._start = e.target.value; this._startEdited = true; })}
-        ${this._renderField('End', 'end', this._end,
+            e => { this._start = e.target.value; this._startEdited = true; }, this._onKeyDown)}
+        ${renderField('End', 'end', this._end,
             'Custom end',
-            e => { this._end = e.target.value; this._endEdited = true; })}
+            e => { this._end = e.target.value; this._endEdited = true; }, this._onKeyDown)}
         <div class="field-row">
           <span class="field-label">Video ID</span>
           <div class="video-id">${this.video?.id ?? ''}</div>
@@ -145,13 +122,6 @@ class LlamaEditVideoModal extends LitElement {
       </llama-modal>
     `;
   }
-}
-
-// Format seconds as m:ss (rounds to nearest second).
-function _fmtTime(secs) {
-  if (secs == null || isNaN(secs)) return '';
-  const r = Math.round(secs);
-  return `${Math.floor(r / 60)}:${String(r % 60).padStart(2, '0')}`;
 }
 
 customElements.define('llama-edit-video-modal', LlamaEditVideoModal);

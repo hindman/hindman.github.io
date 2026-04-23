@@ -1,23 +1,13 @@
 
 We are implementing our plan in refactoring-assessment.md. Next up is Session
-3: Items 6, 10.
+4: Items 8.
 
-Any decisions or clarifications needed before you can start coding? These
-items look relatively straightforward, so I assume we don't need sub-stages.
+Let's solidify the plan for this issue.
 
 ## TODO: LoopLlama v2
 
 Code refactor:
-
   x refactoring-assessment.md
-
-  - implement changes:
-
-    Session 1 | state.js       | Items 2, 9              | done
-    Session 2 | llama-app.js   | Items 1, 3, 4, 5, 7, 11 | done
-    Session 3 | Modal files    | Items 6, 10             | .
-    Session 4 | llama-controls | Item 8                  | .
-
   - app: basic tests: all operations
 
 User docs: final read:
