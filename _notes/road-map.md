@@ -1,7 +1,7 @@
 
 We are implementing the plan in refactoring-assessment.md.
 
-Please implement Session 4: R2-6.
+Please implement Session 5A: llama-app.js decomposition: pure logic extraction.
 
 ## Assessment: Round 2
 

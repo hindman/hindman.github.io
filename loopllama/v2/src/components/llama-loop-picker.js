@@ -13,6 +13,7 @@
 //   show(mode?) / hide()
 
 import { LitElement, html, css } from 'lit';
+import { FilterPickerMixin } from './filter-picker-mixin.js';
 import { fmtTimePlain } from '../format.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
@@ -23,7 +24,7 @@ const TITLES = {
   delete: 'Delete loop',
 };
 
-class LlamaLoopPicker extends LitElement {
+class LlamaLoopPicker extends FilterPickerMixin(LitElement) {
   static styles = css`
     :host {
       --width: 52rem;
@@ -83,8 +84,6 @@ class LlamaLoopPicker extends LitElement {
     namedLoops: { type: Array },
     loopSource: { type: String },
     mode:       { type: String },
-    _filter:    { state: true },
-    _selIdx:    { state: true },
   };
 
   constructor() {
@@ -92,53 +91,10 @@ class LlamaLoopPicker extends LitElement {
     this.namedLoops = [];
     this.loopSource = null;
     this.mode       = 'load';
-    this._filter    = '';
-    this._selIdx    = 0;
   }
 
-  show(mode) {
-    if (mode) this.mode = mode;
-    this._filter = '';
-    this._selIdx = 0;
-    this.renderRoot.querySelector('llama-modal')?.show();
-  }
-
-  hide() {
-    this.renderRoot.querySelector('llama-modal')?.hide();
-  }
-
-  _onInitialFocus() {
-    this.renderRoot.querySelector('sl-input')?.focus();
-  }
-
-  _onFilterKeyDown(e) {
-    const filtered = this._filtered();
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      this._selIdx = Math.min(this._selIdx + 1, filtered.length - 1);
-      this._scrollSelectedIntoView();
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      this._selIdx = Math.max(this._selIdx - 1, 0);
-      this._scrollSelectedIntoView();
-    } else if (e.key === 'Enter') {
-      const target = filtered[this._selIdx] ?? filtered[0];
-      if (target) this._select(target);
-    }
-  }
-
-  _onFilterInput(e) {
-    this._filter = e.target.value;
-    this._selIdx = 0;
-  }
-
-  _scrollSelectedIntoView() {
-    this.updateComplete.then(() => {
-      const list = this.renderRoot.querySelector('.loop-list');
-      const row  = list?.querySelector('.loop-row.selected');
-      row?.scrollIntoView({ block: 'nearest' });
-    });
-  }
+  get _listClass() { return 'loop-list'; }
+  get _rowClass()  { return 'loop-row'; }
 
   _select(loop) {
     const mode = this.mode;

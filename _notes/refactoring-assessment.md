@@ -410,7 +410,7 @@ but is straightforward — `migrateAppState()` only reads `schema_version` and
     1       | Tests + shared utilities      | R2-1, R2-2, R2-8 | done
     2       | Scratch loop separation       | R2-4, R2-7, R2-9 | done
     3       | Data layer                    | R2-5             | done
-    4       | Picker mixin                  | R2-6             | .
+    4       | Picker mixin                  | R2-6             | done
     5A      | llama-app.js: logic           | new              | .
     5B      | llama-app.js: undo/redo       | new              | .
     5C      | llama-app.js: cloud/data      | new              | .

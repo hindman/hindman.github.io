@@ -10,12 +10,13 @@
 //   show() / hide()
 
 import { LitElement, html, css } from 'lit';
+import { FilterPickerMixin } from './filter-picker-mixin.js';
 import { fmtTimePlain } from '../format.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
 
-class LlamaJumpHistoryPicker extends LitElement {
+class LlamaJumpHistoryPicker extends FilterPickerMixin(LitElement) {
   static styles = css`
     :host {
       --width: 32rem;
@@ -61,59 +62,15 @@ class LlamaJumpHistoryPicker extends LitElement {
 
   static properties = {
     jumps:   { type: Array },
-    _filter: { state: true },
-    _selIdx: { state: true },
   };
 
   constructor() {
     super();
     this.jumps   = [];
-    this._filter = '';
-    this._selIdx = 0;
   }
 
-  show() {
-    this._filter = '';
-    this._selIdx = 0;
-    this.renderRoot.querySelector('llama-modal')?.show();
-  }
-
-  hide() {
-    this.renderRoot.querySelector('llama-modal')?.hide();
-  }
-
-  _onInitialFocus() {
-    this.renderRoot.querySelector('sl-input')?.focus();
-  }
-
-  _onFilterInput(e) {
-    this._filter = e.target.value;
-    this._selIdx = 0;
-  }
-
-  _onFilterKeyDown(e) {
-    const items = this._filtered();
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      this._selIdx = Math.min(this._selIdx + 1, items.length - 1);
-      this._scrollSelectedIntoView();
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      this._selIdx = Math.max(this._selIdx - 1, 0);
-      this._scrollSelectedIntoView();
-    } else if (e.key === 'Enter') {
-      const target = items[this._selIdx] ?? items[0];
-      if (target) this._select(target);
-    }
-  }
-
-  _scrollSelectedIntoView() {
-    this.updateComplete.then(() => {
-      const list = this.renderRoot.querySelector('.jump-list');
-      const row  = list?.querySelector('.jump-row.selected');
-      row?.scrollIntoView({ block: 'nearest' });
-    });
-  }
+  get _listClass() { return 'jump-list'; }
+  get _rowClass()  { return 'jump-row'; }
 
   _select(entry) {
     this.dispatchEvent(new CustomEvent('ll-jump-history', {

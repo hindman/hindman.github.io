@@ -12,6 +12,7 @@
 //   show(mode?) / hide()
 
 import { LitElement, html, css } from 'lit';
+import { FilterPickerMixin } from './filter-picker-mixin.js';
 import { fmtTimePlain } from '../format.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
@@ -22,7 +23,7 @@ const TITLES = {
   delete: 'Delete mark',
 };
 
-class LlamaMarksPicker extends LitElement {
+class LlamaMarksPicker extends FilterPickerMixin(LitElement) {
   static styles = css`
     :host {
       --width: 44rem;
@@ -74,61 +75,16 @@ class LlamaMarksPicker extends LitElement {
   static properties = {
     marks:   { type: Array },
     mode:    { type: String },
-    _filter: { state: true },
-    _selIdx: { state: true },
   };
 
   constructor() {
     super();
     this.marks   = [];
     this.mode    = 'jump';
-    this._filter = '';
-    this._selIdx = 0;
   }
 
-  show(mode) {
-    if (mode) this.mode = mode;
-    this._filter = '';
-    this._selIdx = 0;
-    this.renderRoot.querySelector('llama-modal')?.show();
-  }
-
-  hide() {
-    this.renderRoot.querySelector('llama-modal')?.hide();
-  }
-
-  _onInitialFocus() {
-    this.renderRoot.querySelector('sl-input')?.focus();
-  }
-
-  _onFilterInput(e) {
-    this._filter = e.target.value;
-    this._selIdx = 0;
-  }
-
-  _onFilterKeyDown(e) {
-    const filtered = this._filtered();
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      this._selIdx = Math.min(this._selIdx + 1, filtered.length - 1);
-      this._scrollSelectedIntoView();
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      this._selIdx = Math.max(this._selIdx - 1, 0);
-      this._scrollSelectedIntoView();
-    } else if (e.key === 'Enter') {
-      const target = filtered[this._selIdx] ?? filtered[0];
-      if (target) this._select(target);
-    }
-  }
-
-  _scrollSelectedIntoView() {
-    this.updateComplete.then(() => {
-      const list = this.renderRoot.querySelector('.mark-list');
-      const row  = list?.querySelector('.mark-row.selected');
-      row?.scrollIntoView({ block: 'nearest' });
-    });
-  }
+  get _listClass() { return 'mark-list'; }
+  get _rowClass()  { return 'mark-row'; }
 
   _select(mark) {
     const mode = this.mode;
