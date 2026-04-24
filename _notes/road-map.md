@@ -1,8 +1,4 @@
 
-We are implementing the plan in refactoring-assessment.md.
-
-Please implement Session 5A: llama-app.js decomposition: pure logic extraction.
-
 ## Assessment: Round 2
 
 ## TODO: LoopLlama v2
@@ -10,7 +6,10 @@ Please implement Session 5A: llama-app.js decomposition: pure logic extraction.
 Code refactor:
   x refactoring-assessment.md
   x round 1
-  - round 2
+  x round 2
+  - round 3
+    - assess
+    - implement
   - app: basic tests: all operations
 
 User docs: final read:

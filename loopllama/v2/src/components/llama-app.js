@@ -1,6 +1,8 @@
 // llama-app.js -- top-level component.
 
 import { LitElement, html, css } from 'lit';
+import { UndoManager } from '../undo-manager.js';
+import { DataOpsManager, parseVideoInput } from '../data-ops-manager.js';
 import { fmtTimePlain } from '../format.js';
 import { createVideoController }    from '../videoController.js';
 import { createKeyboardController } from '../keyboardController.js';
@@ -18,13 +20,9 @@ import {
   nudgeLoopStart, nudgeLoopEnd,
 } from '../state.js';
 import { EXAMPLES } from '../examples.js';
-import { load, save, exportAll, parseImport,
-         loadFromCloud, saveToCloud, deleteFromCloud,
-         categorizeVideos } from '../storage.js';
+import { load, save, exportAll } from '../storage.js';
 import { logSessionStart, logVideoLoad } from '../analytics.js';
 import { getUser, onAuthStateChange, signInWithGoogle, signInWithGitHub, signOut } from '../auth.js';
-import { createShare, shareUrl, fetchShare, shareIdFromUrl,
-         buildVideoPayload, buildLoopPayload } from '../sharing.js';
 import './llama-shared-video-conflict-modal.js';
 import './llama-whichkey.js';
 import './llama-controls.js';
@@ -360,8 +358,20 @@ class LlamaApp extends LitElement {
     this._jumpIdx              = -1;   // -1 = at current/live position
     this._jumpFromTime         = null; // saved position when jb first invoked
     this._suppressJumpPush     = false;
-    this._undoStack              = [];
-    this._redoStack              = [];
+    this._undoMgr = new UndoManager({
+      getSnapshot:   () => {
+        this._saveCurrentState();
+        return {
+          videos:         JSON.parse(JSON.stringify(this._appState.videos)),
+          currentVideoId: this.currentVideoId,
+        };
+      },
+      applySnapshot: (snap) => this._applySnapshot(snap),
+      onUndo:        (desc) => { this.statusMsg = `Undone: (${desc}).`; },
+      onRedo:        (desc) => { this.statusMsg = `Redone: (${desc}).`; },
+      onEmpty:       (dir)  => this._setWarning(`Cannot ${dir}.`),
+    });
+    this._dataMgr         = new DataOpsManager(this);
     this.seekDelta        = DEFAULT_OPTIONS.seek_delta_default;
     this.speedDelta       = DEFAULT_OPTIONS.speed_delta;
     this.loopNudgeDelta   = DEFAULT_OPTIONS.loop_nudge_delta_default;
@@ -522,28 +532,16 @@ class LlamaApp extends LitElement {
 
   // Snapshot the full video registry and current video ID.
   // Playback state (speed, looping, scratch loop) is not included.
-  // Call before any mutation; reactive props must already be flushed to
-  // _appState (they are, because every mutation ends with _saveCurrentState).
+  // Call after setting statusMsg, before the mutation; reactive props must
+  // already be flushed to _appState (they are, because every mutation ends
+  // with _saveCurrentState).
   _pushUndoSnapshot() {
     const desc = (this.statusMsg ?? '').replace(/\.$/, '');
-    const snap = {
+    this._undoMgr.push({
       videos:         JSON.parse(JSON.stringify(this._appState.videos)),
       currentVideoId: this.currentVideoId,
       desc,
-    };
-    this._undoStack.push(snap);
-    if (this._undoStack.length > 20) this._undoStack.shift();
-    this._redoStack = [];
-  }
-
-  // Capture current state for the redo stack. Flush reactive props first so
-  // _appState.videos reflects the latest entity arrays.
-  _currentSnapshot() {
-    this._saveCurrentState();
-    return {
-      videos:         JSON.parse(JSON.stringify(this._appState.videos)),
-      currentVideoId: this.currentVideoId,
-    };
+    });
   }
 
   _applySnapshot(snap) {
@@ -587,28 +585,6 @@ class LlamaApp extends LitElement {
     }
 
     this._save();
-  }
-
-  _undo() {
-    if (!this._undoStack.length) {
-      this._setWarning('Cannot undo.');
-      return;
-    }
-    const snap = this._undoStack.pop();
-    this._redoStack.push({ ...this._currentSnapshot(), desc: snap.desc });
-    this._applySnapshot(snap);
-    this.statusMsg = `Undone: (${snap.desc}).`;
-  }
-
-  _redo() {
-    if (!this._redoStack.length) {
-      this._setWarning('Cannot redo.');
-      return;
-    }
-    const snap = this._redoStack.pop();
-    this._undoStack.push({ ...this._currentSnapshot(), desc: snap.desc });
-    this._applySnapshot(snap);
-    this.statusMsg = `Redone: (${snap.desc}).`;
   }
 
   // Handlers for Stage 5+. Core playback handlers implemented in Stage 6e.
@@ -696,8 +672,8 @@ class LlamaApp extends LitElement {
           ()  => this._setWarning('Cannot copy current time: clipboard blocked.'),
         );
       },
-      undo:          () => this._undo(),
-      redo:          () => this._redo(),
+      undo:          () => this._undoMgr.undo(),
+      redo:          () => this._undoMgr.redo(),
       helpKeys:      () => window.open(`${_siteOrigin()}/loopllama/v2/keybindings/`, '_blank'),
       options:       () => this._optionsModalEl?.show(this._appState?.options),
       videoUrl:      () => this._urlInputModalEl?.show(),
@@ -954,79 +930,12 @@ class LlamaApp extends LitElement {
         this.statusMsg  = 'Scratch loop: zoomed.';
         this._seekIntoZoomIfNeeded();
       },
-      zoomSection: () => {
-        if (this.zoomSource?.trigger === 'section') {
-          this.zoomSource = null;
-          this.statusMsg  = 'Zoom: off.';
-          return;
-        }
-        const bounds = getSectionBounds(this.sections, this.currentTime, this.duration);
-        if (!bounds || bounds.end == null) {
-          this._setWarning('No current section.');
-          return;
-        }
-        this.zoomSource = { start: bounds.start, end: bounds.end, trigger: 'section' };
-        this.statusMsg  = 'Section: zoomed.';
-      },
-      setSection: () => {
-        const time = this._vc?.getCurrentTime() ?? 0;
-        const containing = nearestSectionLeft(this.sections, time);
-        if (containing && containing.end != null && time <= containing.end) {
-          this._setWarning('Cannot create section: inside a fixed section.');
-          return;
-        }
-        const section = addSection(this.sections, time);
-        if (!section) {
-          this._setWarning('Cannot create section: too close to an existing one.');
-          return;
-        }
-        this.statusMsg = 'Section: created.';
-        this._pushUndoSnapshot();
-        this.sections = [...this.sections];
-        this._saveCurrentState();
-      },
-      editSection:   () => this._editCurrentSection(),
-      scratchSection: () => {
-        const bounds = getSectionBounds(this.sections, this.currentTime, this.duration);
-        if (!bounds || bounds.end == null) {
-          this._setWarning('No current section.');
-          return;
-        }
-        const section    = nearestSectionLeft(this.sections, this.currentTime);
-        const padStart   = this._appState?.options.loop_pad_start ?? DEFAULT_OPTIONS.loop_pad_start;
-        const padEnd     = this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end;
-        const newStart   = Math.max(0, bounds.start - padStart);
-        const newEnd     = Math.min(this.duration ?? Infinity, bounds.end + padEnd);
-        this._clearZoomIfOutside(newStart, newEnd);
-        this.loopStart = newStart;
-        this.loopEnd   = newEnd;
-        this.looping   = true;
-        this.loopSrc   = { id: section?.id ?? null, label: section?.name || null, type: 'section', start: bounds.start, end: bounds.end };
-        this.statusMsg = 'Section: scratched.';
-      },
-      deleteSection: () => this._openSectionsPicker('delete'),
-      fixSection: () => {
-        const section = nearestSectionLeft(this.sections, this.currentTime);
-        if (!section) {
-          this._setWarning('No current section.');
-          return;
-        }
-        if (section.end != null) {
-          this.statusMsg = 'Section: end unfixed.';
-          this._pushUndoSnapshot();
-          section.end = null;
-        } else {
-          if (this.duration == null) {
-            this._setError('Cannot fix section end: video duration unknown.');
-            return;
-          }
-          this.statusMsg = 'Section: end fixed.';
-          this._pushUndoSnapshot();
-          fixSectionEnd(this.sections, section.id, this.duration);
-        }
-        this.sections = [...this.sections];
-        this._saveCurrentState();
-      },
+      zoomSection:    () => this._zoomDivider('section'),
+      setSection:     () => this._setDivider('section'),
+      editSection:    () => this._editCurrentDivider('section'),
+      scratchSection: () => this._scratchDivider('section'),
+      deleteSection:  () => this._openSectionsPicker('delete'),
+      fixSection:     () => this._fixDivider('section'),
       setMark: () => {
         const time = this._vc?.getCurrentTime() ?? 0;
         if (!addMark(this.marks, time)) {
@@ -1040,85 +949,17 @@ class LlamaApp extends LitElement {
       },
       editMark:   () => this._editCurrentMark(),
       deleteMark: () => this._openMarksPicker('delete'),
-      setChapter: () => {
-        const time = this._vc?.getCurrentTime() ?? 0;
-        const containing = nearestChapterLeft(this.chapters, time);
-        if (containing && containing.end != null && time <= containing.end) {
-          this._setWarning('Cannot create chapter: inside a fixed chapter.');
-          return;
-        }
-        const chapter = addChapterDivider(this.chapters, time);
-        if (!chapter) {
-          this._setWarning('Cannot create chapter: too close to an existing one.');
-          return;
-        }
-        this.statusMsg = 'Chapter: created.';
-        this._pushUndoSnapshot();
-        this.chapters = [...this.chapters];
-        this._saveCurrentState();
-      },
-      editChapter:   () => this._editCurrentChapter(),
-      scratchChapter: () => {
-        const bounds = getChapterBounds(this.chapters, this.currentTime, this.duration);
-        if (!bounds || bounds.end == null) {
-          this._setWarning('No current chapter.');
-          return;
-        }
-        const chapter    = nearestChapterLeft(this.chapters, this.currentTime);
-        const padStart   = this._appState?.options.loop_pad_start ?? DEFAULT_OPTIONS.loop_pad_start;
-        const padEnd     = this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end;
-        const newStart   = Math.max(0, bounds.start - padStart);
-        const newEnd     = Math.min(this.duration ?? Infinity, bounds.end + padEnd);
-        this._clearZoomIfOutside(newStart, newEnd);
-        this.loopStart = newStart;
-        this.loopEnd   = newEnd;
-        this.looping   = true;
-        this.loopSrc   = { id: chapter?.id ?? null, label: chapter?.name || null, type: 'chapter', start: bounds.start, end: bounds.end };
-        this.statusMsg = 'Chapter: scratched.';
-      },
-      deleteChapter: () => this._openChapterPicker('delete'),
-      fixChapter: () => {
-        const chapter = nearestChapterLeft(this.chapters, this.currentTime);
-        if (!chapter) {
-          this._setWarning('No current chapter.');
-          return;
-        }
-        if (chapter.end != null) {
-          this.statusMsg = 'Chapter: end unfixed.';
-          this._pushUndoSnapshot();
-          chapter.end = null;
-        } else {
-          if (this.duration == null) {
-            this._setError('Cannot fix chapter end: video duration unknown.');
-            return;
-          }
-          this.statusMsg = 'Chapter: end fixed.';
-          this._pushUndoSnapshot();
-          fixChapterEnd(this.chapters, chapter.id, this.duration);
-        }
-        this.chapters = [...this.chapters];
-        this._saveCurrentState();
-      },
+      setChapter:     () => this._setDivider('chapter'),
+      editChapter:    () => this._editCurrentDivider('chapter'),
+      scratchChapter: () => this._scratchDivider('chapter'),
+      deleteChapter:  () => this._openChapterPicker('delete'),
+      fixChapter:     () => this._fixDivider('chapter'),
       toggleZone2: () => {
         this.zone2Mode = this.zone2Mode === 'sections' ? 'chapters' : 'sections';
         this.statusMsg = `Timeline displaying: ${this.zone2Mode}.`;
         this._saveCurrentState();
       },
-      zoomChapter: () => {
-        if (this.zoomSource?.trigger === 'chapter') {
-          this.zoomSource = null;
-          this.statusMsg  = 'Zoom: off.';
-          return;
-        }
-        const bounds = getChapterBounds(this.chapters, this.currentTime, this.duration);
-        if (!bounds || bounds.end == null) {
-          this._setWarning('No current chapter.');
-          return;
-        }
-        this.zoomSource = { start: bounds.start, end: bounds.end, trigger: 'chapter' };
-        this.statusMsg  = 'Chapter: zoomed.';
-        this._seekIntoZoomIfNeeded();
-      },
+      zoomChapter:    () => this._zoomDivider('chapter'),
       zoomOff: () => {
         if (!this.zoomSource) { this._setWarning('No current zoom.'); return; }
         this.zoomSource = null;
@@ -1138,14 +979,14 @@ class LlamaApp extends LitElement {
           chapters:         this.chapters,
         });
       },
-      exportAll:     () => this._exportAll(),
+      exportAll:     () => this._dataMgr.exportAll(),
       importData:    () => this._fileInputEl?.click(),
       inspectData:   () => this._inspectModalEl?.show(JSON.parse(exportAll(this._appState))),
-      shareVideo:    () => this._createVideoShare(),
-      shareLoop:     () => this._createLoopShare(),
-      dataSave:      () => this._dataSave(),
-      dataRead:      () => this._dataRead(),
-      dataCompare:   () => this._dataCompare(),
+      shareVideo:    () => this._dataMgr.createVideoShare(),
+      shareLoop:     () => this._dataMgr.createLoopShare(),
+      dataSave:      () => this._dataMgr.dataSave(),
+      dataRead:      () => this._dataMgr.dataRead(),
+      dataCompare:   () => this._dataMgr.dataCompare(),
       loadExamples:  () => {
         const newVideos      = EXAMPLES.filter(e => !this._appState.videos.find(v => v.id === e.id));
         const existingVideos = EXAMPLES.filter(e =>  this._appState.videos.find(v => v.id === e.id));
@@ -1280,11 +1121,11 @@ class LlamaApp extends LitElement {
 
     // Initialize auth state: get current user, then subscribe to changes.
     this.currentUser = await getUser();
-    if (this.currentUser) await this._handleSignIn(this.currentUser);
+    if (this.currentUser) await this._dataMgr.handleSignIn(this.currentUser);
     this._unsubscribeAuth = onAuthStateChange(async user => {
       const wasSignedOut = !this.currentUser;
       this.currentUser = user;
-      if (user && wasSignedOut) await this._handleSignIn(user);
+      if (user && wasSignedOut) await this._dataMgr.handleSignIn(user);
       if (!user && !wasSignedOut) {
         if (!this._skipSignOutMsg) this.statusMsg = 'Signed out.';
         this._skipSignOutMsg = false;
@@ -1293,7 +1134,7 @@ class LlamaApp extends LitElement {
 
     // Check for a share URL (?share=id) or legacy loop URL (?v=id&s=start&e=end).
     // If present, load the shared content and skip normal restore.
-    const didLoadShare = await this._handleStartupShare();
+    const didLoadShare = await this._dataMgr.handleStartupShare();
 
     // Otherwise restore the last-used video on startup -- cue without auto-playing.
     if (!didLoadShare && this._appState.currentVideoId) {
@@ -1348,8 +1189,8 @@ class LlamaApp extends LitElement {
       window._ll.state            = this._appState;
       window._ll.vc               = this._vc;
       window._ll.kb               = this._kb;
-      window._ll.createVideoShare = () => this._createVideoShare();
-      window._ll.createLoopShare  = () => this._createLoopShare();
+      window._ll.createVideoShare = () => this._dataMgr.createVideoShare();
+      window._ll.createLoopShare  = () => this._dataMgr.createLoopShare();
       window._ll.auth = { signInWithGoogle, signInWithGitHub, signOut, getUser };
       window._ll.currentUser = () => this.currentUser;
     }
@@ -1467,62 +1308,12 @@ class LlamaApp extends LitElement {
     this._unsubscribeAuth?.();
   }
 
-  // Parse a YouTube URL or bare video ID.
-  // Returns { id, startTime } or null if the input is not recognizable.
-  _parseVideoInput(str) {
-    str = str.trim();
-    if (!str) return null;
-
-    // Check for bare video ID first (11 YouTube-valid chars). Must come
-    // before URL parsing: new URL('https://' + bareId) succeeds because
-    // the browser treats the ID as a valid hostname.
-    if (/^[A-Za-z0-9_-]{11}$/.test(str)) {
-      return { id: str, startTime: 0 };
-    }
-
-    let url;
-    try {
-      url = new URL(str.startsWith('http') ? str : 'https://' + str);
-    } catch (_) {
-      return null;
-    }
-
-    const params    = url.searchParams;
-    const startTime = this._parseTimeParam(params.get('t') ?? '');
-
-    // watch?v=ID  (standard watch URL)
-    let id = params.get('v') ?? null;
-
-    if (!id) {
-      // youtu.be/ID  |  youtube.com/shorts/ID  |  youtube.com/embed/ID
-      const parts = url.pathname.split('/').filter(Boolean);
-      id = parts[parts.length - 1] ?? null;
-    }
-
-    return id ? { id, startTime } : null;
-  }
-
-  // Parse a YouTube `t` parameter to seconds.
-  // Handles plain numbers ("354") and hms notation ("1h23m45s").
-  _parseTimeParam(t) {
-    if (!t) return 0;
-    const n = Number(t);
-    if (!isNaN(n)) return n;
-    let total = 0;
-    const h = t.match(/(\d+)h/);
-    const m = t.match(/(\d+)m/);
-    const s = t.match(/(\d+(?:\.\d+)?)s/);
-    if (h) total += parseInt(h[1]) * 3600;
-    if (m) total += parseInt(m[1]) * 60;
-    if (s) total += parseFloat(s[1]);
-    return total;
-  }
 
   _loadUrl(raw) {
     raw = raw.trim();
     if (!raw) return;
 
-    const parsed = this._parseVideoInput(raw);
+    const parsed = parseVideoInput(raw);
     if (!parsed) {
       this._setWarning('Invalid YouTube URL or ID.');
       return;
@@ -1910,32 +1701,131 @@ class LlamaApp extends LitElement {
     this._sectionsPickerEl?.show(mode);
   }
 
-  // Edit the current section (se): no picker — find section nearest to
-  // the playhead and open the edit modal directly.
-  _editCurrentSection() {
-    const section = nearestSectionLeft(this.sections, this.currentTime);
-    if (!section) {
-      this._setWarning('No current section.');
-      return;
+  // Returns entity-type configuration for section/chapter handler helpers.
+  _getDividerCtx(type) {
+    if (type === 'section') {
+      return {
+        entities:    this.sections,
+        setEntities: (v) => { this.sections = v; },
+        modalEl:     this._editSectionModalEl,
+        label:       'Section',
+        addFn:       addSection,
+        nearestFn:   nearestSectionLeft,
+        getBoundsFn: getSectionBounds,
+        fixEndFn:    fixSectionEnd,
+      };
     }
-    const bounds     = getSectionBounds(this.sections, section.start, this.duration);
-    const derivedEnd = (section.end == null) ? (bounds?.end ?? null) : null;
-    const idx        = this.sections.findIndex(s => s.id === section.id);
-    const validator  = (start, end) => validateEntityChange(this.sections, idx, start, end, this.duration);
-    this._editSectionModalEl?.show(section, derivedEnd, validator);
+    return {
+      entities:    this.chapters,
+      setEntities: (v) => { this.chapters = v; },
+      modalEl:     this._editChapterModalEl,
+      label:       'Chapter',
+      addFn:       addChapterDivider,
+      nearestFn:   nearestChapterLeft,
+      getBoundsFn: getChapterBounds,
+      fixEndFn:    fixChapterEnd,
+    };
   }
 
-  _editCurrentChapter() {
-    const chapter = nearestChapterLeft(this.chapters, this.currentTime);
-    if (!chapter) {
-      this._setWarning('No current chapter.');
+  // Unified handlers for the five section/chapter action pairs (R2-3).
+  // Each method accepts a type string ('section' or 'chapter') and
+  // dispatches to the appropriate data functions via _getDividerCtx.
+
+  _scratchDivider(type) {
+    const { entities, label, nearestFn, getBoundsFn } = this._getDividerCtx(type);
+    const bounds = getBoundsFn(entities, this.currentTime, this.duration);
+    if (!bounds || bounds.end == null) {
+      this._setWarning(`No current ${label.toLowerCase()}.`);
       return;
     }
-    const bounds     = getChapterBounds(this.chapters, chapter.start, this.duration);
-    const derivedEnd = (chapter.end == null) ? (bounds?.end ?? null) : null;
-    const idx        = this.chapters.findIndex(c => c.id === chapter.id);
-    const validator  = (start, end) => validateEntityChange(this.chapters, idx, start, end, this.duration);
-    this._editChapterModalEl?.show(chapter, derivedEnd, validator);
+    const entity   = nearestFn(entities, this.currentTime);
+    const padStart = this._appState?.options.loop_pad_start ?? DEFAULT_OPTIONS.loop_pad_start;
+    const padEnd   = this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end;
+    const newStart = Math.max(0, bounds.start - padStart);
+    const newEnd   = Math.min(this.duration ?? Infinity, bounds.end + padEnd);
+    this._clearZoomIfOutside(newStart, newEnd);
+    this.loopStart = newStart;
+    this.loopEnd   = newEnd;
+    this.looping   = true;
+    this.loopSrc   = { id: entity?.id ?? null, label: entity?.name || null, type, start: bounds.start, end: bounds.end };
+    this.statusMsg = `${label}: scratched.`;
+  }
+
+  _setDivider(type) {
+    const { entities, setEntities, label, addFn, nearestFn } = this._getDividerCtx(type);
+    const lbl  = label.toLowerCase();
+    const time = this._vc?.getCurrentTime() ?? 0;
+    const containing = nearestFn(entities, time);
+    if (containing && containing.end != null && time <= containing.end) {
+      this._setWarning(`Cannot create ${lbl}: inside a fixed ${lbl}.`);
+      return;
+    }
+    const entity = addFn(entities, time);
+    if (!entity) {
+      this._setWarning(`Cannot create ${lbl}: too close to an existing one.`);
+      return;
+    }
+    this.statusMsg = `${label}: created.`;
+    this._pushUndoSnapshot();
+    setEntities([...entities]);
+    this._saveCurrentState();
+  }
+
+  _fixDivider(type) {
+    const { entities, setEntities, label, nearestFn, fixEndFn } = this._getDividerCtx(type);
+    const lbl    = label.toLowerCase();
+    const entity = nearestFn(entities, this.currentTime);
+    if (!entity) {
+      this._setWarning(`No current ${lbl}.`);
+      return;
+    }
+    if (entity.end != null) {
+      this.statusMsg = `${label}: end unfixed.`;
+      this._pushUndoSnapshot();
+      entity.end = null;
+    } else {
+      if (this.duration == null) {
+        this._setError(`Cannot fix ${lbl} end: video duration unknown.`);
+        return;
+      }
+      this.statusMsg = `${label}: end fixed.`;
+      this._pushUndoSnapshot();
+      fixEndFn(entities, entity.id, this.duration);
+    }
+    setEntities([...entities]);
+    this._saveCurrentState();
+  }
+
+  _zoomDivider(type) {
+    const { entities, label, getBoundsFn } = this._getDividerCtx(type);
+    if (this.zoomSource?.trigger === type) {
+      this.zoomSource = null;
+      this.statusMsg  = 'Zoom: off.';
+      return;
+    }
+    const bounds = getBoundsFn(entities, this.currentTime, this.duration);
+    if (!bounds || bounds.end == null) {
+      this._setWarning(`No current ${label.toLowerCase()}.`);
+      return;
+    }
+    this.zoomSource = { start: bounds.start, end: bounds.end, trigger: type };
+    this.statusMsg  = `${label}: zoomed.`;
+    this._seekIntoZoomIfNeeded();
+  }
+
+  // Edit the divider nearest the playhead without a picker (se/ce bindings).
+  _editCurrentDivider(type) {
+    const { entities, label, nearestFn, getBoundsFn, modalEl } = this._getDividerCtx(type);
+    const entity = nearestFn(entities, this.currentTime);
+    if (!entity) {
+      this._setWarning(`No current ${label.toLowerCase()}.`);
+      return;
+    }
+    const bounds     = getBoundsFn(entities, entity.start, this.duration);
+    const derivedEnd = (entity.end == null) ? (bounds?.end ?? null) : null;
+    const idx        = entities.findIndex(e => e.id === entity.id);
+    const validator  = (start, end) => validateEntityChange(entities, idx, start, end, this.duration);
+    modalEl?.show(entity, derivedEnd, validator);
   }
 
   // Open the chapter picker in the given mode, with a guard for empty list.
@@ -1983,513 +1873,16 @@ class LlamaApp extends LitElement {
     this._jumpToExplicit(e.detail.time);
   }
 
-  // dc: compare local vs cloud, categorize each video, show status modal.
-  async _dataCompare() {
-    const userId = this.currentUser?.id;
-    if (!userId) {
-      this._setWarning('Cannot compare local and cloud data: you must be signed in.');
-      return;
-    }
-
-    const cloudState = await loadFromCloud(userId);
-    if (cloudState === false) {
-      this._setError('Cannot compare local and cloud data: cloud request failed.');
-      return;
-    }
-    const cloudVideos = cloudState?.videos ?? [];
-    const { srcOnly, srcNewer, destOnly, destNewer, same } = categorizeVideos(
-      this._appState.videos, cloudVideos
-    );
-    const _name = v => v.name || v.id;
-    this._cloudStatusModalEl?.show({
-      localOnly:  srcOnly.map(_name),
-      localNewer: srcNewer.map(_name),
-      cloudOnly:  destOnly.map(_name),
-      cloudNewer: destNewer.map(_name),
-      same:       same.map(_name),
-    });
-  }
-
-  // ds: save local state to cloud. Categorizes all videos into 5 buckets
-  // (local = source, cloud = dest) and always prompts for review.
-  async _dataSave() {
-    const userId = this.currentUser?.id;
-    if (!userId) {
-      this._setWarning('Cannot save data to cloud: you must be signed in.');
-      return;
-    }
-
-    const cloudState = await loadFromCloud(userId);
-    if (cloudState === false) {
-      this._setError('Cannot save data to cloud: cloud request failed.');
-      return;
-    }
-    const cloudVideos = cloudState?.videos ?? [];
-    const cloudMap = new Map(cloudVideos.map(v => [v.id, v]));
-    const localMap = new Map(this._appState.videos.map(v => [v.id, v]));
-
-    // Categorize all videos into 5 buckets (local = source, cloud = dest).
-    const { srcOnly, srcNewer, destOnly, destNewer, same } = categorizeVideos(
-      this._appState.videos, cloudVideos
-    );
-
-    const result = await this._showDataOp({
-      operation: 'cloud save',
-      srcLabel:  'Library',
-      destLabel: 'Cloud',
-      srcOnly:   srcOnly.map(v => v.name || v.id),
-      srcNewer:  srcNewer.map(v => v.name || v.id),
-      destOnly:  destOnly.map(v => v.name || v.id),
-      destNewer: destNewer.map(v => v.name || v.id),
-      same:      same.map(v => v.name || v.id),
-    });
-    if (result === null) return;
-
-    // Build merged video list for cloud upload.
-    const mergedVideos = [];
-
-    for (const cv of cloudMap.values()) {
-      const lv = localMap.get(cv.id);
-      if (!lv) {
-        // destOnly: cloud-only
-        if (!result.deleteDestOnly) mergedVideos.push(cv);
-      } else {
-        const cvTs = cv.last_modified ?? 0;
-        const lvTs = lv.last_modified ?? 0;
-        if (cvTs > lvTs) {
-          // destNewer: cloud newer than local
-          if (result.replaceDestNewer) mergedVideos.push(lv);
-          else mergedVideos.push(cv);
-        } else if (lvTs > cvTs) {
-          // srcNewer: local newer than cloud
-          if (result.replaceSrcNewer) mergedVideos.push(lv);
-          else mergedVideos.push(cv);
-        } else {
-          // same
-          if (result.replaceSame) mergedVideos.push(lv);
-          else mergedVideos.push(cv);
-        }
-      }
-    }
-    for (const lv of srcOnly) {
-      if (result.addSrcOnly) mergedVideos.push(lv);
-    }
-
-    // stashes are local-only; exclude from cloud upload.
-    const { stashes: _s, ...baseState } = this._appState;
-    const stateToUpload = { ...baseState, videos: mergedVideos };
-    const ok = await saveToCloud(stateToUpload, userId);
-    if (ok) {
-      this.statusMsg = 'Data: saved to cloud.';
-    } else {
-      this._setError('Cannot save data to cloud: cloud request failed.');
-    }
-  }
-
-  // dr: read cloud state into local. Categorizes all videos into 5 buckets
-  // (cloud = source, local = dest) and always prompts for review.
-  async _dataRead() {
-    const userId = this.currentUser?.id;
-    if (!userId) {
-      this._setWarning('Cannot read data from cloud: you must be signed in.');
-      return;
-    }
-
-    const cloudState = await loadFromCloud(userId);
-    if (cloudState === false) {
-      this._setError('Cannot read data from cloud: cloud request failed.');
-      return;
-    }
-    if (!cloudState) {
-      this._setWarning('Cannot read data from cloud: no cloud data found.');
-      return;
-    }
-
-    const cloudVideos = cloudState.videos ?? [];
-    const cloudMap    = new Map(cloudVideos.map(v => [v.id, v]));
-
-    // Categorize all videos into 5 buckets (cloud = source, local = dest).
-    const { srcOnly, srcNewer, destOnly, destNewer, same } = categorizeVideos(
-      cloudVideos, this._appState.videos
-    );
-
-    const result = await this._showDataOp({
-      operation: 'cloud read',
-      srcLabel:  'Cloud',
-      destLabel: 'Library',
-      srcOnly:   srcOnly.map(v => v.name || v.id),
-      srcNewer:  srcNewer.map(v => v.name || v.id),
-      destOnly:  destOnly.map(v => v.name || v.id),
-      destNewer: destNewer.map(v => v.name || v.id),
-      same:      same.map(v => v.name || v.id),
-    });
-    if (result === null) return;
-
-    // Apply choices: merge cloud into local.
-
-    // Remove destOnly (local-only) if user chose to delete.
-    if (result.deleteDestOnly) {
-      const destOnlyIds = new Set(destOnly.map(v => v.id));
-      this._appState.videos = this._appState.videos.filter(v => !destOnlyIds.has(v.id));
-    }
-
-    // Merge cloud videos into local.
-    for (const cv of cloudMap.values()) {
-      const idx = this._appState.videos.findIndex(v => v.id === cv.id);
-      if (idx === -1) {
-        // srcOnly
-        if (result.addSrcOnly) this._appState.videos.push(cv);
-      } else {
-        const lv   = this._appState.videos[idx];
-        const cvTs = cv.last_modified ?? 0;
-        const lvTs = lv.last_modified ?? 0;
-        if (cvTs > lvTs) {
-          // srcNewer
-          if (result.replaceSrcNewer) {
-            this._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
-            this._appState.videos[idx] = cv;
-          }
-        } else if (lvTs > cvTs) {
-          // destNewer
-          if (result.replaceDestNewer) {
-            this._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
-            this._appState.videos[idx] = cv;
-          }
-        } else {
-          // same
-          if (result.replaceSame) {
-            this._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
-            this._appState.videos[idx] = cv;
-          }
-        }
-      }
-    }
-
-    // If the current video was replaced by a cloud version, re-sync UI.
-    const currentVideo = this._appState.videos.find(v => v.id === this.currentVideoId);
-    if (currentVideo) this._syncFromVideo(currentVideo);
-
-    save(this._appState);
-    this.videos  = [...this._appState.videos];
-    this.stashes = { ...this._appState.stashes };
-    this.statusMsg = 'Data: read from cloud.';
-  }
-
-  // Export all app data as a downloadable JSON file.
-  _exportAll() {
-    this._saveCurrentState();
-    const d = new Date();
-    const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    _downloadJson(exportAll(this._appState), `loopllama-${date}.json`);
-    this.statusMsg = 'Data: exported.';
-  }
-
-
-  // Create a Supabase-backed share for the current video and surface the URL.
-  async _createVideoShare() {
-    if (!this.currentVideoId) { this._setWarning('No current video.'); return; }
-    this._saveCurrentState();
-    const video   = this._appState.videos.find(v => v.id === this.currentVideoId);
-    const payload = buildVideoPayload(video);
-    try {
-      const id  = await createShare('video', payload, video.url, video.name || null);
-      const url = shareUrl(id);
-      navigator.clipboard.writeText(url)
-        .then(() => { this.statusMsg = 'Shared video: URL copied to clipboard.'; })
-        .catch(() => { this._setError('Cannot provide shared video URL: clipboard blocked.'); });
-    } catch (err) {
-      this.errorMsg = `Cannot provide shared video URL: ${err.message}.`;
-    }
-  }
-
-  // Create a Supabase-backed share for the current scratch loop and surface the URL.
-  async _createLoopShare() {
-    if (!this.currentVideoId) { this._setWarning('No current video.'); return; }
-    if (!this._isLoopValid()) { this._setWarning('Cannot provide shared scratch loop URL: invalid range.'); return; }
-    this._saveCurrentState();
-    const video   = this._appState.videos.find(v => v.id === this.currentVideoId);
-    const payload = buildLoopPayload(video, this.loopStart, this.loopEnd);
-    try {
-      const id  = await createShare('loop', payload, video.url, video.name || null);
-      const url = shareUrl(id);
-      navigator.clipboard.writeText(url)
-        .then(() => { this.statusMsg = 'Shared scratch loop: URL copied to clipboard.'; })
-        .catch(() => { this._setError('Cannot provide shared scratch loop URL: clipboard blocked.'); });
-    } catch (err) {
-      this.errorMsg = `Cannot provide shared scratch loop URL: ${err.message}.`;
-    }
-  }
-
-  // Handle file-picker change: read JSON and hand off to async importer.
-  _onFileImport(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    e.target.value = '';   // reset so the same file can be re-imported
-    const reader = new FileReader();
-    reader.onload = async (evt) => { await this._importFromJson(evt.target.result); };
-    reader.readAsText(file);
-  }
-
-  // JSON import: categorizes all videos into 5 buckets
-  // (import = source, local = dest) and always prompts for review.
-  async _importFromJson(jsonStr) {
-    let incoming;
-    try {
-      incoming = parseImport(jsonStr);
-    } catch (err) {
-      this.errorMsg = `Cannot import data: ${err.message}.`;
-      return;
-    }
-
-    // Categorize all videos into 5 buckets (import = source, local = dest).
-    const { srcOnly, srcNewer, destOnly, destNewer, same } = categorizeVideos(
-      incoming.filter(v => v.id), this._appState.videos
-    );
-
-    const result = await this._showDataOp({
-      operation: 'import data',
-      srcLabel:  'File',
-      destLabel: 'Library',
-      srcOnly:   srcOnly.map(v => v.name || v.id),
-      srcNewer:  srcNewer.map(v => v.name || v.id),
-      destOnly:  destOnly.map(v => v.name || v.id),
-      destNewer: destNewer.map(v => v.name || v.id),
-      same:      same.map(v => v.name || v.id),
-    });
-    if (result === null) return;
-
-    // Apply choices: merge import into local.
-
-    // Remove destOnly (local-only) if user chose to delete.
-    if (result.deleteDestOnly) {
-      const destOnlyIds = new Set(destOnly.map(v => v.id));
-      this._appState.videos = this._appState.videos.filter(v => !destOnlyIds.has(v.id));
-    }
-
-    // Merge import videos into local.
-    for (const iv of incoming) {
-      if (!iv.id) continue;
-      const idx = this._appState.videos.findIndex(v => v.id === iv.id);
-      if (idx === -1) {
-        // srcOnly
-        if (result.addSrcOnly) this._appState.videos.push(iv);
-      } else {
-        const lv   = this._appState.videos[idx];
-        const ivTs = iv.last_modified ?? 0;
-        const lvTs = lv.last_modified ?? 0;
-        if (ivTs > lvTs) {
-          // srcNewer
-          if (result.replaceSrcNewer) {
-            this._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
-            this._appState.videos[idx] = iv;
-          }
-        } else if (lvTs > ivTs) {
-          // destNewer
-          if (result.replaceDestNewer) {
-            this._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
-            this._appState.videos[idx] = iv;
-          }
-        } else {
-          // same
-          if (result.replaceSame) {
-            this._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
-            this._appState.videos[idx] = iv;
-          }
-        }
-      }
-    }
-
-    this.videos  = [...this._appState.videos];
-    this.stashes = { ...this._appState.stashes };
-    // If the current video was replaced, re-sync reactive props so stale
-    // state isn't flushed back over the imported data on the next video switch.
-    const currentVideo = this._appState.videos.find(v => v.id === this.currentVideoId);
-    if (currentVideo) this._syncFromVideo(currentVideo);
-    this._save();
-    this.statusMsg = 'Data: imported.';
-  }
-
-  // Show the shared-video conflict modal and return a Promise that resolves to
-  // true (replace) or false (skip / dismiss).
-  _showSharedVideoConflict(info) {
-    return new Promise(resolve => {
-      this._sharedVideoConflictResolve = resolve;
-      this._sharedVideoConflictModalEl?.show(info);
-    });
-  }
-
-  _onShareConflictReplace() { this._sharedVideoConflictResolve?.(true);  this._sharedVideoConflictResolve = null; }
-  _onShareConflictSkip()    { this._sharedVideoConflictResolve?.(false); this._sharedVideoConflictResolve = null; }
-
-  // Data-op modal: resolves to { conflictChoice, orphanChoice } or null.
-  _showDataOp(params) {
-    return new Promise(resolve => {
-      this._dataOpResolve = resolve;
-      this._dataOpModalEl?.show(params);
-    });
-  }
-
-  _onDataOpResult(e) {
-    this._dataOpResolve?.(e.detail);
-    this._dataOpResolve = null;
-  }
+  // Thin wrappers for modal event handlers used in render() that delegate to
+  // DataOpsManager. The actual logic and promise resolution live in _dataMgr.
+  _onFileImport(e)          { this._dataMgr.onFileImport(e); }
+  _onDataOpResult(e)        { this._dataMgr.onDataOpResult(e); }
+  _onShareConflictReplace() { this._dataMgr.onShareConflictReplace(); }
+  _onShareConflictSkip()    { this._dataMgr.onShareConflictSkip(); }
 
   _onLoadExamplesResult(e) {
     this._loadExamplesResolve?.(e.detail);
     this._loadExamplesResolve = null;
-  }
-
-  // Apply a 'loop' share payload: add the loop to the video's namedLoops and
-  // load it as the active scratch loop.
-  _applyLoopShare(payload) {
-    const { videoUrl, videoTitle, loop, speed } = payload;
-    const parsed = this._parseVideoInput(videoUrl);
-    if (!parsed) { this.errorMsg = 'Invalid URL: shared loop.'; return; }
-
-    let video = this._appState.videos.find(v => v.id === parsed.id);
-    if (!video) {
-      video = createVideo(videoUrl, parsed.id);
-      if (videoTitle) video.name = videoTitle;
-      this._appState.videos.push(video);
-      this.videos = [...this._appState.videos];
-    }
-
-    const safeName = _uniqueLoopName(video.loops, loop.name || '');
-    const newLoop  = addLoop(video.loops, loop.start, loop.end, safeName);
-
-    this._appState.currentVideoId = video.id;
-    this.currentVideoId = video.id;
-    this._syncFromVideo(video);
-    this.loopStart = loop.start;
-    this.loopEnd   = loop.end;
-    this.loopSrc   = { id: newLoop.id, label: safeName || null, type: 'loop', start: loop.start, end: loop.end };
-    this.looping   = true;
-    if (speed) this._vc.setPlaybackRate(speed);
-    this._vc.cueVideo(video.id, loop.start);
-    this._save();
-    this.statusMsg = 'Shared loop: loaded.';
-  }
-
-  // Apply a 'video' share payload: add to registry (or replace after confirm),
-  // then switch to it.
-  async _applyVideoShare(payload) {
-    const { videoUrl, videoTitle, sections, namedLoops, marks, chapters,
-            speed, start, end } = payload;
-    const parsed = this._parseVideoInput(videoUrl);
-    if (!parsed) { this.errorMsg = 'Invalid URL: shared video.'; return; }
-
-    const displayName = videoTitle || parsed.id;
-    let video = this._appState.videos.find(v => v.id === parsed.id);
-
-    if (video) {
-      const replace = await this._showSharedVideoConflict({
-        videoName:      displayName,
-        localModified:  video.last_modified ?? null,
-        sharedModified: payload.last_modified ?? null,
-      });
-      if (!replace) {
-        return false;
-      }
-      // Stash the current version before replacing.
-      this._appState.stashes[video.id] = JSON.parse(JSON.stringify(video));
-      this.stashes = { ...this._appState.stashes };
-    } else {
-      video = createVideo(videoUrl, parsed.id);
-      this._appState.videos.push(video);
-    }
-
-    if (videoTitle) video.name = videoTitle;
-    video.sections  = sections  ?? [];
-    video.marks     = marks     ?? [];
-    video.chapters  = chapters  ?? [];
-    video.speed     = speed     ?? 1.0;
-    video.start     = start     ?? 0;
-    video.end       = end       ?? null;
-    const sl = payload.scratchLoop ?? {};
-    const scratchStart = sl.start ?? 0;
-    const scratchEnd   = sl.end   ?? 0;
-    video.scratchLoop = {
-      start:      scratchStart,
-      end:        scratchEnd,
-      looping:    (payload.looping && scratchStart < scratchEnd) ? true : false,
-      sourceId:   null,
-      sourceType: null,
-    };
-    video.loops = [...(namedLoops ?? [])];
-    this.videos = [...this._appState.videos];
-    // Don't use _loadVideoObject here: it calls _saveCurrentState() first, which
-    // would overwrite the payload data we just set with empty reactive props.
-    video.last_opened = Date.now();
-    this._appState.currentVideoId = video.id;
-    this.currentVideoId = video.id;
-    this._syncFromVideo(video);
-    const _startAt = this.looping && this.loopStart < this.loopEnd ? this.loopStart : 0;
-    this._vc.loadVideo(video.id, _startAt);
-    this.duration = null;
-    this._save();
-    logVideoLoad(video.id);
-    this.statusMsg = 'Shared video: loaded.';
-    return true;
-  }
-
-  // Check for a Supabase share (?share=id) or legacy loop URL (?v=id&s=start&e=end).
-  // Returns true if a share was applied, false otherwise.
-  async _handleStartupShare() {
-    const shareId = shareIdFromUrl();
-    if (shareId) {
-      let applied = false;
-      try {
-        const share = await fetchShare(shareId);
-        if (share.share_type === 'loop')  { this._applyLoopShare(share.payload); applied = true; }
-        if (share.share_type === 'video') applied = await this._applyVideoShare(share.payload) ?? false;
-      } catch (err) {
-        this.errorMsg = `Could not load share URL: ${err.message}.`;
-      }
-      const clean = new URL(window.location.href);
-      clean.searchParams.delete('share');
-      history.replaceState(null, '', clean.toString());
-      return applied;
-    }
-
-    // Legacy: ?v=id&s=start&e=end
-    return this._handleStartupUrlParams();
-  }
-
-  // Parse ?v=id&s=start&e=end startup URL params for loop sharing.
-  // If all three are present and valid, loads the video and sets the scratch loop.
-  // Returns true if a shared loop was applied, false otherwise.
-  _handleStartupUrlParams() {
-    const params = new URLSearchParams(window.location.search);
-    const videoId = params.get('v');
-    const start   = parseFloat(params.get('s'));
-    const end     = parseFloat(params.get('e'));
-    if (!videoId || isNaN(start) || isNaN(end) || start >= end) return false;
-
-    // Find or create the video entry.
-    let video = this._appState.videos.find(v => v.id === videoId);
-    if (!video) {
-      video = createVideo(videoId, videoId);
-      this._appState.videos.push(video);
-      this.videos = [...this._appState.videos];
-    }
-
-    this._appState.currentVideoId = video.id;
-    this.currentVideoId = video.id;
-    this._syncFromVideo(video);
-    this.loopStart = start;
-    this.loopEnd   = end;
-    this._vc.cueVideo(video.id, start);
-    this.statusMsg = 'Shared loop: loaded.';
-    this._save();
-
-    // Remove the params from the URL bar without reloading the page.
-    const clean = new URL(window.location.href);
-    clean.searchParams.delete('v');
-    clean.searchParams.delete('s');
-    clean.searchParams.delete('e');
-    history.replaceState(null, '', clean.toString());
-
-    return true;
   }
 
   // Handle ll-jump-section from sections picker (mode='jump').
@@ -2583,56 +1976,15 @@ class LlamaApp extends LitElement {
     if (action === 'signInGoogle')  signInWithGoogle();
     if (action === 'signInGitHub')  signInWithGitHub();
     if (action === 'signOut')       signOut();
-    if (action === 'signOutRemove') this._signOutAndRemoveCloudData();
+    if (action === 'signOutRemove') this._dataMgr.signOutAndRemoveCloudData();
     if (action === 'whySignIn')     window.open(`${_siteOrigin()}/loopllama/v2/help/#why-sign-in`, '_blank');
     if (action === 'privacyPolicy') window.open(`${_siteOrigin()}/loopllama/v2/help/#privacy-policy`, '_blank');
-  }
-
-  // Called when a user signs in (either on page load or after OAuth redirect).
-  // Auth only: enables cloud_backup and saves to localStorage.
-  // If local has no videos, nudges the user to run dr.
-  async _handleSignIn(user) {
-    this._appState.options.cloud_backup = true;
-    save(this._appState);
-    this.statusMsg = 'Signed in.';
-  }
-
-  // Sign out and remove the user's cloud data.
-  // Disables cloud_backup so the user is not nudged to sign in again.
-  async _signOutAndRemoveCloudData() {
-    const userId = this.currentUser?.id;
-    this._skipSignOutMsg = true;
-    if (userId) {
-      try {
-        await deleteFromCloud(userId);
-        this.statusMsg = 'Cloud data: deleted.';
-      } catch (err) {
-        this._setError(`Cannot delete cloud data: ${err.message}.`);
-      }
-    }
-    this._appState.options.cloud_backup = false;
-    this._save();
-    await signOut();
-  }
-
-  _shuffleQuipDeck(avoidFirst = null) {
-    // Fisher-Yates shuffle into a fresh deck.
-    const deck = QUIPS.map((_, i) => i);
-    for (let i = deck.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [deck[i], deck[j]] = [deck[j], deck[i]];
-    }
-    // Avoid repeating the last quip of the previous cycle at position 0.
-    if (avoidFirst !== null && deck[0] === avoidFirst && deck.length > 1) {
-      [deck[0], deck[1]] = [deck[1], deck[0]];
-    }
-    return deck;
   }
 
   _nextQuip() {
     if (this._quipPos >= this._quipDeck.length) {
       const lastIdx = this._quipDeck[this._quipDeck.length - 1];
-      this._quipDeck = this._shuffleQuipDeck(lastIdx);
+      this._quipDeck = _shuffleQuipDeck(lastIdx);
       this._quipPos = 0;
     }
     this._quip = QUIPS[this._quipDeck[this._quipPos++]];
@@ -2640,7 +1992,7 @@ class LlamaApp extends LitElement {
   }
 
   _onQuipEnter() {
-    this._quipDeck = this._shuffleQuipDeck();
+    this._quipDeck = _shuffleQuipDeck();
     this._quipPos = 0;
     this._nextQuip();
     this._quipInterval = setInterval(() => this._nextQuip(), QUIP_INTERVAL_MS);
@@ -2959,6 +2311,21 @@ class LlamaApp extends LitElement {
   }
 }
 
+// Fisher-Yates shuffle of QUIPS indices into a fresh deck.
+// avoidFirst: if set, swap deck[0] to avoid repeating the last quip
+// of the previous cycle at position 0.
+function _shuffleQuipDeck(avoidFirst = null) {
+  const deck = QUIPS.map((_, i) => i);
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  if (avoidFirst !== null && deck[0] === avoidFirst && deck.length > 1) {
+    [deck[0], deck[1]] = [deck[1], deck[0]];
+  }
+  return deck;
+}
+
 /// Reconstruct the ephemeral loopSrc object from persisted sourceId/sourceType
 // and the current video's entity arrays. Returns { id, label, type, start, end }
 // or null if the entity is not found or inputs are missing.
@@ -2989,38 +2356,12 @@ function _deriveLoopSrc(video, sourceId, sourceType) {
   return null;
 }
 
-// Return a loop name that doesn't collide with any existing named loop.
-// If the candidate name is taken, appends " (shared)", then " (shared #2)", etc.
-function _uniqueLoopName(loops, name) {
-  const taken = loops.map(l => l.name);
-  if (!taken.includes(name)) return name;
-  const base = name ? `${name} (shared)` : '(shared)';
-  if (!taken.includes(base)) return base;
-  for (let n = 2; n <= 99; n++) {
-    const c = name ? `${name} (shared #${n})` : `(shared #${n})`;
-    if (!taken.includes(c)) return c;
-  }
-  return base;
-}
-
-
 // Return the base URL for The Fifth Fret site. When running under the Vite
 // dev server (port 5173), the Jekyll site is on port 4000 instead.
 function _siteOrigin() {
   return window.location.port === '5173'
     ? 'http://127.0.0.1:4000'
     : window.location.origin;
-}
-
-// Trigger a JSON file download in the browser.
-function _downloadJson(jsonStr, filename) {
-  const blob = new Blob([jsonStr], { type: 'application/json' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
 }
 
 customElements.define('llama-app', LlamaApp);

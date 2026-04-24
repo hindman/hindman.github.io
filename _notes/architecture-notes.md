@@ -223,7 +223,7 @@ direct children make up the main layout and all modals/pickers:
 
 ### Non-Component Modules
 
-Two key controllers live outside the component tree:
+Several modules live outside the component tree:
 
 - `videoController.js`: wraps the YouTube IFrame API. Handles player
   lifecycle, time polling, duration detection, and playback rate. Fires
@@ -237,6 +237,21 @@ Two key controllers live outside the component tree:
   count prefixes, and scratch-edit mode. Uses `event.composedPath()[0]`
   for focus checks to work correctly across shadow boundaries. Dispatches
   named actions to `<llama-app>`.
+
+- `UndoManager` (undo-manager.js): manages the undo/redo stacks. Holds
+  `<llama-app>`'s snapshot callbacks (`getSnapshot`, `applySnapshot`,
+  `onUndo`, `onRedo`, `onEmpty`) and exposes `push()`, `undo()`, and
+  `redo()`. Stack mechanics only — no knowledge of app state shape.
+
+- `DataOpsManager` (data-ops-manager.js): owns all cloud, import/export,
+  and sharing handler methods that would otherwise crowd `<llama-app>`.
+  Holds a back-reference to the app component and calls its state and
+  methods directly. Also exports `parseVideoInput` (YouTube URL/ID parser)
+  used by `<llama-app>._loadUrl`.
+
+- `format.js`: shared time-formatting utilities. `fmtTime` (round-based,
+  `''` for null) is used by edit modals. `fmtTimePlain` (floor-based,
+  `'?'` for null) is used by pickers and status messages.
 
 ### Menu System
 
@@ -270,7 +285,13 @@ and count prefixes. Implemented in `llama-whichkey.js`.
     src/main.js                      | Entry point; bootstraps the app
     src/state.js                     | Entity factories and pure data functions
     src/storage.js                   | localStorage load/save; cloud read/write;
-                                     | import/export; schema migration
+                                     | import/export; schema migration;
+                                     | categorizeVideos (5-bucket conflict sort)
+    src/format.js                    | Shared time-formatting utilities
+                                     | (fmtTime, fmtTimePlain)
+    src/undo-manager.js              | UndoManager: push/undo/redo stack mechanics
+    src/data-ops-manager.js          | DataOpsManager: cloud/import/export/sharing
+                                     | handlers; parseVideoInput
     src/keyboardController.js        | Multi-key binding engine
     src/videoController.js           | YouTube IFrame API wrapper
     src/auth.js                      | Supabase auth helpers (sign in/out, user)
