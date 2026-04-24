@@ -5,10 +5,7 @@
 //
 // Props:
 //   videoName, videoId, chapterName, sectionName  -- strings
-//   loopSourceLabel   -- e.g. "Verse A"
-//   loopSourceType    -- 'loop' | 'section' | 'chapter' | null
-//   loopSourceStart   -- unpadded start of source entity (seconds) | null
-//   loopSourceEnd     -- unpadded end of source entity (seconds) | null
+//   loopSrc           -- { id, label, type, start, end } | null
 //   loopDirty         -- true when scratch-loop bounds differ from source
 //   duration, zoomLabel, zone2Mode
 
@@ -80,10 +77,7 @@ class LlamaCurrent extends LitElement {
     videoId:           { type: String },
     chapterName:       { type: String },
     sectionName:       { type: String },
-    loopSourceLabel:   { type: String },
-    loopSourceType:    { type: String },
-    loopSourceStart:   { type: Number },
-    loopSourceEnd:     { type: Number },
+    loopSrc:           { type: Object },
     loopDirty:         { type: Boolean },
     duration:          { type: Number },
     zoomLabel:         { type: String },
@@ -96,10 +90,7 @@ class LlamaCurrent extends LitElement {
     this.videoId           = null;
     this.chapterName       = null;
     this.sectionName       = null;
-    this.loopSourceLabel   = null;
-    this.loopSourceType    = null;
-    this.loopSourceStart   = null;
-    this.loopSourceEnd     = null;
+    this.loopSrc           = null;
     this.loopDirty         = false;
     this.duration          = null;
     this.zoomLabel         = null;
@@ -123,13 +114,13 @@ class LlamaCurrent extends LitElement {
   }
 
   _loopSourceValue() {
-    if (!this.loopSourceType) return null;
-    const typeLabel = this.loopSourceType[0].toUpperCase() + this.loopSourceType.slice(1);
-    const nameStr   = this.loopSourceLabel ? `: ${this.loopSourceLabel}` : '';
-    if (this.loopSourceStart == null || this.loopSourceEnd == null) {
+    if (!this.loopSrc) return null;
+    const typeLabel = this.loopSrc.type[0].toUpperCase() + this.loopSrc.type.slice(1);
+    const nameStr   = this.loopSrc.label ? `: ${this.loopSrc.label}` : '';
+    if (this.loopSrc.start == null || this.loopSrc.end == null) {
       return html`${typeLabel}${nameStr}`;
     }
-    const range = ` [${this._fmtDuration(this.loopSourceStart)} \u2013 ${this._fmtDuration(this.loopSourceEnd)}]`;
+    const range = ` [${this._fmtDuration(this.loopSrc.start)} \u2013 ${this._fmtDuration(this.loopSrc.end)}]`;
     return html`${typeLabel}${nameStr}<span class="${this.loopDirty ? 'dirty-range' : ''}">${range}</span>`;
   }
 
@@ -146,7 +137,7 @@ class LlamaCurrent extends LitElement {
           ${this._row('Section',     this.sectionName)}
           <div class="current-row">
             <div class="row-label">Scratch loop source</div>
-            <div class="row-value ${!this.loopSourceType ? 'dim' : ''}">${this._loopSourceValue() ?? '—'}</div>
+            <div class="row-value ${!this.loopSrc ? 'dim' : ''}">${this._loopSourceValue() ?? '—'}</div>
           </div>
           ${this.zoomLabel ? html`
             <div class="current-row">

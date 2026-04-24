@@ -336,5 +336,5 @@ ${this._renderGroup('Chapters', this._chapters,
   }
 }
 
-/
 customElements.define('llama-delete-data-modal', LlamaDeleteDataModal);
+

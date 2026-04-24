@@ -7,7 +7,7 @@ import { createKeyboardController } from '../keyboardController.js';
 import {
   DEFAULT_OPTIONS,
   JUMP_HISTORY_MAX, JUMP_THRESHOLD,
-  createVideo, createAppState, createScratchLoop,
+  createVideo, createAppState,
   addMark, deleteMarkById, nearestMarkLeft,
   addSection, deleteSectionById, getSectionBounds, nearestSectionLeft,
   fixSectionEnd,
@@ -18,7 +18,7 @@ import {
   nudgeLoopStart, nudgeLoopEnd,
 } from '../state.js';
 import { EXAMPLES } from '../examples.js';
-import { load, save, exportAll, parseImport, migrateVideo,
+import { load, save, exportAll, parseImport,
          loadFromCloud, saveToCloud, deleteFromCloud } from '../storage.js';
 import { logSessionStart, logVideoLoad } from '../analytics.js';
 import { getUser, onAuthStateChange, signInWithGoogle, signInWithGitHub, signOut } from '../auth.js';
@@ -411,15 +411,20 @@ class LlamaApp extends LitElement {
     this.chapters   = [...(video.chapters ?? [])];
     this.sections   = [...(video.sections ?? [])];
     this.marks      = [...(video.marks    ?? [])];
-    this.namedLoops = (video.loops ?? []).filter(l => !l.is_scratch);
+    this.namedLoops = [...(video.loops    ?? [])];
     this.jumps      = [...(video.jumps    ?? [])];
     this._jumpIdx       = -1;
     this._jumpFromTime  = null;
-    const scratch   = (video.loops ?? []).find(l => l.is_scratch);
-    this.loopStart  = scratch?.start ?? 0;
-    this.loopEnd    = scratch?.end   ?? 0;
-    this.looping         = video.looping ?? false;
-    this.loopSrc         = null;
+    const scratch   = video.scratchLoop;
+    this.loopStart  = scratch?.start   ?? 0;
+    this.loopEnd    = scratch?.end     ?? 0;
+    this.looping    = scratch?.looping ?? false;
+    // Derive loopSrc from persisted sourceId/sourceType; clear stale IDs if entity gone.
+    const derived = _deriveLoopSrc(video, scratch?.sourceId, scratch?.sourceType);
+    if (!derived && scratch?.sourceId && scratch) {
+      scratch.sourceId = null; scratch.sourceType = null;
+    }
+    this.loopSrc         = derived;
     this.speed              = video.speed ?? 1.0;
     this._vc?.setPlaybackRate(this.speed);
     this.seekDelta          = video.seek_delta   ?? DEFAULT_OPTIONS.seek_delta_default;
@@ -456,15 +461,14 @@ class LlamaApp extends LitElement {
     video.marks    = this.marks;
     video.jumps    = this.jumps;
     video.time     = this.currentTime;
-    // Update scratch loop endpoints.
-    let scratch = video.loops?.find(l => l.is_scratch);
-    if (!scratch) {
-      scratch = createScratchLoop();
-    }
-    scratch.start  = this.loopStart;
-    scratch.end    = this.loopEnd;
-    video.looping       = this.looping;
-    video.loops         = [scratch, ...this.namedLoops];
+    // Update scratch loop from reactive state; persist loopSrc identity.
+    if (!video.scratchLoop) video.scratchLoop = { start: 0, end: 0, looping: false, sourceId: null, sourceType: null };
+    video.scratchLoop.start      = this.loopStart;
+    video.scratchLoop.end        = this.loopEnd;
+    video.scratchLoop.looping    = this.looping;
+    video.scratchLoop.sourceId   = this.loopSrc?.id   ?? null;
+    video.scratchLoop.sourceType = this.loopSrc?.type ?? null;
+    video.loops         = [...this.namedLoops];
     video.speed         = this.speed;
     video.seek_delta    = this.seekDelta;
     video.nudge_delta   = this.loopNudgeDelta;
@@ -593,7 +597,7 @@ class LlamaApp extends LitElement {
       // Same current video -- restore entity arrays only; leave playback state alone.
       this.sections   = [...(restoredVideo.sections ?? [])];
       this.marks      = [...(restoredVideo.marks    ?? [])];
-      this.namedLoops = (restoredVideo.loops ?? []).filter(l => !l.is_scratch);
+      this.namedLoops = [...(restoredVideo.loops ?? [])];
       this.chapters   = [...(restoredVideo.chapters ?? [])];
       // Clear stale loop source if the named loop it pointed to was removed.
       if (this.loopSrc?.type === 'loop' && !this.namedLoops.find(l => l.id === this.loopSrc.id)) {
@@ -899,8 +903,9 @@ class LlamaApp extends LitElement {
           ? (this._appState?.options.loop_pad_start ?? DEFAULT_OPTIONS.loop_pad_start) : 0;
         const padEnd = (this.loopSrc.type !== 'loop')
           ? (this._appState?.options.loop_pad_end   ?? DEFAULT_OPTIONS.loop_pad_end)   : 0;
+        const srcEnd   = this.loopSrc.end ?? this.duration ?? Infinity;
         this.loopStart = Math.max(0, this.loopSrc.start - padStart);
-        this.loopEnd   = Math.min(this.duration ?? Infinity, this.loopSrc.end + padEnd);
+        this.loopEnd   = Math.min(this.duration ?? Infinity, srcEnd + padEnd);
         this._clearZoomIfOutside(this.loopStart, this.loopEnd);
         this._autoDisableLoopIfInvalid();
         this.statusMsg = 'Scratch loop: reset to source.';
@@ -2119,7 +2124,7 @@ class LlamaApp extends LitElement {
       return;
     }
 
-    const cloudVideos = (cloudState.videos ?? []).map(migrateVideo);
+    const cloudVideos = cloudState.videos ?? [];
     const cloudMap    = new Map(cloudVideos.map(v => [v.id, v]));
 
     // Categorize all videos into 5 buckets (cloud = source, local = dest).
@@ -2378,7 +2383,6 @@ class LlamaApp extends LitElement {
     this.loopEnd   = loop.end;
     this.loopSrc   = { id: newLoop.id, label: safeName || null, type: 'loop', start: loop.start, end: loop.end };
     this.looping   = true;
-    video.looping  = true;
     if (speed) this._vc.setPlaybackRate(speed);
     this._vc.cueVideo(video.id, loop.start);
     this._save();
@@ -2420,10 +2424,17 @@ class LlamaApp extends LitElement {
     video.speed     = speed     ?? 1.0;
     video.start     = start     ?? 0;
     video.end       = end       ?? null;
-    const scratch   = createScratchLoop();
-    if (payload.scratchLoop) { scratch.start = payload.scratchLoop.start; scratch.end = payload.scratchLoop.end; }
-    video.looping   = (payload.looping && scratch.start < scratch.end) ? true : false;
-    video.loops     = [scratch, ...(namedLoops ?? [])];
+    const sl = payload.scratchLoop ?? {};
+    const scratchStart = sl.start ?? 0;
+    const scratchEnd   = sl.end   ?? 0;
+    video.scratchLoop = {
+      start:      scratchStart,
+      end:        scratchEnd,
+      looping:    (payload.looping && scratchStart < scratchEnd) ? true : false,
+      sourceId:   null,
+      sourceType: null,
+    };
+    video.loops = [...(namedLoops ?? [])];
     this.videos = [...this._appState.videos];
     // Don't use _loadVideoObject here: it calls _saveCurrentState() first, which
     // would overwrite the payload data we just set with empty reactive props.
@@ -2759,9 +2770,7 @@ class LlamaApp extends LitElement {
           .looping=${this.looping}
           .loopStart=${this.loopStart}
           .loopEnd=${this.loopEnd}
-          .loopSourceType=${this.loopSrc?.type ?? null}
-          .loopSourceStart=${this.loopSrc?.start ?? null}
-          .loopSourceEnd=${this.loopSrc?.end ?? null}
+          .loopSrc=${this.loopSrc}
           .seekDelta=${this.seekDelta}
           .seekDeltaChoices=${this._appState?.options.seek_delta_choices ?? DEFAULT_OPTIONS.seek_delta_choices}
           .loopNudgeDelta=${this.loopNudgeDelta}
@@ -2795,10 +2804,7 @@ class LlamaApp extends LitElement {
           .videoId=${currentVideo?.id ?? null}
           .chapterName=${currentChapter?.name ?? null}
           .sectionName=${currentSection?.name ?? null}
-          .loopSourceLabel=${this.loopSrc?.label ?? null}
-          .loopSourceType=${this.loopSrc?.type ?? null}
-          .loopSourceStart=${this.loopSrc?.start ?? null}
-          .loopSourceEnd=${this.loopSrc?.end ?? null}
+          .loopSrc=${this.loopSrc}
           .loopDirty=${loopDirty}
           .duration=${this.duration}
           .zoomLabel=${zoomLabel}
@@ -2972,11 +2978,40 @@ class LlamaApp extends LitElement {
   }
 }
 
-// Format seconds as m:ss (for status messages).
+/// Reconstruct the ephemeral loopSrc object from persisted sourceId/sourceType
+// and the current video's entity arrays. Returns { id, label, type, start, end }
+// or null if the entity is not found or inputs are missing.
+// For sections/chapters, end may be null when duration is not yet known.
+function _deriveLoopSrc(video, sourceId, sourceType) {
+  if (!sourceId || !sourceType) return null;
+  if (sourceType === 'loop') {
+    const loop = (video.loops ?? []).find(l => l.id === sourceId);
+    if (!loop) return null;
+    return { id: loop.id, label: loop.name || null, type: 'loop', start: loop.start, end: loop.end };
+  }
+  if (sourceType === 'section') {
+    const sections = video.sections ?? [];
+    const idx = sections.findIndex(s => s.id === sourceId);
+    if (idx === -1) return null;
+    const s   = sections[idx];
+    const end = s.end ?? sections[idx + 1]?.start ?? null;
+    return { id: s.id, label: s.name || null, type: 'section', start: s.start, end };
+  }
+  if (sourceType === 'chapter') {
+    const chapters = video.chapters ?? [];
+    const idx = chapters.findIndex(c => c.id === sourceId);
+    if (idx === -1) return null;
+    const c   = chapters[idx];
+    const end = c.end ?? chapters[idx + 1]?.start ?? null;
+    return { id: c.id, label: c.name || null, type: 'chapter', start: c.start, end };
+  }
+  return null;
+}
+
 // Return a loop name that doesn't collide with any existing named loop.
 // If the candidate name is taken, appends " (shared)", then " (shared #2)", etc.
 function _uniqueLoopName(loops, name) {
-  const taken = loops.filter(l => !l.is_scratch).map(l => l.name);
+  const taken = loops.map(l => l.name);
   if (!taken.includes(name)) return name;
   const base = name ? `${name} (shared)` : '(shared)';
   if (!taken.includes(base)) return base;

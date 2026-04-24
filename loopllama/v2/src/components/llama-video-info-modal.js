@@ -4,7 +4,7 @@
 //   video:      Video object | null
 //   chapters:   Array of Chapter objects
 //   sections:   Array of Section objects
-//   namedLoops: Array of Loop objects (is_scratch=false)
+//   namedLoops: Array of named Loop objects
 //   marks:      Array of Mark objects
 //   duration:   Number | null  -- current video duration (seconds)
 //

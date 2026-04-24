@@ -1,22 +1,40 @@
 
-NEXT:
+Honest assessment of the main cost drivers:
 
-  cl -r v2-refactor-r2.1
+  1. llama-app.js is the biggest problem.
+  At 36K+ tokens, it can't even be read in one shot. Every session that touches it burns
+  tokens on multiple Grep/Read calls just to navigate it. R2-4 touched it in ~8 places. This
+  file alone is likely responsible for a large fraction of your session costs. The
+  architectural fix is splitting it — moving handler groups, module-level helpers, and render
+   logic into separate files. That's essentially R2-3 territory but the payoff would extend
+  well beyond that refactor.
 
-  Decide how to handle migration robustness.
-  Add that to the plan.
+  2. Cross-cutting changes are inherently expensive.
+  R2-4 touched 9 files. There's not much you can do about that organizationally — the schema
+  change was genuinely cross-cutting. But sessions that are bounded to 2–3 files will cost a
+  lot less.
 
-We are implementing Round 2 of our refactoring-assessment.md.
+  3. The compressed summary grows with session scope.
+  The context that gets carried forward into the next session is proportional to what was
+  done. A session that edits 9 files produces a large summary. Tighter sessions produce
+  smaller ones.
+
+  What's actionable:
+
+  - Consider splitting llama-app.js as a standalone task before continuing other refactoring.
+   It would pay for itself within 1–2 sessions.
+  - For sessions like R2-5 (moving categorizeVideos) and R2-3 (handler unification), keep
+  them file-count-bounded and don't bundle extras.
+  - The MEMORY.md content is about as lean as it can be — that's not a significant factor.
+
+  The global CLAUDE.md (your full user profile) is also loaded every session, but that's
+  fixed overhead you likely want there. The real variable cost is llama-app.js.
+
+❯ In our current plan for the rest of Round 2 we just have 3 more sessions to go: R2-5;
+  R2-3; then R2-6. You are essentially suggesting a new refactoring tasks: splitting up
+  llama-app.js. Should that split be done before or after the rest of Round 2?
 
 Current session: 2.
-
-    Session | Focus                    | Items            | Status
-    ----------------------------------------------------------------
-    1       | Tests + shared utilities | R2-1, R2-2, R2-8 | done
-    2       | Scratch loop separation  | R2-4, R2-7       | .
-    3       | Data layer               | R2-5             | .
-    4       | Handler pairs            | R2-3             | .
-    5       | Picker mixin             | R2-6             | .
 
 Let me know if anything is unclear, needs further discussion, or
 should be subdivided into smaller stages of work. If not, please

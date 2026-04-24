@@ -634,30 +634,97 @@ prop declaration pattern across both.
 
 Risk: None beyond the rename and two call site updates.
 
+### 9. Migration coverage gaps across data ingestion paths
+
+Category: Structural / latent correctness bug
+Severity: High
+
+Description: `_migrateAppState()` in storage.js is the authoritative migration
+function but is only called by `load()` (the localStorage path). Three other
+data ingestion paths have incomplete or missing migration:
+
+- Cloud reads: `loadFromCloud()` returns raw state from Supabase with no
+  migration applied. `_dataRead()` calls `migrateVideo()` per video as a
+  partial fix; `_dataSave()` and `_dataCompare()` apply nothing at all.
+  `migrateVideo()` covers only the v1→v2 rename (title→name); all schema
+  changes from v6 onward are not covered.
+
+- JSON import: `parseImport()` calls `migrateVideo()` per video and ignores
+  the `schema_version` field sitting in the file envelope. Same gap as cloud
+  reads.
+
+- Share URL payloads (`_applyLoopShare`, `_applyVideoShare`): custom-shaped
+  and reconstructed field-by-field. No raw video migration needed; these paths
+  are fine.
+
+There is also a latent bug in the v4→v5 transition block of `_migrateAppState()`
+(line 74): it stamps `state.schema_version = SCHEMA_VERSION` (the current
+version, 10) instead of 5. Any data still using the old `version` field would
+skip all intermediate migrations (v6–v10). Dormant now — essentially no such
+data exists in the wild — but structurally wrong.
+
+The gaps are latent today because all existing data is at schema v10 and
+cloud/import round-trips don't cross a schema boundary. They become real
+correctness bugs as soon as R2-4 ships: a pre-v11 JSON export or a cloud state
+stored before the v11 upgrade would arrive with a broken video object (`is_scratch`
+loop still in `video.loops[]`, `video.looping` at the top level, no
+`video.scratchLoop`). The app would silently work with malformed data.
+
+Fix:
+1. Rename `_migrateAppState` → `migrateAppState` (export it).
+2. Call `migrateAppState()` on the cloud state inside `loadFromCloud()` before
+   returning it. This covers all three cloud callers in one move. Remove
+   `_dataRead()`'s existing `.map(migrateVideo)` call.
+3. In `parseImport()`, after parsing the JSON, wrap the videos in a synthetic
+   state `{ schema_version: data.schema_version ?? 0, videos: [...] }` and run
+   `migrateAppState()` on it. Remove the per-video `migrateVideo()` calls.
+4. Fix the v4→v5 line: `state.schema_version = 5`.
+5. Update the `migrateVideo()` doc comment: it is now a cleanup utility only
+   (strip stale per-video fields, canonicalize URL) — not a migration path.
+
+Risk: Low. Changes are confined to storage.js and callers. Main verification:
+import a v10 export (current format) before and after; videos should arrive
+identical. The synthetic-state wrapper in parseImport() is the most novel change
+but is straightforward — `migrateAppState()` only reads `schema_version` and
+`videos` from the state object.
+
 ### Implementation
 
-    Session | Focus                    | Items            | Status
-    ----------------------------------------------------------------
-    1       | Tests + shared utilities | R2-1, R2-2, R2-8 | .
-    2       | Scratch loop separation  | R2-4, R2-7       | .
-    3       | Data layer               | R2-5             | .
-    4       | Handler pairs            | R2-3             | .
-    5       | Picker mixin             | R2-6             | .
+    Session | Focus                    | Items                 | Status
+    -------------------------------------------------------------------
+    1       | Tests + shared utilities | R2-1, R2-2, R2-8      | done
+    2       | Scratch loop separation  | R2-4, R2-7, R2-9      | done
+    3       | Data layer               | R2-5                  | .
+    4       | Handler pairs            | R2-3                  | .
+    5       | Picker mixin             | R2-6                  | .
 
 Session 1 — state.test.js fix (R2-1), fmtTimePlain extraction to format.js
 and replacement in 7 files (R2-2), showEdit→show rename in
 llama-edit-chapter-modal.js (R2-8).
 
-Session 2 — Separate scratch loop from named loops (R2-4). New
-`video.scratchLoop` object `{ start, end, looping, sourceId, sourceType }`
-replaces the `is_scratch` entry in `video.loops[]` and the top-level
-`video.looping` field. Files: state.js (factories), storage.js (migration v11
-+ import/export), llama-app.js (_syncFromVideo, _saveCurrentState, handler
-reads), test files, architecture-notes.md. Also clean up the loopSrc render
-boundary (R2-7): pass `loopSrc` as a single object prop to llama-controls and
-llama-current, removing the per-field decomposition in render(). These belong
-together — both are part of the same loopSrc story and Session 2 already
-touches all the relevant files.
+Session 2 — Three related items that all live in storage.js and its callers:
+
+R2-9 first: fix migration architecture. Export `migrateAppState`, call it
+inside `loadFromCloud()` so all cloud callers get fully-migrated state, rewrite
+`parseImport()` to use the file envelope's `schema_version` and run
+`migrateAppState()` on a synthetic state wrapper, fix the v4→v5 version-stamp
+bug (line 74: 5, not SCHEMA_VERSION), update `migrateVideo()` doc comment to
+reflect its new cleanup-only role.
+
+Then R2-4: separate scratch loop from named loops. New `video.scratchLoop`
+object `{ start, end, looping, sourceId, sourceType }` replaces the
+`is_scratch` entry in `video.loops[]` and the top-level `video.looping` field.
+Add v10→v11 migration block to `migrateAppState()`. Files: state.js
+(factories), storage.js (migration + export), llama-app.js (_syncFromVideo,
+_saveCurrentState, handler reads), both test files, architecture-notes.md.
+
+Then R2-7: clean up the loopSrc render boundary — pass `loopSrc` as a single
+object prop to llama-controls and llama-current, removing the per-field
+decomposition in render(). Belongs in the same session: part of the same
+loopSrc story, and Session 2 already touches all the relevant files.
+
+R2-9 is done first within the session because it restructures the migration
+plumbing that R2-4's v11 block will rely on.
 
 Session 3 — Move `categorizeVideos` to storage.js, export it, add unit tests
 to storage.test.js.

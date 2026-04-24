@@ -22,7 +22,7 @@ export const EXAMPLES = [
     "seek_delta": 1,
     "nudge_delta": 1,
     "entity_type": "section",
-    "looping": true,
+    "scratchLoop": { "start": 0, "end": 19, "looping": true, "sourceId": null, "sourceType": null },
     "last_opened": 1775858168685,
     "zone2_mode": "sections",
     "chapters": [
@@ -109,36 +109,22 @@ export const EXAMPLES = [
     ],
     "loops": [
       {
-        "id": "kf4zydo",
-        "end": 19,
-        "name": "",
-        "start": 0,
-        "source": null,
-        "is_scratch": true
-      },
-      {
         "id": "m4cj7fs",
         "name": "Section tag",
         "start": 76.94232,
-        "end": 90.78550597138977,
-        "source": null,
-        "is_scratch": false
+        "end": 90.78550597138977
       },
       {
         "id": "qbm6vir",
         "name": "Solo",
         "start": 125,
-        "end": 162,
-        "source": null,
-        "is_scratch": false
+        "end": 162
       },
       {
         "id": "2f0c069",
         "name": "Outro riff",
         "start": 225.67748203814696,
-        "end": 233.05485189318847,
-        "source": null,
-        "is_scratch": false
+        "end": 233.05485189318847
       }
     ],
     "marks": [
@@ -185,7 +171,7 @@ export const EXAMPLES = [
     "seek_delta": 1,
     "nudge_delta": 5,
     "entity_type": "any",
-    "looping": true,
+    "scratchLoop": { "start": 864.751025, "end": 1156, "looping": true, "sourceId": null, "sourceType": null },
     "last_opened": 1775857572383,
     "zone2_mode": "chapters",
     "chapters": [
@@ -233,19 +219,9 @@ export const EXAMPLES = [
       }
     ],
     "sections": [],
-    "loops": [
-      {
-        "id": "jo7cx6f",
-        "name": "",
-        "start": 864.751025,
-        "end": 1156,
-        "source": null,
-        "is_scratch": true
-      }
-    ],
+    "loops": [],
     "marks": [],
     "jumps": [ ]
   }
 
 ];
-

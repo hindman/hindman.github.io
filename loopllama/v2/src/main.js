@@ -3,7 +3,7 @@ import '../styles/app.css';
 import './components/llama-app.js';
 import {
   createAppState, createVideo, createSection,
-  createLoop, createScratchLoop, createMark,
+  createLoop, createMark,
 } from './state.js';
 import { load, save, exportAll, exportVideo } from './storage.js';
 
@@ -11,7 +11,7 @@ import { load, save, exportAll, exportVideo } from './storage.js';
 if (import.meta.env.DEV) {
   window._ll = {
     createAppState, createVideo, createSection,
-    createLoop, createScratchLoop, createMark,
+    createLoop, createMark,
     load, save, exportAll, exportVideo,
   };
   console.log('LoopLlama dev: window._ll is available');

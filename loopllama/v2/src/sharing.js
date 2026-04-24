@@ -29,19 +29,19 @@ export function shareIdFromUrl() {
 
 // Build the JSONB payload for a 'video' share from a Video object.
 export function buildVideoPayload(video) {
-  const scratch = video.loops.find(l => l.is_scratch);
+  const scratch = video.scratchLoop;
   return {
     schema_version: SCHEMA_VERSION,
     videoUrl:       video.url,
     videoTitle:     video.name || null,
     sections:       video.sections,
-    namedLoops:     video.loops.filter(l => !l.is_scratch),
+    namedLoops:     video.loops,
     marks:          video.marks,
     chapters:       video.chapters,
     speed:          video.speed,
     start:          video.start,
     end:            video.end,
-    looping:        video.looping ?? false,
+    looping:        scratch?.looping ?? false,
     scratchLoop:    scratch ? { start: scratch.start, end: scratch.end } : null,
     last_modified:  video.last_modified ?? null,
   };

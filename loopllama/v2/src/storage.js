@@ -10,9 +10,10 @@ const STORAGE_KEY = 'loopllama-v2';
 // Migration
 // ---------------------------------------------------------------------------
 
-// Apply all needed migrations to a single video object in place.
-// Used when importing videos that may come from older app versions.
-// Videos no longer carry their own schema_version (removed in v8).
+// Strip stale per-video fields and standardize the URL. This is a cleanup
+// utility, not a migration path — schema-version-gated migrations live in
+// migrateAppState(). Called from migrateAppState() during the pre-v5 block
+// and retained for any callers that work with isolated video objects.
 export function migrateVideo(video) {
   if ('version' in video) {
     const v = video.version ?? 1;
@@ -31,8 +32,9 @@ export function migrateVideo(video) {
 }
 
 // Apply all needed migrations to the full app state in place.
-// Returns the (mutated) state.
-function _migrateAppState(state) {
+// Returns the (mutated) state. Exported so cloud and import paths can
+// use the same authoritative migration chain as the localStorage path.
+export function migrateAppState(state) {
   // Old data used `version`; new data uses `schema_version`. Run all
   // pre-v5 migrations from the old field, then rename it.
   if ('version' in state) {
@@ -71,7 +73,7 @@ function _migrateAppState(state) {
     }
     // v4 → v5: rename `version` → `schema_version` on state and all videos.
     for (const video of state.videos ?? []) migrateVideo(video);
-    state.schema_version = SCHEMA_VERSION;
+    state.schema_version = 5;
     delete state.version;
   }
   // v5 → v6: add last_modified to each video (0 = unknown, treated as oldest);
@@ -85,7 +87,8 @@ function _migrateAppState(state) {
   }
   // v6 → v7: move ever_logged_in → options.cloud_backup; drop ever_logged_in.
   if ((state.schema_version ?? 0) < 7) {
-    if (!('cloud_backup' in (state.options ?? {}))) {
+    if (!state.options) state.options = {};
+    if (!('cloud_backup' in state.options)) {
       state.options.cloud_backup = state.ever_logged_in === true;
     }
     delete state.ever_logged_in;
@@ -110,6 +113,30 @@ function _migrateAppState(state) {
     }
     state.schema_version = 10;
   }
+  // v10 → v11: separate scratch loop from named loops.
+  //   - New video.scratchLoop { start, end, looping, sourceId, sourceType }
+  //     replaces the is_scratch entry in video.loops[] and video.looping.
+  //   - Named loops lose the source and is_scratch fields.
+  if ((state.schema_version ?? 0) < 11) {
+    for (const video of state.videos ?? []) {
+      const scratchIdx = (video.loops ?? []).findIndex(l => l.is_scratch);
+      const scratch    = scratchIdx !== -1 ? video.loops[scratchIdx] : null;
+      video.scratchLoop = {
+        start:      scratch?.start  ?? 0,
+        end:        scratch?.end    ?? 0,
+        looping:    video.looping   ?? false,
+        sourceId:   null,
+        sourceType: null,
+      };
+      if (scratchIdx !== -1) video.loops.splice(scratchIdx, 1);
+      delete video.looping;
+      for (const l of video.loops ?? []) { delete l.source; delete l.is_scratch; }
+    }
+    state.schema_version = 11;
+  }
+  // Final pass: clean up any stale per-video fields (version, schema_version,
+  // URL canonicalization) regardless of how old the source data is. Idempotent.
+  for (const video of state.videos ?? []) migrateVideo(video);
   return state;
 }
 
@@ -121,15 +148,15 @@ function _migrateAppState(state) {
 // single-value fields first, then collections.
 function _reorderVideo(v) {
   const { id, url, name, last_modified, duration, time, start, end,
-          speed, seek_delta, nudge_delta, entity_type, looping,
+          speed, seek_delta, nudge_delta, entity_type, scratchLoop,
           chapters, sections, loops, marks, jumps } = v;
   // Preserve any unexpected extra keys between scalars and collections.
   const known = new Set(['id','url','name','last_modified','duration','time',
-    'start','end','speed','seek_delta','speed_delta','nudge_delta','entity_type','looping',
+    'start','end','speed','seek_delta','speed_delta','nudge_delta','entity_type','scratchLoop',
     'chapters','sections','loops','marks','jumps','schema_version','version']);
   const extra = Object.fromEntries(Object.entries(v).filter(([k]) => !known.has(k)));
   return { id, url, name, last_modified, duration, time, start, end,
-           speed, seek_delta, nudge_delta, entity_type, looping,
+           speed, seek_delta, nudge_delta, entity_type, scratchLoop,
            ...extra,
            chapters, sections, loops, marks, jumps };
 }
@@ -158,7 +185,7 @@ export function load() {
   try {
     const state = JSON.parse(raw);
     const origVersion = state.schema_version ?? state.version;
-    _migrateAppState(state);
+    migrateAppState(state);
     if (state.schema_version !== origVersion) {
       console.log(`LoopLlama: migrated stored data from schema v${origVersion} to v${state.schema_version}`);
       save(state);
@@ -212,7 +239,9 @@ export async function loadFromCloud(userId) {
       .eq('id', userId)
       .maybeSingle();
     if (error) throw error;
-    return data?.app_state ?? null;
+    const state = data?.app_state ?? null;
+    if (state) migrateAppState(state);
+    return state;
   } catch (e) {
     console.error('LoopLlama: loadFromCloud failed', e);
     return false;
@@ -254,20 +283,28 @@ export async function deleteFromCloud(userId) {
 
 // Parse a LoopLlama JSON string and return a migrated array of video objects.
 // Supports two formats:
-//   - Full app state: { currentVideoId, videos: [...] }
+//   - Full app state: { schema_version, videos: [...] }
 //   - Single video:   { id, name, ... }
 // Throws on parse error or unrecognized format.
+// Migration is applied via a synthetic state wrapper so the same version-gated
+// chain used for localStorage and cloud reads applies here too.
 export function parseImport(jsonStr) {
   const data = JSON.parse(jsonStr);
-  let incoming;
+  let videos;
   if (Array.isArray(data.videos)) {
-    incoming = data.videos;
+    videos = data.videos;
   } else if (data.id && typeof data.id === 'string') {
-    incoming = [data];
+    videos = [data];
   } else {
     throw new Error('Unrecognized format: expected a LoopLlama export.');
   }
-  return incoming.map(migrateVideo);
+  // If the file uses the legacy `version` field (pre-v5 format), carry it into
+  // the synthetic state so the pre-v5 migration chain fires correctly.
+  const synthetic = 'version' in data
+    ? { version: data.version ?? 1, options: data.options ?? {}, videos }
+    : { schema_version: data.schema_version ?? 0, options: {}, videos };
+  migrateAppState(synthetic);
+  return synthetic.videos;
 }
 
 // Simple merge of a JSON string into state: imported video wins (add or overwrite).

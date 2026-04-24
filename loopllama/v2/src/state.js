@@ -5,7 +5,7 @@
 // Mutation functions will be added in later stages as needed.
 
 export const APP_VERSION    = 2;
-export const SCHEMA_VERSION = 10;
+export const SCHEMA_VERSION = 11;
 
 export const JUMP_HISTORY_MAX = 40;   // max persisted jump entries per video
 export const JUMP_THRESHOLD   = 15;   // seconds; smaller moves are not stored
@@ -57,12 +57,12 @@ export function createVideo(url, youtubeId) {
     start:       0,       // user-adjustable effective start
     end:         null,    // user-adjustable effective end; null = use duration
     name:        '',
-    looping:     false,
     speed:       1.0,
     seek_delta:  DEFAULT_OPTIONS.seek_delta_default,
+    scratchLoop: { start: 0, end: 0, looping: false, sourceId: null, sourceType: null },
     chapters:    [],
     sections:    [],
-    loops:       [createScratchLoop()],  // always one scratch loop
+    loops:       [],      // named loops only; scratch loop is in scratchLoop
     marks:         [],
     jumps:         [],
     entity_type:   'any',
@@ -91,14 +91,7 @@ export function createSection(start, name = '') {
 
 // Create a named Loop.
 export function createLoop(start, end, name = '') {
-  return { id: createId(), name, start, end, source: null, is_scratch: false };
-}
-
-// Create the scratch loop. One exists per video at all times.
-// Endpoints default to 0/0; they are set when the user loads a loop or
-// manually sets start/end points.
-export function createScratchLoop() {
-  return { id: createId(), name: '', start: 0, end: 0, source: null, is_scratch: true };
+  return { id: createId(), name, start, end };
 }
 
 // Create a Mark.

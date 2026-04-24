@@ -1,7 +1,7 @@
 // llama-loop-picker.js -- modal to pick a saved loop.
 //
 // Props:
-//   namedLoops: Array of Loop objects (is_scratch=false)
+//   namedLoops: Array of named Loop objects
 //   loopSource: string | null  -- id of the currently loaded loop
 //   mode:       'jump' | 'delete'
 //

@@ -1,9 +1,8 @@
 // storage.test.js -- unit tests for importData and migration in storage.js.
 //
 // load() and save() are thin wrappers around localStorage (not available in
-// Node) and are not tested here. The migration logic for _migrateVideo is
-// exercised indirectly through importData, which calls it on all incoming
-// videos.
+// Node) and are not tested here. Migration logic in migrateAppState() is
+// exercised indirectly through importData, which calls it via parseImport().
 
 import { describe, it, expect, vi } from 'vitest';
 vi.mock('./supabase.js', () => ({ supabase: {} }));
@@ -91,5 +90,66 @@ describe('importData', () => {
     });
     importData(json, state);
     expect(state.videos[0].name).toBe('Current Name');
+  });
+});
+
+describe('migrateAppState v10 → v11 (scratch loop separation)', () => {
+  it('extracts is_scratch loop into scratchLoop and removes it from loops', () => {
+    const state = makeState();
+    const json = JSON.stringify({
+      schema_version: 10,
+      videos: [{
+        id: 'vid1',
+        name: 'Test',
+        looping: true,
+        loops: [
+          { id: 'scratch1', name: '', start: 5, end: 10, is_scratch: true },
+          { id: 'named1',   name: 'Riff', start: 20, end: 30 },
+        ],
+      }],
+    });
+    importData(json, state);
+    const v = state.videos[0];
+    expect(v.scratchLoop).toEqual({ start: 5, end: 10, looping: true, sourceId: null, sourceType: null });
+    expect(v.loops).toHaveLength(1);
+    expect(v.loops[0].id).toBe('named1');
+    expect(v.loops[0].is_scratch).toBeUndefined();
+    expect(v.looping).toBeUndefined();
+  });
+
+  it('creates an empty scratchLoop when no is_scratch entry exists', () => {
+    const state = makeState();
+    const json = JSON.stringify({
+      schema_version: 10,
+      videos: [{
+        id: 'vid2',
+        name: 'Test2',
+        looping: false,
+        loops: [{ id: 'named2', name: 'Solo', start: 15, end: 25 }],
+      }],
+    });
+    importData(json, state);
+    const v = state.videos[0];
+    expect(v.scratchLoop).toEqual({ start: 0, end: 0, looping: false, sourceId: null, sourceType: null });
+    expect(v.loops).toHaveLength(1);
+    expect(v.loops[0].id).toBe('named2');
+  });
+
+  it('preserves scratchLoop on already-v11 data', () => {
+    const state = makeState();
+    const json = JSON.stringify({
+      schema_version: 11,
+      videos: [{
+        id: 'vid3',
+        name: 'Test3',
+        scratchLoop: { start: 2, end: 8, looping: true, sourceId: 'abc', sourceType: 'loop' },
+        loops: [{ id: 'named3', name: 'Tag', start: 2, end: 8 }],
+      }],
+    });
+    importData(json, state);
+    const v = state.videos[0];
+    expect(v.scratchLoop.start).toBe(2);
+    expect(v.scratchLoop.sourceId).toBe('abc');
+    expect(v.loops).toHaveLength(1);
   });
 });

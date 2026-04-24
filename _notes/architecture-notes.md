@@ -330,7 +330,7 @@ Each video stores all its per-video state in a single object:
     start          | User-adjustable effective start (seconds); default 0
     end            | User-adjustable effective end; null means use duration
     name           | User-set display label; empty until set
-    looping        | Boolean; whether looping is currently active
+    scratchLoop    | Object; see Scratch Loop below
     speed          | Playback speed; default 1.0
     seek_delta     | Per-video seek step; initialized from seek_delta_default
     nudge_delta    | Per-video loop nudge step; from loop_nudge_delta_default
@@ -344,8 +344,8 @@ Each video stores all its per-video state in a single object:
                    | for recency sort in the video picker
     chapters       | Array of Chapter objects (sorted by start)
     sections       | Array of Section objects (sorted by start)
-    loops          | Array of Loop objects (sorted by start); includes the
-                   | one scratch loop
+    loops          | Array of named Loop objects (sorted by start); does not
+                   | include the scratch loop (see scratchLoop)
     marks          | Array of Mark objects (sorted by time)
     jumps          | Array of jump history entries (max 40); persisted across
                    | sessions; stores non-trivial navigational jumps for
@@ -377,25 +377,31 @@ model as sections.
 
 ### Loop
 
-Saved loops are user-defined reusable ranges. The scratch loop is a special
-loop stored in the same array.
+Saved loops are user-defined reusable ranges.
 
-    id          | Generated unique identifier
-    name        | User label (optional; UI shows "#N" if absent)
-    start       | Loop start (seconds)
-    end         | Loop end (seconds)
-    source      | ID of the Section or Loop this was loaded from, or null.
-                | Non-null only on the scratch loop. Enables the save-back
-                | operation (xs: save scratch back to source).
-    is_scratch  | Boolean; true on the one scratch-loop entity. Needed
-                | because source can be null on a manually-created scratch
-                | loop, making source alone insufficient to identify it.
+    id    | Generated unique identifier
+    name  | User label (optional; UI shows "#N" if absent)
+    start | Loop start (seconds)
+    end   | Loop end (seconds)
 
-The scratch loop model: every video always has exactly one scratch loop.
-It is the active loop bounds when looping is enabled. Saved loops are
-immutable until explicitly edited; scratch is the working copy. Loading a
-section or saved loop into scratch sets source; saving back (xs) writes
-the scratch bounds back to that source entity.
+### Scratch Loop
+
+Every video has exactly one scratch loop, stored in `video.scratchLoop`
+(separate from the named `video.loops` array). It is the active loop bounds
+when looping is enabled. Named loops are immutable until explicitly edited;
+scratch is the working copy. Loading a section or named loop into scratch
+records its identity as sourceId/sourceType, enabling the save-back
+operation (xs: save scratch bounds back to that entity).
+
+    start      | Scratch loop start (seconds)
+    end        | Scratch loop end (seconds)
+    looping    | Boolean; whether looping is currently active
+    sourceId   | ID of the entity this scratch was loaded from, or null
+    sourceType | 'loop' | 'section' | 'chapter' | null
+
+The ephemeral `loopSrc` reactive prop (not persisted) is derived at
+`_syncFromVideo()` time from sourceId/sourceType via `_deriveLoopSrc()`:
+`{ id, label, type, start, end }` or null.
 
 ### Mark
 
