@@ -320,3 +320,28 @@ export function importData(jsonStr, state) {
   }
   return { added, updated };
 }
+
+// ---------------------------------------------------------------------------
+// Video categorization
+// ---------------------------------------------------------------------------
+
+// Categorize two video arrays into five buckets by id and last_modified.
+// src/dest are arrays of video objects with last_modified (ms epoch).
+// Returns: { srcOnly, srcNewer, destOnly, destNewer, same }
+// Each bucket holds video objects from the appropriate side.
+export function categorizeVideos(srcVideos, destVideos) {
+  const destMap = new Map(destVideos.map(v => [v.id, v]));
+  const srcIds  = new Set(srcVideos.map(v => v.id));
+  const srcOnly = [], srcNewer = [], destOnly = [], destNewer = [], same = [];
+  for (const sv of srcVideos) {
+    const dv = destMap.get(sv.id);
+    if (!dv)                                               srcOnly.push(sv);
+    else if ((sv.last_modified ?? 0) > (dv.last_modified ?? 0)) srcNewer.push(sv);
+    else if ((dv.last_modified ?? 0) > (sv.last_modified ?? 0)) destNewer.push(dv);
+    else                                                    same.push(sv);
+  }
+  for (const dv of destVideos) {
+    if (!srcIds.has(dv.id)) destOnly.push(dv);
+  }
+  return { srcOnly, srcNewer, destOnly, destNewer, same };
+}

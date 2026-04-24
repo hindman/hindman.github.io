@@ -1,4 +1,5 @@
-// storage.test.js -- unit tests for importData and migration in storage.js.
+// storage.test.js -- unit tests for importData, migration, and
+// categorizeVideos in storage.js.
 //
 // load() and save() are thin wrappers around localStorage (not available in
 // Node) and are not tested here. Migration logic in migrateAppState() is
@@ -6,7 +7,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 vi.mock('./supabase.js', () => ({ supabase: {} }));
-import { importData } from './storage.js';
+import { importData, categorizeVideos } from './storage.js';
 
 // Minimal valid app state to merge into.
 function makeState(videos = []) {
@@ -151,5 +152,59 @@ describe('migrateAppState v10 → v11 (scratch loop separation)', () => {
     expect(v.scratchLoop.start).toBe(2);
     expect(v.scratchLoop.sourceId).toBe('abc');
     expect(v.loops).toHaveLength(1);
+  });
+});
+
+describe('categorizeVideos', () => {
+  const v = (id, last_modified) => ({ id, last_modified });
+
+  it('puts a video in srcOnly when id is absent from dest', () => {
+    const { srcOnly, srcNewer, destOnly, destNewer, same } =
+      categorizeVideos([v('a', 1)], []);
+    expect(srcOnly.map(x => x.id)).toEqual(['a']);
+    expect(srcNewer).toHaveLength(0);
+    expect(destOnly).toHaveLength(0);
+    expect(destNewer).toHaveLength(0);
+    expect(same).toHaveLength(0);
+  });
+
+  it('puts a video in destOnly when id is absent from src', () => {
+    const { destOnly } = categorizeVideos([], [v('b', 1)]);
+    expect(destOnly.map(x => x.id)).toEqual(['b']);
+  });
+
+  it('puts matching video in srcNewer when src.last_modified is greater', () => {
+    const { srcNewer } = categorizeVideos([v('a', 200)], [v('a', 100)]);
+    expect(srcNewer.map(x => x.id)).toEqual(['a']);
+  });
+
+  it('puts matching video in destNewer when dest.last_modified is greater', () => {
+    const { destNewer } = categorizeVideos([v('a', 100)], [v('a', 200)]);
+    expect(destNewer.map(x => x.id)).toEqual(['a']);
+  });
+
+  it('puts matching video in same when last_modified is equal', () => {
+    const { same } = categorizeVideos([v('a', 100)], [v('a', 100)]);
+    expect(same.map(x => x.id)).toEqual(['a']);
+  });
+
+  it('treats missing last_modified as 0', () => {
+    // src has no last_modified, dest has 0: equal → same
+    const { same } = categorizeVideos([{ id: 'a' }], [v('a', 0)]);
+    expect(same).toHaveLength(1);
+    // src has no last_modified, dest has 50: destNewer
+    const { destNewer } = categorizeVideos([{ id: 'b' }], [v('b', 50)]);
+    expect(destNewer).toHaveLength(1);
+  });
+
+  it('handles a mix of all five buckets', () => {
+    const src  = [v('srcOnly', 1), v('srcNewer', 200), v('destNewer', 100), v('same', 100)];
+    const dest = [                  v('srcNewer', 100), v('destNewer', 200), v('same', 100), v('destOnly', 1)];
+    const result = categorizeVideos(src, dest);
+    expect(result.srcOnly.map(x => x.id)).toEqual(['srcOnly']);
+    expect(result.srcNewer.map(x => x.id)).toEqual(['srcNewer']);
+    expect(result.destNewer.map(x => x.id)).toEqual(['destNewer']);
+    expect(result.same.map(x => x.id)).toEqual(['same']);
+    expect(result.destOnly.map(x => x.id)).toEqual(['destOnly']);
   });
 });

@@ -19,7 +19,8 @@ import {
 } from '../state.js';
 import { EXAMPLES } from '../examples.js';
 import { load, save, exportAll, parseImport,
-         loadFromCloud, saveToCloud, deleteFromCloud } from '../storage.js';
+         loadFromCloud, saveToCloud, deleteFromCloud,
+         categorizeVideos } from '../storage.js';
 import { logSessionStart, logVideoLoad } from '../analytics.js';
 import { getUser, onAuthStateChange, signInWithGoogle, signInWithGitHub, signOut } from '../auth.js';
 import { createShare, shareUrl, fetchShare, shareIdFromUrl,
@@ -55,26 +56,6 @@ const QUIP_INTERVAL_MS = 6000;
 const MIN_SPEED = 0.25;
 const MAX_SPEED = 2.0;
 
-// Categorize two video arrays into five buckets.
-// src/dest are arrays of video objects with last_modified (ms epoch).
-// Returns: { srcOnly, srcNewer, destOnly, destNewer, same }
-// Each bucket holds video objects from the appropriate side.
-function categorizeVideos(srcVideos, destVideos) {
-  const destMap = new Map(destVideos.map(v => [v.id, v]));
-  const srcIds  = new Set(srcVideos.map(v => v.id));
-  const srcOnly = [], srcNewer = [], destOnly = [], destNewer = [], same = [];
-  for (const sv of srcVideos) {
-    const dv = destMap.get(sv.id);
-    if (!dv)                                               srcOnly.push(sv);
-    else if ((sv.last_modified ?? 0) > (dv.last_modified ?? 0)) srcNewer.push(sv);
-    else if ((dv.last_modified ?? 0) > (sv.last_modified ?? 0)) destNewer.push(dv);
-    else                                                    same.push(sv);
-  }
-  for (const dv of destVideos) {
-    if (!srcIds.has(dv.id)) destOnly.push(dv);
-  }
-  return { srcOnly, srcNewer, destOnly, destNewer, same };
-}
 
 const QUIPS = [
   "Freedom isn't free — but looping is.",
