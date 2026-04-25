@@ -282,8 +282,8 @@ Risk: None.
     2        | Dead code + small duplication | R3-5 (updateChap) | done
              |                               | R3-8 (clearState) | done
     3        | Data-ops merge helper         | R3-2              | done
-    4        | Testing: parseVideoInput      | R3-3              | .
-    5        | Video picker mixin            | R3-4              | .
-    6        | Edit modal unification        | R3-1              | .
-    7        | deriveDividerEnd              | R3-7              | .
+    4        | Testing: parseVideoInput      | R3-3              | done
+    5        | Video picker mixin            | R3-4              | done
+    6        | Edit modal unification        | R3-1              | done
+    7        | deriveDividerEnd              | R3-7              | done
 

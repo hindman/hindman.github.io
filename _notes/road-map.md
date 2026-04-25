@@ -1,33 +1,13 @@
 
 ## Assessment: Round 3
 
-We are implementing Round 3 of the plan in refactoring-assessment.md.
-
-Current session: #3.
-
-Let me know if there are questions; if not, please implement.
-
-
-    Session  | Focus                         | Items             | Status
-    -----------------------------------------------------------------------
-    1        | Quick wins                    | R3-5, R3-6, R3-9  | done
-    2        | Dead code + small duplication | R3-5 (updateChap) | done
-             |                               | R3-8 (clearState) | done
-    3        | Data-ops merge helper         | R3-2              | .
-    4        | Testing: parseVideoInput      | R3-3              | .
-    5        | Video picker mixin            | R3-4              | .
-    6        | Edit modal unification        | R3-1              | .
-    7        | deriveDividerEnd              | R3-7              | .
-
 ## TODO: LoopLlama v2
 
 Code refactor:
   x refactoring-assessment.md
   x round 1
   x round 2
-  - round 3
-    - assess
-    - implement
+  x round 3
   - app: basic tests: all operations
 
 User docs: final read:

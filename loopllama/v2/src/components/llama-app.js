@@ -18,6 +18,7 @@ import {
   addChapterDivider, nearestChapterLeft, getChapterBounds, fixChapterEnd,
   propagateEntityChange, validateEntityChange,
   nudgeLoopStart, nudgeLoopEnd,
+  deriveDividerEnd,
 } from '../state.js';
 import { EXAMPLES } from '../examples.js';
 import { load, save, exportAll } from '../storage.js';
@@ -2329,7 +2330,7 @@ function _deriveLoopSrc(video, sourceId, sourceType) {
     const idx = sections.findIndex(s => s.id === sourceId);
     if (idx === -1) return null;
     const s   = sections[idx];
-    const end = s.end ?? sections[idx + 1]?.start ?? null;
+    const end = deriveDividerEnd(sections, idx);
     return { id: s.id, label: s.name || null, type: 'section', start: s.start, end };
   }
   if (sourceType === 'chapter') {
@@ -2337,7 +2338,7 @@ function _deriveLoopSrc(video, sourceId, sourceType) {
     const idx = chapters.findIndex(c => c.id === sourceId);
     if (idx === -1) return null;
     const c   = chapters[idx];
-    const end = c.end ?? chapters[idx + 1]?.start ?? null;
+    const end = deriveDividerEnd(chapters, idx);
     return { id: c.id, label: c.name || null, type: 'chapter', start: c.start, end };
   }
   return null;

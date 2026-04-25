@@ -118,6 +118,14 @@ function nearestDividerLeft(entities, time) {
   return result;
 }
 
+// Returns the effective end for entities[idx]: the stored end if set, otherwise
+// the next entity's start, otherwise null (no videoDuration fallback).
+// Used by getDividerBounds and by _deriveLoopSrc in llama-app.js.
+export function deriveDividerEnd(entities, idx) {
+  const entity = entities[idx];
+  return entity.end ?? entities[idx + 1]?.start ?? null;
+}
+
 // Get the effective start/end bounds of the divider range containing time.
 // Returns { start, end } or null if time is before the first divider or in
 // a gap zone (past an explicit entity.end, before the next divider).
@@ -125,18 +133,16 @@ function nearestDividerLeft(entities, time) {
 function getDividerBounds(entities, time, videoDuration) {
   if (!entities.length) return null;
 
-  let left  = null;
-  let right = null;
-  for (const e of entities) {
-    if (e.start <= time) left = e;
-    else { right = e; break; }
+  let leftIdx = -1;
+  for (let i = 0; i < entities.length; i++) {
+    if (entities[i].start <= time) leftIdx = i;
+    else break;
   }
 
-  if (!left) return null;   // before first divider
+  if (leftIdx === -1) return null;   // before first divider
 
-  // Stored explicit end overrides derived end.
-  const derivedEnd = right ? right.start : (videoDuration ?? null);
-  const entityEnd  = (left.end != null) ? left.end : derivedEnd;
+  const left      = entities[leftIdx];
+  const entityEnd = deriveDividerEnd(entities, leftIdx) ?? videoDuration ?? null;
 
   // Gap zone: time is past the explicit end, before the next divider.
   if (left.end != null && time > left.end) return null;

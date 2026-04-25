@@ -13,12 +13,13 @@
 //   show(mode?) / hide()
 
 import { LitElement, html, css } from 'lit';
+import { FilterPickerMixin } from './filter-picker-mixin.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
 import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 import './llama-modal.js';
 
-class LlamaVideoPicker extends LitElement {
+class LlamaVideoPicker extends FilterPickerMixin(LitElement) {
   static styles = css`
     :host {
       --width: 52rem;
@@ -91,8 +92,6 @@ class LlamaVideoPicker extends LitElement {
     currentVideoId: { type: String },
     mode:           { type: String },
     stashes:        { type: Object },
-    _filter:        { state: true },
-    _selIdx:        { state: true },
     _sortMode:      { state: true },
   };
 
@@ -102,58 +101,20 @@ class LlamaVideoPicker extends LitElement {
     this.currentVideoId = null;
     this.mode           = 'switch';
     this.stashes        = {};
-    this._filter        = '';
-    this._selIdx        = 0;
     this._sortMode      = 'recent';
   }
 
-  show(mode = 'switch', sortMode = 'recent') {
-    this.mode      = mode;
-    this._sortMode = sortMode;
-    this._filter   = '';
-    this._selIdx   = 0;
-    this.renderRoot.querySelector('llama-modal')?.show();
-  }
+  get _listClass() { return 'video-list'; }
+  get _rowClass()  { return 'video-row'; }
 
-  hide() {
-    this.renderRoot.querySelector('llama-modal')?.hide();
+  show(mode = 'switch', sortMode = 'recent') {
+    this._sortMode = sortMode;
+    super.show(mode);
   }
 
   _onInitialFocus() {
     this.renderRoot.querySelector('.video-list')?.scrollTo(0, 0);
-    this.renderRoot.querySelector('sl-input')?.focus();
-  }
-
-  _onFilterKeyDown(e) {
-    const filtered = this._filtered();
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      this._selIdx = Math.min(this._selIdx + 1, filtered.length - 1);
-      this._scrollSelectedIntoView();
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      this._selIdx = Math.max(this._selIdx - 1, 0);
-      this._scrollSelectedIntoView();
-    } else if (e.key === 'Enter') {
-      const target = filtered[this._selIdx] ?? filtered[0];
-      if (target) this._select(target);
-    }
-  }
-
-  // Reset selection to 0 whenever the filter changes so the highlighted
-  // item stays within the visible results.
-  _onFilterInput(e) {
-    this._filter = e.target.value;
-    this._selIdx = 0;
-  }
-
-  _scrollSelectedIntoView() {
-    // Run after Lit has re-rendered the updated selection.
-    this.updateComplete.then(() => {
-      const list = this.renderRoot.querySelector('.video-list');
-      const row  = list?.querySelector('.video-row.selected');
-      row?.scrollIntoView({ block: 'nearest' });
-    });
+    super._onInitialFocus();
   }
 
   _select(video) {
