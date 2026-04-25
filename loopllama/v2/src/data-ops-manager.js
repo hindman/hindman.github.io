@@ -150,7 +150,6 @@ export class DataOpsManager {
     }
 
     const cloudVideos = cloudState.videos ?? [];
-    const cloudMap    = new Map(cloudVideos.map(v => [v.id, v]));
 
     const { srcOnly, srcNewer, destOnly, destNewer, same } = categorizeVideos(
       cloudVideos, app._appState.videos
@@ -168,43 +167,7 @@ export class DataOpsManager {
     });
     if (result === null) return;
 
-    // Remove destOnly (local-only) if user chose to delete.
-    if (result.deleteDestOnly) {
-      const destOnlyIds = new Set(destOnly.map(v => v.id));
-      app._appState.videos = app._appState.videos.filter(v => !destOnlyIds.has(v.id));
-    }
-
-    // Merge cloud videos into local.
-    for (const cv of cloudMap.values()) {
-      const idx = app._appState.videos.findIndex(v => v.id === cv.id);
-      if (idx === -1) {
-        // srcOnly
-        if (result.addSrcOnly) app._appState.videos.push(cv);
-      } else {
-        const lv   = app._appState.videos[idx];
-        const cvTs = cv.last_modified ?? 0;
-        const lvTs = lv.last_modified ?? 0;
-        if (cvTs > lvTs) {
-          // srcNewer
-          if (result.replaceSrcNewer) {
-            app._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
-            app._appState.videos[idx] = cv;
-          }
-        } else if (lvTs > cvTs) {
-          // destNewer
-          if (result.replaceDestNewer) {
-            app._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
-            app._appState.videos[idx] = cv;
-          }
-        } else {
-          // same
-          if (result.replaceSame) {
-            app._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
-            app._appState.videos[idx] = cv;
-          }
-        }
-      }
-    }
+    this._mergeIncomingVideos({ srcOnly, srcNewer, destOnly, destNewer, same }, result);
 
     // If the current video was replaced by a cloud version, re-sync UI.
     const currentVideo = app._appState.videos.find(v => v.id === app.currentVideoId);
@@ -305,44 +268,7 @@ export class DataOpsManager {
     });
     if (result === null) return;
 
-    // Remove destOnly (local-only) if user chose to delete.
-    if (result.deleteDestOnly) {
-      const destOnlyIds = new Set(destOnly.map(v => v.id));
-      app._appState.videos = app._appState.videos.filter(v => !destOnlyIds.has(v.id));
-    }
-
-    // Merge import videos into local.
-    for (const iv of incoming) {
-      if (!iv.id) continue;
-      const idx = app._appState.videos.findIndex(v => v.id === iv.id);
-      if (idx === -1) {
-        // srcOnly
-        if (result.addSrcOnly) app._appState.videos.push(iv);
-      } else {
-        const lv   = app._appState.videos[idx];
-        const ivTs = iv.last_modified ?? 0;
-        const lvTs = lv.last_modified ?? 0;
-        if (ivTs > lvTs) {
-          // srcNewer
-          if (result.replaceSrcNewer) {
-            app._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
-            app._appState.videos[idx] = iv;
-          }
-        } else if (lvTs > ivTs) {
-          // destNewer
-          if (result.replaceDestNewer) {
-            app._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
-            app._appState.videos[idx] = iv;
-          }
-        } else {
-          // same
-          if (result.replaceSame) {
-            app._appState.stashes[lv.id] = JSON.parse(JSON.stringify(lv));
-            app._appState.videos[idx] = iv;
-          }
-        }
-      }
-    }
+    this._mergeIncomingVideos({ srcOnly, srcNewer, destOnly, destNewer, same }, result);
 
     app.videos  = [...app._appState.videos];
     app.stashes = { ...app._appState.stashes };
@@ -352,6 +278,45 @@ export class DataOpsManager {
     if (currentVideo) app._syncFromVideo(currentVideo);
     app._save();
     app.statusMsg = 'Data: imported.';
+  }
+
+  // Applies the user's merge choices from the data-op modal to app._appState.
+  // categories: { srcOnly, srcNewer, destOnly, destNewer, same } from categorizeVideos.
+  // result: resolved data-op modal result object.
+  // Mutates app._appState.videos and app._appState.stashes in place.
+  _mergeIncomingVideos(categories, result) {
+    const app = this._app;
+    const { srcOnly, srcNewer, destOnly, destNewer, same } = categories;
+
+    // Remove dest-only (local-only) videos if user chose to delete.
+    if (result.deleteDestOnly) {
+      const destOnlyIds = new Set(destOnly.map(v => v.id));
+      app._appState.videos = app._appState.videos.filter(v => !destOnlyIds.has(v.id));
+    }
+
+    // Build index map after potential deleteDestOnly filter.
+    const localMap = new Map(app._appState.videos.map((v, i) => [v.id, { v, i }]));
+
+    // Add src-only videos.
+    if (result.addSrcOnly) {
+      for (const sv of srcOnly) app._appState.videos.push(sv);
+    }
+
+    // Replace dest with src for each opted-in conflict bucket (stash displaced local).
+    const replacements = [
+      { bucket: srcNewer,  flag: result.replaceSrcNewer  },
+      { bucket: destNewer, flag: result.replaceDestNewer },
+      { bucket: same,      flag: result.replaceSame      },
+    ];
+    for (const { bucket, flag } of replacements) {
+      if (!flag) continue;
+      for (const sv of bucket) {
+        const entry = localMap.get(sv.id);
+        if (!entry) continue;
+        app._appState.stashes[entry.v.id] = JSON.parse(JSON.stringify(entry.v));
+        app._appState.videos[entry.i] = sv;
+      }
+    }
   }
 
   // Show the shared-video conflict modal; resolves to true (replace) or false (skip).

@@ -425,6 +425,23 @@ class LlamaApp extends LitElement {
     this.zone2Mode  = video.zone2_mode ?? 'sections';
   }
 
+  // Clear all reactive state tied to the current video and mark no video loaded.
+  // Call when the current video is deleted or the user returns to a no-video state.
+  _clearCurrentVideoState() {
+    this._vc?.pause();
+    this._appState.currentVideoId = null;
+    this.currentVideoId = null;
+    this.sections   = [];
+    this.marks      = [];
+    this.namedLoops = [];
+    this.chapters   = [];
+    this.loopStart  = 0;
+    this.loopEnd    = 0;
+    this.looping    = false;
+    this.loopSrc    = null;
+    this.duration   = null;
+  }
+
   // Push a jump-history entry if the move is large enough.
   // fromTime: where the user was; toTime: where they're going.
   // Skipped when _suppressJumpPush is true (jb/jf navigation).
@@ -561,16 +578,7 @@ class LlamaApp extends LitElement {
         this.duration = null;
       } else {
         // Restoring to a no-video state.
-        this._vc?.pause();
-        this.sections        = [];
-        this.marks           = [];
-        this.namedLoops      = [];
-        this.chapters        = [];
-        this.loopStart       = 0;
-        this.loopEnd         = 0;
-        this.looping         = false;
-        this.loopSrc         = null;
-        this.duration        = null;
+        this._clearCurrentVideoState();
       }
     } else if (restoredVideo) {
       // Same current video -- restore entity arrays only; leave playback state alone.
@@ -1368,17 +1376,7 @@ class LlamaApp extends LitElement {
     this._pushUndoSnapshot();
     this._appState.videos.splice(idx, 1);
     if (this.currentVideoId === id) {
-      this._vc?.pause();
-      this._appState.currentVideoId = null;
-      this.currentVideoId = null;
-      this.sections   = [];
-      this.marks      = [];
-      this.namedLoops = [];
-      this.loopStart  = 0;
-      this.loopEnd   = 0;
-      this.looping   = false;
-      this.loopSrc   = null;
-      this.duration  = null;
+      this._clearCurrentVideoState();
     }
     this.videos = [...this._appState.videos];
     this._save();
@@ -1913,18 +1911,7 @@ class LlamaApp extends LitElement {
       this._pushUndoSnapshot();
       this._appState.videos = this._appState.videos.filter(v => !videoIds.includes(v.id));
       if (videoIds.includes(this.currentVideoId)) {
-        this._vc?.pause();
-        this._appState.currentVideoId = null;
-        this.currentVideoId      = null;
-        this.sections            = [];
-        this.marks               = [];
-        this.namedLoops          = [];
-        this.chapters            = [];
-        this.loopStart           = 0;
-        this.loopEnd             = 0;
-        this.looping  = false;
-        this.loopSrc  = null;
-        this.duration = null;
+        this._clearCurrentVideoState();
       }
       this.videos = [...this._appState.videos];
       this._save();

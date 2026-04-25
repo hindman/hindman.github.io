@@ -325,14 +325,6 @@ export function deleteChapterById(chapters, id) {
   if (idx !== -1) chapters.splice(idx, 1);
 }
 
-// Update chapter fields by id. fields: { name?, start?, end? }
-export function updateChapter(chapters, id, fields) {
-  const chapter = chapters.find(c => c.id === id);
-  if (!chapter) return;
-  Object.assign(chapter, fields);
-  chapters.sort((a, b) => a.start - b.start);
-}
-
 // Find the chapter divider with the largest start at or before time.
 // Returns the chapter or null. Assumes chapters are sorted by start.
 export function nearestChapterLeft(chapters, time) {
