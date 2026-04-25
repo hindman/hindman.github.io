@@ -1,0 +1,191 @@
+#!/usr/bin/env python
+
+'''
+
+ldiff -- LoopLlama-savvy JSON diff.
+
+Usage:
+    ldiff <file-a> <file-b>
+
+Output format: a JSON/Markdown hybrid. Keys are shown hierarchically;
+differing scalar values are shown as a bullet pair (A then B). Lists of
+dicts are split into three buckets -- shared items (# COMPARE), items
+only in A (# A ONLY), items only in B (# B ONLY) -- and the same
+approach applies recursively within each bucket. No fields are skipped.
+
+Entity arrays are keyed by natural identity, not array position:
+- videos: id
+- chapters, sections, loops: (start, end)
+- marks: time
+- jumps: flat scalar array, diffed as a whole
+
+'''
+
+import json
+import sys
+
+# Natural key functions for entity arrays, keyed by field name.
+ENTITY_KEYS = {
+    'videos':   lambda item: item.get('id'),
+    'chapters': lambda item: (item.get('start'), item.get('end')),
+    'sections': lambda item: (item.get('start'), item.get('end')),
+    'loops':    lambda item: (item.get('start'), item.get('end')),
+    'marks':    lambda item: item.get('time'),
+}
+
+
+def main(path_a, path_b):
+    a = load(path_a)
+    b = load(path_b)
+
+    print(f'# A: {path_a}')
+    print(f'# B: {path_b}')
+    print()
+
+    lines = render_dict_diff(a, b, indent=0)
+
+    if lines:
+        print('\n'.join(lines))
+    else:
+        print('No content differences.')
+
+
+def load(path):
+    with open(path) as f:
+        return json.load(f)
+
+
+def fmt_val(val):
+    """Format a value for display: JSON conventions, strings unquoted."""
+    if val is None:
+        return 'null'
+    if isinstance(val, bool):
+        return 'true' if val else 'false'
+    if isinstance(val, (int, float)):
+        return str(val)
+    if isinstance(val, str):
+        return val
+    if isinstance(val, list):
+        return '[' + ', '.join(fmt_val(v) for v in val) + ']'
+    if isinstance(val, dict):
+        return json.dumps(val)
+    return str(val)
+
+
+def fmt_key(k):
+    """Format a natural key value for COMPARE headings."""
+    if isinstance(k, tuple):
+        return '(' + ', '.join(fmt_val(v) for v in k) + ')'
+    return fmt_val(k)
+
+
+def render_dict_diff(a, b, indent):
+    """Render diff of two dicts. Returns list of output lines."""
+    lines = []
+    all_keys = sorted(set(a) | set(b))
+    for key in all_keys:
+        a_val = a.get(key)
+        b_val = b.get(key)
+        if a_val == b_val:
+            continue
+        lines.extend(render_value_diff(key, a_val, b_val, indent))
+    return lines
+
+
+def render_value_diff(key, a_val, b_val, indent):
+    """Render diff for one key. Returns list of output lines."""
+    pad = ' ' * indent
+
+    # Entity array (list of dicts with natural keys).
+    if key in ENTITY_KEYS:
+        a_list = a_val if isinstance(a_val, list) else []
+        b_list = b_val if isinstance(b_val, list) else []
+        child_lines = render_entity_list_diff(key, a_list, b_list, indent + 2)
+        if child_lines:
+            return [f'{pad}{key}:'] + child_lines
+        return []
+
+    # Both are plain dicts -- recurse.
+    if isinstance(a_val, dict) and isinstance(b_val, dict):
+        child_lines = render_dict_diff(a_val, b_val, indent + 2)
+        if child_lines:
+            return [f'{pad}{key}:'] + child_lines
+        return []
+
+    # Scalar or list of scalars -- bullet pair.
+    return [
+        f'{pad}{key}:',
+        f'{pad}  - {fmt_val(a_val)}',
+        f'{pad}  - {fmt_val(b_val)}',
+    ]
+
+
+def render_entity_list_diff(key, a_list, b_list, indent):
+    """Render diff for two entity arrays. Returns list of output lines."""
+    key_fn = ENTITY_KEYS[key]
+    a_map = {key_fn(item): item for item in a_list if isinstance(item, dict)}
+    b_map = {key_fn(item): item for item in b_list if isinstance(item, dict)}
+    a_keys = set(a_map)
+    b_keys = set(b_map)
+
+    lines = []
+    for k in sorted(a_keys & b_keys):
+        lines.extend(render_entity_compare(key, k, a_map[k], b_map[k], indent))
+    for k in sorted(a_keys - b_keys):
+        lines.extend(render_entity_one_side(k, a_map[k], 'A', indent))
+    for k in sorted(b_keys - a_keys):
+        lines.extend(render_entity_one_side(k, b_map[k], 'B', indent))
+    return lines
+
+
+def render_entity_compare(entity_key, k, a_item, b_item, indent):
+    """Render diff of two matched entity items. Returns list of output lines."""
+    pad = ' ' * indent
+    if entity_key == 'videos':
+        heading = f'# COMPARE: {fmt_key(k)} {a_item.get("name", "")}'
+    else:
+        heading = f'# COMPARE: {fmt_key(k)}'
+    child_lines = render_dict_diff(a_item, b_item, indent + 2)
+    if not child_lines:
+        return []
+    return [f'{pad}{heading}'] + child_lines
+
+
+def render_entity_one_side(k, item, side, indent):
+    """Render a one-sided entity item. Returns list of output lines."""
+    pad = ' ' * indent
+    heading = f'# {side} ONLY'
+    child_lines = render_single_dict(item, side, indent + 2)
+    return [f'{pad}{heading}'] + child_lines
+
+
+def render_single_dict(d, side, indent):
+    """Render a dict for one-sided display (no diff partner). Returns lines."""
+    pad = ' ' * indent
+    lines = []
+    for k, v in d.items():
+        if k in ENTITY_KEYS and isinstance(v, list):
+            if v:
+                lines.append(f'{pad}{k}:')
+                key_fn = ENTITY_KEYS[k]
+                for item in v:
+                    if isinstance(item, dict):
+                        lines.extend(render_entity_one_side(key_fn(item), item, side, indent + 2))
+            else:
+                lines.append(f'{pad}{k}: []')
+        elif isinstance(v, dict):
+            lines.append(f'{pad}{k}:')
+            lines.extend(render_single_dict(v, side, indent + 2))
+        elif isinstance(v, list):
+            lines.append(f'{pad}{k}:')
+            lines.append(f'{pad}  {fmt_val(v)}')
+        else:
+            lines.append(f'{pad}{k}: {fmt_val(v)}')
+    return lines
+
+
+if __name__ == '__main__':
+    if len(sys.argv) != 3:
+        print(f'Usage: {sys.argv[0]} <file-a> <file-b>')
+        sys.exit(1)
+    main(sys.argv[1], sys.argv[2])

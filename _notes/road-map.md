@@ -16,11 +16,13 @@ Code refactor:
 
 User docs: final read:
     - MH
-    - CC review
+    - CC
+      - general review & and missing app behavior, policy, features
+      - typos, etc
 
 Dev docs: final edits:
   - dev-notes.md
-  - architecture-notes.md
+  - architecture-notes.md (CC already checked against code)
 
 Launch:
   - User docs: F5 post: draft
