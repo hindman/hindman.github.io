@@ -168,8 +168,9 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 
 | Key         | Operation
 | ----------- | ---------------------
-| `au` · `u`  | Undo
-| `ar` · `U`  | Redo
+| `au` · `u`  | Undo (supports count)
+| `ar` · `U`  | Redo (supports count)
+| `a⌫`        | Clear history
 | `am`        | Recall message
 | `ac`        | Copy time
 | `at` · `t`  | Toggle timeline

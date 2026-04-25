@@ -587,6 +587,10 @@ are remembered per video.
 <span class="ll-phead">Redo</span>. Use `ar` for **App › Redo** to apply an
 edit that was undone.
 
+<span class="ll-phead">Clear history</span>. Use `a⌫` for **App › Clear
+history** to discard the undo and redo stacks entirely. This operation is
+not undoable.
+
 <span class="ll-phead">Recall message</span>. Use `am` for **App › Recall
 message** to recall the most recent message emitted in the message footer.
 

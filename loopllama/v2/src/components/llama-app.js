@@ -368,8 +368,8 @@ class LlamaApp extends LitElement {
         };
       },
       applySnapshot: (snap) => this._applySnapshot(snap),
-      onUndo:        (desc) => { this.statusMsg = `Undone: (${desc}).`; },
-      onRedo:        (desc) => { this.statusMsg = `Redone: (${desc}).`; },
+      onUndo:        (n, desc) => { this.statusMsg = n > 1 ? `Undone: ${n} edits.` : `Undone: (${desc}).`; },
+      onRedo:        (n, desc) => { this.statusMsg = n > 1 ? `Redone: ${n} edits.` : `Redone: (${desc}).`; },
       onEmpty:       (dir)  => this._setWarning(`Cannot ${dir}.`),
     });
     this._dataMgr         = new DataOpsManager(this);
@@ -681,8 +681,9 @@ class LlamaApp extends LitElement {
           ()  => this._setWarning('Cannot copy current time: clipboard blocked.'),
         );
       },
-      undo:          () => this._undoMgr.undo(),
-      redo:          () => this._undoMgr.redo(),
+      undo:          (count) => this._undoMgr.undo(count),
+      redo:          (count) => this._undoMgr.redo(count),
+      clearHistory:  () => { this._undoMgr.clear(); this.statusMsg = 'Edit history: cleared.'; },
       helpKeys:      () => window.open(`${_siteOrigin()}/loopllama/v2/keybindings/`, '_blank'),
       options:       () => this._optionsModalEl?.show(this._appState?.options),
       videoUrl:      () => this._urlInputModalEl?.show(),

@@ -36,25 +36,40 @@ export class UndoManager {
     this._redoStack = [];
   }
 
-  undo() {
+  undo(count = 1) {
     if (!this._undoStack.length) {
       this._onEmpty('undo');
       return;
     }
-    const snap = this._undoStack.pop();
-    this._redoStack.push({ ...this._getSnapshot(), desc: snap.desc });
-    this._applySnap(snap);
-    this._onUndo(snap.desc);
+    let n = 0, lastDesc = '';
+    while (n < count && this._undoStack.length) {
+      const snap = this._undoStack.pop();
+      this._redoStack.push({ ...this._getSnapshot(), desc: snap.desc });
+      this._applySnap(snap);
+      lastDesc = snap.desc;
+      n++;
+    }
+    this._onUndo(n, lastDesc);
   }
 
-  redo() {
+  redo(count = 1) {
     if (!this._redoStack.length) {
       this._onEmpty('redo');
       return;
     }
-    const snap = this._redoStack.pop();
-    this._undoStack.push({ ...this._getSnapshot(), desc: snap.desc });
-    this._applySnap(snap);
-    this._onRedo(snap.desc);
+    let n = 0, lastDesc = '';
+    while (n < count && this._redoStack.length) {
+      const snap = this._redoStack.pop();
+      this._undoStack.push({ ...this._getSnapshot(), desc: snap.desc });
+      this._applySnap(snap);
+      lastDesc = snap.desc;
+      n++;
+    }
+    this._onRedo(n, lastDesc);
+  }
+
+  clear() {
+    this._undoStack = [];
+    this._redoStack = [];
   }
 }

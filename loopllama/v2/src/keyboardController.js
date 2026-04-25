@@ -139,6 +139,7 @@ export const BINDINGS = {
   'a': { completions: {
     'u': { handler: 'undo',         desc: 'Undo' },
     'r': { handler: 'redo',         desc: 'Redo' },
+    'Backspace': { handler: 'clearHistory', desc: 'Clear history' },
     'm': { handler: 'msgRecall',    desc: 'Recall message' },
     'c': { handler: 'copyTime',     desc: 'Copy time' },
     't': { handler: 'toggleZone2',  desc: 'Toggle timeline' },
