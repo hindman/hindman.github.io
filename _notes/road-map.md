@@ -1,14 +1,18 @@
 
-## Assessment: Round 3
-
 ## TODO: LoopLlama v2
 
 Code refactor:
-  x refactoring-assessment.md
-  x round 1
-  x round 2
-  x round 3
   - app: basic tests: all operations
+    - especially:
+      - ds/dr/di/dc
+      - export/import round trip
+      - undo/redo
+      - scratch sources
+      - section/chapter modals
+      - pickers:
+        - arrows
+        - enter
+        - esc
 
 User docs: final read:
     - MH
