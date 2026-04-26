@@ -167,7 +167,7 @@ export class DataOpsManager {
     });
     if (result === null) return;
 
-    this._mergeIncomingVideos({ srcOnly, srcNewer, destOnly, destNewer, same }, result);
+    this._mergeIncomingVideos({ srcOnly, srcNewer, destOnly, destNewer, same }, result, cloudVideos);
 
     // If the current video was replaced by a cloud version, re-sync UI.
     const currentVideo = app._appState.videos.find(v => v.id === app.currentVideoId);
@@ -252,8 +252,9 @@ export class DataOpsManager {
     }
 
     // Categorize all videos into 5 buckets (import = source, local = dest).
+    const importedVideos = incoming.filter(v => v.id);
     const { srcOnly, srcNewer, destOnly, destNewer, same } = categorizeVideos(
-      incoming.filter(v => v.id), app._appState.videos
+      importedVideos, app._appState.videos
     );
 
     const result = await this._showDataOp({
@@ -268,7 +269,7 @@ export class DataOpsManager {
     });
     if (result === null) return;
 
-    this._mergeIncomingVideos({ srcOnly, srcNewer, destOnly, destNewer, same }, result);
+    this._mergeIncomingVideos({ srcOnly, srcNewer, destOnly, destNewer, same }, result, importedVideos);
 
     app.videos  = [...app._appState.videos];
     app.stashes = { ...app._appState.stashes };
@@ -283,10 +284,13 @@ export class DataOpsManager {
   // Applies the user's merge choices from the data-op modal to app._appState.
   // categories: { srcOnly, srcNewer, destOnly, destNewer, same } from categorizeVideos.
   // result: resolved data-op modal result object.
+  // srcVideos: the source video array (cloud or import); needed to look up the
+  // src version for destNewer replacements (destNewer buckets hold dest/local videos).
   // Mutates app._appState.videos and app._appState.stashes in place.
-  _mergeIncomingVideos(categories, result) {
+  _mergeIncomingVideos(categories, result, srcVideos = []) {
     const app = this._app;
     const { srcOnly, srcNewer, destOnly, destNewer, same } = categories;
+    const srcMap = new Map(srcVideos.map(v => [v.id, v]));
 
     // Remove dest-only (local-only) videos if user chose to delete.
     if (result.deleteDestOnly) {
@@ -303,6 +307,7 @@ export class DataOpsManager {
     }
 
     // Replace dest with src for each opted-in conflict bucket (stash displaced local).
+    // destNewer buckets hold the dest (local) video; use srcMap to get the src version.
     const replacements = [
       { bucket: srcNewer,  flag: result.replaceSrcNewer  },
       { bucket: destNewer, flag: result.replaceDestNewer },
@@ -310,11 +315,12 @@ export class DataOpsManager {
     ];
     for (const { bucket, flag } of replacements) {
       if (!flag) continue;
-      for (const sv of bucket) {
-        const entry = localMap.get(sv.id);
+      for (const bv of bucket) {
+        const incoming = srcMap.get(bv.id) ?? bv;
+        const entry = localMap.get(bv.id);
         if (!entry) continue;
         app._appState.stashes[entry.v.id] = JSON.parse(JSON.stringify(entry.v));
-        app._appState.videos[entry.i] = sv;
+        app._appState.videos[entry.i] = incoming;
       }
     }
   }

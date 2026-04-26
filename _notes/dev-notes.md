@@ -4,7 +4,9 @@
 ## Overview of documents
 ## Project setup
 ## Common dev tasks
-## Testing Supabase down
+## Testing scenarios
+### Creating a cloud-newer video
+### Testing: Supabase down
 ## Markdown notes
 ## V3 ideas: other video sources
 ### Vimeo
@@ -78,7 +80,41 @@ LoopLlama: lines of code:
 
         inv loc
 
-## Testing Supabase down
+## Testing scenarios
+
+### Creating a cloud-newer video
+
+Get a video ID for testing. Edit MVID and N_HOURS as needed.
+
+Phase 1: backdate the local video by running this from dev console:
+
+    // Setup.
+    const LLKEY = 'loopllama-v2'
+    const MVID = 'aYfwRktvFNc'
+    const N_HOURS = 24;
+
+    function checkVid() {
+      let state = JSON.parse(localStorage.getItem(LLKEY));
+      let vid = state.videos.find(v => v.id === MVID);
+      console.log('VIDEO_NAME', vid.name);
+      console.log('LAST_MODIFIED', new Date(vid.last_modified));
+      return [state, vid];
+    }
+
+    // Backdate, write to localStorage, then confirm.
+    let [state, vid] = checkVid();
+    vid.last_modified -= 60 * 60 * 1000 * N_HOURS;
+    localStorage.setItem(LLKEY, JSON.stringify(state));
+    checkVid();
+
+Phase 2. Check.
+  - Hard reload from the console: CMD-SHIFT-R.
+  - Run "Setup" code from above.
+  - Run checkVid().
+  - Close console.
+  - Run `dc`: should see a cloud-newer video.
+
+### Testing: Supabase down
 
 Steps:
 
