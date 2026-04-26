@@ -1,47 +1,3 @@
-## TODO: Undo-redo-stash rework
-
-Policy and plan:
-
-  - Undo/redo: scoped to current video, current session only.
-    - Covered:
-      - Edits to child entities (marks, loops, sections, chapters).
-      - Edits to video metadata (name, start/end trim).
-    - Stack limit: 20. Switching videos clears the stacks.
-    - Not covered:
-      - Full video deletion: single or bulk.
-      - Full video replacement: via unstash, di, or dr.
-
-  - Stash insurance for full-video delete/replacement:
-    - di/dr already stash before replacing (no change needed).
-    - Direct deletes (single and bulk): add stash-before-delete.
-    - du (unstash): adjust behavior based on whether vid is still in library:
-      - If stashed vid in library: keep doing the swap (no change needed).
-      - If stashed vid not in library: re-add to library; drop stash entry.
-    - Unstash modal:
-      - List only videos that have a stashed copy.
-      - Picker should visually distinguish vids in or not-in current library.
-
-Implementation:
-
-  - S1: Narrow undo/redo scope
-    - Snapshot only current video's entities (not all videos)
-    - Remove _pushUndoSnapshot from delete/replace operations
-    - Clear stacks on video switch
-    - Simplify _applySnapshot accordingly
-
-  - S2: Stash-before-delete
-    - _onDeleteVideo and _onDeleteData mode videos stash before deleting
-
-  - S3: Unstash modal rework
-    - Iterate stashes directly instead of filtering the library
-    - Handle re-add (deleted) vs swap (still in library)
-    - UI distinction between the two cases
-
-  - S4: Docs: update to reflect new policy:
-    - User help:
-      - Clarify what's covered and not.
-      - Explain what is stashed.
-    - architecture-notes.md
 
 ## TODO: LoopLlama v2
 
@@ -51,6 +7,7 @@ Code refactor:
       x ds/dr/di/dc
       x export/import round trip
       - undo/redo
+      - video > unstash
       - scratch sources
       - section/chapter modals
       - pickers:

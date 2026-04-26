@@ -429,6 +429,7 @@ class LlamaApp extends LitElement {
   // Clear all reactive state tied to the current video and mark no video loaded.
   // Call when the current video is deleted or the user returns to a no-video state.
   _clearCurrentVideoState() {
+    this._undoMgr.clear();
     this._vc?.pause();
     this._appState.currentVideoId = null;
     this.currentVideoId = null;
@@ -518,6 +519,7 @@ class LlamaApp extends LitElement {
 
   // Load a Video object: save current state, switch to new video, restore state.
   _loadVideoObject(video, startTime = null, loadMsg = 'Video: loaded.') {
+    this._undoMgr.clear();
     this._saveCurrentState();
     video.last_opened = Date.now();
     this._appState.currentVideoId = video.id;
@@ -554,45 +556,29 @@ class LlamaApp extends LitElement {
   // already be flushed to _appState (they are, because every mutation ends
   // with _saveCurrentState).
   _pushUndoSnapshot() {
+    const vid = this._appState.videos.find(v => v.id === this.currentVideoId);
+    if (!vid) return;
     const desc = (this.statusMsg ?? '').replace(/\.$/, '');
     this._undoMgr.push({
-      videos:         JSON.parse(JSON.stringify(this._appState.videos)),
+      video:          JSON.parse(JSON.stringify(vid)),
       currentVideoId: this.currentVideoId,
       desc,
     });
   }
 
   _applySnapshot(snap) {
-    // Restore the video registry.
-    this._appState.videos = JSON.parse(JSON.stringify(snap.videos));
+    const idx = this._appState.videos.findIndex(v => v.id === snap.currentVideoId);
+    if (idx === -1) return;
+    this._appState.videos[idx] = JSON.parse(JSON.stringify(snap.video));
     this.videos = [...this._appState.videos];
-
-    const restoredVideo = this._appState.videos.find(v => v.id === snap.currentVideoId) ?? null;
-
-    if (snap.currentVideoId !== this.currentVideoId) {
-      // Current video changed (e.g. a deleted video is being restored).
-      this._appState.currentVideoId = snap.currentVideoId;
-      this.currentVideoId = snap.currentVideoId;
-      if (restoredVideo) {
-        this._syncFromVideo(restoredVideo);
-        this._vc?.cueVideo(restoredVideo.id, restoredVideo.time ?? 0);
-        this.duration = null;
-      } else {
-        // Restoring to a no-video state.
-        this._clearCurrentVideoState();
-      }
-    } else if (restoredVideo) {
-      // Same current video -- restore entity arrays only; leave playback state alone.
-      this.sections   = [...(restoredVideo.sections ?? [])];
-      this.marks      = [...(restoredVideo.marks    ?? [])];
-      this.namedLoops = [...(restoredVideo.loops ?? [])];
-      this.chapters   = [...(restoredVideo.chapters ?? [])];
-      // Clear stale loop source if the named loop it pointed to was removed.
-      if (this.loopSrc?.type === 'loop' && !this.namedLoops.find(l => l.id === this.loopSrc.id)) {
-        this.loopSrc = null;
-      }
+    const restored = this._appState.videos[idx];
+    this.sections   = [...(restored.sections ?? [])];
+    this.marks      = [...(restored.marks    ?? [])];
+    this.namedLoops = [...(restored.loops ?? [])];
+    this.chapters   = [...(restored.chapters ?? [])];
+    if (this.loopSrc?.type === 'loop' && !this.namedLoops.find(l => l.id === this.loopSrc.id)) {
+      this.loopSrc = null;
     }
-
     this._save();
   }
 
@@ -1375,32 +1361,36 @@ class LlamaApp extends LitElement {
     const idx = this._appState?.videos.findIndex(v => v.id === id);
     if (idx == null || idx === -1) return;
     this.statusMsg = 'Video: deleted.';
-    this._pushUndoSnapshot();
+    this._appState.stashes[id] = JSON.parse(JSON.stringify(this._appState.videos[idx]));
     this._appState.videos.splice(idx, 1);
     if (this.currentVideoId === id) {
       this._clearCurrentVideoState();
     }
-    this.videos = [...this._appState.videos];
+    this.stashes = { ...this._appState.stashes };
+    this.videos  = [...this._appState.videos];
     this._save();
   }
 
   // Handle ll-restore-video from the video picker (restore mode).
-  // Swaps the stashed copy back to current and saves the current copy as the
-  // new stash, giving free toggle behavior.
+  // Unstash a video. If the video is still in the library, swap (current → stash,
+  // stash → library). If it was deleted, re-add the stash at end and drop the entry.
   _onRestoreVideo(e) {
     const { id } = e.detail;
     const stash = this._appState.stashes?.[id];
     if (!stash) return;
-    const idx = this._appState.videos.findIndex(v => v.id === id);
-    if (idx === -1) return;
     this.statusMsg = 'Video: unstashed.';
-    this._pushUndoSnapshot();
-    const current = JSON.parse(JSON.stringify(this._appState.videos[idx]));
-    this._appState.stashes[id] = current;
-    this._appState.videos[idx] = stash;
+    const idx = this._appState.videos.findIndex(v => v.id === id);
+    if (idx !== -1) {
+      const current = JSON.parse(JSON.stringify(this._appState.videos[idx]));
+      this._appState.stashes[id] = current;
+      this._appState.videos[idx] = stash;
+      if (this.currentVideoId === id) this._syncFromVideo(stash);
+    } else {
+      this._appState.videos.push(stash);
+      delete this._appState.stashes[id];
+    }
     this.stashes = { ...this._appState.stashes };
     this.videos  = [...this._appState.videos];
-    if (this.currentVideoId === id) this._syncFromVideo(stash);
     this._save();
   }
 
@@ -1910,12 +1900,18 @@ class LlamaApp extends LitElement {
     if (mode === 'videos') {
       const { videoIds } = e.detail;
       this.statusMsg = 'Data: deleted.';
-      this._pushUndoSnapshot();
-      this._appState.videos = this._appState.videos.filter(v => !videoIds.includes(v.id));
-      if (videoIds.includes(this.currentVideoId)) {
+      const deletedSet = new Set(videoIds);
+      for (const v of this._appState.videos) {
+        if (deletedSet.has(v.id)) {
+          this._appState.stashes[v.id] = JSON.parse(JSON.stringify(v));
+        }
+      }
+      this._appState.videos = this._appState.videos.filter(v => !deletedSet.has(v.id));
+      if (deletedSet.has(this.currentVideoId)) {
         this._clearCurrentVideoState();
       }
-      this.videos = [...this._appState.videos];
+      this.stashes = { ...this._appState.stashes };
+      this.videos  = [...this._appState.videos];
       this._save();
 
     } else {

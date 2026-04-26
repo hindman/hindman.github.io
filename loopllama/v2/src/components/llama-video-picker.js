@@ -3,11 +3,13 @@
 // Props:
 //   videos:         Array of Video objects
 //   currentVideoId: string | null  -- highlights the active video
-//   mode:           'switch' | 'delete'  (default: 'switch')
+//   stashes:        Object (keyed by video id)
+//   mode:           'switch' | 'delete' | 'restore'  (default: 'switch')
 //
 // Events fired (composed, bubbling):
 //   ll-pick-video    { videoId: string }  -- mode='switch': user selected a video
 //   ll-delete-video  { id: string }       -- mode='delete': user selected a video to delete
+//   ll-restore-video { id: string }       -- mode='restore': user selected a video to unstash
 //
 // API:
 //   show(mode?) / hide()
@@ -63,6 +65,9 @@ class LlamaVideoPicker extends FilterPickerMixin(LitElement) {
     .video-row.mode-restore:hover,
     .video-row.mode-restore.selected {
       border-color: var(--ll-accent-warm, #e3a857);
+    }
+    .video-row.not-in-library .video-primary {
+      color: var(--ll-text-dim, #aaa);
     }
     .video-primary {
       font-size: var(--ll-text-base, 1.05rem);
@@ -175,13 +180,20 @@ class LlamaVideoPicker extends FilterPickerMixin(LitElement) {
     return this._sortMode === 'alpha' ? this._sortedAlpha() : this._sortedRecent();
   }
 
+  // In restore mode: build list from stash values, sorted alpha by name then id.
+  _stashEntries() {
+    return Object.values(this.stashes).sort((a, b) => {
+      const aKey = (a.name || a.id).toLowerCase();
+      const bKey = (b.name || b.id).toLowerCase();
+      return aKey.localeCompare(bKey);
+    });
+  }
+
   _filtered() {
     const q = this._filter.trim().toLowerCase();
-    const sorted = this.mode === 'restore'
-      ? this._sorted().filter(v => this.stashes[v.id])
-      : this._sorted();
-    if (!q) return sorted;
-    return sorted.filter(v =>
+    const base = this.mode === 'restore' ? this._stashEntries() : this._sorted();
+    if (!q) return base;
+    return base.filter(v =>
       (v.name || '').toLowerCase().includes(q) ||
       v.id.toLowerCase().includes(q)
     );
@@ -202,11 +214,12 @@ class LlamaVideoPicker extends FilterPickerMixin(LitElement) {
     const isDelete   = this.mode === 'delete';
     const isRestore  = this.mode === 'restore';
     const title = isDelete ? 'Delete video' : isRestore ? 'Unstash video' : 'Open video';
+    const libraryIds = isRestore ? new Set(this.videos.map(v => v.id)) : null;
     return html`
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
         ${isRestore ? html`
           <div class="restore-info">
-            <sl-tooltip content="Restores a video to its prior version — before the last video replacement during a data import from JSON, data read from cloud, video load from a share URL, or video unstash.">
+            <sl-tooltip content="Restores a video to a saved copy from before the last deletion, replacement, or unstash. Videos marked [not in library] were deleted and will be re-added.">
               <span class="help-icon">ⓘ</span>
             </sl-tooltip>
           </div>` : ''}
@@ -222,18 +235,21 @@ class LlamaVideoPicker extends FilterPickerMixin(LitElement) {
         </div>
         <div class="video-list">
           ${filtered.length
-            ? filtered.map((v, i) => html`
+            ? filtered.map((v, i) => {
+                const notInLib = isRestore && !libraryIds.has(v.id);
+                return html`
                 <div
                   class="video-row
                     ${isDelete ? 'mode-delete' : isRestore ? 'mode-restore' : ''}
+                    ${notInLib ? 'not-in-library' : ''}
                     ${v.id === this.currentVideoId ? 'current' : ''}
                     ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(v)}
                 >
                   <div class="video-primary">${this._primaryLabel(v)}</div>
-                  <div class="video-sub">${this._subLabel(v)}</div>
-                </div>
-              `)
+                  <div class="video-sub">${v.id}${notInLib ? '   [not in library]' : ''}</div>
+                </div>`;
+              })
             : html`<div class="empty">No videos match.</div>`}
         </div>
       </llama-modal>

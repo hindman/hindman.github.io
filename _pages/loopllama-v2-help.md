@@ -166,11 +166,18 @@ of the LoopLlama information about a video.
 
 <span class="ll-phead">Delete</span>. Use `vd` for **Video › Delete**, which
 allows you to select a video for deletion. The app also provides an operation
-to [delete data in bulk](#bulk-delete).
+to [delete data in bulk](#bulk-delete) and an [unstash
+operation](#video-unstash) to restore a previously deleted video.
 
-<span class="ll-phead">Unstash</span>. Use `vu` for **Video › Unstash**, which
-replaces a local video using a stashed copy (see [last-modified
-checks](#last-modified-checks)).
+<a id="video-unstash"></a><span class="ll-phead">Unstash</span>. Use `vu` for
+**Video › Unstash**, which restores a video from a stashed copy. A stash is
+created whenever a video is deleted (via **Video › Delete** or **Data ›
+Delete**) or replaced (via **Data › Import**, **Data › Read from cloud**, a
+prior **Video › Unstash**, or loading a share URL for a video already in your
+library). The picker lists all stashed video copies, both for videos that
+still exist in your library and for those that do not (the latter are marked
+in the picker). For videos still in the library, the unstash is a swap: the
+stashed copy becomes current and the current copy is saved as the new stash.
 
 ## Sections
 
@@ -476,6 +483,10 @@ video, the primary intent is to allow a user to return to their prior location
 after an inadvertent jump. The jump history operations and key bindings are
 listed on the App menu.
 
+<span class="ll-phead">Super slow motion</span>. To examine a video in super
+slow motion, a useful technique is to pause the video, set the seek-duration
+to 0.1 seconds, and then "watch" the video using the `Left`/`Right` arrows.
+
 ### Time input formats
 
 LoopLlama supports various time input styles:
@@ -524,20 +535,17 @@ review](#data-review)).
   operation acts on those videos, with defaults biased toward keeping newer
   data over older. You can review, adjust any toggle, and apply the operation
   or cancel. Any time the operation replaces a video, LoopLlama stashes a copy
-  of the prior version for recovery. To retrieve a prior version use `vu` for
-  **Video › Unstash**.
+  of the prior version for recovery (see [Unstash](#video-unstash)).
 
 </div>
-
-<span class="ll-phead">Unstash</span>. Use `vu` for **Video › Unstash**, to
-retrieve a stashed copy of a video (see [data review](#data-review)).
 
 <span class="ll-phead">Inspect</span>. Use `dI` for **Data › Inspect**,
 which displays your LoopLlama data directly in the browser.
 
 <a id="bulk-delete"></a><span class="ll-phead">Bulk deletion</span>. Use `d⌫`
 for **Data › Delete** to delete data in bulk — either entire videos or the
-entities within a single video.
+entities within a single video. Deleted videos can be restored via
+[Unstash](#video-unstash).
 
 ## Cloud storage and sign-in {#why-sign-in}
 
@@ -577,12 +585,13 @@ history](#jump-history) has already been covered, and the two help items are
 self-evident. The others are the following:
 
 <span class="ll-phead">Undo</span>. Use `au` for **App › Undo** to reverse a
-prior edit. LoopLlama stores data snapshots for the 20 most recent edits.
-Snapshotting covers explicit changes to your library data — videos,
-chapters, sections, loops, and marks. It does not cover routine navigation or
-adjustments to playback and looping controls (current location and speed, jump
-history, navigation settings, scratch loop bounds), even though those settings
-are remembered per video.
+prior edit to the current video. LoopLlama stores data snapshots for the 20
+most recent edits. Snapshotting covers explicit changes to the current video —
+its attributes and edits to its chapters, sections, loops, and marks. It does
+not cover routine navigation or adjustments to playback and looping controls
+(current location and speed, jump history, navigation settings, scratch loop
+bounds), even though those settings are remembered per video. Changing the
+current video clears the edit history.
 
 <span class="ll-phead">Redo</span>. Use `ar` for **App › Redo** to apply an
 edit that was undone.

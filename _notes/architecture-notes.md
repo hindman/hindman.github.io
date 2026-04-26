@@ -321,7 +321,7 @@ localStorage under one key. The schema version is tracked via the
     options         | App-wide settings (see Options below)
     videos          | Array of Video objects
     stashes         | Object keyed by video ID; one stash entry per video;
-                    | holds a prior video snapshot for the Unstash operation;
+                    | created on deletion or replacement; used by vu (Unstash);
                     | local-only, never synced to the cloud
     currentVideoId  | YouTube ID of the currently loaded video, or null
 
@@ -502,8 +502,15 @@ before confirming.
 ### Stashes
 
 The `stashes` object on app state holds one prior snapshot per video (keyed
-by YouTube ID). Used by the Unstash operation (vu) to restore a previous
-state of a video. Stashes are local-only and are never synced to the cloud.
+by YouTube ID). Stashes are local-only and never synced to the cloud.
+
+A stash entry is created whenever a video is deleted (vd; dD mode=videos) or
+replaced (di, dr, dv, or a prior vu swap).
+
+The Unstash operation (vu) has two behaviors depending on whether the video
+is still in the library: if it is, the stash and current copies are swapped
+(the current copy becomes the new stash); if the video was deleted, the stash
+copy is re-added to the end of the library and the stash entry is dropped.
 
 ### Analytics
 

@@ -1,6 +1,6 @@
 // undo-manager.js -- manages the undo/redo stacks for llama-app.
 //
-// Snapshot shape: { videos, currentVideoId, desc }
+// Snapshot shape: { video, currentVideoId, desc }
 // The snapshot data and desc are supplied by the caller. UndoManager handles
 // only the stack mechanics: push, pop, size limit, and undo/redo sequencing.
 //
