@@ -268,11 +268,11 @@ standard, which applies it to any dialog.
 Menu items do not duplicate actions available via the app's main controls
 (play/pause, toggle looping, previous/next entity, etc.).
 
-Menus are opened via backtick + letter (e.g., `` `v `` for the Video menu)
-or by clicking the menu button in the header. Eight menus: Video, Chapter,
-Section, Loop, Scratch, Mark, Data, App. Eight is the practical limit
-across the narrow header; the Help menu was folded into App to preserve
-horizontal space.
+Action menus are opened via backtick + letter (e.g., `` `v `` for the Video
+menu) or by clicking the menu button in the header bar: Video, Chapter,
+Section, Loop, Scratch, Mark, Data, App. The header also has a Help dropdown
+(not part of the backtick system) containing help docs, example loading, and
+site links.
 
 ### Which-Key Overlay
 

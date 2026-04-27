@@ -1,18 +1,6 @@
 
 ## TODO: LoopLlama v2
 
-3b. Git commit.
-
-4. Update docs:
-
-        _pages/loopllama-v2-keybindings.md
-        _pages/loopllama-v2-help.md
-        _notes/text-elements.md
-        _notes/dev-notes.md
-
-Stages 1 and 2 are independent and could be done in parallel. Stage 3 depends
-on nothing but is the heaviest lift. Stage 4 is always last.
-
 Code refactor:
   - app: basic tests: all operations [see text-elements]
 

@@ -176,9 +176,14 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 | `at` · `t`  | Toggle timeline
 | `az` · `z`  | Zoom off
 | `ao` · `o`  | Options
-| `ah` · `h`  | Help
-| `ak` · `k`  | Key bindings
-| `ae`        | Load examples
+
+## Help
+
+| Key         | Operation
+| ----------- | ---------------------
+| `hh`        | Help
+| `hk`        | Key bindings
+| `he`        | Load examples
 
 ## Menu activation
 

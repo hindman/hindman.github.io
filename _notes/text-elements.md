@@ -93,9 +93,31 @@
         Zoom off        | az  z
         --------------------------------
         Options         | ao  o
-        Help            | ah  h
-        Key bindings    | ak  k
-        Load examples   | ae
+
+    Help:
+        Help           | hh
+        Key bindings   | hk
+        Load examples  | he
+        --------------------------------
+        The Fifth Fret |
+        Code           |
+        Issues         |
+
+    Account [NOT SIGNED IN]:
+        [email]
+        --------------------------------
+        Sign out
+        Sign out and remove cloud data
+        --------------------------------
+        Why sign in?
+        Privacy policy
+
+    Account [SIGNED IN]:
+        Sign in with Google
+        Sign in with GitHub
+        --------------------------------
+        Why sign in?
+        Privacy policy
 
 ## Pickers
 
@@ -166,6 +188,7 @@ Elements:
         m | Mark
         d | Data
         a | App
+        h | Help
         j | Jump
         ` | Open menu
         [ | Loop start

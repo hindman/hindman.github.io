@@ -122,7 +122,7 @@ LoopLlama, the app remembers the video and how you last left it: the current
 playhead position, the playback speed, the scratch loop endpoints, and any
 other information about the entities that a video can have.
 
-<span class="ll-phead">Load examples</span>. Use `ae` for **App › Load
+<span class="ll-phead">Load examples</span>. Use `he` for **Help › Load
 examples**, which will load two example videos pre-configured with various
 sections, chapters, marks, and loops. You can use those examples along with
 the help documentation to learn how the app works.
@@ -139,10 +139,10 @@ video you loaded previously into LoopLlama.
 
   **Key binding overview**. Bindings follow a 2-character system: (a) the
   first character is an entity prefix; (b) the second a mnemonic for the
-  operation. For example, `vo` for **Video › Open** and `ae` for **App › Load
-  examples**. The most common operations also have shortcut bindings for
-  easier typing (see the **Video** and **App** menus for several examples).
-  The help documentation mainly use the formal two-character bindings.
+  operation. For example, `vo` for **Video › Open** or `ce` for **Chapter ›
+  Edit**. The most common operations also have shortcut bindings for easier
+  typing (see the **Video** and **App** menus for several examples). The help
+  documentation mainly use the formal two-character bindings.
 
 </div>
 
@@ -479,7 +479,7 @@ Navigational jumps of more than 15 seconds are stored in a jump history that
 you can traverse. Although the history holds up to the last 40 jumps for a
 video, the primary intent is to allow a user to return to their prior location
 after an inadvertent jump. The jump history operations and key bindings are
-listed on the App menu.
+listed on the **App** menu.
 
 <span class="ll-phead">Super slow motion</span>. To examine a video in super
 slow motion, a useful technique is to pause the video, set the seek-duration
@@ -579,8 +579,8 @@ out and remove all of your cloud data.
 ## App menu
 
 The **App** menu contains a variety of operations and settings. [Jump
-history](#jump-history) has already been covered, and the two help items are
-self-evident. The others are the following:
+history](#jump-history) has already been covered. The others are the
+following:
 
 <span class="ll-phead">Undo</span>. Use `au` for **App › Undo** to reverse a
 prior edit to the current video. LoopLlama stores data snapshots for the 20
