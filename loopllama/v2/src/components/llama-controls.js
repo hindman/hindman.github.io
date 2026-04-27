@@ -178,11 +178,18 @@ const MENUS = [
       { label: 'Zoom off',        action: 'zoomOff',     hint: hintFor('zoomOff')     },
       { type: 'divider' },
       { label: 'Options',       action: 'options',      hint: hintFor('options')      },
-      { label: 'Help',          action: 'helpGeneral',  hint: hintFor('helpGeneral')  },
-      { label: 'Key bindings',  action: 'helpKeys',     hint: hintFor('helpKeys')     },
-      { label: 'Load examples', action: 'loadExamples', hint: hintFor('loadExamples') },
     ],
   },
+];
+
+export const HELP_MENU_ITEMS = [
+  { label: 'Help',           action: 'helpGeneral',  hint: hintFor('helpGeneral')  },
+  { label: 'Key bindings',   action: 'helpKeys',     hint: hintFor('helpKeys')     },
+  { label: 'Load examples',  action: 'loadExamples', hint: hintFor('loadExamples') },
+  { type: 'divider' },
+  { label: 'The Fifth Fret', action: 'siteHome'   },
+  { label: 'Code',           action: 'siteCode'   },
+  { label: 'Issues',         action: 'siteIssues' },
 ];
 
 // Tooltip content with a muted key binding suffix.

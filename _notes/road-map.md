@@ -1,21 +1,20 @@
 
 ## TODO: LoopLlama v2
 
+3b. Git commit.
+
+4. Update docs:
+
+        _pages/loopllama-v2-keybindings.md
+        _pages/loopllama-v2-help.md
+        _notes/text-elements.md
+        _notes/dev-notes.md
+
+Stages 1 and 2 are independent and could be done in parallel. Stage 3 depends
+on nothing but is the heaviest lift. Stage 4 is always last.
+
 Code refactor:
-  - app: basic tests: all operations
-    - especially:
-      x ds/dr/di/dc
-      x export/import round trip
-      - undo/redo
-        x Scratch loop save-back
-        - Fix/unfix section or chapter end
-      - video > unstash
-      - scratch sources
-      - section/chapter modals
-      - pickers:
-        - arrows
-        - enter
-        - esc
+  - app: basic tests: all operations [see text-elements]
 
 User docs: final read:
     - MH
@@ -165,44 +164,19 @@ Posts:
 
 ## Current panel
 
-Elements:
-  - Name
-  - Video ID
-  - Duration
-  - Timeline display
-  - Chapter
-  - Section
-  - Scratch loop source
-  - Zoom [if active]
+[done]
 
 ## Timeline: hovers
 
-Elements:
-  - Playback.
-  - Chapters.
-  - Sections.
-  - Marks.
-  - Loops.
+[done]
 
 ## Which-key
 
-Elements:
-  - Scratch-edit mode.
-  - Count prefix.
-  - Binding prefixes:
+[done]
 
-        v | Video
-        c | Chapter
-        s | Section
-        l | Loop
-        x | Scratch
-        m | Mark
-        d | Data
-        a | App
-        j | Jump
-        ` | Open menu
-        [ | Loop start
-        ] | Loop end
+## Bindings
+
+Check file for any gaps that I haven't tested yet.
 
 ## Messages
 

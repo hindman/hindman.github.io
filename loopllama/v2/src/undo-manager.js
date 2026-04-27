@@ -72,4 +72,7 @@ export class UndoManager {
     this._undoStack = [];
     this._redoStack = [];
   }
+
+  get undoCount() { return this._undoStack.length; }
+  get redoCount()  { return this._redoStack.length; }
 }

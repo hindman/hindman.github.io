@@ -110,10 +110,10 @@ LoopLlama timeline makes clicking in the YouTube frame rarely necessary.
 <span class="ll-phead">Entities: the next step</span>. For many users — those
 who simply want to have a tool to loop or change the speed of YouTube videos
 using an efficient user interface — everything you need to know has been
-covered. But if you work some videos in depth (for example, transcribing a
-musical performance), being able to attach additional information to the video
-is powerful. That information is organized around five types of entities:
-videos, sections, chapters, marks, and loops.
+covered. But if you work with some videos in depth (for example, transcribing
+a musical performance), being able to attach additional information to the
+video is powerful. That information is organized around five types of
+entities: videos, sections, chapters, marks, and loops.
 
 ## Videos
 
@@ -141,20 +141,18 @@ video you loaded previously into LoopLlama.
   first character is an entity prefix; (b) the second a mnemonic for the
   operation. For example, `vo` for **Video › Open** and `ae` for **App › Load
   examples**. The most common operations also have shortcut bindings for
-  easier typing (see the Video and App menus for several examples). The help
-  documentation will tend to use the formal two-character bindings.
+  easier typing (see the **Video** and **App** menus for several examples).
+  The help documentation mainly use the formal two-character bindings.
 
 </div>
 
 <span class="ll-phead">Edit</span>. Use `ve` for **Video › Edit** to change
-the video name (by default, set to the title provided by the YouTube player)
-or to set custom start and end times for the video — for example, to exclude
-filler material that you rarely need to watch.
+the video name (by default, the title provided by the YouTube player) or to
+set custom start and end times for the video — for example, to exclude filler
+material that you rarely watch.
 
 <span class="ll-phead">Zoom</span>. Use `vz` for **Video › Zoom** to focus the
-timeline view to a video's custom start-end range, if you have set one (note
-zoom is most useful for smaller entities like sections, chapters, and loops,
-rather than for videos).
+timeline view to a video's custom start-end range, if you have set one.
 
 <span class="ll-phead">Scratch</span>. Use `vx` for **Video › Scratch** to
 loop an entire video (or the range defined by its custom start/end values).

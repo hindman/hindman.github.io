@@ -43,8 +43,6 @@ export const BINDINGS = {
   'u':          { handler: 'undo',        desc: 'Undo (synonym: au)' },
   'U':          { handler: 'redo',        desc: 'Redo (synonym: ar)' },
   't':          { handler: 'toggleZone2', desc: 'Toggle timeline (synonym: at)' },
-  'h':          { handler: 'helpGeneral', desc: 'General help (synonym: ah)' },
-  'k':          { handler: 'helpKeys',    desc: 'Key bindings (synonym: ak)' },
   'o':          { handler: 'options',     desc: 'Options (synonym: ao)' },
   'z':          { handler: 'zoomOff',    desc: 'Zoom off (synonym: az)' },
 
@@ -145,6 +143,9 @@ export const BINDINGS = {
     't': { handler: 'toggleZone2',  desc: 'Toggle timeline' },
     'z': { handler: 'zoomOff',      desc: 'Zoom off' },
     'o': { handler: 'options',      desc: 'Options' },
+  }},
+
+  'h': { completions: {
     'h': { handler: 'helpGeneral',  desc: 'Help' },
     'k': { handler: 'helpKeys',     desc: 'Key bindings' },
     'e': { handler: 'loadExamples', desc: 'Load examples' },

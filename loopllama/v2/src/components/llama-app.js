@@ -26,7 +26,7 @@ import { logSessionStart, logVideoLoad } from '../analytics.js';
 import { getUser, onAuthStateChange, signInWithGoogle, signInWithGitHub, signOut } from '../auth.js';
 import './llama-shared-video-conflict-modal.js';
 import './llama-whichkey.js';
-import './llama-controls.js';
+import { HELP_MENU_ITEMS } from './llama-controls.js';
 import './llama-timeline.js';
 import './llama-url-input-modal.js';
 import './llama-video-picker.js';
@@ -369,9 +369,9 @@ class LlamaApp extends LitElement {
         };
       },
       applySnapshot: (snap) => this._applySnapshot(snap),
-      onUndo:        (n, desc) => { this.statusMsg = n > 1 ? `Undone: ${n} edits.` : `Undone: (${desc}).`; },
-      onRedo:        (n, desc) => { this.statusMsg = n > 1 ? `Redone: ${n} edits.` : `Redone: (${desc}).`; },
-      onEmpty:       (dir)  => this._setWarning(`Cannot ${dir}.`),
+      onUndo:        (n, desc) => { this.statusMsg = n > 1 ? `Undone: ${n} edits.` : `Undone › ${desc}.`; },
+      onRedo:        (n, desc) => { this.statusMsg = n > 1 ? `Redone: ${n} edits.` : `Redone › ${desc}.`; },
+      onEmpty:       (dir)  => this._setWarning(`Cannot ${dir}: no edit history.`),
     });
     this._dataMgr         = new DataOpsManager(this);
     this.seekDelta        = DEFAULT_OPTIONS.seek_delta_default;
@@ -966,6 +966,9 @@ class LlamaApp extends LitElement {
       },
       videoInfo:     () => this._videoInfoModalEl?.show(),
       helpGeneral:   () => window.open(`${_siteOrigin()}/loopllama/v2/help/`, '_blank'),
+      siteHome:      () => window.open('https://hindman.github.io/', '_blank'),
+      siteCode:      () => window.open('https://github.com/hindman/hindman.github.io/tree/master/loopllama', '_blank'),
+      siteIssues:    () => window.open('https://github.com/hindman/hindman.github.io/issues', '_blank'),
       deleteData: () => {
         const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
         this._deleteDataModalEl?.show({
@@ -2046,9 +2049,11 @@ class LlamaApp extends LitElement {
         <nav class="header-nav">
           <img src="${import.meta.env.BASE_URL}flag.svg" class="header-flag" alt="">
           <span class="nav-sep">|</span>
-          <a class="nav-link" href="https://hindman.github.io/" target="_blank" rel="noopener">The Fifth Fret</a>
-          <span class="nav-sep">|</span>
-          <a class="nav-link" href="https://github.com/hindman/hindman.github.io/tree/master/loopllama" target="_blank" rel="noopener">Code</a>
+          <llama-dropdown
+            label="Help"
+            .items=${HELP_MENU_ITEMS}
+            @ll-menu-select=${this._onMenuSelect}
+          ></llama-dropdown>
           <span class="nav-sep">|</span>
           <llama-dropdown
             label="Account"
@@ -2225,6 +2230,9 @@ class LlamaApp extends LitElement {
         .namedLoops=${this.namedLoops}
         .marks=${this.marks}
         .duration=${this.duration}
+        .undoCount=${this._undoMgr.undoCount}
+        .redoCount=${this._undoMgr.redoCount}
+        .stash=${this.stashes[this.currentVideoId] ?? null}
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
       ></llama-video-info-modal>

@@ -82,6 +82,13 @@ LoopLlama: lines of code:
 
 ## Testing scenarios
 
+### Deleting all video stashes
+
+    const LLKEY = 'loopllama-v2';
+    const state = JSON.parse(localStorage.getItem(LLKEY));
+    state.stashes = {};
+    localStorage.setItem(LLKEY, JSON.stringify(state));
+
 ### Creating a cloud-newer video
 
 Get a video ID for testing. Edit MVID and N_HOURS as needed.

@@ -368,12 +368,12 @@ jb: no history     | W    | Cannot jump: no jump history.
 jb: at oldest      | W    | Cannot jump: at oldest position.
 jf: no history     | W    | Cannot jump: no jump history.
 jf: at newest      | W    | Cannot jump: at newest position.
-au                 | I    | Undone: ({prior_edit_msg}).
+au                 | I    | Undone › {prior_edit_msg}.
 au: N edits        | I    | Undone: {N} edits.
-au: nothing        | W    | Cannot undo.
-ar                 | I    | Redone: ({prior_edit_msg}).
+au: nothing        | W    | Cannot undo: no edit history.
+ar                 | I    | Redone › {prior_edit_msg}.
 ar: N edits        | I    | Redone: {N} edits.
-ar: nothing        | W    | Cannot redo.
+ar: nothing        | W    | Cannot redo: no edit history.
 a⌫                 | I    | Edit history: cleared.
 am: no prior       | W    | No recent message.
 ac                 | I    | Time copied: {time}.

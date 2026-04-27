@@ -113,6 +113,9 @@ class LlamaVideoInfoModal extends LitElement {
     namedLoops: { type: Array },
     marks:      { type: Array },
     duration:   { type: Number },
+    undoCount:  { type: Number },
+    redoCount:  { type: Number },
+    stash:      { type: Object },
   };
 
   constructor() {
@@ -123,6 +126,9 @@ class LlamaVideoInfoModal extends LitElement {
     this.namedLoops = [];
     this.marks      = [];
     this.duration   = null;
+    this.undoCount  = 0;
+    this.redoCount  = 0;
+    this.stash      = null;
     this._keyHandler = null;
   }
 
@@ -178,6 +184,11 @@ class LlamaVideoInfoModal extends LitElement {
     return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
   }
 
+  _fmtDate(ms) {
+    if (!ms) return '—';
+    return new Date(ms).toLocaleString();
+  }
+
   _renderVideo() {
     const v = this.video;
     if (!v) return html`<div class="empty">No video loaded.</div>`;
@@ -194,6 +205,12 @@ class LlamaVideoInfoModal extends LitElement {
         <span class="info-value">${v.url || '—'}</span>
         <span class="info-label">Duration</span>
         <span class="info-value">${dur != null ? this._fmt(dur) : '—'}</span>
+        <span class="info-label">Custom range</span>
+        <span class="info-value">${
+          v.start === 0 && v.end == null
+            ? '—'
+            : `${this._fmt(v.start)} – ${v.end != null ? this._fmt(v.end) : 'end'}`
+        }</span>
       </div>
     `;
   }
@@ -254,6 +271,28 @@ class LlamaVideoInfoModal extends LitElement {
     `;
   }
 
+  _renderOther() {
+    const v = this.video;
+    if (!v) return '';
+    const stashLabel = this.stash ? this._fmtDate(this.stash.last_modified) : '—';
+    return html`
+      <div class="info-grid">
+        <span class="info-label">Last modified</span>
+        <span class="info-value">${this._fmtDate(v.last_modified)}</span>
+        <span class="info-label">Last opened</span>
+        <span class="info-value">${this._fmtDate(v.last_opened)}</span>
+        <span class="info-label">Jump history</span>
+        <span class="info-value">${v.jumps?.length ?? 0}</span>
+        <span class="info-label">Undo history</span>
+        <span class="info-value">${this.undoCount}</span>
+        <span class="info-label">Redo history</span>
+        <span class="info-value">${this.redoCount}</span>
+        <span class="info-label">Stashed</span>
+        <span class="info-value">${stashLabel}</span>
+      </div>
+    `;
+  }
+
   render() {
     return html`
       <llama-modal label="Video info" @ll-modal-close=${this._onModalClose}>
@@ -268,6 +307,8 @@ class LlamaVideoInfoModal extends LitElement {
           ${this._renderLoops()}
           <div class="section-heading">Marks (${this.marks.length})</div>
           ${this._renderMarks()}
+          <div class="section-heading">Other</div>
+          ${this._renderOther()}
         </div>
         <div slot="footer">
           <sl-button variant="primary" @click=${this.hide}>Close</sl-button>

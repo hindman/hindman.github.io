@@ -126,14 +126,14 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 | ----------- | ---------------------
 | `[[`        | Start: set now
 | `[⌫`        | Start: reset to video start
+| `[\`        | Start: edit
 | `[-`        | Start: nudge: decrease (supports count)
 | `[=`        | Start: nudge: increase (supports count)
-| `[\`        | Start: edit
 | `]]`        | End: set now
 | `]⌫`        | End: reset to video end
+| `]\`        | End: edit
 | `]-`        | End: nudge: decrease (supports count)
 | `]=`        | End: nudge: increase (supports count)
-| `]\`        | End: edit
 | `[]` · `][` | Nudge delta: activate dropdown
 
 ## Scratch loop edit mode
@@ -141,10 +141,10 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 | Key         | Operation
 | ----------- | ---------------------
 | `Tab`       | Toggle focus: start/end
-| `Right`     | Increase: start/end
 | `Left`      | Decrease: start/end
-| `Up`        | Increase: nudge-delta
+| `Right`     | Increase: start/end
 | `Down`      | Decrease: nudge-delta
+| `Up`        | Increase: nudge-delta
 | `Space`     | Play/pause near start/end
 | `⌫`         | Reset: start/end
 | `Enter`     | Exit mode
