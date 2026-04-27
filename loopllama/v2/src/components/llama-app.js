@@ -362,8 +362,9 @@ class LlamaApp extends LitElement {
     this._undoMgr = new UndoManager({
       getSnapshot:   () => {
         this._saveCurrentState();
+        const vid = this._appState.videos.find(v => v.id === this.currentVideoId);
         return {
-          videos:         JSON.parse(JSON.stringify(this._appState.videos)),
+          video:          JSON.parse(JSON.stringify(vid)),
           currentVideoId: this.currentVideoId,
         };
       },
@@ -466,10 +467,10 @@ class LlamaApp extends LitElement {
   _saveCurrentState() {
     const video = this._appState?.videos.find(v => v.id === this.currentVideoId);
     if (!video) return;
-    video.chapters = this.chapters;
-    video.sections = this.sections;
-    video.marks    = this.marks;
-    video.jumps    = this.jumps;
+    video.chapters = [...this.chapters];
+    video.sections = [...this.sections];
+    video.marks    = [...this.marks];
+    video.jumps    = [...this.jumps];
     video.time     = this.currentTime;
     // Update scratch loop from reactive state; persist loopSrc identity.
     if (!video.scratchLoop) video.scratchLoop = { start: 0, end: 0, looping: false, sourceId: null, sourceType: null };
@@ -552,15 +553,24 @@ class LlamaApp extends LitElement {
 
   // Snapshot the full video registry and current video ID.
   // Playback state (speed, looping, scratch loop) is not included.
-  // Call after setting statusMsg, before the mutation; reactive props must
-  // already be flushed to _appState (they are, because every mutation ends
-  // with _saveCurrentState).
+  // Call after setting statusMsg, before the mutation.
+  // _appState.video has current array state (sections/marks/etc.) but scratch
+  // loop may lag if nudge was the last op (nudge skips _saveCurrentState).
+  // Inject reactive scratch loop state directly so the snapshot is accurate.
   _pushUndoSnapshot() {
     const vid = this._appState.videos.find(v => v.id === this.currentVideoId);
     if (!vid) return;
     const desc = (this.statusMsg ?? '').replace(/\.$/, '');
+    const videoSnap = JSON.parse(JSON.stringify(vid));
+    videoSnap.scratchLoop = {
+      start:      this.loopStart,
+      end:        this.loopEnd,
+      looping:    this.looping,
+      sourceId:   this.loopSrc?.id   ?? null,
+      sourceType: this.loopSrc?.type ?? null,
+    };
     this._undoMgr.push({
-      video:          JSON.parse(JSON.stringify(vid)),
+      video:          videoSnap,
       currentVideoId: this.currentVideoId,
       desc,
     });
@@ -571,14 +581,7 @@ class LlamaApp extends LitElement {
     if (idx === -1) return;
     this._appState.videos[idx] = JSON.parse(JSON.stringify(snap.video));
     this.videos = [...this._appState.videos];
-    const restored = this._appState.videos[idx];
-    this.sections   = [...(restored.sections ?? [])];
-    this.marks      = [...(restored.marks    ?? [])];
-    this.namedLoops = [...(restored.loops ?? [])];
-    this.chapters   = [...(restored.chapters ?? [])];
-    if (this.loopSrc?.type === 'loop' && !this.namedLoops.find(l => l.id === this.loopSrc.id)) {
-      this.loopSrc = null;
-    }
+    this._syncFromVideo(this._appState.videos[idx]);
     this._save();
   }
 

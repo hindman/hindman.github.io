@@ -171,7 +171,7 @@ export class DataOpsManager {
 
     // If the current video was replaced by a cloud version, re-sync UI.
     const currentVideo = app._appState.videos.find(v => v.id === app.currentVideoId);
-    if (currentVideo) app._syncFromVideo(currentVideo);
+    if (currentVideo) { app._undoMgr.clear(); app._syncFromVideo(currentVideo); }
 
     app._save();
     app.videos  = [...app._appState.videos];
@@ -276,7 +276,7 @@ export class DataOpsManager {
     // If the current video was replaced, re-sync reactive props so stale
     // state isn't flushed back over the imported data on the next video switch.
     const currentVideo = app._appState.videos.find(v => v.id === app.currentVideoId);
-    if (currentVideo) app._syncFromVideo(currentVideo);
+    if (currentVideo) { app._undoMgr.clear(); app._syncFromVideo(currentVideo); }
     app._save();
     app.statusMsg = 'Data: imported.';
   }
@@ -373,6 +373,7 @@ export class DataOpsManager {
 
     app._appState.currentVideoId = video.id;
     app.currentVideoId = video.id;
+    app._undoMgr.clear();
     app._syncFromVideo(video);
     app.loopStart = loop.start;
     app.loopEnd   = loop.end;
@@ -437,6 +438,7 @@ export class DataOpsManager {
     video.last_opened = Date.now();
     app._appState.currentVideoId = video.id;
     app.currentVideoId = video.id;
+    app._undoMgr.clear();
     app._syncFromVideo(video);
     const _startAt = app.looping && app.loopStart < app.loopEnd ? app.loopStart : 0;
     app._vc.loadVideo(video.id, _startAt);

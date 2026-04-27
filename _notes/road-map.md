@@ -7,6 +7,8 @@ Code refactor:
       x ds/dr/di/dc
       x export/import round trip
       - undo/redo
+        x Scratch loop save-back
+        - Fix/unfix section or chapter end
       - video > unstash
       - scratch sources
       - section/chapter modals
