@@ -527,7 +527,7 @@ class LlamaApp extends LitElement {
     this.currentVideoId = video.id;
     this._syncFromVideo(video);
     const _startAt = startTime ?? (this.looping && this.loopStart < this.loopEnd ? this.loopStart : video.time ?? 0);
-    this._vc.loadVideo(video.id, _startAt);
+    this._vc.cueVideo(video.id, _startAt);
     this.duration  = null;
     this.statusMsg = loadMsg;
     this._save();
@@ -1594,6 +1594,8 @@ class LlamaApp extends LitElement {
     this._pushUndoSnapshot();
     deleteSectionById(this.sections, e.detail.id);
     this.sections = [...this.sections];
+    if (this.loopSrc?.id === e.detail.id) this.loopSrc = null;
+    if (this.zoomSource?.trigger === 'section') this.zoomSource = null;
     this._saveCurrentState();
   }
 
@@ -1602,6 +1604,7 @@ class LlamaApp extends LitElement {
     this._pushUndoSnapshot();
     deleteMarkById(this.marks, e.detail.id);
     this.marks = [...this.marks];
+    if (this.loopSrc?.id === e.detail.id) this.loopSrc = null;
     this._saveCurrentState();
   }
 
@@ -1858,9 +1861,8 @@ class LlamaApp extends LitElement {
     this._pushUndoSnapshot();
     deleteChapterById(this.chapters, e.detail.id);
     this.chapters = [...this.chapters];
-    if (this.zoomSource?.trigger === 'chapter') {
-      this.zoomSource = null;
-    }
+    if (this.loopSrc?.id === e.detail.id) this.loopSrc = null;
+    if (this.zoomSource?.trigger === 'chapter') this.zoomSource = null;
     this._saveCurrentState();
   }
 

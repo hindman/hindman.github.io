@@ -149,7 +149,8 @@ video you loaded previously into LoopLlama.
 <span class="ll-phead">Edit</span>. Use `ve` for **Video › Edit** to change
 the video name (by default, the title provided by the YouTube player) or to
 set custom start and end times for the video — for example, to exclude filler
-material that you rarely watch.
+material that you rarely watch when looping or zooming a video or when using
+`Enter` to jump to its start.
 
 <span class="ll-phead">Zoom</span>. Use `vz` for **Video › Zoom** to focus the
 timeline view to a video's custom start-end range, if you have set one.

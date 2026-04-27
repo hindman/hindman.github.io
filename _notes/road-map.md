@@ -33,25 +33,6 @@ Posts:
 
 ## Menus
 
-    Video:
-        Load URL   | vl  y
-        Open...    | vo  vv
-        Edit       | ve
-        Scratch    | vx
-        Zoom       | vz
-        Delete...  | vd
-        Unstash... | vu
-        Info       | vi
-
-    Chapter:
-        Create    | cc
-        Edit      | ce
-        Scratch   | cx
-        Jump...   | cj
-        Zoom      | cz
-        Fix end   | cf
-        Delete... | cd
-
     Section:
         Create    | ss
         Edit      | se

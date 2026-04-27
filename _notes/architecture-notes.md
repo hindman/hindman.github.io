@@ -243,6 +243,15 @@ Several modules live outside the component tree:
   `onUndo`, `onRedo`, `onEmpty`) and exposes `push()`, `undo()`, and
   `redo()`. Stack mechanics only — no knowledge of app state shape.
 
+  Known limitation: main-control settings (seek delta, loop nudge delta,
+  speed) are not treated as reversible edits — no snapshot is pushed when
+  they change. However, because snapshots are full deep-copies of the video
+  object (which stores these values in seek_delta, loop_nudge_delta, speed),
+  a control change made after a structural edit will be silently rolled back
+  if the user undoes that edit. The fix would require either stripping those
+  fields from snapshots or overlaying current values post-restore, both of
+  which add schema-level maintenance burden. Accepted as a minor edge case.
+
 - `DataOpsManager` (data-ops-manager.js): owns all cloud, import/export,
   and sharing handler methods that would otherwise crowd `<llama-app>`.
   Holds a back-reference to the app component and calls its state and

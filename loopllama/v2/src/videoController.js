@@ -67,6 +67,10 @@ export function createVideoController({ onReady, onStateChange, onError } = {}) 
   }
 
   // Cue a video by YouTube ID without auto-playing.
+  // YT quirk: seeking a cued (never-played) video triggers autoplay. We accept
+  // this rather than suppressing it -- suppression requires an immediate pause()
+  // on the PLAYING state event, which causes a brief audible blip before the
+  // pause lands. That glitch is worse than the autoplay itself.
   function cueVideo(videoId, startSeconds = 0) {
     durationReady = false;
     player.cueVideoById({ videoId, startSeconds });

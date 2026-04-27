@@ -441,7 +441,7 @@ export class DataOpsManager {
     app._undoMgr.clear();
     app._syncFromVideo(video);
     const _startAt = app.looping && app.loopStart < app.loopEnd ? app.loopStart : 0;
-    app._vc.loadVideo(video.id, _startAt);
+    app._vc.cueVideo(video.id, _startAt);
     app.duration = null;
     app._save();
     logVideoLoad(video.id);
