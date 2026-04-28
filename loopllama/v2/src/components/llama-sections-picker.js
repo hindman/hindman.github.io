@@ -53,13 +53,6 @@ class LlamaSectionsPicker extends FilterPickerMixin(LitElement) {
       border-color: var(--ll-accent, #7ec8e3);
       outline: none;
     }
-    .section-row.active {
-      border-color: var(--ll-accent-warm, #e3a857);
-    }
-    .section-row.active.selected {
-      border-color: var(--ll-accent-warm, #e3a857);
-      box-shadow: 0 0 0 1px var(--ll-accent, #7ec8e3);
-    }
     .section-row.mode-delete:hover,
     .section-row.mode-delete.selected {
       border-color: var(--sl-color-danger-600, #c0392b);
@@ -71,6 +64,9 @@ class LlamaSectionsPicker extends FilterPickerMixin(LitElement) {
       font-size: var(--ll-text-sm, 0.85rem);
       color: var(--ll-text-dim, #aaa);
       margin-top: 0.1rem;
+    }
+    .section-suffix {
+      color: var(--ll-accent-warm, #e3a857);
     }
     .empty {
       color: var(--ll-text-muted, #666);
@@ -142,14 +138,13 @@ class LlamaSectionsPicker extends FilterPickerMixin(LitElement) {
                 <div
                   class="section-row
                     ${isDelete ? 'mode-delete' : ''}
-                    ${s.id === this.activeSectionId ? 'active' : ''}
                     ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(s)}
                 >
-                  <div class="section-primary">${s.name || fmtTimePlain(s.start)}</div>
-                  ${s.name
-                    ? html`<div class="section-sub">${fmtTimePlain(s.start)}</div>`
-                    : ''}
+                  <div class="section-primary">${s.name || '—'}</div>
+                  <div class="section-sub">${fmtTimePlain(s.start)}${s.id === this.activeSectionId
+                    ? html`<span class="section-suffix"> [current]</span>`
+                    : ''}</div>
                 </div>
               `)
             : html`<div class="empty">No sections${this._filter ? ' match.' : ' set.'}</div>`}

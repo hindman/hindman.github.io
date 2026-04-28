@@ -65,6 +65,9 @@ class LlamaMarksPicker extends FilterPickerMixin(LitElement) {
       color: var(--ll-text-dim, #aaa);
       margin-top: 0.1rem;
     }
+    .mark-suffix {
+      color: var(--ll-accent-warm, #e3a857);
+    }
     .empty {
       color: var(--ll-text-muted, #666);
       font-size: var(--ll-text-sm, 0.85rem);
@@ -73,14 +76,16 @@ class LlamaMarksPicker extends FilterPickerMixin(LitElement) {
   `;
 
   static properties = {
-    marks:   { type: Array },
-    mode:    { type: String },
+    marks:        { type: Array },
+    mode:         { type: String },
+    activeMarkId: { type: String },
   };
 
   constructor() {
     super();
-    this.marks   = [];
-    this.mode    = 'jump';
+    this.marks        = [];
+    this.mode         = 'jump';
+    this.activeMarkId = null;
   }
 
   get _listClass() { return 'mark-list'; }
@@ -134,10 +139,10 @@ class LlamaMarksPicker extends FilterPickerMixin(LitElement) {
                   class="mark-row ${isDelete ? 'mode-delete' : ''} ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(m)}
                 >
-                  <div class="mark-primary">${m.name || fmtTimePlain(m.time)}</div>
-                  ${m.name
-                    ? html`<div class="mark-sub">${fmtTimePlain(m.time)}</div>`
-                    : ''}
+                  <div class="mark-primary">${m.name || '—'}</div>
+                  <div class="mark-sub">${fmtTimePlain(m.time)}${m.id === this.activeMarkId
+                    ? html`<span class="mark-suffix"> [current]</span>`
+                    : ''}</div>
                 </div>
               `)
             : html`<div class="empty">No marks${this._filter ? ' match.' : ' set.'}</div>`}

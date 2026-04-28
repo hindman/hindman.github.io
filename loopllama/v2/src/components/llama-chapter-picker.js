@@ -53,13 +53,6 @@ class LlamaChapterPicker extends FilterPickerMixin(LitElement) {
       border-color: var(--ll-accent, #7ec8e3);
       outline: none;
     }
-    .chapter-row.active {
-      border-color: var(--ll-accent-warm, #e3a857);
-    }
-    .chapter-row.active.selected {
-      border-color: var(--ll-accent-warm, #e3a857);
-      box-shadow: 0 0 0 1px var(--ll-accent, #7ec8e3);
-    }
     .chapter-row.mode-delete:hover,
     .chapter-row.mode-delete.selected {
       border-color: var(--sl-color-danger-600, #c0392b);
@@ -71,6 +64,9 @@ class LlamaChapterPicker extends FilterPickerMixin(LitElement) {
       font-size: var(--ll-text-sm, 0.85rem);
       color: var(--ll-text-dim, #aaa);
       margin-top: 0.1rem;
+    }
+    .chapter-suffix {
+      color: var(--ll-accent-warm, #e3a857);
     }
     .empty {
       color: var(--ll-text-muted, #666);
@@ -141,14 +137,13 @@ class LlamaChapterPicker extends FilterPickerMixin(LitElement) {
                 <div
                   class="chapter-row
                     ${isDelete ? 'mode-delete' : ''}
-                    ${c.id === this.activeChapterId ? 'active' : ''}
                     ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(c)}
                 >
-                  <div class="chapter-primary">${c.name || fmtTimePlain(c.start)}</div>
-                  ${c.name
-                    ? html`<div class="chapter-sub">${fmtTimePlain(c.start)}</div>`
-                    : ''}
+                  <div class="chapter-primary">${c.name || '—'}</div>
+                  <div class="chapter-sub">${fmtTimePlain(c.start)}${c.id === this.activeChapterId
+                    ? html`<span class="chapter-suffix"> [current]</span>`
+                    : ''}</div>
                 </div>
               `)
             : html`<div class="empty">No chapters${this._filter ? ' match.' : ' set.'}</div>`}

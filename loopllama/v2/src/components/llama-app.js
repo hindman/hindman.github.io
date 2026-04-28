@@ -2183,6 +2183,7 @@ class LlamaApp extends LitElement {
 
       <llama-marks-picker
         .marks=${this.marks}
+        .activeMarkId=${nearestMarkLeft(this.marks, this.currentTime)?.id ?? null}
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-jump-mark=${this._onJumpMark}

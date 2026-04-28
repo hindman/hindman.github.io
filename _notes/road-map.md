@@ -31,53 +31,42 @@ Posts:
   - Skepticism of the science of music practice: https://chatgpt.com/c/692dd380-d5d0-832c-ad74-a768b049c47b
   - Tommy Emmanuel vs Music Practice Inc [see writing-notes]
 
+## ISSUES
+
+Scratch edit mode:
+  - Space: it always plays; no way to stop playing.
+
+Scratch loop:
+  - Looping: on.
+  - Playback: either paused or playing (does not matter).
+  - Playhead near start (or end, if scenario were reversed).
+  - Nudge start increase.
+  - Now the playhead resides outside the scratch loop.
+  - We should be enforcing bounds: move playhead into the loop.
+
+Delete data modal: simplify the empty messages:
+
+    Current | Current video has no entities to delete.
+    New     | Video has no entities.
+
+    Current | No video loaded.
+    New     | No video.
+
+    Current | No videos saved.
+    New     | No videos.
+
+Saved loops: current-entity is broken:
+  - Three saved-loop operations apply to the current-entity, based on playhead
+    position: Edit (le), Scratch (lx), Zoom (lz).
+  - But saved-loops can overlap!
+  - That means a user can create overlapping saved loops and then lose the
+    ability to ever edit/scratch/zoom them.
+
 ## Menus
-
-    Section:
-        Create    | ss
-        Edit      | se
-        Scratch   | sx
-        Jump...   | sj
-        Zoom      | sz
-        Fix end   | sf
-        Delete... | sd
-
-    Loop:
-        Create    | ll
-        Edit      | le
-        Scratch   | lx
-        Jump...   | lj
-        Zoom      | lz
-        Delete... | ld
-
-    Scratch:
-        Toggle          | xx
-        Edit mode       | xe  \
-        Zoom            | xz
-        --------------------------------
-        Save to source  | xs
-        Reset to source | xr
-        Unlink source   | xu
-
-    Mark:
-        Create    | mm
-        Edit      | me
-        Jump...   | mj
-        Delete... | md
 
     Data:
         Share video        | dv
         Share scratch loop | dx
-        --------------------------------
-        Export             | de
-        Import             | di
-        Inspect            | dI
-        --------------------------------
-        Save to cloud      | ds  dd
-        Read from cloud    | dr
-        Compare            | dc
-        --------------------------------
-        Delete...          | d⌫
 
     App:
         Jump history... | jh

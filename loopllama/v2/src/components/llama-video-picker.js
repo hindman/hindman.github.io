@@ -46,13 +46,6 @@ class LlamaVideoPicker extends FilterPickerMixin(LitElement) {
       background: var(--ll-surface-raised, #2a2a2a);
       border-color: var(--ll-accent, #7ec8e3);
     }
-    .video-row.current {
-      border-color: var(--ll-accent-warm, #e3a857);
-    }
-    .video-row.current.selected {
-      border-color: var(--ll-accent-warm, #e3a857);
-      box-shadow: 0 0 0 1px var(--ll-accent, #7ec8e3);
-    }
     .video-row.selected {
       background: var(--ll-surface-raised, #2a2a2a);
       border-color: var(--ll-accent, #7ec8e3);
@@ -64,10 +57,7 @@ class LlamaVideoPicker extends FilterPickerMixin(LitElement) {
     }
     .video-row.mode-restore:hover,
     .video-row.mode-restore.selected {
-      border-color: var(--ll-accent-warm, #e3a857);
-    }
-    .video-row.not-in-library .video-primary {
-      color: var(--ll-text-dim, #aaa);
+      border-color: var(--sl-color-danger-600, #c0392b);
     }
     .video-primary {
       font-size: var(--ll-text-base, 1.05rem);
@@ -76,6 +66,9 @@ class LlamaVideoPicker extends FilterPickerMixin(LitElement) {
       font-size: var(--ll-text-sm, 0.85rem);
       color: var(--ll-text-dim, #aaa);
       margin-top: 0.1rem;
+    }
+    .video-suffix {
+      color: var(--ll-accent-warm, #e3a857);
     }
     .empty {
       color: var(--ll-text-muted, #666);
@@ -199,9 +192,9 @@ class LlamaVideoPicker extends FilterPickerMixin(LitElement) {
     );
   }
 
-  // Preferred display label: name > id.
+  // Preferred display label: name or em-dash if unnamed.
   _primaryLabel(v) {
-    return v.name || v.id;
+    return v.name || '—';
   }
 
   // Secondary label: always the video ID.
@@ -241,13 +234,15 @@ class LlamaVideoPicker extends FilterPickerMixin(LitElement) {
                 <div
                   class="video-row
                     ${isDelete ? 'mode-delete' : isRestore ? 'mode-restore' : ''}
-                    ${notInLib ? 'not-in-library' : ''}
-                    ${v.id === this.currentVideoId ? 'current' : ''}
                     ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(v)}
                 >
                   <div class="video-primary">${this._primaryLabel(v)}</div>
-                  <div class="video-sub">${v.id}${notInLib ? '   [not in library]' : ''}</div>
+                  <div class="video-sub">${v.id}${v.id === this.currentVideoId
+                    ? html`<span class="video-suffix"> [current]</span>`
+                    : ''}${notInLib
+                    ? html`<span class="video-suffix"> [not in library]</span>`
+                    : ''}</div>
                 </div>`;
               })
             : html`<div class="empty">No videos match.</div>`}

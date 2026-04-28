@@ -49,17 +49,10 @@ class LlamaLoopPicker extends FilterPickerMixin(LitElement) {
       background: var(--ll-surface-raised, #2a2a2a);
       border-color: var(--ll-accent, #7ec8e3);
     }
-    .loop-row.active {
-      border-color: var(--ll-accent-warm, #e3a857);
-    }
     .loop-row.selected {
       background: var(--ll-surface-raised, #2a2a2a);
       border-color: var(--ll-accent, #7ec8e3);
       outline: none;
-    }
-    .loop-row.active.selected {
-      border-color: var(--ll-accent-warm, #e3a857);
-      box-shadow: 0 0 0 1px var(--ll-accent, #7ec8e3);
     }
     .loop-row.mode-delete:hover,
     .loop-row.mode-delete.selected {
@@ -72,6 +65,9 @@ class LlamaLoopPicker extends FilterPickerMixin(LitElement) {
       font-size: var(--ll-text-sm, 0.85rem);
       color: var(--ll-text-dim, #aaa);
       margin-top: 0.1rem;
+    }
+    .loop-suffix {
+      color: var(--ll-accent-warm, #e3a857);
     }
     .empty {
       color: var(--ll-text-muted, #666);
@@ -148,14 +144,13 @@ class LlamaLoopPicker extends FilterPickerMixin(LitElement) {
                 <div
                   class="loop-row
                     ${isDelete ? 'mode-delete' : ''}
-                    ${l.id === this.loopSource ? 'active' : ''}
                     ${i === this._selIdx ? 'selected' : ''}"
                   @click=${() => this._select(l)}
                 >
-                  <div class="loop-primary">${l.name || this._range(l)}</div>
-                  ${l.name
-                    ? html`<div class="loop-sub">${this._range(l)}</div>`
-                    : ''}
+                  <div class="loop-primary">${l.name || '—'}</div>
+                  <div class="loop-sub">${this._range(l)}${l.id === this.loopSource
+                    ? html`<span class="loop-suffix"> [current]</span>`
+                    : ''}</div>
                 </div>
               `)
             : html`<div class="empty">No loops${this._filter ? ' match.' : ' saved.'}</div>`}
