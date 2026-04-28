@@ -240,7 +240,7 @@ def deploy(c):
     build_num = 1 + max(d['build_num'] for d in deployments)
 
     # Write version.js with the build number.
-    write_file(PATHS.ll_version_file, VERSION_FMT.format(build_num))
+    write_file(c, PATHS.ll_version_file, VERSION_FMT.format(build_num))
 
     # Build.
     with c.cd(PATHS.ll_root):
@@ -275,7 +275,7 @@ def deploy(c):
 
     # Write the deployments data file, including the current deployment.
     deployments.append(current)
-    write_json(PATHS.ll_deployments, deployments)
+    write_json(c, PATHS.ll_deployments, deployments)
 
     # Add several things to git: deployments data file, the JS version file,
     # the generated index.html file, and the assets files. The --force is used
@@ -358,16 +358,22 @@ def read_file(path):
     with open(path) as fh:
         return fh.read()
 
-def write_file(path, text):
-    with open(path, 'w') as fh:
-        return fh.write(text)
+def write_file(c, path, text):
+    if c.config.run.dry:
+        print(f'# write_file({path}): {text!r}')
+    else:
+        with open(path, 'w') as fh:
+            return fh.write(text)
 
 def read_json(path):
     return json.loads(read_file(path))
 
-def write_json(path, d):
-    with open(path, 'w') as fh:
-        json.dump(d, fh, indent = 2)
+def write_json(c, path, d):
+    if c.config.run.dry:
+        print(f'# write_json({path}): {d}')
+    else:
+        with open(path, 'w') as fh:
+            json.dump(d, fh, indent = 2)
 
 def get_apps(f5 = False, ll = False):
     # Returns a list of APPS values: both apps for

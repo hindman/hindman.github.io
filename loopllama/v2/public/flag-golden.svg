@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 434 100">
+  <!-- Anti-authoritarian amalgam flag: Black | Red | Purple | White | Gold | Green | Blue -->
+  <!-- Anarchism | Labor/resistance | Spanish Republic | Peace | Democratic hope | Pan-African | Liberty -->
+  <rect x="0"   y="0" width="62" height="100" fill="#1a1a1a"/>
+  <rect x="62"  y="0" width="62" height="100" fill="#c0392b"/>
+  <rect x="124" y="0" width="62" height="100" fill="#6c3483"/>
+  <rect x="186" y="0" width="62" height="100" fill="#f0f0f0"/>
+  <rect x="248" y="0" width="62" height="100" fill="#d4ac0d"/>
+  <rect x="310" y="0" width="62" height="100" fill="#1e8449"/>
+  <rect x="372" y="0" width="62" height="100" fill="#2471a3"/>
+  <!-- Border inset 0.5px to avoid clipping -->
+  <rect x="0.5" y="0.5" width="433" height="99" fill="none" stroke="#666" stroke-width="1"/>
+</svg>

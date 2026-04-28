@@ -509,11 +509,11 @@ devices, or perform bulk deletions.
 <span class="ll-phead">Share video</span>. Use `dv` for **Data › Share video**
 to copy a LoopLlama sharing URL to your clipboard. Anyone with the URL can get
 a copy of your data for that video loaded into their LoopLlama. If the URL
-recipient already has the same video in their library, the app will warn them
-and offer a chance to skip the URL or replace their video information with the
-shared information. If the recipient selects replace, their video information
-is first stashed, allowing them to review your shared data and later use
-**Video › Unstash** to return to their prior data.
+recipient already has the same video, the app will prompt the user with a
+skip-replace choice. If the recipient selects replace, the local video
+information is stashed and then the shared video information is loaded into
+the library. Later, the recipient can return to the prior video information
+via [unstash](#video-unstash).
 
 <span class="ll-phead">Share scratch loop</span>. Use `dx` for **Data › Share
 scratch loop**, which is like **Share video**, but the data covers only the
@@ -524,11 +524,11 @@ your LoopLlama data as a JSON file. If you understand how to use the app, the
 data in the file will make sense.
 
 <span class="ll-phead">Import</span>. Use `di` for **Data › Import**, which
-performs that process in reverse: load the data from an exported JSON file
+performs that process in reverse, loading the data from an exported JSON file
 into LoopLlama — for example on a different browser or computer (see [data
 review](#data-review)). The export-import operations can also be used to
-create a snapshot of your LoopLlama data before making experimental edits that
-you might want to reverse in bulk.
+create a snapshot of your library data before making experimental edits that
+you might want to reverse.
 
 <div class="notice--primary" markdown="1">
 
@@ -543,7 +543,7 @@ you might want to reverse in bulk.
   toward keeping newer data over older. You can review, adjust any toggle, and
   apply the operation or cancel. Any time the operation replaces a video,
   LoopLlama stashes a copy of the prior version for recovery (see
-  [Unstash](#video-unstash)).
+  [**Unstash**](#video-unstash)).
 
 </div>
 
@@ -553,7 +553,7 @@ which displays your LoopLlama data directly in the browser.
 <a id="bulk-delete"></a><span class="ll-phead">Bulk deletion</span>. Use `d⌫`
 for **Data › Delete** to delete data in bulk — either entire videos or the
 entities within a single video. Deleted videos can be restored via
-[Unstash](#video-unstash).
+[**Unstash**](#video-unstash).
 
 ## Cloud storage and sign-in {#why-sign-in}
 
@@ -583,8 +583,8 @@ opens an informational review showing an inventory of your videos across the
 same five categories as the [data review](#data-review) — without any toggles
 or action.
 
-<span class="ll-phead">Remove cloud data</span>. See **Account** menu to sign
-out and remove all of your cloud data.
+<span class="ll-phead">Remove cloud data</span>. See the **Account** menu to
+sign out and remove all of your cloud data.
 
 ## App menu
 
@@ -594,12 +594,12 @@ following:
 
 <span class="ll-phead">Undo</span>. Use `au` for **App › Undo** to reverse a
 prior edit to the current video. LoopLlama stores data snapshots for the 20
-most recent edits. Snapshotting covers explicit changes to the current video —
-its attributes and edits to its chapters, sections, loops, and marks. It does
-not cover routine navigation or adjustments to playback and looping controls
-(current location and speed, jump history, navigation settings, scratch loop
-bounds), even though those settings are remembered per video. Changing the
-current video clears the edit history.
+most recent edits. Snapshotting covers explicit changes to the current video's
+direct attributes, as well as those of its chapters, sections, loops, and
+marks. It does not cover routine navigation or adjustments to playback and
+looping controls (current location and speed, jump history, navigation
+settings, scratch loop bounds), even though those settings are remembered per
+video. Switching to a different video clears the edit history.
 
 <span class="ll-phead">Redo</span>. Use `ar` for **App › Redo** to apply an
 edit that was undone.

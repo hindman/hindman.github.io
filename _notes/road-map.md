@@ -2,7 +2,7 @@
 ## TODO: LoopLlama v2
 
 Help edit pass:
-  - HERE: ## Cloud storage and sign-in {#why-sign-in}
+  - HERE:
 
 Code refactor:
   - app: basic tests: all operations [see text-elements]

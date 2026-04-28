@@ -2049,7 +2049,7 @@ class LlamaApp extends LitElement {
           <span class="header-quip ${this._quip ? 'visible' : ''}">${this._quip}</span>
         </div>
         <nav class="header-nav">
-          <img src="${import.meta.env.BASE_URL}flag.svg" class="header-flag" alt="">
+          <img src="${import.meta.env.BASE_URL}flag-golden.svg" class="header-flag" alt="">
           <span class="nav-sep">|</span>
           <llama-dropdown
             label="Help"
