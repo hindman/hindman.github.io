@@ -61,6 +61,12 @@ Saved loops: current-entity is broken:
   - But saved-loops can overlap!
   - That means a user can create overlapping saved loops and then lose the
     ability to ever edit/scratch/zoom them.
+    - Currently, the picker app designates one of them as "current".
+    - So if 3 saved-loops overlap, only 1 of them can be edited/scratched/zoomed.
+  - I don't want to solve this problem by forcing all of these operations to
+    go through a picker. Most of the time, my saved-loops don't overlap.
+  - Could we solve it by inserting a picker into the process only when
+    required, and limit the picker to just the relevant saved-loops?
 
 ## Menus
 

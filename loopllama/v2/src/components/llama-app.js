@@ -290,6 +290,7 @@ class LlamaApp extends LitElement {
     loopNudgeDelta:     { type: Number },
     seekDelta:          { type: Number },
     zone2Mode:          { type: String },
+    _loopCandidates:    { type: Array },
   };
 
   constructor() {
@@ -325,6 +326,9 @@ class LlamaApp extends LitElement {
     this.warningMsg          = null;
     this.errorMsg            = null;
     this.zone2Mode           = 'sections';
+    this._loopCandidates     = null;
+    this._pendingLoopOp      = null;
+    this._selectedLoop       = null;
     this._quip               = '';
     this._quipDeck           = [];
     this._quipPos            = 0;
@@ -875,21 +879,8 @@ class LlamaApp extends LitElement {
         this.statusMsg = 'Scratch loop: source unlinked.';
       },
       editScratch: () => this._enterEditScratch(),
-      editLoop: () => {
-        const loop = this.namedLoops.find(l => this.currentTime >= l.start && this.currentTime <= l.end);
-        if (!loop) { this._setWarning('No current loop.'); return; }
-        this._saveLoopModalEl?.show(loop);
-      },
-      scratchLoop: () => {
-        const loop = this.namedLoops.find(l => this.currentTime >= l.start && this.currentTime <= l.end);
-        if (!loop) { this._setWarning('No current loop.'); return; }
-        this._clearZoomIfOutside(loop.start, loop.end);
-        this.loopStart = loop.start;
-        this.loopEnd   = loop.end;
-        this.looping   = true;
-        this.loopSrc   = { id: loop.id, label: loop.name || null, type: 'loop', start: loop.start, end: loop.end };
-        this.statusMsg = 'Loop: scratched.';
-      },
+      editLoop:   () => this._resolveCurrentLoop('edit'),
+      scratchLoop: () => this._resolveCurrentLoop('scratch'),
       deleteLoop: () => this._openLoopsPicker('delete'),
       zoomLoop: () => {
         if (this.zoomSource?.trigger === 'loop') {
@@ -897,19 +888,7 @@ class LlamaApp extends LitElement {
           this.statusMsg  = 'Zoom: off.';
           return;
         }
-        const loop = this.namedLoops.find(l =>
-          this.currentTime >= l.start && this.currentTime <= l.end);
-        if (!loop) {
-          this._setWarning('No current loop.');
-          return;
-        }
-        if (loop.start === 0 && loop.end === this.duration) {
-          this._setWarning('Cannot zoom a range spanning entire video.');
-          return;
-        }
-        this.zoomSource = { start: loop.start, end: loop.end, trigger: 'loop' };
-        this.statusMsg  = 'Loop: zoomed.';
-        this._seekIntoZoomIfNeeded();
+        this._resolveCurrentLoop('zoom');
       },
       zoomScratch: () => {
         if (this.zoomSource?.trigger === 'scratch') {
@@ -1648,6 +1627,57 @@ class LlamaApp extends LitElement {
     this._saveCurrentState();
   }
 
+  // Find all loops covering currentTime; if exactly one, apply op directly;
+  // if multiple, open the picker in disambiguation mode.
+  _resolveCurrentLoop(op) {
+    const candidates = this.namedLoops.filter(
+      l => this.currentTime >= l.start && this.currentTime <= l.end
+    );
+    if (!candidates.length) { this._setWarning('No current loop.'); return; }
+    if (candidates.length === 1) { this._applyLoopOp(op, candidates[0]); return; }
+    this._pendingLoopOp  = op;
+    this._loopCandidates = candidates;
+    this._loopPickerEl?.show(`select-${op}`);
+  }
+
+  // Execute a loop operation on a specific loop object.
+  _applyLoopOp(op, loop) {
+    if (op === 'edit') {
+      this._saveLoopModalEl?.show(loop);
+    } else if (op === 'scratch') {
+      this._clearZoomIfOutside(loop.start, loop.end);
+      this.loopStart = loop.start;
+      this.loopEnd   = loop.end;
+      this.looping   = true;
+      this.loopSrc   = { id: loop.id, label: loop.name || null, type: 'loop', start: loop.start, end: loop.end };
+      this.statusMsg = 'Loop: scratched.';
+    } else if (op === 'zoom') {
+      if (loop.start === 0 && loop.end === this.duration) {
+        this._setWarning('Cannot zoom a range spanning entire video.');
+        return;
+      }
+      this.zoomSource = { start: loop.start, end: loop.end, trigger: 'loop' };
+      this.statusMsg  = 'Loop: zoomed.';
+      this._seekIntoZoomIfNeeded();
+    }
+  }
+
+  // Stash the selected loop; _applyLoopOp runs from _onLoopPickerClose after
+  // the picker's sl-after-hide blur has already fired.
+  _onSelectLoop(e) {
+    this._selectedLoop = e.detail.loop;
+  }
+
+  _onLoopPickerClose() {
+    this._kb?.enable();
+    const op   = this._pendingLoopOp;
+    const loop = this._selectedLoop;
+    this._pendingLoopOp  = null;
+    this._loopCandidates = null;
+    this._selectedLoop   = null;
+    if (op && loop) this._applyLoopOp(op, loop);
+  }
+
   // Open the loop picker in the given mode, with a guard for empty list.
   _openLoopsPicker(mode) {
     if (!this.namedLoops.length) {
@@ -2175,10 +2205,12 @@ class LlamaApp extends LitElement {
       <llama-loop-picker
         .namedLoops=${this.namedLoops}
         .loopSource=${this.loopSrc?.id ?? null}
+        .candidateLoops=${this._loopCandidates}
         @ll-modal-open=${() => this._kb?.disable()}
-        @ll-modal-close=${() => this._kb?.enable()}
+        @ll-modal-close=${this._onLoopPickerClose}
         @ll-jump-loop=${this._onJumpLoop}
         @ll-delete-loop=${this._onDeleteLoop}
+        @ll-select-loop=${this._onSelectLoop}
       ></llama-loop-picker>
 
       <llama-marks-picker

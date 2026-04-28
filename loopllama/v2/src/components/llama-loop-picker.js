@@ -1,13 +1,15 @@
 // llama-loop-picker.js -- modal to pick a saved loop.
 //
 // Props:
-//   namedLoops: Array of named Loop objects
-//   loopSource: string | null  -- id of the currently loaded loop
-//   mode:       'jump' | 'delete'
+//   namedLoops:     Array of named Loop objects
+//   loopSource:     string | null  -- id of the currently loaded loop
+//   candidateLoops: Array | null   -- when set, overrides namedLoops for select modes
+//   mode:           'jump' | 'delete' | 'select-edit' | 'select-scratch' | 'select-zoom'
 //
 // Events fired (composed, bubbling):
 //   ll-jump-loop   { id, start }  -- mode='jump': seek to loop's start
 //   ll-delete-loop { id }         -- mode='delete': delete the loop
+//   ll-select-loop { loop }       -- mode='select-*': loop chosen for disambiguation
 //
 // API:
 //   show(mode?) / hide()
@@ -20,8 +22,11 @@ import '@shoelace-style/shoelace/dist/components/input/input.js';
 import './llama-modal.js';
 
 const TITLES = {
-  jump:   'Jump to loop',
-  delete: 'Delete loop',
+  jump:            'Jump to loop',
+  delete:          'Delete loop',
+  'select-edit':   'Select loop to edit',
+  'select-scratch': 'Select loop to scratch',
+  'select-zoom':   'Select loop to zoom',
 };
 
 class LlamaLoopPicker extends FilterPickerMixin(LitElement) {
@@ -77,16 +82,18 @@ class LlamaLoopPicker extends FilterPickerMixin(LitElement) {
   `;
 
   static properties = {
-    namedLoops: { type: Array },
-    loopSource: { type: String },
-    mode:       { type: String },
+    namedLoops:     { type: Array },
+    loopSource:     { type: String },
+    candidateLoops: { type: Array },
+    mode:           { type: String },
   };
 
   constructor() {
     super();
-    this.namedLoops = [];
-    this.loopSource = null;
-    this.mode       = 'load';
+    this.namedLoops     = [];
+    this.loopSource     = null;
+    this.candidateLoops = null;
+    this.mode           = 'load';
   }
 
   get _listClass() { return 'loop-list'; }
@@ -104,14 +111,22 @@ class LlamaLoopPicker extends FilterPickerMixin(LitElement) {
         detail: { id: loop.id },
         bubbles: true, composed: true,
       }));
+    } else if (mode.startsWith('select-')) {
+      this.dispatchEvent(new CustomEvent('ll-select-loop', {
+        detail: { loop },
+        bubbles: true, composed: true,
+      }));
     }
     this.hide();
   }
 
   _filtered() {
+    const list = this.mode.startsWith('select-') && this.candidateLoops
+      ? this.candidateLoops
+      : this.namedLoops;
     const q = this._filter.trim().toLowerCase();
-    if (!q) return this.namedLoops;
-    return this.namedLoops.filter(l =>
+    if (!q) return list;
+    return list.filter(l =>
       (l.name || '').toLowerCase().includes(q) ||
       (!l.name && _fmtRange(l.start, l.end).includes(q))
     );
@@ -126,6 +141,7 @@ class LlamaLoopPicker extends FilterPickerMixin(LitElement) {
     const filtered  = this._filtered();
     const title     = TITLES[this.mode] ?? 'Select Loop';
     const isDelete  = this.mode === 'delete';
+    const isSelect  = this.mode.startsWith('select-');
     return html`
       <llama-modal label=${title} @ll-modal-initial-focus=${this._onInitialFocus}>
         <div class="filter-wrap">
@@ -148,7 +164,7 @@ class LlamaLoopPicker extends FilterPickerMixin(LitElement) {
                   @click=${() => this._select(l)}
                 >
                   <div class="loop-primary">${l.name || '—'}</div>
-                  <div class="loop-sub">${this._range(l)}${l.id === this.loopSource
+                  <div class="loop-sub">${this._range(l)}${isSelect || l.id === this.loopSource
                     ? html`<span class="loop-suffix"> [current]</span>`
                     : ''}</div>
                 </div>

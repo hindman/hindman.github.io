@@ -218,11 +218,17 @@ which allows you to select a section for deletion.
 
 <div class="notice--primary" markdown="1">
 
-  **Menu ellipses**. On the Section menu, notice that **Delete** and **Jump**
-  have trailing ellipses. That convention conveys that the operation will
-  occur through an interactive picker where you first select the section to be
-  deleted or jumped to. The other menu items have no ellipses, because they
-  operate on the current section — meaning the one where the playhead sits.
+  <a id="menu-ellipses"></a>**Menu ellipses**. On the Section menu, notice
+  that **Delete** and **Jump** have trailing ellipses. That convention conveys
+  that the operation will occur through an interactive picker where you first
+  select the section to be deleted or jumped to. The other menu items have no
+  ellipses, because they operate on the current section — meaning the one
+  where the playhead sits. This convention is followed across all of the app's
+  menus, with a small exception for saved loops. On the **Loop** menu, the
+  **Edit**, **Scratch**, and **Zoom** operations have no ellipses. If they are
+  invoked when only one saved loop resides at the playhead position, the
+  operation will occur immediately; otherwise, the app first prompts the user
+  with an interactive picker to select the intended saved loop.
 
 </div>
 
