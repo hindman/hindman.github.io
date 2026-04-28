@@ -1,9 +1,6 @@
 
 ## TODO: LoopLlama v2
 
-Help edit pass:
-  - HERE:
-
 Code refactor:
   - app: basic tests: all operations [see text-elements]
 
