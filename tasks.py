@@ -358,9 +358,12 @@ def read_file(path):
     with open(path) as fh:
         return fh.read()
 
+def clsname(x):
+    return type(x).__name__
+
 def write_file(c, path, text):
     if c.config.run.dry:
-        print(f'# write_file({path}): {text!r}')
+        print(f'# write_file({path}): {clsname(text)}')
     else:
         with open(path, 'w') as fh:
             return fh.write(text)
@@ -370,7 +373,7 @@ def read_json(path):
 
 def write_json(c, path, d):
     if c.config.run.dry:
-        print(f'# write_json({path}): {d}')
+        print(f'# write_json({path}): {clsname(d)}')
     else:
         with open(path, 'w') as fh:
             json.dump(d, fh, indent = 2)
