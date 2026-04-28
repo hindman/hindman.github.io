@@ -202,7 +202,8 @@ allows you to select any section and jump the playhead to its start.
 
 <span class="ll-phead">Zoom</span>. Use `sz` for **Section › Zoom**, which
 will focus the timeline on the current section. Use `sz` again to toggle the
-section-zoom off (or `az` to turn off any kind of zooming).
+section-zoom off (or `az` for **App › Zoom off** to turn off any kind of
+zooming).
 
 <span class="ll-phead">Fix end</span>. Use `sf` for **Section › Fix end**.
 Although rarely needed, this operation converts the current section's end
@@ -235,10 +236,10 @@ So if you understand sections, you also understand chapters. But there are two
 differences worth pointing out:
 
 <span class="ll-phead">Default timeline view</span>. By default, the timeline
-area shows sections, not chapters. That view can be toggled via `at` and
-LoopLlama will remember each video's most recent setting. Regardless of the
-timeline's current display status, the current chapter and section, if
-defined, are both listed in the **Current** panel.
+area shows sections, not chapters. That view can be toggled via `at` for **App
+› Toggle timeline**. LoopLlama will remember each video's most recent setting.
+Regardless of the timeline's current display status, the current chapter and
+section, if defined, are both listed in the **Current** panel.
 
 <span class="ll-phead">Design intent</span>. The app was built with the
 premise that chapters are bigger (for example, songs in a concert) and
@@ -250,7 +251,7 @@ required to follow that model.
 Marks are the simplest entities — nothing more than a time point. They are
 displayed as yellow dots in the timeline, below the sections/chapters. The
 operations and key bindings are simple and follow the conventions already
-established for sections and chapters (see the Mark menu).
+established for sections and chapters (see the **Mark** menu).
 
 ## Loops
 
@@ -275,18 +276,17 @@ creates a new saved loop using the current bounds of the scratch loop.
 current loop's name or adjust its bounds. As with other entities, current is
 defined by playhead position.
 
-<span class="ll-phead">Jump</span>. Use `lj` for **Loop › Jump**, to select
+<span class="ll-phead">Jump</span>. Use `lj` for **Loop › Jump** to select
 a saved loop and move the playhead to its start.
 
-<span class="ll-phead">Zoom</span>. Use `lz` for **Loop › Zoom**, to focus
+<span class="ll-phead">Zoom</span>. Use `lz` for **Loop › Zoom** to focus
 the timeline on the bounds of the current saved loop.
 
-<span class="ll-phead">Delete</span>. Use `ld` for **Loop › Delete**, to
+<span class="ll-phead">Delete</span>. Use `ld` for **Loop › Delete** to
 select a saved loop for deletion.
 
-<span class="ll-phead">Scratch</span>. Use `lx` for **Loop › Scratch**,
-which will load the current loop's bounds into the scratch loop — our next
-topic.
+<span class="ll-phead">Scratch</span>. Use `lx` for **Loop › Scratch** to load
+the current loop's bounds into the scratch loop — our next topic.
 
 ### Scratch loop
 
@@ -310,8 +310,8 @@ and the scratch loop.
 
 | Loop type     | Menu      | Binding prefix
 | ------------- | --------- | --------------
-| Saved loop    | Loop      | l
-| Scratch loop  | Scratch   | x
+| Saved loop    | Loop      | `l`
+| Scratch loop  | Scratch   | `x`
 
 ### Scratch loop edit mode
 
@@ -442,7 +442,7 @@ When the scratch loop has a source, additional operations are available:
 The timeline sits below the video and provides a visual overview of the
 information attached to it. It has four horizontal zones stacked top to
 bottom. Both for the progress bar and saved entities — sections, chapters,
-marks, and loops — hover to display time and name information.
+marks, and loops — hover to display name and time information.
 
 <span class="ll-phead">Playhead zone</span>. Mimics the YouTube progress bar:
 a thick line with a dot marking the playhead. The elapsed portion is blue, the
@@ -468,12 +468,12 @@ other navigational methods:
 playhead to the "start", which is contextual: start of scratch loop, if
 looping; start of zoom, if zoomed; otherwise, start of video.
 
-<span class="ll-phead">Jump to previous/next entity</span>. To the right of
-the app's seek controls are buttons and a dropdown to support navigation by
-entity. The dropdown (accessible via the `/` binding) controls the entity
-type. The previous/next buttons surrounding the dropdown (or the `,` and `.`
-bindings) allow you to navigate efficiently to the start of the previous/next
-chapter, section, loop, or mark.
+<span class="ll-phead">Jump to previous/next entity</span>. Near the app's
+seek controls are buttons and a dropdown to support navigation by entity. The
+dropdown (accessible via the `/` binding) controls the entity type. The
+previous/next buttons surrounding the dropdown (or the `,` and `.` bindings)
+allow you to navigate efficiently to the start of the previous/next chapter,
+section, loop, or mark.
 
 <a id="jump-history"></a><span class="ll-phead">Jump history</span>.
 Navigational jumps of more than 15 seconds are stored in a jump history that
@@ -484,7 +484,8 @@ listed on the **App** menu.
 
 <span class="ll-phead">Super slow motion</span>. To examine a video in super
 slow motion, a useful technique is to pause the video, set the seek-duration
-to 0.1 seconds, and then "watch" the video using the `Left`/`Right` arrows.
+to 0.1 seconds, and then "watch" the video (without sound) using the
+`Left`/`Right` arrows.
 
 ### Time input formats
 
@@ -494,10 +495,10 @@ LoopLlama supports various time input styles:
 | ---------------- | --------- | -----------
 | mm:ss            | 32:45     | .
 | hh:mm:ss         | 1:13:28   | .
-| condensed forms  | 73:44     | 1:13:44
-| raw seconds      | 245       | 4:05
-| decimal seconds  | 34:43.2   | 1 digit max
-| forward slash    | 7/44      | 7:44
+| Raw mm:ss        | 73:44     | 1:13:44
+| Raw seconds      | 245       | 4:05
+| Decimal seconds  | 34:43.2   | 1 digit max
+| Forward slash    | 7/44      | 7:44
 
 ## Data management
 
@@ -507,11 +508,16 @@ devices, or perform bulk deletions.
 
 <span class="ll-phead">Share video</span>. Use `dv` for **Data › Share video**
 to copy a LoopLlama sharing URL to your clipboard. Anyone with the URL can get
-a copy of your data for that video loaded into their LoopLlama.
+a copy of your data for that video loaded into their LoopLlama. If the URL
+recipient already has the same video in their library, the app will warn them
+and offer a chance to skip the URL or replace their video information with the
+shared information. If the recipient selects replace, their video information
+is first stashed, allowing them to review your shared data and later use
+**Video › Unstash** to return to their prior data.
 
 <span class="ll-phead">Share scratch loop</span>. Use `dx` for **Data › Share
 scratch loop**, which is like **Share video**, but the data covers only the
-scratch loop.
+scratch loop bounds.
 
 <span class="ll-phead">Export</span>. Use `de` for **Data › Export** to save
 your LoopLlama data as a JSON file. If you understand how to use the app, the
@@ -520,7 +526,9 @@ data in the file will make sense.
 <span class="ll-phead">Import</span>. Use `di` for **Data › Import**, which
 performs that process in reverse: load the data from an exported JSON file
 into LoopLlama — for example on a different browser or computer (see [data
-review](#data-review)).
+review](#data-review)). The export-import operations can also be used to
+create a snapshot of your LoopLlama data before making experimental edits that
+you might want to reverse in bulk.
 
 <div class="notice--primary" markdown="1">
 
@@ -529,12 +537,13 @@ review](#data-review)).
   full inventory of your videos. Each video is classified into one of five
   categories based on whether it exists in the source, the destination, or
   both — and if both, which copy carries the more recent last-modified
-  timestamp: source only, source newer, destination only, destination newer,
-  and same last-modified. Each category has a toggle controlling whether the
-  operation acts on those videos, with defaults biased toward keeping newer
-  data over older. You can review, adjust any toggle, and apply the operation
-  or cancel. Any time the operation replaces a video, LoopLlama stashes a copy
-  of the prior version for recovery (see [Unstash](#video-unstash)).
+  timestamp. The categorties are: source only, source newer, destination only,
+  destination newer, and same last-modified. Each category has a toggle
+  controlling whether the operation acts on those videos, with defaults biased
+  toward keeping newer data over older. You can review, adjust any toggle, and
+  apply the operation or cancel. Any time the operation replaces a video,
+  LoopLlama stashes a copy of the prior version for recovery (see
+  [Unstash](#video-unstash)).
 
 </div>
 

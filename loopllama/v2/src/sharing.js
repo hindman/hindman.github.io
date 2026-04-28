@@ -50,13 +50,12 @@ export function buildVideoPayload(video) {
 // Build the JSONB payload for a 'loop' share.
 // start/end are the current scratch loop endpoints.
 // name is the loop label (often '' for a scratch loop).
-export function buildLoopPayload(video, start, end, name = '') {
+export function buildLoopPayload(video, start, end) {
   return {
     schema_version: SCHEMA_VERSION,
     videoUrl:       video.url,
     videoTitle:     video.name || null,
-    loop:           { name, start, end },
-    speed:          video.speed,
+    loop:           { start, end },
   };
 }
 

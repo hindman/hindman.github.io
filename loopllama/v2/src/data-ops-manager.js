@@ -15,7 +15,7 @@ import { logVideoLoad } from './analytics.js';
 import { signOut } from './auth.js';
 import { createShare, shareUrl, fetchShare, shareIdFromUrl,
          buildVideoPayload, buildLoopPayload } from './sharing.js';
-import { createVideo, addLoop } from './state.js';
+import { createVideo } from './state.js';
 
 
 export class DataOpsManager {
@@ -356,7 +356,7 @@ export class DataOpsManager {
   // load it as the active scratch loop.
   applyLoopShare(payload) {
     const app = this._app;
-    const { videoUrl, videoTitle, loop, speed } = payload;
+    const { videoUrl, videoTitle, loop } = payload;
     const parsed = parseVideoInput(videoUrl);
     if (!parsed) { app.errorMsg = 'Invalid URL: shared loop.'; return; }
 
@@ -368,18 +368,14 @@ export class DataOpsManager {
       app.videos = [...app._appState.videos];
     }
 
-    const safeName = _uniqueLoopName(video.loops, loop.name || '');
-    const newLoop  = addLoop(video.loops, loop.start, loop.end, safeName);
-
     app._appState.currentVideoId = video.id;
     app.currentVideoId = video.id;
     app._undoMgr.clear();
     app._syncFromVideo(video);
     app.loopStart = loop.start;
     app.loopEnd   = loop.end;
-    app.loopSrc   = { id: newLoop.id, label: safeName || null, type: 'loop', start: loop.start, end: loop.end };
+    app.loopSrc   = null;
     app.looping   = true;
-    if (speed) app._vc.setPlaybackRate(speed);
     app._vc.cueVideo(video.id, loop.start);
     app._save();
     app.statusMsg = 'Shared loop: loaded.';
@@ -594,19 +590,6 @@ function _parseTimeParam(t) {
   return total;
 }
 
-// Return a loop name that doesn't collide with any existing named loop.
-// If the candidate name is taken, appends " (shared)", then " (shared #2)", etc.
-function _uniqueLoopName(loops, name) {
-  const taken = loops.map(l => l.name);
-  if (!taken.includes(name)) return name;
-  const base = name ? `${name} (shared)` : '(shared)';
-  if (!taken.includes(base)) return base;
-  for (let n = 2; n <= 99; n++) {
-    const c = name ? `${name} (shared #${n})` : `(shared #${n})`;
-    if (!taken.includes(c)) return c;
-  }
-  return base;
-}
 
 // Trigger a JSON file download in the browser.
 function _downloadJson(jsonStr, filename) {
