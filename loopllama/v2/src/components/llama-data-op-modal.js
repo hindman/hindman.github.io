@@ -180,7 +180,7 @@ class LlamaDataOpModal extends LitElement {
         ${names.length > 0 ? html`
           <sl-switch
             ?checked=${checked}
-            @sl-change=${e => onChange(e.target.checked)}
+            @sl-change=${e => { onChange(e.target.checked); setTimeout(() => this._applyRef.value?.focus(), 0); }}
           >${actionLabel}</sl-switch>
           <ul class="name-list">
             ${names.map(n => html`<li>${n}</li>`)}

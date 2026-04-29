@@ -5,8 +5,13 @@
 // To add or update examples: fill in real YouTube IDs, names, and entity
 // timings. The last_modified values below are intentionally set in the past
 // so that any edits the user makes will always be treated as newer.
+//
+// When the app schema version changes: update the video data to match the new
+// schema and bump schema_version below to match SCHEMA_VERSION in state.js.
 
-export const EXAMPLES = [
+export const EXAMPLES = {
+  schema_version: 11,
+  videos: [
 
   // Ex1: single song, illustrating all entities.
   {
@@ -19,7 +24,7 @@ export const EXAMPLES = [
     "start": 0,
     "end": null,
     "speed": 1,
-    "seek_delta": 1,
+    "seek_delta": 5,
     "nudge_delta": 1,
     "entity_type": "section",
     "scratchLoop": { "start": 0, "end": 19, "looping": true, "sourceId": null, "sourceType": null },
@@ -60,9 +65,9 @@ export const EXAMPLES = [
     "sections": [
       {
         "id": "ojt7aob",
-        "end": null,
         "name": "Intro",
-        "start": 0
+        "start": 0,
+        "end": null
       },
       {
         "id": "kszi8qb",
@@ -168,7 +173,7 @@ export const EXAMPLES = [
     "start": 0,
     "end": null,
     "speed": 1,
-    "seek_delta": 1,
+    "seek_delta": 5,
     "nudge_delta": 5,
     "entity_type": "any",
     "scratchLoop": { "start": 864.751025, "end": 1156, "looping": true, "sourceId": null, "sourceType": null },
@@ -224,4 +229,5 @@ export const EXAMPLES = [
     "jumps": [ ]
   }
 
-];
+  ],
+};

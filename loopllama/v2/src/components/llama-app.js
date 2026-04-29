@@ -21,7 +21,7 @@ import {
   deriveDividerEnd,
 } from '../state.js';
 import { EXAMPLES } from '../examples.js';
-import { load, save, exportAll } from '../storage.js';
+import { load, save, exportAll, migrateAppState } from '../storage.js';
 import { logSessionStart, logVideoLoad } from '../analytics.js';
 import { getUser, onAuthStateChange, signInWithGoogle, signInWithGitHub, signOut } from '../auth.js';
 import './llama-shared-video-conflict-modal.js';
@@ -979,8 +979,10 @@ class LlamaApp extends LitElement {
       dataRead:      () => this._dataMgr.dataRead(),
       dataCompare:   () => this._dataMgr.dataCompare(),
       loadExamples:  () => {
-        const newVideos      = EXAMPLES.filter(e => !this._appState.videos.find(v => v.id === e.id));
-        const existingVideos = EXAMPLES.filter(e =>  this._appState.videos.find(v => v.id === e.id));
+        const cloned = JSON.parse(JSON.stringify(EXAMPLES.videos));
+        migrateAppState({ schema_version: EXAMPLES.schema_version, videos: cloned, options: {}, stashes: {} });
+        const newVideos      = cloned.filter(e => !this._appState.videos.find(v => v.id === e.id));
+        const existingVideos = cloned.filter(e =>  this._appState.videos.find(v => v.id === e.id));
         this._loadExamplesResolve = null;
         const p = new Promise(resolve => { this._loadExamplesResolve = resolve; });
         this._loadExamplesModalEl?.show({
@@ -1004,6 +1006,10 @@ class LlamaApp extends LitElement {
           }
           if (changed) {
             this.videos = [...this._appState.videos];
+            if (result.replaceExisting) {
+              const replacedCurrent = existingVideos.find(v => v.id === this.currentVideoId);
+              if (replacedCurrent) this._syncFromVideo(replacedCurrent);
+            }
             this._save();
           }
           this.statusMsg = 'Examples: loaded.';
