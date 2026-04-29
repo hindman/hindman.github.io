@@ -4,7 +4,8 @@
 // section, and loop source.
 //
 // Props:
-//   videoName, videoId, chapterName, sectionName  -- strings
+//   videoName, videoId  -- strings
+//   currentChapter, currentSection  -- entity objects | null
 //   loopSrc           -- { id, label, type, start, end } | null
 //   loopDirty         -- true when scratch-loop bounds differ from source
 //   duration, zoomLabel, zone2Mode
@@ -75,8 +76,8 @@ class LlamaCurrent extends LitElement {
   static properties = {
     videoName:         { type: String },
     videoId:           { type: String },
-    chapterName:       { type: String },
-    sectionName:       { type: String },
+    currentChapter:    { type: Object },
+    currentSection:    { type: Object },
     loopSrc:           { type: Object },
     loopDirty:         { type: Boolean },
     duration:          { type: Number },
@@ -88,8 +89,8 @@ class LlamaCurrent extends LitElement {
     super();
     this.videoName         = '';
     this.videoId           = null;
-    this.chapterName       = null;
-    this.sectionName       = null;
+    this.currentChapter    = null;
+    this.currentSection    = null;
     this.loopSrc           = null;
     this.loopDirty         = false;
     this.duration          = null;
@@ -109,6 +110,25 @@ class LlamaCurrent extends LitElement {
       <div class="current-row">
         <div class="row-label">${label}</div>
         <div class="row-value ${isEmpty ? 'dim' : ''}">${value || '—'}</div>
+      </div>
+    `;
+  }
+
+  _dividerRow(label, entity) {
+    let display, dim;
+    if (!entity) {
+      display = '—'; dim = true;
+    } else if (entity.name) {
+      display = entity.name; dim = false;
+    } else {
+      const s = this._fmtDuration(entity.start);
+      display = entity.end != null ? `${s} – ${this._fmtDuration(entity.end)}` : s;
+      dim = false;
+    }
+    return html`
+      <div class="current-row">
+        <div class="row-label">${label}</div>
+        <div class="row-value ${dim ? 'dim' : ''}">${display}</div>
       </div>
     `;
   }
@@ -133,8 +153,8 @@ class LlamaCurrent extends LitElement {
           ${this._row('Video ID',    this.videoId)}
           ${this._row('Duration',    this.duration != null ? this._fmtDuration(this.duration) : null)}
           ${this._row('Timeline display', this.zone2Mode === 'sections' ? 'Sections' : 'Chapters')}
-          ${this._row('Chapter',     this.chapterName)}
-          ${this._row('Section',     this.sectionName)}
+          ${this._dividerRow('Chapter', this.currentChapter)}
+          ${this._dividerRow('Section', this.currentSection)}
           <div class="current-row">
             <div class="row-label">Scratch loop source</div>
             <div class="row-value ${!this.loopSrc ? 'dim' : ''}">${this._loopSourceValue() ?? '—'}</div>

@@ -74,7 +74,6 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 | `cx`        | Scratch
 | `cj`        | Jump...
 | `cz`        | Zoom
-| `cf`        | Fix end
 | `cd`        | Delete...
 
 ## Section
@@ -86,7 +85,6 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 | `sx`        | Scratch
 | `sj`        | Jump...
 | `sz`        | Zoom
-| `sf`        | Fix end
 | `sd`        | Delete...
 
 ## Mark

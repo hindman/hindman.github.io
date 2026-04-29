@@ -18,7 +18,7 @@ toc_icon: 'guitar'
 ## Loops
 ### Saved loops
 ### Scratch loop
-### Scratch operation {#scratch-loop}
+### Scratch operation {#scratch-operation}
 ### Scratch loop edit mode
 ### Scratch loop bounds
 ### Scratch loop sources
@@ -47,7 +47,7 @@ to music or any other domain.
 The keyboard-first design means you can drive the app efficiently:
 Vim-inspired [key bindings](/loopllama/v2/keybindings/) cover every operation.
 For those who prefer a mouse, the usual menus, buttons, and other controls,
-plus a clickable visual timeline, provide the same access.
+plus a clickable visual timeline, provide similar access.
 
 ## Quick start {#quick-start}
 
@@ -102,7 +102,7 @@ information in various ways.
   - **Message footer**: displays informational, warning, and error messages.
 
   - **Key binding help**: displayed in the footer area when the user types the
-    first character of the 2-character binding.
+    first character of a two-character binding.
 
 <span class="ll-phead">Gotcha: app focus</span>. If you click anywhere in the
 YouTube frame, the LoopLlama app loses focus and its key bindings become
@@ -140,8 +140,8 @@ video you loaded previously into LoopLlama.
 
 <div class="notice--primary" markdown="1">
 
-  **Key binding overview**. Bindings follow a 2-character system: (a) the
-  first character is an entity prefix; (b) the second a mnemonic for the
+  **Key binding overview**. Bindings follow a two-character system: (a) the
+  first character is an entity prefix; (b) the second is a mnemonic for the
   operation. For example, `vo` for **Video › Open** or `ce` for **Chapter ›
   Edit**. The most common operations also have shortcut bindings for easier
   typing (see the **Video** and **App** menus for several examples). The help
@@ -155,21 +155,26 @@ video you loaded previously into LoopLlama.
 <span class="ll-phead">Edit</span>. Use `ve` for **Video › Edit** to change
 the video name (by default, the title provided by the YouTube player) or to
 set custom start and end times for the video — for example, to exclude filler
-material that you rarely watch when looping or zooming a video or when using
-`Enter` to jump to its start.
+material that you rarely watch when looping or zooming a video.
 
 <span class="ll-phead">Zoom</span>. Use `vz` for **Video › Zoom** to focus the
 timeline view to a video's custom start-end range, if you have set one.
-Zooming of any kind — whether for a video, section, chapter, saved loop, or
-scratch loop — constrains both the timeline view and the playhead itself to
-the zoomed range. Zoom can be toggled off either by repeating the command used
-to invoke it (`vz` in the case of **Video › Zoom**) or via `az` for **App ›
-Zoom off**, which turns off any kind of zooming.
+
+<div class="notice--primary" markdown="1">
+
+  <a id="zooming"></a>**Zooming**. Zooming of any kind — whether for a video,
+  section, chapter, saved loop, or scratch loop — constrains both the timeline
+  view and the playhead itself to the zoomed range. Zoom can be toggled off
+  either by repeating the command used to invoke it (for example, `vz` in the
+  case of **Video › Zoom**) or via `az` for **App › Zoom off**, which turns
+  off any kind of zooming.
+
+</div>
 
 <span class="ll-phead">Scratch</span>. Use `vx` for **Video › Scratch** to
 loop an entire video (or the range defined by its custom start/end values).
-The [scratch operation](#scratch-loop) loads the start and end times into the
-scratch loop — the app's work area for looping.
+The [scratch operation](#scratch-operation) loads the start and end times into
+the scratch loop — the app's work area for looping.
 
 <span class="ll-phead">Info</span>. Use `vi` for **Video › Info** to see all
 of the LoopLlama information about a video.
@@ -212,15 +217,7 @@ which loads the section's start and end into the scratch loop.
 allows you to select any section and jump the playhead to its start.
 
 <span class="ll-phead">Zoom</span>. Use `sz` for **Section › Zoom**, which
-will focus the timeline on the current section.
-
-<span class="ll-phead">Fix end</span>. Use `sf` for **Section › Fix end**.
-Although rarely needed, this operation converts the current section's end
-point from an inferred value to an explicit value. This feature is needed only
-if you want to organize a video into sections, but do not want the entire
-video to be exhaustively covered by the sections you define. One consequence
-of fixing a section's end is that the section will be protected from further
-subdivision via `ss` for **Section › Create**.
+will focus the timeline on the current section (see [zooming](#zooming)).
 
 <span class="ll-phead">Delete</span>. Use `sd` for **Section › Delete**,
 which allows you to select a section for deletion.
@@ -233,11 +230,12 @@ which allows you to select a section for deletion.
   select the section to be deleted or jumped to. The other menu items have no
   ellipses, because they operate on the current section — meaning the one
   where the playhead sits. This convention is followed across all of the app's
-  menus, with a small exception for saved loops. On the **Loop** menu, the
-  **Edit**, **Scratch**, and **Zoom** operations have no ellipses. If they are
-  invoked when only one saved loop resides at the playhead position, the
-  operation will occur immediately; otherwise, the app first prompts the user
-  with an interactive picker to select the intended saved loop.
+  menus, with a small exception for saved loops, which can overlap. On the
+  **Loop** menu, the **Edit**, **Scratch**, and **Zoom** operations have no
+  ellipses. If they are invoked when only one saved loop resides at the
+  playhead position, the operation will occur immediately; otherwise, the app
+  first prompts the user with an interactive picker to select the intended
+  saved loop.
 
 </div>
 
@@ -294,8 +292,8 @@ is defined by playhead position.
 <span class="ll-phead">Jump</span>. Use `lj` for **Loop › Jump** to select
 a saved loop and move the playhead to its start.
 
-<span class="ll-phead">Zoom</span>. Use `lz` for **Loop › Zoom** to focus
-the timeline on the bounds of the current saved loop.
+<span class="ll-phead">Zoom</span>. Use `lz` for **Loop › Zoom** to focus the
+timeline on the bounds of the current saved loop (see [zooming](#zooming)).
 
 <span class="ll-phead">Delete</span>. Use `ld` for **Loop › Delete** to
 select a saved loop for deletion.
@@ -314,13 +312,13 @@ are supported.
 turn looping on/off.
 
 <span class="ll-phead">Zoom</span>. Use `xz` for **Scratch › Zoom** to focus
-the timeline on the bounds of the scratch loop.
+the timeline on the bounds of the scratch loop (see [zooming](#zooming)).
 
 When scratch loop bounds are invalid, the font displaying the start and end is
 red and the app disallows toggling looping on, zooming the scratch loop, or
 creating a new saved loop based on those bounds.
 
-### Scratch operation {#scratch-loop}
+### Scratch operation {#scratch-operation}
 
 As mentioned in the documentation for sections, chapters, and saved loops,
 entities with a start and end support the scratch operation, which loads the
@@ -766,7 +764,7 @@ In the past quarter century, the long trend toward democratization has slowed
 or reversed, most notably in the United States — not only my own country but
 also the nation that most symbolized democratic governance, due to its
 pioneering liberal-democratic revolution and its economic, military, and
-cultural dominance since World War I. Authoritarian politics is not inherently
+cultural prominence since World War I. Authoritarian politics is not inherently
 a phenomenon of the right, but recent anti-democratic movements have come
 predominantly from the populist right. The LoopLlama banner is intended as a
 symbolic gesture of resistance — to authoritarianism generally, and to its

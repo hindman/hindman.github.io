@@ -14,8 +14,6 @@ import {
   addChapterDivider,
   validateEntityChange,
   propagateEntityChange,
-  fixSectionEnd,
-  fixChapterEnd,
 } from './state.js';
 
 // ---------------------------------------------------------------------------
@@ -309,15 +307,27 @@ describe('addSection', () => {
     expect(sections.map(s => s.start)).toEqual([10, 30, 50]);
   });
 
-  it('rejects a section whose time falls inside a fixed section', () => {
-    const sections = [{ id: 'a', start: 10, end: 40, name: '' }];
-    expect(addSection(sections, 25)).toBeNull();
-    expect(sections).toHaveLength(1);
+  it('splits a section with explicit end: child inherits end, parent end cleared', () => {
+    const sections = [{ id: 'a', start: 0, end: 10, name: '' }];
+    const child = addSection(sections, 7);
+    expect(child).not.toBeNull();
+    expect(child.start).toBe(7);
+    expect(child.end).toBe(10);       // inherits parent's explicit end
+    expect(sections[0].end).toBeNull(); // parent end cleared
+    expect(sections).toHaveLength(2);
   });
 
-  it('rejects a section at the explicit end of a fixed section', () => {
+  it('rejects a split too close to the explicit end of the containing section', () => {
+    const sections = [{ id: 'a', start: 0, end: 10, name: '' }];
+    expect(addSection(sections, 9.5)).toBeNull();  // 0.5s from explicit end
+  });
+
+  it('accepts a section at the explicit end (gap zone boundary)', () => {
     const sections = [{ id: 'a', start: 10, end: 40, name: '' }];
-    expect(addSection(sections, 40)).toBeNull();
+    const s = addSection(sections, 40);
+    expect(s).not.toBeNull();
+    expect(s.end).toBeNull();          // not a split; no end inherited
+    expect(sections[0].end).toBe(40); // containing end unchanged
   });
 
   it('accepts a section in a gap zone past a fixed section end', () => {
@@ -349,9 +359,12 @@ describe('addSection', () => {
 // ---------------------------------------------------------------------------
 
 describe('addChapterDivider', () => {
-  it('rejects a divider inside a fixed chapter', () => {
+  it('splits a chapter with explicit end: child inherits end, parent end cleared', () => {
     const chapters = [{ id: 'a', start: 0, end: 60, name: '' }];
-    expect(addChapterDivider(chapters, 30)).toBeNull();
+    const child = addChapterDivider(chapters, 30);
+    expect(child).not.toBeNull();
+    expect(child.end).toBe(60);
+    expect(chapters[0].end).toBeNull();
   });
 
   it('accepts a divider in an open-ended chapter', () => {
@@ -504,51 +517,3 @@ describe('propagateEntityChange', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// fixSectionEnd / fixChapterEnd
-// ---------------------------------------------------------------------------
-
-describe('fixSectionEnd', () => {
-  it('returns false for unknown id', () => {
-    const sections = [{ id: 'a', start: 0, end: 50 }];
-    expect(fixSectionEnd(sections, 'z', 100)).toBe(false);
-  });
-
-  it('sets end to next section start when next exists', () => {
-    const sections = [
-      { id: 'a', start:  0, end: 999 },
-      { id: 'b', start: 40, end: null },
-    ];
-    expect(fixSectionEnd(sections, 'a', 100)).toBe(true);
-    expect(sections[0].end).toBe(40);
-  });
-
-  it('sets end to videoDuration when no next section', () => {
-    const sections = [{ id: 'a', start: 0, end: 999 }];
-    expect(fixSectionEnd(sections, 'a', 100)).toBe(true);
-    expect(sections[0].end).toBe(100);
-  });
-
-  it('sets end to null when no next section and videoDuration is null', () => {
-    const sections = [{ id: 'a', start: 0, end: 999 }];
-    fixSectionEnd(sections, 'a', null);
-    expect(sections[0].end).toBeNull();
-  });
-});
-
-describe('fixChapterEnd', () => {
-  it('sets end to next chapter start when next exists', () => {
-    const chapters = [
-      { id: 'a', start:  0, end: 999 },
-      { id: 'b', start: 60, end: null },
-    ];
-    fixChapterEnd(chapters, 'a', 120);
-    expect(chapters[0].end).toBe(60);
-  });
-
-  it('sets end to videoDuration when no next chapter', () => {
-    const chapters = [{ id: 'a', start: 0, end: 999 }];
-    fixChapterEnd(chapters, 'a', 180);
-    expect(chapters[0].end).toBe(180);
-  });
-});

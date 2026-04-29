@@ -151,25 +151,19 @@ function getDividerBounds(entities, time, videoDuration) {
   return { start: left.start, end: entityEnd };
 }
 
-// Set entities[id].end to its derived end (next entity's start, or videoDuration).
-// Returns true if found and updated, false if not found.
-function fixDividerEnd(entities, id, videoDuration) {
-  const idx = entities.findIndex(e => e.id === id);
-  if (idx === -1) return false;
-  const next = entities[idx + 1];
-  entities[idx].end = next ? next.start : (videoDuration ?? null);
-  return true;
-}
-
 // Add a divider at the given time (sorted by start).
-// Rejects if time falls inside a fixed range (entity with explicit end) or
-// if any existing divider starts within MIN_ENTITY_GAP seconds of time.
+// Rejects if any existing divider starts within MIN_ENTITY_GAP seconds of time,
+// or if splitting inside an entity with explicit end within MIN_ENTITY_GAP of that end.
+// If the containing entity has an explicit end and time is within its range,
+// the new entity inherits that explicit end and the containing entity's end is cleared.
 // Returns the new entity { id, name, start, end }, or null if rejected.
 function addDivider(entities, time, name = '') {
   const containing = nearestDividerLeft(entities, time);
-  if (containing && containing.end != null && time <= containing.end) return null;
   if (entities.some(e => Math.abs(e.start - time) < MIN_ENTITY_GAP)) return null;
-  const entity = { id: createId(), name, start: time, end: null };
+  if (containing?.end != null && time < containing.end && containing.end - time < MIN_ENTITY_GAP) return null;
+  const inheritedEnd = (containing?.end != null && time < containing.end) ? containing.end : null;
+  if (inheritedEnd != null) containing.end = null;
+  const entity = { id: createId(), name, start: time, end: inheritedEnd };
   entities.push(entity);
   entities.sort((a, b) => a.start - b.start);
   return entity;
@@ -233,11 +227,6 @@ export function getSectionBounds(sections, time, videoDuration) {
   return getDividerBounds(sections, time, videoDuration);
 }
 
-// Set a section's end to its derived end (next section's start, or videoDuration).
-// Returns true if found and updated, false if not found.
-export function fixSectionEnd(sections, id, videoDuration) {
-  return fixDividerEnd(sections, id, videoDuration);
-}
 
 // ---------------------------------------------------------------------------
 // Loop functions
@@ -308,12 +297,6 @@ export function nearestChapterLeft(chapters, time) {
 // Returns { start, end } or null. See getDividerBounds for full semantics.
 export function getChapterBounds(chapters, time, videoDuration) {
   return getDividerBounds(chapters, time, videoDuration);
-}
-
-// Set a chapter's end to its derived end (next chapter's start, or videoDuration).
-// Returns true if found and updated, false if not found.
-export function fixChapterEnd(chapters, id, videoDuration) {
-  return fixDividerEnd(chapters, id, videoDuration);
 }
 
 // Add a chapter divider at the given time. Returns the new chapter or null.

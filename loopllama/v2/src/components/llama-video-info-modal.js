@@ -222,7 +222,7 @@ class LlamaVideoInfoModal extends LitElement {
         ${this.chapters.map(c => html`
           <div class="entity-row">
             <span class="entity-name ${c.name ? '' : 'dim'}">${c.name || '—'}</span>
-            <span class="entity-time">${this._fmt(c.start)}</span>
+            <span class="entity-time">${c.end != null ? `${this._fmt(c.start)} – ${this._fmt(c.end)}` : this._fmt(c.start)}</span>
           </div>
         `)}
       </div>
@@ -236,7 +236,7 @@ class LlamaVideoInfoModal extends LitElement {
         ${this.sections.map(s => html`
           <div class="entity-row">
             <span class="entity-name ${s.name ? '' : 'dim'}">${s.name || '—'}</span>
-            <span class="entity-time">${this._fmt(s.start)}</span>
+            <span class="entity-time">${s.end != null ? `${this._fmt(s.start)} – ${this._fmt(s.end)}` : this._fmt(s.start)}</span>
           </div>
         `)}
       </div>
@@ -303,7 +303,7 @@ class LlamaVideoInfoModal extends LitElement {
           ${this._renderChapters()}
           <div class="section-heading">Sections (${this.sections.length})</div>
           ${this._renderSections()}
-          <div class="section-heading">Named Loops (${this.namedLoops.length})</div>
+          <div class="section-heading">Saved Loops (${this.namedLoops.length})</div>
           ${this._renderLoops()}
           <div class="section-heading">Marks (${this.marks.length})</div>
           ${this._renderMarks()}

@@ -4,6 +4,8 @@
 User docs: final read:
   x CC review
   - MH final read
+      HERE
+      http://127.0.0.1:4000/loopllama/v2/help/#chapters
   - CC final typo check
 
 Dev docs: final edits:

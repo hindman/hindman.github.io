@@ -109,7 +109,6 @@ export const BINDINGS = {
     'x': { handler: 'scratchChapter', desc: 'Scratch' },
     'j': { handler: 'jumpChapter',    desc: 'Jump' },
     'z': { handler: 'zoomChapter',    desc: 'Zoom' },
-    'f': { handler: 'fixChapter',     desc: 'Fix end' },
     'd': { handler: 'deleteChapter',  desc: 'Delete' },
   }},
 
@@ -119,7 +118,6 @@ export const BINDINGS = {
     'x': { handler: 'scratchSection', desc: 'Scratch' },
     'j': { handler: 'jumpSection',    desc: 'Jump' },
     'z': { handler: 'zoomSection',    desc: 'Zoom' },
-    'f': { handler: 'fixSection',     desc: 'Fix end' },
     'd': { handler: 'deleteSection',  desc: 'Delete' },
   }},
 

@@ -12,10 +12,9 @@ import {
   createVideo, createAppState,
   addMark, deleteMarkById, nearestMarkLeft,
   addSection, deleteSectionById, getSectionBounds, nearestSectionLeft,
-  fixSectionEnd,
   addLoop, deleteLoopById, updateLoop,
   deleteChapterById,
-  addChapterDivider, nearestChapterLeft, getChapterBounds, fixChapterEnd,
+  addChapterDivider, nearestChapterLeft, getChapterBounds,
   propagateEntityChange, validateEntityChange,
   nudgeLoopStart, nudgeLoopEnd,
   deriveDividerEnd,
@@ -924,7 +923,6 @@ class LlamaApp extends LitElement {
       editSection:    () => this._editCurrentDivider('section'),
       scratchSection: () => this._scratchDivider('section'),
       deleteSection:  () => this._openSectionsPicker('delete'),
-      fixSection:     () => this._fixDivider('section'),
       setMark: () => {
         const time = this._vc?.getCurrentTime() ?? 0;
         if (!addMark(this.marks, time)) {
@@ -942,7 +940,6 @@ class LlamaApp extends LitElement {
       editChapter:    () => this._editCurrentDivider('chapter'),
       scratchChapter: () => this._scratchDivider('chapter'),
       deleteChapter:  () => this._openChapterPicker('delete'),
-      fixChapter:     () => this._fixDivider('chapter'),
       toggleZone2: () => {
         this.zone2Mode = this.zone2Mode === 'sections' ? 'chapters' : 'sections';
         this.statusMsg = `Timeline displaying: ${this.zone2Mode}.`;
@@ -1778,7 +1775,6 @@ class LlamaApp extends LitElement {
         addFn:       addSection,
         nearestFn:   nearestSectionLeft,
         getBoundsFn: getSectionBounds,
-        fixEndFn:    fixSectionEnd,
       };
     }
     return {
@@ -1789,7 +1785,6 @@ class LlamaApp extends LitElement {
       addFn:       addChapterDivider,
       nearestFn:   nearestChapterLeft,
       getBoundsFn: getChapterBounds,
-      fixEndFn:    fixChapterEnd,
     };
   }
 
@@ -1818,14 +1813,9 @@ class LlamaApp extends LitElement {
   }
 
   _setDivider(type) {
-    const { entities, setEntities, label, addFn, nearestFn } = this._getDividerCtx(type);
+    const { entities, setEntities, label, addFn } = this._getDividerCtx(type);
     const lbl  = label.toLowerCase();
     const time = this._vc?.getCurrentTime() ?? 0;
-    const containing = nearestFn(entities, time);
-    if (containing && containing.end != null && time <= containing.end) {
-      this._setWarning(`Cannot create ${lbl}: inside a fixed ${lbl}.`);
-      return;
-    }
     const entity = addFn(entities, time);
     if (!entity) {
       this._setWarning(`Cannot create ${lbl}: too close to an existing one.`);
@@ -1833,31 +1823,6 @@ class LlamaApp extends LitElement {
     }
     this.statusMsg = `${label}: created.`;
     this._pushUndoSnapshot();
-    setEntities([...entities]);
-    this._saveCurrentState();
-  }
-
-  _fixDivider(type) {
-    const { entities, setEntities, label, nearestFn, fixEndFn } = this._getDividerCtx(type);
-    const lbl    = label.toLowerCase();
-    const entity = nearestFn(entities, this.currentTime);
-    if (!entity) {
-      this._setWarning(`No current ${lbl}.`);
-      return;
-    }
-    if (entity.end != null) {
-      this.statusMsg = `${label}: end unfixed.`;
-      this._pushUndoSnapshot();
-      entity.end = null;
-    } else {
-      if (this.duration == null) {
-        this._setError(`Cannot fix ${lbl} end: video duration unknown.`);
-        return;
-      }
-      this.statusMsg = `${label}: end fixed.`;
-      this._pushUndoSnapshot();
-      fixEndFn(entities, entity.id, this.duration);
-    }
     setEntities([...entities]);
     this._saveCurrentState();
   }
@@ -2078,8 +2043,10 @@ class LlamaApp extends LitElement {
 
   render() {
     const currentVideo   = this._appState?.videos.find(v => v.id === this.currentVideoId) ?? null;
-    const currentChapter = nearestChapterLeft(this.chapters, this.currentTime);
-    const currentSection = nearestSectionLeft(this.sections, this.currentTime);
+    const t = this.currentTime;
+    const _nearest = (fn, arr) => { const e = fn(arr, t); return e?.end != null && t > e.end ? null : e; };
+    const currentChapter = _nearest(nearestChapterLeft, this.chapters);
+    const currentSection = _nearest(nearestSectionLeft, this.sections);
     const loopDirty      = this._isLoopDirty();
     const zoomLabel = (() => {
       if (!this.zoomSource) return null;
@@ -2197,8 +2164,8 @@ class LlamaApp extends LitElement {
         <llama-current
           .videoName=${currentVideo?.name ?? ''}
           .videoId=${currentVideo?.id ?? null}
-          .chapterName=${currentChapter?.name ?? null}
-          .sectionName=${currentSection?.name ?? null}
+          .currentChapter=${currentChapter ?? null}
+          .currentSection=${currentSection ?? null}
           .loopSrc=${this.loopSrc}
           .loopDirty=${loopDirty}
           .duration=${this.duration}
