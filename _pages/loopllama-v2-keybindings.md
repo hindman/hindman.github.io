@@ -24,7 +24,7 @@ Return to LoopLlama [help](/loopllama/v2/help/).
   **Key binding counts**. Some bindings accept a Vim-style count, meaning that
   the binding can be prefixed by a number that will multiply the effect of the
   operation. For example, `5Right` will seek forward by an amount equal to `5`
-  times the seek-delta. The operations that support counts are: speed
+  times the seek delta. The operations that support counts are: speed
   decrease/increase; seek backward/forward; navigation to previous/next
   entity; scratch loop bound decrease/increase; and undo/redo.
 

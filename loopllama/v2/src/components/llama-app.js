@@ -496,6 +496,7 @@ class LlamaApp extends LitElement {
     video.entity_type   = this.activeEntityType;
     video.zone2_mode    = this.zone2Mode;
     video.last_modified = Date.now();
+    delete video.speed_delta;
     this._save();
   }
 
@@ -630,7 +631,7 @@ class LlamaApp extends LitElement {
       jumpToStart:   () => {
         if (noVideo()) return;
         const video  = this._appState?.videos.find(v => v.id === this.currentVideoId);
-        const target = this.looping ? this.loopStart : (video?.start ?? 0);
+        const target = this.looping ? this.loopStart : (this.zoomSource?.start ?? video?.start ?? 0);
         this._maybePushJump(this._vc?.getCurrentTime() ?? 0, target);
         this._vc?.seekTo(target);
         this._flash('time');

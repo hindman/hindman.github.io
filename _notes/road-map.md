@@ -2,19 +2,21 @@
 ## TODO: LoopLlama v2
 
 User docs: final read:
-  - MH
-  - CC
-    - general review & and missing app behavior, policy, features
-    - stylistic conventions (eg all UI elements bolded).
-    - typos, etc
+  x CC review
+  - MH final read
+  - CC final typo check
 
 Dev docs: final edits:
   - dev-notes.md
     x mh
-    - cc chck
+    - cc check
   - architecture-notes.md
     - mh read/edit
     - cc check: discrepancies with code; other problems
+
+inv stats:
+  - Metrics for both prod/dev.
+  - Both to get the metrics and to keep the DBs active.
 
 Launch:
   - User docs: F5 post: draft

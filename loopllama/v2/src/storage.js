@@ -166,7 +166,8 @@ function _reorderVideo(v) {
   const known = new Set(['id','url','name','last_modified','duration','time',
     'start','end','speed','seek_delta','nudge_delta','entity_type','zone2_mode',
     'last_opened','scratchLoop',
-    'chapters','sections','loops','marks','jumps','schema_version','version']);
+    'chapters','sections','loops','marks','jumps','schema_version','version',
+    'speed_delta']);
   const extra = Object.fromEntries(Object.entries(v).filter(([k]) => !known.has(k)));
   return { id, url, name, last_modified, duration, time, start, end,
            speed, seek_delta, nudge_delta, entity_type, zone2_mode,

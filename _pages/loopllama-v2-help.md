@@ -72,6 +72,7 @@ actions are the following:
 | `Up`    | Seek delta: increase
 | `-`     | Speed: decrease
 | `=`     | Speed: increase
+| `⌫`     | Speed: reset to 100%
 | `jj`    | Jump to a time
 
 <span class="ll-phead">Basic looping</span>. The controls in the **Scratch
@@ -98,8 +99,10 @@ information in various ways.
 
   - **Controls**: hover to display labels and key bindings.
 
-  - **Message footer**: displays informational, warning, and error messages,
-    along with key binding continuation information.
+  - **Message footer**: displays informational, warning, and error messages.
+
+  - **Key binding help**: displayed in the footer area when the user types the
+    first character of the 2-character binding.
 
 <span class="ll-phead">Gotcha: app focus</span>. If you click anywhere in the
 YouTube frame, the LoopLlama app loses focus and its key bindings become
@@ -142,7 +145,10 @@ video you loaded previously into LoopLlama.
   operation. For example, `vo` for **Video › Open** or `ce` for **Chapter ›
   Edit**. The most common operations also have shortcut bindings for easier
   typing (see the **Video** and **App** menus for several examples). The help
-  documentation mainly use the formal two-character bindings.
+  documentation mainly uses the formal two-character bindings. Also note that
+  some key bindings accept a preliminary count — a number typed before the
+  binding — to multiply the effect of the operation (see [key
+  bindings](/loopllama/v2/keybindings/)).
 
 </div>
 
@@ -154,6 +160,11 @@ material that you rarely watch when looping or zooming a video or when using
 
 <span class="ll-phead">Zoom</span>. Use `vz` for **Video › Zoom** to focus the
 timeline view to a video's custom start-end range, if you have set one.
+Zooming of any kind — whether for a video, section, chapter, saved loop, or
+scratch loop — constrains both the timeline view and the playhead itself to
+the zoomed range. Zoom can be toggled off either by repeating the command used
+to invoke it (`vz` in the case of **Video › Zoom**) or via `az` for **App ›
+Zoom off**, which turns off any kind of zooming.
 
 <span class="ll-phead">Scratch</span>. Use `vx` for **Video › Scratch** to
 loop an entire video (or the range defined by its custom start/end values).
@@ -201,9 +212,7 @@ which loads the section's start and end into the scratch loop.
 allows you to select any section and jump the playhead to its start.
 
 <span class="ll-phead">Zoom</span>. Use `sz` for **Section › Zoom**, which
-will focus the timeline on the current section. Use `sz` again to toggle the
-section-zoom off (or `az` for **App › Zoom off** to turn off any kind of
-zooming).
+will focus the timeline on the current section.
 
 <span class="ll-phead">Fix end</span>. Use `sf` for **Section › Fix end**.
 Although rarely needed, this operation converts the current section's end
@@ -218,7 +227,7 @@ which allows you to select a section for deletion.
 
 <div class="notice--primary" markdown="1">
 
-  <a id="menu-ellipses"></a>**Menu ellipses**. On the Section menu, notice
+  <a id="menu-ellipses"></a>**Menu ellipses**. On the **Section** menu, notice
   that **Delete** and **Jump** have trailing ellipses. That convention conveys
   that the operation will occur through an interactive picker where you first
   select the section to be deleted or jumped to. The other menu items have no
@@ -279,8 +288,8 @@ sections and chapters.
 creates a new saved loop using the current bounds of the scratch loop.
 
 <span class="ll-phead">Edit</span>. Use `le` for **Loop › Edit** to edit the
-current loop's name or adjust its bounds. As with other entities, current is
-defined by playhead position.
+current loop's name or adjust its bounds. As with other entities, "current"
+is defined by playhead position.
 
 <span class="ll-phead">Jump</span>. Use `lj` for **Loop › Jump** to select
 a saved loop and move the playhead to its start.
@@ -296,13 +305,20 @@ the current loop's bounds into the scratch loop — our next topic.
 
 ### Scratch loop
 
-As noted above, the scratch loop is the active working area for looping. The
-main looping controls were covered in the [Quick start](#quick-start).
+As noted above, the scratch loop is the active working area for looping. When
+the scratch loop bounds produce a valid loop — meaning start less than end —
+the text boxes display the values in regular font and the following operations
+are supported.
 
-When the scratch loop bounds produce a valid loop — meaning start less than
-end — the text boxes display the values in regular font. When the bounds are
-invalid, the font is red and the app disallows toggling looping on or creating
-a new saved loop based on those bounds.
+<span class="ll-phead">Toggle</span>. Use `xx` for **Scratch › Toggle** to
+turn looping on/off.
+
+<span class="ll-phead">Zoom</span>. Use `xz` for **Scratch › Zoom** to focus
+the timeline on the bounds of the scratch loop.
+
+When scratch loop bounds are invalid, the font displaying the start and end is
+red and the app disallows toggling looping on, zooming the scratch loop, or
+creating a new saved loop based on those bounds.
 
 ### Scratch operation {#scratch-loop}
 
@@ -314,10 +330,10 @@ Although the terminology is idiosyncratic, the app's menu labeling and key
 binding scheme benefit from keeping a clear distinction between saved loops
 and the scratch loop.
 
-| Loop type     | Menu      | Binding prefix
-| ------------- | --------- | --------------
-| Saved loop    | Loop      | `l`
-| Scratch loop  | Scratch   | `x`
+| Loop type     | Menu        | Binding prefix
+| ------------- | ----------- | --------------
+| Saved loop    | **Loop**    | `l`
+| Scratch loop  | **Scratch** | `x`
 
 ### Scratch loop edit mode
 
@@ -367,7 +383,7 @@ press `sx` to scratch the current section. There are several things to notice:
 
   - <span class="ll-phead">Looping</span>. Toggled on.
 
-  - <span class="ll-phead">Current Panel</span>. Indicates the name and range
+  - <span class="ll-phead">Current panel</span>. Indicates the name and range
     of the scratch loop source.
 
   - <span class="ll-phead">Scratch bounds larger than source</span>. The
@@ -424,7 +440,7 @@ segments: blue for the scratch loop, brown for saved loops.
 ### More navigation
 
 Basic playback and navigation is available in the app's main controls and was
-covered in the [Quick Start](#quick-start): play, pause, speed control,
+covered in the [quick start](#quick-start): play, pause, speed control,
 seeking, and jumping to specific times or entities. LoopLlama supports a few
 other navigational methods:
 
@@ -447,7 +463,7 @@ after an inadvertent jump. The jump history operations and key bindings are
 listed on the **App** menu.
 
 <span class="ll-phead">Super slow motion</span>. To examine a video in super
-slow motion, a useful technique is to pause the video, set the seek-duration
+slow motion, a useful technique is to pause the video, set the seek delta
 to 0.1 seconds, and then "watch" the video (without sound) using the
 `Left`/`Right` arrows.
 
@@ -467,7 +483,7 @@ LoopLlama supports various time input styles:
 ## Data management
 
 LoopLlama provides several ways to share your LoopLlama data with others,
-backup your data to your computer, sync your data across multiple browsers and
+back up your data to your computer, sync your data across multiple browsers and
 devices, or perform bulk deletions.
 
 <span class="ll-phead">Share video</span>. Use `dv` for **Data › Share video**
@@ -501,7 +517,7 @@ you might want to reverse.
   full inventory of your videos. Each video is classified into one of five
   categories based on whether it exists in the source, the destination, or
   both — and if both, which copy carries the more recent last-modified
-  timestamp. The categorties are: source only, source newer, destination only,
+  timestamp. The categories are: source only, source newer, destination only,
   destination newer, and same last-modified. Each category has a toggle
   controlling whether the operation acts on those videos, with defaults biased
   toward keeping newer data over older. You can review, adjust any toggle, and
@@ -522,10 +538,11 @@ entities within a single video. Deleted videos can be restored via
 ## Cloud storage and sign-in {#why-sign-in}
 
 <span class="ll-phead">Sign-in is optional</span>. LoopLlama does not require
-sign in, but signing in with Google or GitHub lets you back up your LoopLlama
-data to the cloud — providing a more convenient insurance mechanism against
-lost data (for example, caused by clearing your browser cache) and a simpler
-way to coordinate LoopLlama usage across multiple browsers or devices.
+sign in, but signing in with Google or GitHub (via the **Account** menu) lets
+you back up your LoopLlama data to the cloud — providing a more convenient
+insurance mechanism against lost data (for example, caused by clearing your
+browser cache) and a simpler way to coordinate LoopLlama usage across multiple
+browsers or devices.
 
 <span class="ll-phead">Cloud as hard drive</span>. LoopLlama's cloud storage
 is a backup-restore facility, not a true multi-device sync. The correct mental
@@ -586,24 +603,24 @@ turn off any type of timeline zoom (video, chapter, section, saved loop, or
 scratch loop).
 
 <a id="app-options"></a><span class="ll-phead">Options</span>. Use `ao` for
-**App › Options** to customize various settings. Three of the settings are
+**App › Options** to customize various settings. Two of the settings are
 per-video defaults: applied when you first load a new video, then remembered
 per video.
 
   - Seek delta default: the number of seconds used when seeking
     backward/forward.
 
-  - Loop delta default: the number of seconds used when nudging the bounds of
-    the scratch loop.
+  - Scratch loop delta default: the number of seconds used when
+    decreasing/increasing the bounds of the scratch loop.
+
+The other options are global:
 
   - Speed delta default: the number of percentage points applied when
     decreasing/increasing playback speed.
 
-The other options are global:
-
   - Seek delta choices: the values in the seek delta dropdown.
 
-  - Loop delta choices: the values in the loop delta dropdown.
+  - Scratch loop delta choices: the values in the scratch loop delta dropdown.
 
   - Loop pad start/end: the number of extra seconds added before and after a
     section or chapter when you load it into the scratch loop.
@@ -626,67 +643,67 @@ part of its GitHub Pages feature.
 streams all video content via its standard embed API. LoopLlama simply uses
 that API.
 
-<span class="ll-phead">Browser storage by default</span>. Your LoopLLama data
+<span class="ll-phead">Browser storage by default</span>. Your LoopLlama data
 is stored only in your web browser, in [localStorage][localStorage]. The app
 does not use cookies.
 
 <span class="ll-phead">Transparent</span>. The data that LoopLlama stores can
 be viewed directly via `de` for **Data › Export**. The resulting JSON file
-provides an accurate representation of your LoopLLama data.
+provides an accurate representation of your LoopLlama data.
 
-<span class="ll-phead">Cloud backup is optional</span>. If you sign-in via
-Google or GitHub, LoopLLama backs up your data in the cloud, using
+<span class="ll-phead">Cloud backup is optional</span>. If you sign in via
+Google or GitHub, LoopLlama backs up your data in the cloud, using
 [Supabase][supabase], which offers a free database service for small projects
-like LoopLLama.
+like LoopLlama.
 
 <span class="ll-phead">Authentication via known, reliable
-third-parties</span>. LoopLLama does not manage user authentication or know
+third-parties</span>. LoopLlama does not manage user authentication or know
 anything about your credentials. Those details are handled by the
 authentication provider you choose — Google or GitHub.
 
-<span class="ll-phead">LoopLLama does not store your email address</span>.
-None of the LoopLLama database tables contain your email address. The table
-holding a backup copy of your LoopLLama data does have an ID that can be
+<span class="ll-phead">LoopLlama does not store your email address</span>.
+None of the LoopLlama database tables contain your email address. The table
+holding a backup copy of your LoopLlama data does have an ID that can be
 linked to a Supabase table holding your email address (Supabase needs to store
 that email to ensure that only the properly authenticated user can access your
-data). But the LoopLLama project will never issue queries linking your email
+data). But the LoopLlama project will never issue queries linking your email
 address and your cloud backup, other than to investigate problems or requests
 initiated by you.
 
 <span class="ll-phead">Cloud data is not shared</span>. The copy of your
-LoopLLama data stored in the cloud requires valid authentication to access.
+LoopLlama data stored in the cloud requires valid authentication to access.
 That means other internet users cannot access it, unless you share your
 credentials with them.
 
 <span class="ll-phead">Cloud data can be accessed by infrastructure
-staff</span>. The LoopLLama app, and developers on the LoopLLama project, can
+staff</span>. The LoopLlama app, and developers on the LoopLlama project, can
 access your data. But the project commits to access this information only for
 the purpose of allowing the app to function or to investigate specific
-problems or requests submitted by you to the LoopLLama team. Similarly, some
-Supabase staff can access the data in the LoopLLama database, but their access
+problems or requests submitted by you to the LoopLlama team. Similarly, some
+Supabase staff can access the data in the LoopLlama database, but their access
 is governed in similar ways by Supabase policies.
 
 <span class="ll-phead">User-driven access to your cloud data</span>. The
-LoopLLama app interacts with your cloud data only in response to your explicit
+LoopLlama app interacts with your cloud data only in response to your explicit
 requests to save your browser data to the cloud or to read data from the cloud
 into your browser.
 
 <span class="ll-phead">Cloud data can be removed</span>. You can remove your
 cloud data at any time (see the **Account** menu).
 
-<span class="ll-phead">No user-data tracking</span>. LoopLLama does not use
+<span class="ll-phead">No user-data tracking</span>. LoopLlama does not use
 cookies and does not sell, share, or transfer your data to any third parties —
 other than backing up your data in Supabase, as noted above. The application
 does track some events for the purpose of collecting aggregate metrics for the
-project, specifically (1) when a user starts a new LoopLLama session and (2)
-when a user loads a new YouTube URL. In that data, the user is represented by
-a client ID, which is simply a random ID stored in your browser that helps us
-count approximate unique visitors. That ID is not linked to your identity.
-Further, in the data that holds the URL for newly loaded YouTube videos, the
+project, specifically (1) when a user starts a new LoopLlama session and (2)
+when a user loads or opens a YouTube video. In that data, the user is
+represented by a client ID, which is simply a random ID stored in your browser
+that helps us count approximate unique visitors. That ID is not linked to your
+identity. Further, in the data that holds the YouTube ID for the video, the
 app purposely omits the client ID.
 
 <span class="ll-phead">Shared data is publicly available, but opaque</span>.
-If you ask LoopLLama to create a URL to share either a video or a scratch
+If you ask LoopLlama to create a URL to share either a video or a scratch
 loop, the shared data can be accessed by anyone with the correct URL. That URL
 includes a random ID generated by the app, so it is not something anyone can
 guess or tie to your identity.
@@ -709,7 +726,7 @@ prohibited.
 
 ### Contact
 
-If you have questions, comments, problems to report, or features to request
+If you have questions, comments, problems to report, or features to request,
 you can file an issue via the project's [GitHub codebase][github_code]. You
 can also contact Monty Hindman directly, as [detailed here][mh_contact].
 
