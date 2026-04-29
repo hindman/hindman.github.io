@@ -134,6 +134,17 @@ export function migrateAppState(state) {
     }
     state.schema_version = 11;
   }
+  // SCHEMA UPGRADE CHECKLIST — when adding a v12 (or later) migration block:
+  //   1. Add the migration block here following the same pattern as above.
+  //   2. Update SCHEMA_VERSION in state.js to the new version number.
+  //   3. Update examples.js: rewrite the video data to match the new schema
+  //      and bump EXAMPLES.schema_version to match. The loadExamples action
+  //      runs migrateAppState on example data before inserting it, so the
+  //      migration will paper over any lag — but keeping examples current
+  //      ensures the data inserted is correct, not just structurally valid.
+  //   4. Update createVideo() in state.js if new fields are added.
+  //   5. Update _reorderVideo() in storage.js if new fields need canonical ordering.
+
   // Final pass: clean up any stale per-video fields (version, schema_version,
   // URL canonicalization) regardless of how old the source data is. Idempotent.
   for (const video of state.videos ?? []) migrateVideo(video);
