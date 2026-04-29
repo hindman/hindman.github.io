@@ -156,6 +156,7 @@ class LlamaWhichkey extends LitElement {
         <div class="row">
           <span class="cheat-label">Scratch edit</span>
           ${this._kbItem('Tab', 'Toggle focus')}
+          ${this._kbItem('x', 'Toggle looping')}
           ${this._kbItem('Left', 'Decrease')}
           ${this._kbItem('Right', 'Increase')}
           ${this._kbItem('Down', 'Delta decrease')}

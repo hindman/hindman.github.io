@@ -638,6 +638,7 @@ class LlamaApp extends LitElement {
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
         this.loopStart = nudgeLoopStart(-this.loopNudgeDelta * count, state);
         this._autoDisableLoopIfInvalid();
+        this._enforceLoopBoundsOnPlayhead();
         this._flash('loopStart');
       },
       nudgeStartUp: (count = 1) => {
@@ -645,6 +646,7 @@ class LlamaApp extends LitElement {
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
         this.loopStart = nudgeLoopStart(+this.loopNudgeDelta * count, state);
         this._autoDisableLoopIfInvalid();
+        this._enforceLoopBoundsOnPlayhead();
         this._flash('loopStart');
       },
       nudgeEndDown: (count = 1) => {
@@ -652,6 +654,7 @@ class LlamaApp extends LitElement {
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
         this.loopEnd = nudgeLoopEnd(-this.loopNudgeDelta * count, state);
         this._autoDisableLoopIfInvalid();
+        this._enforceLoopBoundsOnPlayhead();
         this._flash('loopEnd');
       },
       nudgeEndUp: (count = 1) => {
@@ -659,6 +662,7 @@ class LlamaApp extends LitElement {
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
         this.loopEnd = nudgeLoopEnd(+this.loopNudgeDelta * count, state);
         this._autoDisableLoopIfInvalid();
+        this._enforceLoopBoundsOnPlayhead();
         this._flash('loopEnd');
       },
       focusLoopNudgeDelta: () => { this.renderRoot.querySelector('llama-controls')?.focusNudgeDeltaSelect(); this._flash('nudgeDelta', 'until-blur'); },
@@ -1234,6 +1238,7 @@ class LlamaApp extends LitElement {
         this.loopEnd = Math.max(0, Math.min(this.loopEnd + delta, maxT));
       }
       this._autoDisableLoopIfInvalid();
+      this._enforceLoopBoundsOnPlayhead();
       return;
     }
 
@@ -1251,11 +1256,15 @@ class LlamaApp extends LitElement {
 
     if (key === ' ') {
       event.preventDefault();
-      const seekTo = this.editScratchFocus === 'start'
-        ? this.loopStart
-        : Math.max(0, this.loopEnd - 3);
-      this._vc?.seekTo(seekTo);
-      if (!this._vc?.isPlaying()) this._vc?.play();
+      if (this._vc?.isPlaying()) {
+        this._vc?.pause();
+      } else {
+        const seekTo = this.editScratchFocus === 'start'
+          ? this.loopStart
+          : Math.max(0, this.loopEnd - 3);
+        this._vc?.seekTo(seekTo);
+        this._vc?.play();
+      }
       return;
     }
 
@@ -1267,6 +1276,12 @@ class LlamaApp extends LitElement {
         this.loopEnd = this.duration ?? 0;
       }
       this._autoDisableLoopIfInvalid();
+      return;
+    }
+
+    if (key === 'x') {
+      event.preventDefault();
+      this._toggleLoop();
       return;
     }
 
@@ -1457,6 +1472,14 @@ class LlamaApp extends LitElement {
     if (this.looping && !this._isLoopValid()) this.looping = false;
   }
 
+  _enforceLoopBoundsOnPlayhead() {
+    if (!this.looping || !this._isLoopValid()) return;
+    const t = this._vc?.getCurrentTime() ?? null;
+    if (t === null || (t >= this.loopStart && t <= this.loopEnd)) return;
+    this._vc.seekTo(this._vc.isPlaying() ? this.loopStart
+      : (t < this.loopStart ? this.loopStart : this.loopEnd));
+  }
+
   // Clear zoomSource if the given range doesn't fit within it.
   // Called before any operation that sets new scratch-loop bounds.
   _clearZoomIfOutside(start, end) {
@@ -1523,11 +1546,13 @@ class LlamaApp extends LitElement {
   _onLoopStartChange(e) {
     this.loopStart = e.detail.value;
     this._autoDisableLoopIfInvalid();
+    this._enforceLoopBoundsOnPlayhead();
   }
 
   _onLoopEndChange(e) {
     this.loopEnd = e.detail.value;
     this._autoDisableLoopIfInvalid();
+    this._enforceLoopBoundsOnPlayhead();
   }
 
   // Collect all entity time points for the given type, deduped and sorted.

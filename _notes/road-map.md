@@ -33,41 +33,6 @@ Posts:
 
 ## ISSUES
 
-Scratch edit mode:
-  - Space: it always plays; no way to stop playing.
-
-Scratch loop:
-  - Looping: on.
-  - Playback: either paused or playing (does not matter).
-  - Playhead near start (or end, if scenario were reversed).
-  - Nudge start increase.
-  - Now the playhead resides outside the scratch loop.
-  - We should be enforcing bounds: move playhead into the loop.
-
-Delete data modal: simplify the empty messages:
-
-    Current | Current video has no entities to delete.
-    New     | Video has no entities.
-
-    Current | No video loaded.
-    New     | No video.
-
-    Current | No videos saved.
-    New     | No videos.
-
-Saved loops: current-entity is broken:
-  - Three saved-loop operations apply to the current-entity, based on playhead
-    position: Edit (le), Scratch (lx), Zoom (lz).
-  - But saved-loops can overlap!
-  - That means a user can create overlapping saved loops and then lose the
-    ability to ever edit/scratch/zoom them.
-    - Currently, the picker app designates one of them as "current".
-    - So if 3 saved-loops overlap, only 1 of them can be edited/scratched/zoomed.
-  - I don't want to solve this problem by forcing all of these operations to
-    go through a picker. Most of the time, my saved-loops don't overlap.
-  - Could we solve it by inserting a picker into the process only when
-    required, and limit the picker to just the relevant saved-loops?
-
 ## Menus
 
     Data:

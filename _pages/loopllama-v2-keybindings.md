@@ -113,7 +113,7 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 
 | Key         | Operation
 | ----------- | ---------------------
-| `xx`        | Toggle
+| `xx`        | Toggle looping
 | `xe` · `\`  | Edit mode
 | `xz`        | Zoom
 | `xs`        | Save to source
@@ -141,6 +141,7 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 | Key         | Operation
 | ----------- | ---------------------
 | `Tab`       | Toggle focus: start/end
+| `x`         | Toggle looping
 | `Left`      | Decrease: start/end
 | `Right`     | Increase: start/end
 | `Down`      | Decrease: nudge-delta

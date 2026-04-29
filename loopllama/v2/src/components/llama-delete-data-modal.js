@@ -220,12 +220,12 @@ class LlamaDeleteDataModal extends LitElement {
 
   _renderCurrentVideoContent() {
     if (!this._currentVideoId) {
-      return html`<div class="no-video-msg">No video loaded.</div>`;
+      return html`<div class="no-video-msg">No video.</div>`;
     }
     const hasAny = this._sections.length || this._loops.length
                 || this._marks.length   || this._chapters.length;
     if (!hasAny) {
-      return html`<div class="empty-msg">Current video has no entities to delete.</div>`;
+      return html`<div class="empty-msg">Video has no entities.</div>`;
     }
     return html`
 ${this._renderGroup('Chapters', this._chapters,
@@ -245,7 +245,7 @@ ${this._renderGroup('Chapters', this._chapters,
 
   _renderVideosContent() {
     if (!this._videos.length) {
-      return html`<div class="empty-msg">No videos saved.</div>`;
+      return html`<div class="empty-msg">No videos.</div>`;
     }
     const state = this._groupState(this._videos);
     return html`
