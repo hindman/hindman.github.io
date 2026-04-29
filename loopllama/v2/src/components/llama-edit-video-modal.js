@@ -35,6 +35,7 @@ class LlamaEditVideoModal extends LitElement {
     _name:        { state: true },
     _start:       { state: true },
     _end:         { state: true },
+    _error:       { state: true },
     _startEdited: { state: true },
     _endEdited:   { state: true },
   };
@@ -45,6 +46,7 @@ class LlamaEditVideoModal extends LitElement {
     this._name          = '';
     this._start         = '';
     this._end           = '';
+    this._error         = '';
     this._startEdited   = false;
     this._endEdited     = false;
     this._originalStart = null;
@@ -60,6 +62,7 @@ class LlamaEditVideoModal extends LitElement {
       this._originalStart = v.start ?? 0;
       this._originalEnd   = v.end   ?? null;
     }
+    this._error       = '';
     this._startEdited = false;
     this._endEdited   = false;
     this.renderRoot.querySelector('llama-modal')?.show();
@@ -75,6 +78,7 @@ class LlamaEditVideoModal extends LitElement {
 
   _save() {
     if (!this.video) return;
+    if (!this._name.trim()) { this._error = 'Name is required.'; return; }
     const start = this._startEdited ? (_parseTime(this._start) ?? 0) : this._originalStart;
     const end   = this._endEdited
       ? (this._end.trim() ? (_parseTime(this._end) ?? null) : null)
@@ -115,6 +119,7 @@ class LlamaEditVideoModal extends LitElement {
           <span class="field-label">Video ID</span>
           <div class="video-id">${this.video?.id ?? ''}</div>
         </div>
+        <div class="error" style=${this._error ? '' : 'visibility: hidden'}>${this._error || '\u00a0'}</div>
         <div slot="footer">
           <sl-button @click=${this.hide}>Cancel</sl-button>
           <sl-button variant="primary" @click=${this._save}>Save</sl-button>

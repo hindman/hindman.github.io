@@ -2,7 +2,7 @@
 //
 // API:
 //   show({ localOnly, localNewer, cloudOnly, cloudNewer, same })
-//     Each array contains display name strings.
+//     Each array contains { name, id } objects.
 //   hide()
 
 import { LitElement, html, css } from 'lit';
@@ -37,6 +37,10 @@ class LlamaCloudStatusModal extends LitElement {
     .name-list li {
       color: var(--ll-text, #e0e0e0);
       font-size: 0.9rem;
+    }
+    .vid-id {
+      color: var(--ll-text-dim, #aaa);
+      margin-left: 0.3em;
     }
     .section-empty {
       color: var(--ll-text-muted, #888);
@@ -73,7 +77,7 @@ class LlamaCloudStatusModal extends LitElement {
       <div class="group">
         <div class="group-header">${label} (${names.length})</div>
         ${names.length > 0
-          ? html`<ul class="name-list">${names.map(n => html`<li>${n}</li>`)}</ul>`
+          ? html`<ul class="name-list">${names.map(v => html`<li>${v.name}<span class="vid-id">${v.id}</span></li>`)}</ul>`
           : html`<div class="section-empty">None</div>`}
       </div>
     `;

@@ -199,10 +199,8 @@ class LlamaVideoInfoModal extends LitElement {
       <div class="info-grid">
         <span class="info-label">ID</span>
         <span class="info-value">${v.id}</span>
-        ${v.name ? html`
-          <span class="info-label">Name</span>
-          <span class="info-value">${v.name}</span>
-        ` : ''}
+        <span class="info-label">Name</span>
+        <span class="info-value">${v.name}</span>
         <span class="info-label">URL</span>
         <span class="info-value">${v.url || '—'}</span>
         <span class="info-label">Duration</span>

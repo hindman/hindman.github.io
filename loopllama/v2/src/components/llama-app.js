@@ -7,7 +7,7 @@ import { fmtTimePlain } from '../format.js';
 import { createVideoController }    from '../videoController.js';
 import { createKeyboardController } from '../keyboardController.js';
 import {
-  DEFAULT_OPTIONS,
+  DEFAULT_OPTIONS, UNTITLED,
   JUMP_HISTORY_MAX, JUMP_THRESHOLD,
   createVideo, createAppState,
   addMark, deleteMarkById, nearestMarkLeft,
@@ -963,7 +963,7 @@ class LlamaApp extends LitElement {
         this._deleteDataModalEl?.show({
           videos:           this._appState?.videos ?? [],
           currentVideoId:   this.currentVideoId,
-          currentVideoName: video?.name || video?.id || null,
+          currentVideoName: video?.name ?? null,
           sections:         this.sections,
           namedLoops:       this.namedLoops,
           marks:            this.marks,
@@ -1001,10 +1001,15 @@ class LlamaApp extends LitElement {
           if (result.replaceExisting) {
             for (const video of existingVideos) {
               const idx = this._appState.videos.findIndex(v => v.id === video.id);
-              if (idx !== -1) { this._appState.videos[idx] = video; changed = true; }
+              if (idx !== -1) {
+                this._appState.stashes[video.id] = JSON.parse(JSON.stringify(this._appState.videos[idx]));
+                this._appState.videos[idx] = video;
+                changed = true;
+              }
             }
           }
           if (changed) {
+            this.stashes = { ...this._appState.stashes };
             this.videos = [...this._appState.videos];
             if (result.replaceExisting) {
               const replacedCurrent = existingVideos.find(v => v.id === this.currentVideoId);
@@ -1059,12 +1064,9 @@ class LlamaApp extends LitElement {
         if (state === 1 || state === 5) {
           const video = this._appState.videos.find(v => v.id === this.currentVideoId);
           if (video && !video.name) {
-            const title = this._vc.getVideoTitle();
-            if (title) {
-              video.name = title;
-              this.videos = [...this._appState.videos];
-              this._save();
-            }
+            video.name = this._vc.getVideoTitle() || UNTITLED;
+            this.videos = [...this._appState.videos];
+            this._save();
           }
         }
       },

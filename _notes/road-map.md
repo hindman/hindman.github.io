@@ -32,29 +32,6 @@ Posts:
 
 ## ISSUES
 
-Load examples. Not sure vid stashing is working. Check the whole flow,
-including stash/unstash.
-
-    const LLKEY = 'loopllama-v2';
-    const state = JSON.parse(localStorage.getItem(LLKEY));
-    state.stashes = {};
-    localStorage.setItem(LLKEY, JSON.stringify(state));
-
-## Pickers
-
-    video-open     | Open video
-    video-delete   | Delete video
-    video-unstash  | Unstash video
-    chapter-jump   | Jump to chapter
-    chapter-delete | Delete chapter
-    section-jump   | Jump to section
-    section-delete | Delete section
-    loop-jump      | Jump to loop
-    loop-delete    | Delete loop
-    mark-jump      | Jump to mark
-    mark-delete    | Delete mark
-    jump-history   | Jump history
-
 ## Modals
 
     video-load-url        | Load Video

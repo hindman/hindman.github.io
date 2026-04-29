@@ -6,11 +6,11 @@
 //     operation:  Label for modal title (e.g. 'import data').
 //     srcLabel:   Source label for headings (e.g. 'Import').
 //     destLabel:  Destination label for headings (e.g. 'Local').
-//     srcOnly:    Array of video name strings present only in source.
-//     srcNewer:   Array of video name strings where source is newer.
-//     destOnly:   Array of video name strings present only in destination.
-//     destNewer:  Array of video name strings where destination is newer.
-//     same:       Array of video name strings with equal last-modified.
+//     srcOnly:    Array of { name, id } objects present only in source.
+//     srcNewer:   Array of { name, id } objects where source is newer.
+//     destOnly:   Array of { name, id } objects present only in destination.
+//     destNewer:  Array of { name, id } objects where destination is newer.
+//     same:       Array of { name, id } objects with equal last-modified.
 //
 //   hide()
 //
@@ -58,6 +58,10 @@ class LlamaDataOpModal extends LitElement {
     .name-list li {
       color: var(--ll-text, #e0e0e0);
       font-size: 0.9rem;
+    }
+    .vid-id {
+      color: var(--ll-text-dim, #aaa);
+      margin-left: 0.3em;
     }
     .section-empty {
       color: var(--ll-text-muted, #888);
@@ -183,7 +187,7 @@ class LlamaDataOpModal extends LitElement {
             @sl-change=${e => { onChange(e.target.checked); setTimeout(() => this._applyRef.value?.focus(), 0); }}
           >${actionLabel}</sl-switch>
           <ul class="name-list">
-            ${names.map(n => html`<li>${n}</li>`)}
+            ${names.map(v => html`<li>${v.name}<span class="vid-id">${v.id}</span></li>`)}
           </ul>
         ` : html`<div class="section-empty">None</div>`}
       </div>

@@ -128,7 +128,7 @@ class LlamaDeleteDataModal extends LitElement {
     this._marks            = marks      ?? [];
     this._chapters         = chapters   ?? [];
     this._videos           = (videos ?? []).slice().sort(
-      (a, b) => (a.name || a.id).localeCompare(b.name || b.id, undefined, { sensitivity: 'base' })
+      (a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
     );
     this._currentVideoId   = currentVideoId   ?? null;
     this._checked          = preCheckedVideoId ? { [preCheckedVideoId]: true } : {};
@@ -229,16 +229,16 @@ class LlamaDeleteDataModal extends LitElement {
     }
     return html`
 ${this._renderGroup('Chapters', this._chapters,
-          c => html`<span class="item-label">${c.name || ''}</span>
+          c => html`<span class="item-label">${c.name || '—'}</span>
                     <span class="item-sub">${fmtTimePlain(c.start)}</span>`)}
       ${this._renderGroup('Sections', this._sections,
-          s => html`<span class="item-label">${s.name || ''}</span>
+          s => html`<span class="item-label">${s.name || '—'}</span>
                     <span class="item-sub">${fmtTimePlain(s.start)}</span>`)}
       ${this._renderGroup('Loops', this._loops,
-          l => html`<span class="item-label">${l.name || ''}</span>
+          l => html`<span class="item-label">${l.name || '—'}</span>
                     <span class="item-sub">${fmtTimePlain(l.start)} – ${fmtTimePlain(l.end)}</span>`)}
       ${this._renderGroup('Marks', this._marks,
-          m => html`<span class="item-label">${m.name || ''}</span>
+          m => html`<span class="item-label">${m.name || '—'}</span>
                     <span class="item-sub">${fmtTimePlain(m.time)}</span>`)}
     `;
   }
@@ -267,7 +267,7 @@ ${this._renderGroup('Chapters', this._chapters,
                 .checked=${this._isChecked(v.id)}
                 @change=${() => this._toggle(v.id)}
               >
-              <div class="item-text"><span class="item-label">${v.name || v.id}</span>${v.name ? html`<span class="item-sub">${v.id}</span>` : ''}</div>
+              <div class="item-text"><span class="item-label">${v.name}</span><span class="item-sub">${v.id}</span></div>
             </div>
           `)}
         </div>

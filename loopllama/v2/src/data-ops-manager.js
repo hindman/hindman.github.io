@@ -43,13 +43,13 @@ export class DataOpsManager {
     const { srcOnly, srcNewer, destOnly, destNewer, same } = categorizeVideos(
       app._appState.videos, cloudVideos
     );
-    const _name = v => v.name || v.id;
+    const toItem = v => ({ name: v.name, id: v.id });
     app._cloudStatusModalEl?.show({
-      localOnly:  srcOnly.map(_name),
-      localNewer: srcNewer.map(_name),
-      cloudOnly:  destOnly.map(_name),
-      cloudNewer: destNewer.map(_name),
-      same:       same.map(_name),
+      localOnly:  srcOnly.map(toItem),
+      localNewer: srcNewer.map(toItem),
+      cloudOnly:  destOnly.map(toItem),
+      cloudNewer: destNewer.map(toItem),
+      same:       same.map(toItem),
     });
   }
 
@@ -76,15 +76,16 @@ export class DataOpsManager {
       app._appState.videos, cloudVideos
     );
 
+    const toItem = v => ({ name: v.name, id: v.id });
     const result = await this._showDataOp({
       operation: 'cloud save',
       srcLabel:  'Library',
       destLabel: 'Cloud',
-      srcOnly:   srcOnly.map(v => v.name || v.id),
-      srcNewer:  srcNewer.map(v => v.name || v.id),
-      destOnly:  destOnly.map(v => v.name || v.id),
-      destNewer: destNewer.map(v => v.name || v.id),
-      same:      same.map(v => v.name || v.id),
+      srcOnly:   srcOnly.map(toItem),
+      srcNewer:  srcNewer.map(toItem),
+      destOnly:  destOnly.map(toItem),
+      destNewer: destNewer.map(toItem),
+      same:      same.map(toItem),
     });
     if (result === null) return;
 
@@ -155,15 +156,16 @@ export class DataOpsManager {
       cloudVideos, app._appState.videos
     );
 
+    const toItem = v => ({ name: v.name, id: v.id });
     const result = await this._showDataOp({
       operation: 'cloud read',
       srcLabel:  'Cloud',
       destLabel: 'Library',
-      srcOnly:   srcOnly.map(v => v.name || v.id),
-      srcNewer:  srcNewer.map(v => v.name || v.id),
-      destOnly:  destOnly.map(v => v.name || v.id),
-      destNewer: destNewer.map(v => v.name || v.id),
-      same:      same.map(v => v.name || v.id),
+      srcOnly:   srcOnly.map(toItem),
+      srcNewer:  srcNewer.map(toItem),
+      destOnly:  destOnly.map(toItem),
+      destNewer: destNewer.map(toItem),
+      same:      same.map(toItem),
     });
     if (result === null) return;
 
@@ -197,7 +199,7 @@ export class DataOpsManager {
     const video   = app._appState.videos.find(v => v.id === app.currentVideoId);
     const payload = buildVideoPayload(video);
     try {
-      const id  = await createShare('video', payload, video.url, video.name || null);
+      const id  = await createShare('video', payload, video.url, video.name);
       const url = shareUrl(id);
       navigator.clipboard.writeText(url)
         .then(() => { app.statusMsg = 'Shared video: URL copied to clipboard.'; })
@@ -219,7 +221,7 @@ export class DataOpsManager {
     const video   = app._appState.videos.find(v => v.id === app.currentVideoId);
     const payload = buildLoopPayload(video, app.loopStart, app.loopEnd);
     try {
-      const id  = await createShare('loop', payload, video.url, video.name || null);
+      const id  = await createShare('loop', payload, video.url, video.name);
       const url = shareUrl(id);
       navigator.clipboard.writeText(url)
         .then(() => { app.statusMsg = 'Shared scratch loop: URL copied to clipboard.'; })
@@ -257,15 +259,16 @@ export class DataOpsManager {
       importedVideos, app._appState.videos
     );
 
+    const toItem = v => ({ name: v.name, id: v.id });
     const result = await this._showDataOp({
       operation: 'import data',
       srcLabel:  'File',
       destLabel: 'Library',
-      srcOnly:   srcOnly.map(v => v.name || v.id),
-      srcNewer:  srcNewer.map(v => v.name || v.id),
-      destOnly:  destOnly.map(v => v.name || v.id),
-      destNewer: destNewer.map(v => v.name || v.id),
-      same:      same.map(v => v.name || v.id),
+      srcOnly:   srcOnly.map(toItem),
+      srcNewer:  srcNewer.map(toItem),
+      destOnly:  destOnly.map(toItem),
+      destNewer: destNewer.map(toItem),
+      same:      same.map(toItem),
     });
     if (result === null) return;
 

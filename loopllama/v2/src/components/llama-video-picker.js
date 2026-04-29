@@ -165,7 +165,7 @@ class LlamaVideoPicker extends FilterPickerMixin(LitElement) {
       const bT = b.last_opened ?? 0;
       if (aT !== bT) return bT - aT;
       // Tie (both never opened): fall back to alpha by name.
-      return (a.name || '').toLowerCase().localeCompare((b.name || '').toLowerCase());
+      return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
     });
   }
 
@@ -176,8 +176,8 @@ class LlamaVideoPicker extends FilterPickerMixin(LitElement) {
   // In restore mode: build list from stash values, sorted alpha by name then id.
   _stashEntries() {
     return Object.values(this.stashes).sort((a, b) => {
-      const aKey = (a.name || a.id).toLowerCase();
-      const bKey = (b.name || b.id).toLowerCase();
+      const aKey = a.name.toLowerCase();
+      const bKey = b.name.toLowerCase();
       return aKey.localeCompare(bKey);
     });
   }
@@ -187,14 +187,14 @@ class LlamaVideoPicker extends FilterPickerMixin(LitElement) {
     const base = this.mode === 'restore' ? this._stashEntries() : this._sorted();
     if (!q) return base;
     return base.filter(v =>
-      (v.name || '').toLowerCase().includes(q) ||
+      v.name.toLowerCase().includes(q) ||
       v.id.toLowerCase().includes(q)
     );
   }
 
   // Preferred display label: name or em-dash if unnamed.
   _primaryLabel(v) {
-    return v.name || '—';
+    return v.name;
   }
 
   // Secondary label: always the video ID.
