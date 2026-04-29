@@ -33,31 +33,6 @@ Posts:
 
 ## ISSUES
 
-## Menus
-
-    Data:
-        Share video        | dv
-        Share scratch loop | dx
-
-    App:
-        Jump history... | jh
-        Back            | jb
-        Forward         | jf
-        --------------------------------
-        Undo            | au  u
-        Redo            | ar  U
-        Clear history   | a⌫
-        --------------------------------
-        Recall message  | am
-        Copy time       | ac
-        Toggle timeline | at  t
-        Zoom off        | az  z
-        --------------------------------
-        Options         | ao  o
-        Help            | ah  h
-        Key bindings    | ak  k
-        Load examples   | ae
-
 ## Pickers
 
     video-open     | Open video

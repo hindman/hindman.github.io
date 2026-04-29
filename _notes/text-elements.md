@@ -398,6 +398,7 @@ ar                 | I    | Redone › {prior_edit_msg}.
 ar: N edits        | I    | Redone: {N} edits.
 ar: nothing        | W    | Cannot redo: no edit history.
 a⌫                 | I    | Edit history: cleared.
+am                 | I    | Recalled message › {prior_msg}.
 am: no prior       | W    | No recent message.
 ac                 | I    | Time copied: {time}.
 ac: CB blocked     | W    | Cannot copy current time: clipboard blocked.

@@ -112,6 +112,7 @@ class LlamaVideoInfoModal extends LitElement {
     sections:   { type: Array },
     namedLoops: { type: Array },
     marks:      { type: Array },
+    jumps:      { type: Array },
     duration:   { type: Number },
     undoCount:  { type: Number },
     redoCount:  { type: Number },
@@ -126,6 +127,7 @@ class LlamaVideoInfoModal extends LitElement {
     this.namedLoops = [];
     this.marks      = [];
     this.duration   = null;
+    this.jumps      = [];
     this.undoCount  = 0;
     this.redoCount  = 0;
     this.stash      = null;
@@ -282,7 +284,7 @@ class LlamaVideoInfoModal extends LitElement {
         <span class="info-label">Last opened</span>
         <span class="info-value">${this._fmtDate(v.last_opened)}</span>
         <span class="info-label">Jump history</span>
-        <span class="info-value">${v.jumps?.length ?? 0}</span>
+        <span class="info-value">${this.jumps.length}</span>
         <span class="info-label">Undo history</span>
         <span class="info-value">${this.undoCount}</span>
         <span class="info-label">Redo history</span>

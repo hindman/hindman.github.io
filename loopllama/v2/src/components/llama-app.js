@@ -272,6 +272,7 @@ class LlamaApp extends LitElement {
     jumps:           { type: Array },
     loopSrc:         { type: Object },
     statusMsg:       { type: String },
+    recallMsg:       { type: Object },
     wkPrefix:        { type: String },
     wkCompletions:   { type: Object },
     wkCount:         { type: Number },
@@ -308,6 +309,7 @@ class LlamaApp extends LitElement {
     this.jumps         = [];
     this.loopSrc       = null;
     this.statusMsg     = null;
+    this.recallMsg     = null;
     this._skipSignOutMsg = false;
     this.wkPrefix            = null;
     this.wkCompletions       = null;
@@ -400,6 +402,10 @@ class LlamaApp extends LitElement {
       clearTimeout(this._errorTimeout);
       this._errorTimeout = setTimeout(() => { this.errorMsg = null; }, 5000);
       if (this.errorMsg !== this._lastMsg?.text) this._lastMsg = { text: this.errorMsg, type: 'error' };
+    }
+    if (changedProps.has('recallMsg') && this.recallMsg) {
+      clearTimeout(this._recallTimeout);
+      this._recallTimeout = setTimeout(() => { this.recallMsg = null; }, 5000);
     }
   }
 
@@ -1005,10 +1011,7 @@ class LlamaApp extends LitElement {
       },
       msgRecall:     () => {
         if (!this._lastMsg) { this._setWarning('No recent message.'); return; }
-        const { text, type } = this._lastMsg;
-        if (type === 'warning') this.warningMsg = text;
-        else if (type === 'error') this.errorMsg = text;
-        else this.statusMsg = text;
+        this.recallMsg = { text: this._lastMsg.text, type: this._lastMsg.type };
       },
 
       openMenuVideo:   () => this.renderRoot.querySelector('llama-controls')?.openMenu('Video'),
@@ -2289,6 +2292,7 @@ class LlamaApp extends LitElement {
         .sections=${this.sections}
         .namedLoops=${this.namedLoops}
         .marks=${this.marks}
+        .jumps=${this.jumps}
         .duration=${this.duration}
         .undoCount=${this._undoMgr.undoCount}
         .redoCount=${this._undoMgr.redoCount}
@@ -2362,6 +2366,7 @@ class LlamaApp extends LitElement {
         .warningMsg=${this.warningMsg}
         .errorMsg=${this.errorMsg}
         .statusMsg=${this.statusMsg}
+        .recallMsg=${this.recallMsg}
       ></llama-whichkey>
     `;
   }

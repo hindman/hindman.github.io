@@ -7,6 +7,8 @@
 //   3. Which-key completions (prefix + completions pending)
 //   4. Warning message (warningMsg, amber)
 //   5. Error message (errorMsg, red -- serious problems only)
+//   6. Status message (statusMsg, dim)
+//   7. Recall message (recallMsg = { text, type }, mixed style)
 //
 // Hidden when none of the above apply.
 
@@ -102,6 +104,7 @@ class LlamaWhichkey extends LitElement {
     warningMsg:        { type: String },
     errorMsg:          { type: String },
     statusMsg:         { type: String },
+    recallMsg:         { type: Object },
   };
 
   constructor() {
@@ -114,6 +117,7 @@ class LlamaWhichkey extends LitElement {
     this.warningMsg        = null;
     this.errorMsg          = null;
     this.statusMsg         = null;
+    this.recallMsg         = null;
   }
 
   _kbItem(key, desc) {
@@ -223,6 +227,18 @@ class LlamaWhichkey extends LitElement {
       return html`
         <div class="bar">
           <div class="row"><span class="status">${this.statusMsg}</span></div>
+        </div>
+      `;
+    }
+
+    // Priority 8: recall (mixed style -- prefix in status color, text in original type color).
+    if (this.recallMsg) {
+      const { text, type } = this.recallMsg;
+      return html`
+        <div class="bar">
+          <div class="row">
+            <span><span class="status">Recalled message › </span><span class="${type}">${text}</span></span>
+          </div>
         </div>
       `;
     }
