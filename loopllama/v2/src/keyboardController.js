@@ -52,18 +52,18 @@ export const BINDINGS = {
     '[':         { handler: 'setLoopStart',       desc: 'Set now' },
     'Backspace': { handler: 'resetLoopStart',     desc: 'Reset' },
     '\\':        { handler: 'focusLoopStart',     desc: 'Edit' },
-    '-':         { handler: 'nudgeStartDown',     desc: 'Nudge decrease' },
-    '=':         { handler: 'nudgeStartUp',       desc: 'Nudge increase' },
-    ']':         { handler: 'focusLoopNudgeDelta', desc: 'Nudge dropdown' },
+    '-':         { handler: 'nudgeStartDown',     desc: 'Decrease' },
+    '=':         { handler: 'nudgeStartUp',       desc: 'Increase' },
+    ']':         { handler: 'focusLoopNudgeDelta', desc: 'Delta dropdown' },
   }},
 
   ']': { completions: {
     ']':         { handler: 'setLoopEnd',         desc: 'Set now' },
     'Backspace': { handler: 'resetLoopEnd',       desc: 'Reset' },
     '\\':        { handler: 'focusLoopEnd',       desc: 'Edit' },
-    '-':         { handler: 'nudgeEndDown',       desc: 'Nudge decrease' },
-    '=':         { handler: 'nudgeEndUp',         desc: 'Nudge increase' },
-    '[':         { handler: 'focusLoopNudgeDelta', desc: 'Nudge dropdown' },
+    '-':         { handler: 'nudgeEndDown',       desc: 'Decrease' },
+    '=':         { handler: 'nudgeEndUp',         desc: 'Increase' },
+    '[':         { handler: 'focusLoopNudgeDelta', desc: 'Delta dropdown' },
   }},
 
   'v': { completions: {

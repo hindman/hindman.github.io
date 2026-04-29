@@ -5,6 +5,7 @@
 ## Project setup
 ## Common dev tasks
 ## Testing scenarios
+### Deleting all video stashes
 ### Creating a cloud-newer video
 ### Testing: Supabase down
 ## Markdown notes
@@ -30,7 +31,7 @@
     writing-notes.txt           | dev      | Rough notes for future F5 posts
     deployments.json            | dev      | Build numbers and artifacts for deployments
     text-elements.md            | dev      | Listing of the app's text elements
-    jdiff-ll                    | dev      | Python to smart-diff LL data exports
+    ldiff                       | dev      | Python to smart-diff LL data exports
     create_db.sql               | dev      | Create/configure Supabase tables
     select_user_video_count.sql | dev      | SQL snippets for manual queries in Supabase
 
@@ -84,10 +85,15 @@ LoopLlama: lines of code:
 
 ### Deleting all video stashes
 
+Phase 1. Run from dev console:
+
     const LLKEY = 'loopllama-v2';
     const state = JSON.parse(localStorage.getItem(LLKEY));
     state.stashes = {};
     localStorage.setItem(LLKEY, JSON.stringify(state));
+
+Phase 2: hard reload from console:
+  - CMD-SHIFT-R.
 
 ### Creating a cloud-newer video
 

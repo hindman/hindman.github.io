@@ -144,13 +144,13 @@
     loop-edit             | Edit Loop
     mark-edit             | Edit Mark
     data-inspect          | Inspect data
-    data-compare          | Compare data: local and cloud
+    data-compare          | Compare: library and cloud
     data-delete-bulk      | Delete data
     app-options           | Options
     shared-video-conflict | Review conflict: shared video
-    data-op (di)          | Review conflict: import data
-    data-op (dr)          | Review conflict: cloud read
-    data-op (ds)          | Review conflict: cloud save
+    data-op (di)          | Review: import data
+    data-op (dr)          | Review: cloud read
+    data-op (ds)          | Review: cloud save
 
 ## Current panel
 

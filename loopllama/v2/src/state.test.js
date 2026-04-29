@@ -35,10 +35,7 @@ describe('nudgeLoopStart', () => {
     expect(nudgeLoopStart(-20, { loopStart: 5, loopEnd: 20, duration: 100 })).toBe(0);
   });
 
-  it('large positive delta that would exceed loopEnd falls back to regular clamped value', () => {
-    // regular = clamp(10 + 20, 0, 100) = 30; 30 >= loopEnd(20) → fallback
-    // relative = clamp(20 + 20, 0, 100) = 40; 40 >= loopEnd(20) → fallback
-    // returns regular = 30
+  it('large positive delta clamps to duration', () => {
     expect(nudgeLoopStart(20, { loopStart: 10, loopEnd: 20, duration: 100 })).toBe(30);
   });
 
@@ -50,19 +47,6 @@ describe('nudgeLoopStart', () => {
     expect(nudgeLoopStart(50, { loopStart: 10, loopEnd: 200, duration: null })).toBe(60);
   });
 
-  // Inverted loop (start >= end): relative nudge fires when nudging start
-  // toward end, allowing a legal loop to be established in two actions.
-  it('inverted loop: relative nudge fires when nudging start toward end', () => {
-    // regular = 10 + (-3) = 7; 7 < end(6)? No → fail
-    // relative = end + delta = 6 + (-3) = 3; 3 < 6? Yes → return 3
-    expect(nudgeLoopStart(-3, { loopStart: 10, loopEnd: 6, duration: 100 })).toBe(3);
-  });
-
-  it('inverted loop: fallback when nudging start away from end (both steps fail)', () => {
-    // regular = 10 + 5 = 15; 15 < end(2)? No → fail
-    // relative = end + delta = 2 + 5 = 7; 7 < 2? No → fail → return regular = 15
-    expect(nudgeLoopStart(5, { loopStart: 10, loopEnd: 2, duration: 100 })).toBe(15);
-  });
 });
 
 // ---------------------------------------------------------------------------
@@ -82,9 +66,7 @@ describe('nudgeLoopEnd', () => {
     expect(nudgeLoopEnd(20, { loopStart: 10, loopEnd: 95, duration: 100 })).toBe(100);
   });
 
-  it('large negative delta that would cross loopStart falls back to regular clamped value', () => {
-    // regular = clamp(15 - 20, 0, 100) = 0; loopStart(10) < 0 is false → fallback
-    // returns regular = 0
+  it('large negative delta clamps to 0', () => {
     expect(nudgeLoopEnd(-20, { loopStart: 10, loopEnd: 15, duration: 100 })).toBe(0);
   });
 
@@ -92,20 +74,6 @@ describe('nudgeLoopEnd', () => {
     expect(nudgeLoopEnd(50, { loopStart: 10, loopEnd: 100, duration: null })).toBe(150);
   });
 
-  // Inverted loop (end <= start): relative nudge fires when nudging end
-  // toward start, allowing a legal loop to be established in two actions.
-  it('inverted loop: relative nudge fires when nudging end toward start', () => {
-    // This is the worked example from the design comments.
-    // regular = 2 + 5 = 7; start(10) < 7? No → fail
-    // relative = start + delta = 10 + 5 = 15; 10 < 15? Yes → return 15
-    expect(nudgeLoopEnd(5, { loopStart: 10, loopEnd: 2, duration: 100 })).toBe(15);
-  });
-
-  it('inverted loop: fallback when nudging end away from start (both steps fail)', () => {
-    // regular = 2 + (-5) = 0 (clamped); start(10) < 0? No → fail
-    // relative = start + delta = 10 + (-5) = 5; 10 < 5? No → fail → return regular = 0
-    expect(nudgeLoopEnd(-5, { loopStart: 10, loopEnd: 2, duration: 100 })).toBe(0);
-  });
 });
 
 // ---------------------------------------------------------------------------

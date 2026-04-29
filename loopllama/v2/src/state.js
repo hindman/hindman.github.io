@@ -274,52 +274,18 @@ export function updateLoop(loops, id, fields) {
   if (loop) Object.assign(loop, fields);
 }
 
-// Nudge the loop start point by delta seconds.
-// Returns the new start value; does not mutate state.
-// All results are clamped to [0, duration ?? Infinity].
-//
-// Goal: support a 2-action loop-setting workflow -- user places one endpoint,
-// then nudges the other into position to produce a legal loop (start < end).
-// The relative nudge handles the common case where the loop is currently
-// inverted (start >= end) and the nudge direction would fix it, but the
-// regular nudge does not reach far enough to clear the other endpoint.
-//
-// Decision rules (SELF = start, OTHER = end):
-//   Step 1 -- regular nudge: SELF + delta. If legal (result < end), use it.
-//   Step 2 -- relative nudge: OTHER + delta. If legal (result < end), use it.
-//   Step 3 -- fallback: return the Step 1 result even though it is illegal.
-//             Caller is responsible for the looping guard:
-//               looping=on  -> refuse the edit entirely.
-//               looping=off -> apply it; the loop remains broken but harmless
-//                              until the user completes the intended edit.
-export function nudgeLoopStart(delta, { loopStart, loopEnd, duration }) {
+// Shift the loop start by delta seconds, clamped to [0, duration ?? Infinity].
+// Returns the new value; does not mutate state.
+export function nudgeLoopStart(delta, { loopStart, duration }) {
   const maxT = duration ?? Infinity;
-  const regular = Math.max(0, Math.min(loopStart + delta, maxT));
-  if (regular < loopEnd) return regular;
-  const relative = Math.max(0, Math.min(loopEnd + delta, maxT));
-  if (relative < loopEnd) return relative;
-  return regular;
+  return Math.max(0, Math.min(loopStart + delta, maxT));
 }
 
-// Nudge the loop end point by delta seconds.
-// Returns the new end value; does not mutate state.
-// All results are clamped to [0, duration ?? Infinity].
-//
-// Goal and decision rules mirror nudgeLoopStart (SELF = end, OTHER = start):
-//   Step 1 -- regular nudge: SELF + delta. If legal (start < result), use it.
-//   Step 2 -- relative nudge: OTHER + delta. If legal (start < result), use it.
-//   Step 3 -- fallback: return the Step 1 result even though it is illegal.
-//             Caller is responsible for the looping guard:
-//               looping=on  -> refuse the edit entirely.
-//               looping=off -> apply it; the loop remains broken but harmless
-//                              until the user completes the intended edit.
-export function nudgeLoopEnd(delta, { loopStart, loopEnd, duration }) {
+// Shift the loop end by delta seconds, clamped to [0, duration ?? Infinity].
+// Returns the new value; does not mutate state.
+export function nudgeLoopEnd(delta, { loopEnd, duration }) {
   const maxT = duration ?? Infinity;
-  const regular = Math.max(0, Math.min(loopEnd + delta, maxT));
-  if (loopStart < regular) return regular;
-  const relative = Math.max(0, Math.min(loopStart + delta, maxT));
-  if (loopStart < relative) return relative;
-  return regular;
+  return Math.max(0, Math.min(loopEnd + delta, maxT));
 }
 
 // ---------------------------------------------------------------------------

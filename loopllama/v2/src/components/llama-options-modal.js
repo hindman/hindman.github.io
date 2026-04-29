@@ -132,16 +132,16 @@ class LlamaOptionsModal extends LitElement {
 
     const nudgeChoices = this._parseChoices(this._nudgeChoices);
     if (!nudgeChoices) {
-      this._error = 'Loop nudge delta choices: enter space-separated positive numbers.';
+      this._error = 'Scratch loop delta choices: enter space-separated positive numbers.';
       return;
     }
     const nudgeDefault = this._parsePositive(this._nudgeDefault);
     if (nudgeDefault === null) {
-      this._error = 'Loop nudge delta default: must be a positive number.';
+      this._error = 'Scratch loop delta default: must be a positive number.';
       return;
     }
     if (!nudgeChoices.includes(nudgeDefault)) {
-      this._error = 'Loop nudge delta default must be one of the loop nudge delta choices.';
+      this._error = 'Scratch loop delta default must be one of the loop delta choices.';
       return;
     }
 
@@ -203,7 +203,7 @@ class LlamaOptionsModal extends LitElement {
           ></sl-input>
         </div>
 
-        <div class="section-heading">Loop nudge delta</div>
+        <div class="section-heading">Scratch loop delta</div>
 
         <div class="field-row">
           <span class="field-label">Default</span>

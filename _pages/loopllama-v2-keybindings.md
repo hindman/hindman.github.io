@@ -26,7 +26,7 @@ Return to LoopLlama [help](/loopllama/v2/help/).
   operation. For example, `5Right` will seek forward by an amount equal to `5`
   times the seek-delta. The operations that support counts are: speed
   decrease/increase; seek backward/forward; navigation to previous/next
-  entity; and scratch loop nudge decrease/increase.
+  entity; scratch loop bound decrease/increase; and undo/redo.
 
 </div>
 
@@ -120,21 +120,21 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 | `xr`        | Reset to source
 | `xu`        | Unlink source
 
-## Scratch loop bounds {#nudge-bindings}
+## Scratch loop bounds
 
 | Key         | Operation
 | ----------- | ---------------------
 | `[[`        | Start: set now
 | `[⌫`        | Start: reset to video start
 | `[\`        | Start: edit
-| `[-`        | Start: nudge: decrease (supports count)
-| `[=`        | Start: nudge: increase (supports count)
+| `[-`        | Start: decrease (supports count)
+| `[=`        | Start: increase (supports count)
 | `]]`        | End: set now
 | `]⌫`        | End: reset to video end
 | `]\`        | End: edit
-| `]-`        | End: nudge: decrease (supports count)
-| `]=`        | End: nudge: increase (supports count)
-| `[]` · `][` | Nudge delta: activate dropdown
+| `]-`        | End: decrease (supports count)
+| `]=`        | End: increase (supports count)
+| `[]` · `][` | Delta dropdown
 
 ## Scratch loop edit mode
 
@@ -144,8 +144,8 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 | `x`         | Toggle looping
 | `Left`      | Decrease: start/end
 | `Right`     | Increase: start/end
-| `Down`      | Decrease: nudge-delta
-| `Up`        | Increase: nudge-delta
+| `Down`      | Decrease: delta
+| `Up`        | Increase: delta
 | `Space`     | Play/pause near start/end
 | `⌫`         | Reset: start/end
 | `Enter`     | Exit mode

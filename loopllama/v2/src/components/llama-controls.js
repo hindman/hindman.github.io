@@ -42,7 +42,7 @@ import '@shoelace-style/shoelace/dist/components/switch/switch.js';
 import '@shoelace-style/shoelace/dist/components/tooltip/tooltip.js';
 
 // Render special keys as display symbols for menu hints.
-const KEY_DISPLAY = { 'Backspace': '⌫' };
+const KEY_DISPLAY = { 'Backspace': '⌫', ' ': 'Space', 'ArrowLeft': 'Left', 'ArrowRight': 'Right', 'ArrowDown': 'Down', 'ArrowUp': 'Up' };
 
 function displayKey(k) {
   return KEY_DISPLAY[k] ?? k;
@@ -195,7 +195,7 @@ export const HELP_MENU_ITEMS = [
 // Tooltip content with a muted key binding suffix.
 // Uses sl-tooltip's content slot so we can style the two parts independently.
 function ttip(desc, binding) {
-  return html`<span slot="content">${desc}<span style="color:#888;margin-left:0.75em;">${binding}</span></span>`;
+  return html`<span slot="content">${desc}<span style="color:#888;margin-left:0.75em;font-family:monospace;">${binding}</span></span>`;
 }
 
 class LlamaControls extends LitElement {
@@ -752,12 +752,12 @@ class LlamaControls extends LitElement {
           <div class="ctrl-group">
             <span class="ctrl-group-label">Play</span>
             <div class="ctrl-group-body">
-              <sl-tooltip>${ttip('Play / pause', 'Space')}
+              <sl-tooltip>${ttip('Play / pause', hintFor('playPause'))}
                 <button class="btn-play-pause" ${ref(this._playPauseRef)} @click=${() => this._emit('ll-play-pause')}>
                   ${this.isPlaying ? 'Pause' : 'Play'}
                 </button>
               </sl-tooltip>
-              <sl-tooltip>${ttip('Seek to time', 'jj')}
+              <sl-tooltip>${ttip('Seek to time', hintFor('jumpTime'))}
                 <input
                   ${ref(this._timeRef)}
                   class="time-input-play"
@@ -774,7 +774,7 @@ class LlamaControls extends LitElement {
             <span class="ctrl-group-label">Speed</span>
             <div class="ctrl-group-body">
               <div class="btn-group">
-                <sl-tooltip>${ttip('Speed', '- / =')}
+                <sl-tooltip>${ttip('Speed', `${hintFor('speedDown')} · ${hintFor('speedUp')}`)}
                   <input
                     ${ref(this._speedRef)}
                     class="speed-input"
@@ -795,10 +795,10 @@ class LlamaControls extends LitElement {
             <span class="ctrl-group-label">Navigate</span>
             <div class="ctrl-group-body">
               <div class="btn-group">
-                <sl-tooltip>${ttip('Seek back', '←')}
+                <sl-tooltip>${ttip('Seek back', hintFor('seekBack'))}
                   <button class="btn-accent" @click=${() => this._emit('ll-seek-back')}>◀</button>
                 </sl-tooltip>
-                <sl-tooltip>${ttip('Seek delta', '↓ / ↑')}
+                <sl-tooltip>${ttip('Seek delta', `${hintFor('seekDeltaDown')} · ${hintFor('seekDeltaUp')}`)}
                   <select
                     ${ref(this._seekDeltaRef)}
                     class="delta-select"
@@ -809,15 +809,15 @@ class LlamaControls extends LitElement {
                     `)}
                   </select>
                 </sl-tooltip>
-                <sl-tooltip>${ttip('Seek forward', '→')}
+                <sl-tooltip>${ttip('Seek forward', hintFor('seekForward'))}
                   <button class="btn-accent" @click=${() => this._emit('ll-seek-forward')}>▶</button>
                 </sl-tooltip>
               </div>
               <div class="btn-group">
-                <sl-tooltip>${ttip('Prev entity', ',')}
+                <sl-tooltip>${ttip('Prev entity', hintFor('prevEntity'))}
                   <button class="btn-accent" @click=${() => this._emit('ll-prev-entity')}>⏮</button>
                 </sl-tooltip>
-                <sl-tooltip>${ttip('Entity type', '/')}
+                <sl-tooltip>${ttip('Entity type', hintFor('entityType'))}
                   <select
                     ${ref(this._entitySelectRef)}
                     class="entity-type-select"
@@ -831,7 +831,7 @@ class LlamaControls extends LitElement {
                     <option value="mark"    ?selected=${this.activeEntityType === 'mark'}>Mark</option>
                   </select>
                 </sl-tooltip>
-                <sl-tooltip>${ttip('Next entity', '.')}
+                <sl-tooltip>${ttip('Next entity', hintFor('nextEntity'))}
                   <button class="btn-accent" @click=${() => this._emit('ll-next-entity')}>⏭</button>
                 </sl-tooltip>
               </div>
@@ -841,7 +841,7 @@ class LlamaControls extends LitElement {
           <div class="ctrl-group looping-group">
             <span class="ctrl-group-label">Scratch loop</span>
             <div class="ctrl-group-body">
-              <sl-tooltip>${ttip('Toggle looping', 'll')}
+              <sl-tooltip>${ttip('Toggle looping', hintFor('toggleLoop'))}
                 <sl-switch
                   class="loop-switch"
                   ?checked=${this.looping}
@@ -849,13 +849,13 @@ class LlamaControls extends LitElement {
                 ></sl-switch>
               </sl-tooltip>
               <div class="btn-group">
-                <sl-tooltip>${ttip('Set loop start to now', '[[')}
+                <sl-tooltip>${ttip('Set start to now', hintFor('setLoopStart'))}
                   <button
                     class="btn-now"
                     @click=${() => this._emit('ll-set-loop-start-now')}
                   >Now</button>
                 </sl-tooltip>
-                <sl-tooltip>${ttip('Edit loop start', '[\\')}
+                <sl-tooltip>${ttip('Edit start', hintFor('focusLoopStart'))}
                   <input
                     ${ref(this._startRef)}
                     class="time-input align-left ${this.editScratchActive && this.editScratchFocus === 'start' ? 'loop-edit-focus' : ''} ${this.loopStart >= this.loopEnd ? 'loop-invalid' : ''} ${this.loopSrc && this.currentTime < this.loopSrc.start ? 'source-outside' : ''}"
@@ -865,7 +865,7 @@ class LlamaControls extends LitElement {
                   />
                 </sl-tooltip>
               </div>
-              <sl-tooltip>${ttip('Nudge delta', '[]')}
+              <sl-tooltip>${ttip('Delta', hintFor('focusLoopNudgeDelta'))}
                 <select
                   ${ref(this._nudgeDeltaRef)}
                   class="delta-select"
@@ -878,7 +878,7 @@ class LlamaControls extends LitElement {
                 </select>
               </sl-tooltip>
               <div class="btn-group">
-                <sl-tooltip>${ttip('Edit loop end', ']\\' )}
+                <sl-tooltip>${ttip('Edit end', hintFor('focusLoopEnd'))}
                   <input
                     ${ref(this._endRef)}
                     class="time-input ${this.editScratchActive && this.editScratchFocus === 'end' ? 'loop-edit-focus' : ''} ${this.loopStart >= this.loopEnd ? 'loop-invalid' : ''} ${this.loopSrc?.end != null && this.currentTime > this.loopSrc.end ? 'source-outside' : ''}"
@@ -887,7 +887,7 @@ class LlamaControls extends LitElement {
                     @blur=${() => this._submitEnd()}
                   />
                 </sl-tooltip>
-                <sl-tooltip>${ttip('Set loop end to now', ']]')}
+                <sl-tooltip>${ttip('Set end to now', hintFor('setLoopEnd'))}
                   <button
                     class="btn-now"
                     @click=${() => this._emit('ll-set-loop-end-now')}

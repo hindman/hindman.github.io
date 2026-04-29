@@ -20,7 +20,7 @@ toc_icon: 'guitar'
 ### Scratch loop
 ### Scratch operation {#scratch-loop}
 ### Scratch loop edit mode
-### Scratch loop nudges
+### Scratch loop bounds
 ### Scratch loop sources
 ## Time and navigation
 ### The visual timeline
@@ -344,62 +344,20 @@ As noted, `Space` will play/pause the video near the active bound. The purpose
 is to allow you to adjust a boundary, then play the video to assess whether
 more fine-tuning is needed.
 
-### Scratch loop nudges
+### Scratch loop bounds
 
-In addition to scratch loop edit mode, the app also supports a coherent set of
-key bindings to make quick adjustments to the loop bounds. If you hover over
-the **Now** buttons, notice that `[[` is the binding to set the start to the
-playhead position and `]]` sets the end. The nudge key bindings build on that
-convention: `[` is the prefix for start, `]` for end. See the [nudge key
-bindings](/loopllama/v2/keybindings/#nudge-bindings) for a full listing. The
-most commonly used bindings are these:
+In addition to scratch loop edit mode, the app supports key bindings to
+increase or decrease the loop bounds directly. The `[` prefix targets the
+start; `]` targets the end. See the [loop bound key
+bindings](/loopllama/v2/keybindings/#scratch-loop-bounds) for a full listing.
+The most commonly used bindings are these:
 
 | Key    | Operation
 | ------ | ---------------------
-| `[-`   | Start: nudge decrease
-| `[=`   | Start: nudge increase
-| `]-`   | End: nudge decrease
-| `]=`   | End: nudge increase
-
-The nudge operation has one special wrinkle to support the rapid creation of
-loops. This behavior is best explained via an example.
-
-1. <span class="ll-phead">Initial</span>. The scratch loop start and end are a
-   short distance apart, near the beginning of a video. The playhead is near
-   the video end.
-
-2. <span class="ll-phead">Set start</span>. To create a short loop starting at
-   the playhead, press `[[` to set the scratch loop start.
-
-3. <span class="ll-phead">Regular nudge</span>. Consider what happens if the
-   user presses `]=` to perform a nudge increase on the end. A regular nudge
-   would shift the end to the right, leaving an invalid loop (assume the delta
-   is at a typical value like 5s).
-
-4. <span class="ll-phead">Relative nudge</span>. This operation applies the
-   delta relative to the loop's other bound. In our example, the end nudge
-   would be applied relative to the start. The result would be a legal loop,
-   so the app would apply this nudge.
-
-        _____________________________
-          S     E              ^        (1) Initial
-
-        _____________________________
-                E              S        (2) Set start
-
-
-        _____________________________
-                    E          S        (3) Regular nudge: invalid loop
-
-
-        _____________________________
-                               S   E    (4) Relative nudge: valid loop
-
-The key intuition is that nudges have a bias toward creating legal loops. The
-app calculates the result for both regular and relative nudges and stops at
-the first method that produces a valid loop. The methods are attempted in this
-order: regular, then relative, with fallback to regular if both methods result
-in invalid loops.
+| `[-`   | Start: decrease
+| `[=`   | Start: increase
+| `]-`   | End: decrease
+| `]=`   | End: increase
 
 ### Scratch loop sources
 
@@ -635,8 +593,8 @@ per video.
   - Seek delta default: the number of seconds used when seeking
     backward/forward.
 
-  - Loop nudge delta default: the number of seconds used when nudging the
-    bounds of the scratch loop.
+  - Loop delta default: the number of seconds used when nudging the bounds of
+    the scratch loop.
 
   - Speed delta default: the number of percentage points applied when
     decreasing/increasing playback speed.
@@ -645,7 +603,7 @@ The other options are global:
 
   - Seek delta choices: the values in the seek delta dropdown.
 
-  - Loop nudge delta choices: the values in the loop nudge delta dropdown.
+  - Loop delta choices: the values in the loop delta dropdown.
 
   - Loop pad start/end: the number of extra seconds added before and after a
     section or chapter when you load it into the scratch loop.
