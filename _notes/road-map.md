@@ -1,34 +1,4 @@
 
-One idea:
-
-  - Policy:
-    - Sort loops sharing a lane by start.
-    - Use a thin color bar to convey loop starts.
-
-  - Possible 2-loop overlap arrangements, given the policy:
-
-           == Fully contained ==
-
-               ----------------        # Two loops.
-                 --------
-
-               --|-------------        # Displayed in one lane.
-
-           == Overlapping ==
-
-               ----------------        # Two loops.
-                          --------
-
-               -----------|-------     # Displayed in one lane
-
-  - That aproach would tell the user something, even if not everthing.
-  - It would also become a vehicle for improving hover info:
-    - The help doc would tell users how loops in a lane are sorted.
-    - They now know where to hover to see the name of the loop and its range
-      (the latter would require adding END to the hover text).
-
-Maybe there are other ideas as well, or improvements on that one.
-
 ## TODO: LoopLlama v2
 
 User docs: final read:
@@ -36,6 +6,18 @@ User docs: final read:
   - MH final read
       HERE
       http://127.0.0.1:4000/loopllama/v2/help/#chapters
+
+      saved loops: document overlap policies in lanes
+
+      time reporting: document:
+        - times Reported at 1s generally.
+        - if you want to see extra precision, set seek-delta to 0.1
+          - edit modals
+          - current time
+          - video-info modal
+        - similar policy for scratch loop start/end: to see 0.1 precision set
+          the scratch loop delta to 0.1.
+
   - CC final typo check
 
 Dev docs: final edits:

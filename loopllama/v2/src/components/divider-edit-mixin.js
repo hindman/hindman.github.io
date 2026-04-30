@@ -24,6 +24,7 @@ export const DividerEditMixin = (superClass) => class extends superClass {
     _error:        { state: true },
     _startEdited:  { state: true },
     _endEdited:    { state: true },
+    _tenths:       { state: true },
   };
 
   constructor(...args) {
@@ -39,17 +40,19 @@ export const DividerEditMixin = (superClass) => class extends superClass {
     this._originalStart = null;
     this._originalEnd   = null;
     this._validator     = null;
+    this._tenths        = false;
   }
 
   // entity: section or chapter object
   // derivedEnd: the end that would be used if entity.end stays null
   //   (next divider's start, or video duration). Used for placeholder hint.
   // validator: optional (start, end) => boolean -- returns false to block save.
-  show(entity, derivedEnd = null, validator = null) {
+  // tenths: if true, display times at 0.1s precision.
+  show(entity, derivedEnd = null, validator = null, tenths = false) {
     this._entityId      = entity.id;
     this._name          = entity.name || '';
-    this._start         = fmtTime(entity.start);
-    this._end           = fmtTime(entity.end);
+    this._start         = fmtTime(entity.start, tenths);
+    this._end           = fmtTime(entity.end, tenths);
     this._originalStart = entity.start;
     this._originalEnd   = entity.end;
     this._derivedEnd    = derivedEnd;
@@ -57,6 +60,7 @@ export const DividerEditMixin = (superClass) => class extends superClass {
     this._startEdited   = false;
     this._endEdited     = false;
     this._validator     = validator;
+    this._tenths        = tenths;
     this.renderRoot.querySelector('llama-modal')?.show();
   }
 
@@ -108,7 +112,7 @@ export const DividerEditMixin = (superClass) => class extends superClass {
 
   render() {
     const endPlaceholder = this._derivedEnd != null
-      ? `${fmtTime(this._derivedEnd)} (derived)`
+      ? `${fmtTime(this._derivedEnd, this._tenths)} (derived)`
       : '';
     return html`
       <llama-modal label=${this._modalLabel} @ll-modal-initial-focus=${this._onInitialFocus}>

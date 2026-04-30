@@ -117,6 +117,7 @@ class LlamaVideoInfoModal extends LitElement {
     undoCount:  { type: Number },
     redoCount:  { type: Number },
     stash:      { type: Object },
+    seekDelta:  { type: Number },
   };
 
   constructor() {
@@ -131,6 +132,7 @@ class LlamaVideoInfoModal extends LitElement {
     this.undoCount  = 0;
     this.redoCount  = 0;
     this.stash      = null;
+    this.seekDelta  = 1;
     this._keyHandler = null;
   }
 
@@ -182,8 +184,14 @@ class LlamaVideoInfoModal extends LitElement {
 
   _fmt(secs) {
     if (secs == null || isNaN(secs)) return '?';
-    const s = Math.floor(secs);
-    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+    if (this.seekDelta === 0.1) {
+      const f = Math.floor(secs * 10) / 10;
+      const m = Math.floor(f / 60);
+      const s = (f % 60).toFixed(1);
+      return `${m}:${s.padStart(4, '0')}`;
+    }
+    const r = Math.round(secs);
+    return `${Math.floor(r / 60)}:${String(r % 60).padStart(2, '0')}`;
   }
 
   _fmtDate(ms) {

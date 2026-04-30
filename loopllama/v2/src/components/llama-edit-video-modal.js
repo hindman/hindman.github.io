@@ -53,12 +53,12 @@ class LlamaEditVideoModal extends LitElement {
     this._originalEnd   = null;
   }
 
-  show() {
+  show(tenths = false) {
     const v = this.video;
     if (v) {
       this._name          = v.name  || '';
-      this._start         = v.start > 0   ? fmtTime(v.start) : '';
-      this._end           = v.end != null ? fmtTime(v.end)   : '';
+      this._start         = v.start > 0   ? fmtTime(v.start, tenths) : '';
+      this._end           = v.end != null ? fmtTime(v.end, tenths)   : '';
       this._originalStart = v.start ?? 0;
       this._originalEnd   = v.end   ?? null;
     }

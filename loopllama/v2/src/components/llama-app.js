@@ -30,7 +30,7 @@ import './llama-timeline.js';
 import './llama-url-input-modal.js';
 import './llama-video-picker.js';
 import './llama-edit-video-modal.js';
-import './llama-save-loop-modal.js';
+import './llama-edit-loop-modal.js';
 import './llama-loop-picker.js';
 import './llama-marks-picker.js';
 import './llama-edit-mark-modal.js';
@@ -347,7 +347,7 @@ class LlamaApp extends LitElement {
     this._urlInputModalEl    = null;
     this._videoPickerEl      = null;
     this._editVideoModalEl   = null;
-    this._saveLoopModalEl    = null;
+    this._editLoopModalEl    = null;
     this._loopPickerEl       = null;
     this._marksPickerEl      = null;
     this._editMarkModalEl    = null;
@@ -587,12 +587,29 @@ class LlamaApp extends LitElement {
   }
 
   _applySnapshot(snap) {
+    const savedZoom = this.zoomSource;
     const idx = this._appState.videos.findIndex(v => v.id === snap.currentVideoId);
     if (idx === -1) return;
     this._appState.videos[idx] = JSON.parse(JSON.stringify(snap.video));
     this.videos = [...this._appState.videos];
     this._syncFromVideo(this._appState.videos[idx]);
+    if (savedZoom && this._isZoomStillValid(savedZoom)) this.zoomSource = savedZoom;
     this._save();
+  }
+
+  // After an undo/redo, check whether a previously active zoom still makes
+  // sense given the restored video state.
+  _isZoomStillValid(zoom) {
+    const { trigger, start, end } = zoom;
+    if (trigger === 'video')   return true;
+    if (trigger === 'scratch') return start === this.loopStart && end === this.loopEnd;
+    if (trigger === 'loop')    return this.namedLoops.some(l => l.start === start && l.end === end);
+    if (trigger === 'chapter') return this.chapters.some(c => c.start === start);
+    if (trigger === 'section') {
+      const bounds = getSectionBounds(this.sections, start, this.duration);
+      return bounds?.start === start && bounds?.end === end;
+    }
+    return false;
   }
 
   // Handlers for Stage 5+. Core playback handlers implemented in Stage 6e.
@@ -696,7 +713,7 @@ class LlamaApp extends LitElement {
       },
       editVideo: () => {
         if (!this.currentVideoId) { this._setWarning('No current video.'); return; }
-        this._editVideoModalEl?.show();
+        this._editVideoModalEl?.show(this.seekDelta === 0.1);
       },
       scratchVideo: () => {
         if (this.duration == null) {
@@ -1088,7 +1105,7 @@ class LlamaApp extends LitElement {
     this._urlInputModalEl  = this.renderRoot.querySelector('llama-url-input-modal');
     this._videoPickerEl    = this.renderRoot.querySelector('llama-video-picker');
     this._editVideoModalEl = this.renderRoot.querySelector('llama-edit-video-modal');
-    this._saveLoopModalEl  = this.renderRoot.querySelector('llama-save-loop-modal');
+    this._editLoopModalEl  = this.renderRoot.querySelector('llama-edit-loop-modal');
     this._loopPickerEl     = this.renderRoot.querySelector('llama-loop-picker');
     this._marksPickerEl      = this.renderRoot.querySelector('llama-marks-picker');
     this._editMarkModalEl    = this.renderRoot.querySelector('llama-edit-mark-modal');
@@ -1622,7 +1639,7 @@ class LlamaApp extends LitElement {
   }
 
 
-  // Handle ll-update-loop from save-loop modal (edit mode): update the loop
+  // Handle ll-update-loop from edit-loop modal: update the loop
   // in place, trigger re-render, and persist.
   _onUpdateLoop(e) {
     this.statusMsg = 'Loop: edited.';
@@ -1677,7 +1694,7 @@ class LlamaApp extends LitElement {
   // Execute a loop operation on a specific loop object.
   _applyLoopOp(op, loop) {
     if (op === 'edit') {
-      this._saveLoopModalEl?.show(loop);
+      this._editLoopModalEl?.show(loop, this.seekDelta === 0.1);
     } else if (op === 'scratch') {
       this._clearZoomIfOutside(loop.start, loop.end);
       this.loopStart = loop.start;
@@ -1739,7 +1756,7 @@ class LlamaApp extends LitElement {
   _editCurrentMark() {
     const mark = nearestMarkLeft(this.marks, this.currentTime);
     if (!mark) { this._setWarning('No current mark.'); return; }
-    this._editMarkModalEl?.show(mark);
+    this._editMarkModalEl?.show(mark, this.seekDelta === 0.1);
   }
 
   // Handle ll-update-mark from edit-mark-modal.
@@ -1848,7 +1865,7 @@ class LlamaApp extends LitElement {
   _editCurrentDivider(type) {
     const { entities, label, nearestFn, getBoundsFn, modalEl } = this._getDividerCtx(type);
     const entity = nearestFn(entities, this.currentTime);
-    if (!entity) {
+    if (!entity || (entity.end != null && this.currentTime > entity.end)) {
       this._setWarning(`No current ${label.toLowerCase()}.`);
       return;
     }
@@ -1856,7 +1873,7 @@ class LlamaApp extends LitElement {
     const derivedEnd = (entity.end == null) ? (bounds?.end ?? null) : null;
     const idx        = entities.findIndex(e => e.id === entity.id);
     const validator  = (start, end) => validateEntityChange(entities, idx, start, end, this.duration);
-    modalEl?.show(entity, derivedEnd, validator);
+    modalEl?.show(entity, derivedEnd, validator, this.seekDelta === 0.1);
   }
 
   // Open the chapter picker in the given mode, with a guard for empty list.
@@ -2200,11 +2217,11 @@ class LlamaApp extends LitElement {
         @ll-delete-video=${this._onDeleteVideo}
       ></llama-edit-video-modal>
 
-      <llama-save-loop-modal
+      <llama-edit-loop-modal
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
         @ll-update-loop=${this._onUpdateLoop}
-      ></llama-save-loop-modal>
+      ></llama-edit-loop-modal>
 
       <llama-loop-picker
         .namedLoops=${this.namedLoops}
@@ -2273,6 +2290,7 @@ class LlamaApp extends LitElement {
         .undoCount=${this._undoMgr.undoCount}
         .redoCount=${this._undoMgr.redoCount}
         .stash=${this.stashes[this.currentVideoId] ?? null}
+        .seekDelta=${this.seekDelta}
         @ll-modal-open=${() => this._kb?.disable()}
         @ll-modal-close=${() => this._kb?.enable()}
       ></llama-video-info-modal>

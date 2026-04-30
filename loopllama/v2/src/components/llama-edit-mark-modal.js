@@ -54,12 +54,12 @@ class LlamaEditMarkModal extends LitElement {
     this._originalTime = null;
   }
 
-  show(mark) {
+  show(mark, tenths = false) {
     const m = mark ?? this.mark;
     if (m) {
       this.mark          = m;
       this._name         = m.name || '';
-      this._time         = fmtTime(m.time);
+      this._time         = fmtTime(m.time, tenths);
       this._originalTime = m.time;
     }
     this._timeEdited = false;
