@@ -184,7 +184,7 @@ class LlamaVideoInfoModal extends LitElement {
 
   _fmt(secs) {
     if (secs == null || isNaN(secs)) return '?';
-    if (this.seekDelta === 0.1) {
+    if (this.seekDelta < 1) {
       const f = Math.floor(secs * 10) / 10;
       const m = Math.floor(f / 60);
       const s = (f % 60).toFixed(1);

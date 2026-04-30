@@ -93,12 +93,12 @@ class LlamaOptionsModal extends LitElement {
   }
 
   // Parse a space-delimited string of numbers. Returns sorted array of
-  // positive finite numbers, or null if any token is invalid.
+  // finite numbers >= 0.1, or null if any token is invalid.
   _parseChoices(str) {
     const tokens = str.trim().split(/\s+/).filter(Boolean);
     if (!tokens.length) return null;
     const nums = tokens.map(Number);
-    if (nums.some(n => isNaN(n) || !isFinite(n) || n <= 0)) return null;
+    if (nums.some(n => isNaN(n) || !isFinite(n) || n < 0.1)) return null;
     return [...new Set(nums)].sort((a, b) => a - b);
   }
 
@@ -117,12 +117,16 @@ class LlamaOptionsModal extends LitElement {
   _save() {
     const seekChoices = this._parseChoices(this._seekChoices);
     if (!seekChoices) {
-      this._error = 'Seek delta choices: enter space-separated positive numbers.';
+      this._error = 'Seek delta choices: enter space-separated numbers, each at least 0.1.';
+      return;
+    }
+    if (!seekChoices.some(n => n < 1)) {
+      this._error = 'Seek delta choices: at least one value must be less than 1.';
       return;
     }
     const seekDefault = this._parsePositive(this._seekDefault);
-    if (seekDefault === null) {
-      this._error = 'Seek delta default: must be a positive number.';
+    if (seekDefault === null || seekDefault < 0.1) {
+      this._error = 'Seek delta default: must be a number at least 0.1.';
       return;
     }
     if (!seekChoices.includes(seekDefault)) {
@@ -132,12 +136,16 @@ class LlamaOptionsModal extends LitElement {
 
     const nudgeChoices = this._parseChoices(this._nudgeChoices);
     if (!nudgeChoices) {
-      this._error = 'Scratch loop delta choices: enter space-separated positive numbers.';
+      this._error = 'Scratch loop delta choices: enter space-separated numbers, each at least 0.1.';
+      return;
+    }
+    if (!nudgeChoices.some(n => n < 1)) {
+      this._error = 'Scratch loop delta choices: at least one value must be less than 1.';
       return;
     }
     const nudgeDefault = this._parsePositive(this._nudgeDefault);
-    if (nudgeDefault === null) {
-      this._error = 'Scratch loop delta default: must be a positive number.';
+    if (nudgeDefault === null || nudgeDefault < 0.1) {
+      this._error = 'Scratch loop delta default: must be a number at least 0.1.';
       return;
     }
     if (!nudgeChoices.includes(nudgeDefault)) {

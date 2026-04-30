@@ -281,9 +281,13 @@ Saved loops are similar to chapters and sections in that they define a range
 via their start and end. They are more generic because their purpose is not to
 partition a video into non-overlapping parts: saved loops can overlap
 ([details](#menu-ellipses) on how the app handles the case when multiple loops
-are "current" based on playhead position). Save loops are displayed at the
+are "current" based on playhead position). Saved loops are displayed at the
 bottom of the timeline area as brown line segments (below sections, chapters,
-and marks).
+and marks). For rare cases when a user has created more than two overlapping
+saved loops, the brown line segments will contain visual dividers indicating
+where there are loop starts and ends. You can use those dividers, along with
+mouse hovers over the line sub-segments, to see where the overlapping loops
+start and end.
 
 The key bindings and menu items for saved loops are similar to those for
 sections and chapters.
@@ -482,6 +486,16 @@ LoopLlama supports various time input styles:
 | Raw seconds      | 245       | 4:05
 | Decimal seconds  | 34:43.2   | 1 digit max
 | Forward slash    | 7/44      | 7:44
+
+### Time precision
+
+Under most circumstances, LoopLlama reports times rounded to the nearest
+second. If you set seek-delta to a value less than 1 second, the app will
+report times to 0.1 precision in the following contexts: the current time text
+box; modals to edit the current video, chapter, section, loop, or mark; and
+the **Video › Info** modal. Similarly, if you set the scratch loop delta to
+less than 1 second, the loop's start/end text boxes will display with 0.1
+precision.
 
 ## Data management
 

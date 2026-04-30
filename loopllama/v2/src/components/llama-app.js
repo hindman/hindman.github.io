@@ -713,7 +713,7 @@ class LlamaApp extends LitElement {
       },
       editVideo: () => {
         if (!this.currentVideoId) { this._setWarning('No current video.'); return; }
-        this._editVideoModalEl?.show(this.seekDelta === 0.1);
+        this._editVideoModalEl?.show(this.seekDelta < 1);
       },
       scratchVideo: () => {
         if (this.duration == null) {
@@ -1694,7 +1694,7 @@ class LlamaApp extends LitElement {
   // Execute a loop operation on a specific loop object.
   _applyLoopOp(op, loop) {
     if (op === 'edit') {
-      this._editLoopModalEl?.show(loop, this.seekDelta === 0.1);
+      this._editLoopModalEl?.show(loop, this.seekDelta < 1);
     } else if (op === 'scratch') {
       this._clearZoomIfOutside(loop.start, loop.end);
       this.loopStart = loop.start;
@@ -1756,7 +1756,7 @@ class LlamaApp extends LitElement {
   _editCurrentMark() {
     const mark = nearestMarkLeft(this.marks, this.currentTime);
     if (!mark) { this._setWarning('No current mark.'); return; }
-    this._editMarkModalEl?.show(mark, this.seekDelta === 0.1);
+    this._editMarkModalEl?.show(mark, this.seekDelta < 1);
   }
 
   // Handle ll-update-mark from edit-mark-modal.
@@ -1873,7 +1873,7 @@ class LlamaApp extends LitElement {
     const derivedEnd = (entity.end == null) ? (bounds?.end ?? null) : null;
     const idx        = entities.findIndex(e => e.id === entity.id);
     const validator  = (start, end) => validateEntityChange(entities, idx, start, end, this.duration);
-    modalEl?.show(entity, derivedEnd, validator, this.seekDelta === 0.1);
+    modalEl?.show(entity, derivedEnd, validator, this.seekDelta < 1);
   }
 
   // Open the chapter picker in the given mode, with a guard for empty list.

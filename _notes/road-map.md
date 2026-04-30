@@ -9,15 +9,6 @@ User docs: final read:
 
       saved loops: document overlap policies in lanes
 
-      time reporting: document:
-        - times Reported at 1s generally.
-        - if you want to see extra precision, set seek-delta to 0.1
-          - edit modals
-          - current time
-          - video-info modal
-        - similar policy for scratch loop start/end: to see 0.1 precision set
-          the scratch loop delta to 0.1.
-
   - CC final typo check
 
 Dev docs: final edits:
