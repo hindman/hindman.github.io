@@ -266,6 +266,10 @@ displayed as yellow dots in the timeline, below the sections/chapters. The
 operations and key bindings are simple and follow the conventions already
 established for sections and chapters (see the **Mark** menu).
 
+<span class="ll-phead">Current mark</span>. The only wrinkle is how
+"current" is defined for **Mark › Edit**: it is the nearest mark at
+or before the playhead.
+
 ## Loops
 
 The entity tour postponed loops until the end because they sit at the center
@@ -275,9 +279,11 @@ of the app's mission. There are several sub-topics to cover.
 
 Saved loops are similar to chapters and sections in that they define a range
 via their start and end. They are more generic because their purpose is not to
-partition a video into non-overlapping parts: saved loops can overlap. They
-are displayed at the bottom of the timeline area as brown line segments (below
-sections, chapters, and marks).
+partition a video into non-overlapping parts: saved loops can overlap
+([details](#menu-ellipses) on how the app handles the case when multiple loops
+are "current" based on playhead position). Save loops are displayed at the
+bottom of the timeline area as brown line segments (below sections, chapters,
+and marks).
 
 The key bindings and menu items for saved loops are similar to those for
 sections and chapters.
@@ -286,8 +292,7 @@ sections and chapters.
 creates a new saved loop using the current bounds of the scratch loop.
 
 <span class="ll-phead">Edit</span>. Use `le` for **Loop › Edit** to edit the
-current loop's name or adjust its bounds. As with other entities, "current"
-is defined by playhead position.
+current loop's name or adjust its bounds.
 
 <span class="ll-phead">Jump</span>. Use `lj` for **Loop › Jump** to select
 a saved loop and move the playhead to its start.

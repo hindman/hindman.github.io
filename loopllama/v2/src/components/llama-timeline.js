@@ -238,6 +238,16 @@ class LlamaTimeline extends LitElement {
       background: var(--ll-accent, #7ec8e3);
     }
 
+    /* Vertical notch marking interior loop boundaries within a shared lane */
+    .loop-notch {
+      position: absolute;
+      width: 2px;
+      height: 7px;
+      background: var(--ll-surface-raised, #2a2a2a);
+      pointer-events: none;
+      transform: translateX(-50%);
+    }
+
     /* Tooltip rich content: TYPE and START share metadata style */
     .tip-meta {
       font-size: 0.72rem;
@@ -400,7 +410,7 @@ class LlamaTimeline extends LitElement {
           break;
         }
       }
-      if (!placed) lanes[1].push(loop);
+      if (!placed) lanes[lanes[0].length <= lanes[1].length ? 0 : 1].push(loop);
     }
     return lanes;
   }
@@ -421,6 +431,17 @@ class LlamaTimeline extends LitElement {
           </sl-tooltip>
         `;
       });
+  }
+
+  // Interior boundary positions for loops sharing a lane.
+  // Collects all start/end times, removes the global min and max, returns the rest.
+  _laneNotchPcts(lane) {
+    if (lane.length < 2) return [];
+    const times = lane.flatMap(l => [l.start, l.end]);
+    const min = Math.min(...times);
+    const max = Math.max(...times);
+    return [...new Set(times.filter(t => t !== min && t !== max))]
+      .map(t => this._pct(t));
   }
 
   // Render loop bars for the loop zone (18px, three 6px lanes).
@@ -456,15 +477,21 @@ class LlamaTimeline extends LitElement {
         if (!this._loopInScope(loop)) continue;
         const leftPct  = this._pct(loop.start);
         const widthPct = this._pct(loop.end) - leftPct;
+        const tipTime  = `${this._fmt(loop.start)}–${this._fmt(loop.end)}`;
         els.push(html`
           <sl-tooltip hoist>
-            <span slot="content">${this._tipContent('Loop', this._fmt(loop.start), loop.name)}</span>
+            <span slot="content">${this._tipContent('Loop', tipTime, loop.name)}</span>
             <div
               class="loop-bar"
               style="left: ${leftPct}%; width: ${widthPct}%; top: ${barTop}px"
               @click=${() => this._onLoopBarClick(loop)}
             ></div>
           </sl-tooltip>
+        `);
+      }
+      for (const pct of this._laneNotchPcts(lane)) {
+        els.push(html`
+          <div class="loop-notch" style="left: ${pct}%; top: ${barTop}px"></div>
         `);
       }
     });
