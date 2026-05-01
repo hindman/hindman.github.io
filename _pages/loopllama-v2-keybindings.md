@@ -136,18 +136,17 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 
 ## Scratch loop edit mode
 
-| Key         | Operation
-| ----------- | ---------------------
-| `Tab`       | Toggle active bound: start/end
-| `x`         | Toggle looping
-| `Left`      | Decrease active bound
-| `Right`     | Increase active bound
-| `Down`      | Decrease: delta
-| `Up`        | Increase: delta
-| `Space`     | Play/pause near active bound
-| `⌫`         | Reset active bound
-| `Enter`     | Exit mode
-| `Esc`       | Exit mode
+| Key             | Operation
+| --------------- | ---------------------
+| `Tab`           | Toggle active bound: start/end
+| `x`             | Toggle looping: on/off
+| `Left`          | Active bound: decrease
+| `Right`         | Active bound: increase
+| `Down`          | Delta: decrease
+| `Up`            | Delta: increase
+| `Space`         | Play/pause near active bound
+| `⌫`             | Reset active bound
+| `Enter` · `Esc` | Exit mode
 
 ## Data
 

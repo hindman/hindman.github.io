@@ -111,12 +111,12 @@ simple: click anywhere in the app outside of the YouTube frame. The clickable
 LoopLlama timeline makes clicking in the YouTube frame rarely necessary.
 
 <span class="ll-phead">Entities: the next step</span>. For many users — those
-who simply want to have a tool to loop or change the speed of YouTube videos
-using an efficient user interface — everything you need to know has been
-covered. But if you work with some videos in depth (for example, transcribing
-a musical performance), being able to attach additional information to the
-video is powerful. That information is organized around five types of
-entities: videos, sections, chapters, marks, and loops.
+who simply want to loop or change the speed of YouTube videos using an
+efficient user interface — everything you need to know has been covered. But
+if you work with some videos in depth (for example, transcribing a musical
+performance), being able to attach additional information to the video is
+powerful. That information is organized around five types of entities: videos,
+sections, chapters, marks, and loops.
 
 ## Videos
 
@@ -280,7 +280,7 @@ of the app's mission. There are several sub-topics to cover.
 Saved loops are similar to chapters and sections in that they define a range
 via their start and end. They are more generic because their purpose is not to
 partition a video into non-overlapping parts: saved loops can overlap, which
-has a two important implications.
+has two important implications.
 
   - <span class="ll-phead">Current saved loop</span>. Operations that apply to
     the current saved loop, based on playhead position, go through an
@@ -290,7 +290,7 @@ has a two important implications.
   - <span class="ll-phead">Timeline display</span>. Saved loops are displayed
     at the bottom of the timeline area as brown line segments. This part of
     the timeline has two "lanes" — enough real estate to display up to two
-    overlapping loops unambigously. When the number of overlaps is greater
+    overlapping loops unambiguously. When the number of overlaps is greater
     than that, the segments are merged, but the start and end points of loops
     within the merged segment are marked with visual dividers. You can use
     those dividers, along with mouse hovers over the line sub-segments, to see
@@ -357,12 +357,12 @@ are listed, with the most important controls being the following:
 
 | Key             | Operation
 | --------------- | ------------------------------
-| `Tab`           | Toggle focus between start/end
-| `x`             | Toggle looping on/off
-| `Left`          | Decrease active bound
-| `Right`         | Increase active bound
-| `Down`          | Decrease left/right delta
-| `Up`            | Increase left/right delta
+| `Tab`           | Toggle active bound: start/end
+| `x`             | Toggle looping: on/off
+| `Left`          | Active bound: decrease
+| `Right`         | Active bound: increase
+| `Down`          | Delta: decrease
+| `Up`            | Delta: increase
 | `Space`         | Play/pause near active bound
 | `Enter` · `Esc` | Exit edit mode
 
@@ -433,7 +433,7 @@ When the scratch loop has a source, additional operations are available:
 
 The timeline sits below the video and provides a visual overview of the
 information attached to it. It has four horizontal zones stacked top to
-bottom. Both for the progress bar and saved entities — sections, chapters,
+bottom. For both the progress bar and saved entities — sections, chapters,
 marks, and loops — hover to display name and time information, and click to
 jump to the start of an entity.
 
@@ -511,8 +511,8 @@ back up your data to your computer, sync your data across multiple browsers and
 devices, or perform bulk deletions.
 
 <span class="ll-phead">Share video</span>. Use `dv` for **Data › Share video**
-to copy a LoopLlama sharing URL to your clipboard. Anyone with the URL can get
-a copy of your data for that video loaded into their LoopLlama. If the URL
+to copy a LoopLlama sharing URL to your clipboard. Anyone with the URL can
+load a copy of your data for that video into their LoopLlama. If the URL
 recipient already has the same video, the app will prompt the user with a
 skip-replace choice. If the recipient selects replace, the local video
 information is stashed and then the shared video information is loaded into
@@ -529,7 +529,7 @@ data in the file will make sense.
 
 <span class="ll-phead">Import</span>. Use `di` for **Data › Import**, which
 performs that process in reverse, loading the data from an exported JSON file
-into LoopLlama — for example on a different browser or computer (see [data
+into LoopLlama — for example, on a different browser or computer (see [data
 review](#data-review)). The export-import operations can also be used to
 create a snapshot of your library data before making experimental edits that
 you might want to reverse.
@@ -562,7 +562,7 @@ entities within a single video. Deleted videos can be restored via
 ## Cloud storage and sign-in {#why-sign-in}
 
 <span class="ll-phead">Sign-in is optional</span>. LoopLlama does not require
-sign in, but signing in with Google or GitHub (via the **Account** menu) lets
+signing in, but doing so with Google or GitHub (via the **Account** menu) lets
 you back up your LoopLlama data to the cloud — providing a more convenient
 insurance mechanism against lost data (for example, caused by clearing your
 browser cache) and a simpler way to coordinate LoopLlama usage across multiple
@@ -680,10 +680,10 @@ Google or GitHub (see the **Account** menu), LoopLlama backs up your data in
 the cloud, using [Supabase][supabase], which offers a free database service
 for small projects like LoopLlama.
 
-<span class="ll-phead">Authentication via known, reliable
-third-parties</span>. LoopLlama does not manage user authentication or know
-anything about your credentials. Those details are handled by the
-authentication provider you choose — Google or GitHub.
+<span class="ll-phead">Authentication via known, reliable third
+parties</span>. LoopLlama does not manage user authentication or know anything
+about your credentials. Those details are handled by the authentication
+provider you choose — Google or GitHub.
 
 <span class="ll-phead">LoopLlama does not store your email address</span>.
 None of the LoopLlama database tables contain your email address. The table
@@ -701,7 +701,7 @@ credentials with them.
 
 <span class="ll-phead">Cloud data can be accessed by infrastructure
 staff</span>. The LoopLlama app, and developers on the LoopLlama project, can
-access your data. But the project commits to access this information only for
+access your data. But the project commits to accessing this information only for
 the purpose of allowing the app to function or to investigate specific
 problems or requests submitted by you to the LoopLlama team. Similarly, some
 Supabase staff can access the data in the LoopLlama database, but their access
@@ -737,7 +737,7 @@ app and do not rely on advertising. The project has no commercial
 relationships of any kind. Cloud backup is provided via a free tier from
 Supabase. If the volume of cloud usage becomes prohibitively large — very
 unlikely — the app might need to charge for cloud backup in the future, but
-the project has every intention to avoid that scenario.
+the project has every intention of avoiding that scenario.
 
 ### Terms of service {#terms-of-service}
 

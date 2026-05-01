@@ -1,21 +1,6 @@
 
 ## TODO: LoopLlama v2
 
-User docs: final read:
-  x CC review
-  x MH final read
-  - CC final check:
-    - writing
-    - typos and grammar glitches
-
-Dev docs: final edits:
-  - dev-notes.md
-    x mh
-    - cc check
-  - architecture-notes.md
-    - mh read/edit
-    - cc check: discrepancies with code; other problems
-
 inv stats:
   - Metrics for both prod/dev.
   - Both to get the metrics and to keep the DBs active.
@@ -35,4 +20,22 @@ Posts:
   - 76 reasons why the filibuster is a bad idea
   - Skepticism of the science of music practice: https://chatgpt.com/c/692dd380-d5d0-832c-ad74-a768b049c47b
   - Tommy Emmanuel vs Music Practice Inc [see writing-notes]
+
+- Sessions (all time + last 7 days)
+- Unique clients/approximate unique users (all time + last 7 days)
+- Video loads (all time + last 7 days)
+- Shares by type (loop vs. video)
+- Registered users count
+
+
+
+
+      .                   | 7 days | 30 days | All
+      -----------------------------------------------
+      Sessions            | .      | .       | .
+      Clients             | .      | .       | .
+      Users authenticated | .      | .       | .
+      Videos loaded       | .      | .       | .
+      Shared videos       | .      | .       | .
+      Shared loops        | .      | .       | .
 
