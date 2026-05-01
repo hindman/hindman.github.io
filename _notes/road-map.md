@@ -3,13 +3,10 @@
 
 User docs: final read:
   x CC review
-  - MH final read
-      HERE
-      http://127.0.0.1:4000/loopllama/v2/help/#chapters
-
-      saved loops: document overlap policies in lanes
-
-  - CC final typo check
+  x MH final read
+  - CC final check:
+    - writing
+    - typos and grammar glitches
 
 Dev docs: final edits:
   - dev-notes.md

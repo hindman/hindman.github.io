@@ -132,8 +132,8 @@ the help documentation to learn how the app works.
 
 | Example | Video          | Description
 | ------- | -------------- | ------------------------------
-| Ex1     | Catfish blues  | Song with all entities
-| Ex2     | Edith Pageaud  | Concert with songs as chapters
+| **Ex1** | Catfish blues  | Song with all entities
+| **Ex2** | Edith Pageaud  | Concert with songs as chapters
 
 <span class="ll-phead">Open</span>. Use `vo` for **Video › Open** to open a
 video you loaded previously into LoopLlama.
@@ -279,15 +279,22 @@ of the app's mission. There are several sub-topics to cover.
 
 Saved loops are similar to chapters and sections in that they define a range
 via their start and end. They are more generic because their purpose is not to
-partition a video into non-overlapping parts: saved loops can overlap
-([details](#menu-ellipses) on how the app handles the case when multiple loops
-are "current" based on playhead position). Saved loops are displayed at the
-bottom of the timeline area as brown line segments (below sections, chapters,
-and marks). For rare cases when a user has created more than two overlapping
-saved loops, the brown line segments will contain visual dividers indicating
-where there are loop starts and ends. You can use those dividers, along with
-mouse hovers over the line sub-segments, to see where the overlapping loops
-start and end.
+partition a video into non-overlapping parts: saved loops can overlap, which
+has a two important implications.
+
+  - <span class="ll-phead">Current saved loop</span>. Operations that apply to
+    the current saved loop, based on playhead position, go through an
+    interactive picker to select the loop of interest whenever there are
+    multiple loops at the playhead (related [details](#menu-ellipses)).
+
+  - <span class="ll-phead">Timeline display</span>. Saved loops are displayed
+    at the bottom of the timeline area as brown line segments. This part of
+    the timeline has two "lanes" — enough real estate to display up to two
+    overlapping loops unambigously. When the number of overlaps is greater
+    than that, the segments are merged, but the start and end points of loops
+    within the merged segment are marked with visual dividers. You can use
+    those dividers, along with mouse hovers over the line sub-segments, to see
+    where the overlapping loops start and end.
 
 The key bindings and menu items for saved loops are similar to those for
 sections and chapters.
@@ -312,10 +319,10 @@ the current loop's bounds into the scratch loop — our next topic.
 
 ### Scratch loop
 
-As noted above, the scratch loop is the active working area for looping. When
-the scratch loop bounds produce a valid loop — meaning start less than end —
-the text boxes display the values in regular font and the following operations
-are supported.
+The scratch loop is the active working area for looping. When the scratch loop
+bounds produce a valid loop — meaning start less than end — the text boxes
+display the values in regular font (red font when the bounds are invalid). If
+the scratch loop is valid, the following operations are supported.
 
 <span class="ll-phead">Toggle</span>. Use `xx` for **Scratch › Toggle** to
 turn looping on/off.
@@ -323,15 +330,11 @@ turn looping on/off.
 <span class="ll-phead">Zoom</span>. Use `xz` for **Scratch › Zoom** to focus
 the timeline on the bounds of the scratch loop (see [zooming](#zooming)).
 
-When scratch loop bounds are invalid, the font displaying the start and end is
-red and the app disallows toggling looping on, zooming the scratch loop, or
-creating a new saved loop based on those bounds.
-
 ### Scratch operation {#scratch-operation}
 
-As mentioned in the documentation for sections, chapters, and saved loops,
-entities with a start and end support the scratch operation, which loads the
-bounds of a saved entity into the scratch loop work area.
+As mentioned in the documentation for videos, sections, chapters, and saved
+loops, entities with a start and end support the scratch operation, which
+loads the bounds of a saved entity into the scratch loop work area.
 
 Although the terminology is idiosyncratic, the app's menu labeling and key
 binding scheme benefit from keeping a clear distinction between saved loops
@@ -352,26 +355,26 @@ After the mode is invoked, the scratch loop's start point will have focus
 (notice the yellow border). In the message footer, the available key bindings
 are listed, with the most important controls being the following:
 
-| Key           | Operation
-| ------------- | ------------------------------
-| `Left`        | Decrease active bound
-| `Right`       | Increase active bound
-| `Down`        | Decrease left/right delta
-| `Up`          | Increase left/right delta
-| `Tab`         | Toggle focus between start/end
-| `Space`       | Play/pause near active bound
-| `Enter`       | Exit edit mode
-| `Esc`         | Exit edit mode
+| Key             | Operation
+| --------------- | ------------------------------
+| `Tab`           | Toggle focus between start/end
+| `x`             | Toggle looping on/off
+| `Left`          | Decrease active bound
+| `Right`         | Increase active bound
+| `Down`          | Decrease left/right delta
+| `Up`            | Increase left/right delta
+| `Space`         | Play/pause near active bound
+| `Enter` · `Esc` | Exit edit mode
 
-As noted, `Space` will play/pause the video near the active bound. The purpose
-is to allow you to adjust a boundary, then play the video to assess whether
-more fine-tuning is needed.
+As noted in the table, `Space` will play/pause the video near the active
+bound. The purpose is to allow you to adjust a boundary, then play the video
+to assess whether more fine-tuning is needed.
 
 ### Scratch loop bounds
 
-In addition to scratch loop edit mode, the app supports key bindings to
-increase or decrease the loop bounds directly. The `[` prefix targets the
-start; `]` targets the end. See the [loop bound key
+In addition to scratch loop edit mode, the app supports key bindings to adjust
+the loop bounds directly. The `[` prefix targets the start; `]` targets the
+end. See the [loop bounds key
 bindings](/loopllama/v2/keybindings/#scratch-loop-bounds) for a full listing.
 The most commonly used bindings are these:
 
@@ -384,9 +387,9 @@ The most commonly used bindings are these:
 
 ### Scratch loop sources
 
-As mentioned above, the **Scratch** operation loads the bounds of a saved
-entity into the scratch loop. Using Ex1, navigate to section "A1" and then
-press `sx` to scratch the current section. There are several things to notice:
+As noted above, the **Scratch** operation loads the bounds of a saved entity
+into the scratch loop. If you navigate to a section and then press `sx` to
+scratch the current section, there are several things to notice:
 
   - <span class="ll-phead">Looping</span>. Toggled on.
 
@@ -397,13 +400,14 @@ press `sx` to scratch the current section. There are several things to notice:
     scratch loop bounds are set slightly larger than the source bounds. This
     is done to provide a small bit of lead-in and lead-out time as you play
     the loop. Loop padding is done for sections and chapters, but not for
-    saved loops. You can adjust the padding via [Options](#app-options).
+    videos or saved loops. You can adjust the padding via
+    [Options](#app-options).
 
   - <span class="ll-phead">Yellow bound when playhead outside source</span>.
-    Press `Space` to play the video and then `Enter` to jump to the loop
-    start. After you do that, notice that whenever the playhead sits in the
-    padded region beyond the source bounds, the relevant scratch loop bound is
-    highlighted yellow.
+    Press `Space` to play the video and then `Enter` to jump to the scratch
+    loop start. After you do that, notice that whenever the playhead sits in
+    the padded region beyond the source bounds, the relevant scratch loop
+    bound is highlighted yellow.
 
   - <span class="ll-phead">Yellow **Current** panel range when scratch and
     source diverge</span>. If you modify the scratch loop bounds, notice that
@@ -416,7 +420,8 @@ When the scratch loop has a source, additional operations are available:
     controlling for padding, where applicable).
 
   - <span class="ll-phead">Reset to source</span>. Press `xr` to return the
-    scratch loop bounds to match those of the source.
+    scratch loop bounds to match those of the source (also controlling for
+    padding).
 
   - <span class="ll-phead">Unlink source</span>. Press `xu` to remove the
     source linkage: after that the scratch loop will have no connection to the
@@ -429,7 +434,8 @@ When the scratch loop has a source, additional operations are available:
 The timeline sits below the video and provides a visual overview of the
 information attached to it. It has four horizontal zones stacked top to
 bottom. Both for the progress bar and saved entities — sections, chapters,
-marks, and loops — hover to display name and time information.
+marks, and loops — hover to display name and time information, and click to
+jump to the start of an entity.
 
 <span class="ll-phead">Playhead zone</span>. Mimics the YouTube progress bar:
 a thick line with a dot marking the playhead. The elapsed portion is blue, the
@@ -442,7 +448,8 @@ the display.
 <span class="ll-phead">Mark zone</span>. Displays marks as yellow dots.
 
 <span class="ll-phead">Loop zone</span>. Displays loops as colored line
-segments: blue for the scratch loop, brown for saved loops.
+segments: blue for the scratch loop (in its own lane), brown for saved loops
+(in two lanes).
 
 ### More navigation
 
@@ -458,8 +465,8 @@ looping; start of zoom, if zoomed; otherwise, start of video.
 <span class="ll-phead">Jump to previous/next entity</span>. Near the app's
 seek controls are buttons and a dropdown to support navigation by entity. The
 dropdown (accessible via the `/` binding) controls the entity type. The
-previous/next buttons surrounding the dropdown (or the `,` and `.` bindings)
-allow you to navigate efficiently to the start of the previous/next chapter,
+previous/next buttons surrounding the dropdown (or the `,` and `.` key
+bindings) allow you to navigate to the start of the previous/next chapter,
 section, loop, or mark.
 
 <a id="jump-history"></a><span class="ll-phead">Jump history</span>.
@@ -489,7 +496,7 @@ LoopLlama supports various time input styles:
 
 ### Time precision
 
-Under most circumstances, LoopLlama reports times rounded to the nearest
+Under most circumstances, LoopLlama displays times rounded to the nearest
 second. If you set seek-delta to a value less than 1 second, the app will
 report times to 0.1 precision in the following contexts: the current time text
 box; modals to edit the current video, chapter, section, loop, or mark; and
@@ -510,7 +517,7 @@ recipient already has the same video, the app will prompt the user with a
 skip-replace choice. If the recipient selects replace, the local video
 information is stashed and then the shared video information is loaded into
 the library. Later, the recipient can return to the prior video information
-via [unstash](#video-unstash).
+via [**Unstash**](#video-unstash).
 
 <span class="ll-phead">Share scratch loop</span>. Use `dx` for **Data › Share
 scratch loop**, which is like **Share video**, but the data covers only the
@@ -563,10 +570,10 @@ browsers or devices.
 
 <span class="ll-phead">Cloud as hard drive</span>. LoopLlama's cloud storage
 is a backup-restore facility, not a true multi-device sync. The correct mental
-model for this feature is cloud as hard drive: the browser's localStorage is
-your working copy; the cloud is a saved copy. Multi-device users can use
-LoopLlama successfully if they organize their saves and reads to align with
-their device switches.
+model for this feature is *cloud as hard drive*: the browser's
+[localStorage][localStorage] is your working copy; the cloud is a saved copy.
+Multi-device users can use LoopLlama successfully if they organize their saves
+and reads to align with their device switches.
 
 <span class="ll-phead">Save to cloud</span>. Use `ds` for **Data › Save to
 cloud**, which writes library data to the cloud (see [data
@@ -622,7 +629,7 @@ scratch loop).
 <a id="app-options"></a><span class="ll-phead">Options</span>. Use `ao` for
 **App › Options** to customize various settings. Two of the settings are
 per-video defaults: applied when you first load a new video, then remembered
-per video.
+per video:
 
   - Seek delta default: the number of seconds used when seeking
     backward/forward.
@@ -639,7 +646,7 @@ The other options are global:
 
   - Scratch loop delta choices: the values in the scratch loop delta dropdown.
 
-  - Loop pad start/end: the number of extra seconds added before and after a
+  - Scratch loop pad: the number of extra seconds added before and after a
     section or chapter when you load it into the scratch loop.
 
 ## Miscellaneous
@@ -650,7 +657,7 @@ The other options are global:
 project managed and designed by me, Monty Hindman. I wrote the v1 code; v2
 code was written entirely by Claude Code. Although simply a personal project,
 it is nonetheless serious: a great deal of care was put into planning its
-features, designing its user experience, and checking that the app functions
+features, designing its user interface, and checking that the app functions
 correctly.
 
 <span class="ll-phead">Hosting</span>. The project is hosted by GitHub, as
@@ -669,9 +676,9 @@ be viewed directly via `de` for **Data › Export**. The resulting JSON file
 provides an accurate representation of your LoopLlama data.
 
 <span class="ll-phead">Cloud backup is optional</span>. If you sign in via
-Google or GitHub, LoopLlama backs up your data in the cloud, using
-[Supabase][supabase], which offers a free database service for small projects
-like LoopLlama.
+Google or GitHub (see the **Account** menu), LoopLlama backs up your data in
+the cloud, using [Supabase][supabase], which offers a free database service
+for small projects like LoopLlama.
 
 <span class="ll-phead">Authentication via known, reliable
 third-parties</span>. LoopLlama does not manage user authentication or know
@@ -715,9 +722,9 @@ does track some events for the purpose of collecting aggregate metrics for the
 project, specifically (1) when a user starts a new LoopLlama session and (2)
 when a user loads or opens a YouTube video. In that data, the user is
 represented by a client ID, which is simply a random ID stored in your browser
-that helps us count approximate unique visitors. That ID is not linked to your
-identity. Further, in the data that holds the YouTube ID for the video, the
-app purposely omits the client ID.
+that helps us count unique visitors. That ID is not linked to your identity.
+Further, in the data that holds the YouTube ID for the video, the app
+purposely omits the client ID.
 
 <span class="ll-phead">Shared data is publicly available, but opaque</span>.
 If you ask LoopLlama to create a URL to share either a video or a scratch
@@ -754,40 +761,40 @@ traditions of movements that fought against fascism and authoritarianism. The
 color order reads as a loose narrative arc, from the darkest symbols of
 resistance toward warmer symbols of hope.
 
-<span class="ll-phead">Black</span>. Anarchism and anarcho-syndicalism, the
-oldest visual language of anti-fascist organizing.
+<span class="ll-phead">Charcoal black</span>. Anarchism and
+anarcho-syndicalism, the oldest visual language of anti-fascist organizing.
 
-<span class="ll-phead">Deep red</span>. Organized labor and the socialist
-left, broadly construed — a color that runs through more anti-authoritarian
+<span class="ll-phead">Crimson</span>. Organized labor and the socialist left,
+broadly construed — a color that runs through more anti-authoritarian
 traditions than any other.
 
-<span class="ll-phead">Purple</span>. The Second Spanish Republic, whose
+<span class="ll-phead">Deep purple</span>. The Second Spanish Republic, whose
 defense drew volunteers from dozens of countries — perhaps the broadest
 anti-fascist coalition before World War II.
 
-<span class="ll-phead">White</span>. Peace and nonviolent resistance — the
-center band, as a pivot between the harder symbols and the warmer ones.
+<span class="ll-phead">Chalk white</span>. Peace and nonviolent resistance —
+the center band, as a pivot between the harder symbols and the warmer ones.
 
-<span class="ll-phead">Gold</span>. The German democratic tradition — colors
-the Nazis rejected and the Federal Republic later reclaimed.
+<span class="ll-phead">Old gold</span>. The German democratic tradition —
+colors the Nazis rejected and the Federal Republic later reclaimed.
 
 <span class="ll-phead">Forest green</span>. Pan-African resistance and the
 struggle against colonial and racial authoritarianism.
 
-<span class="ll-phead">Blue</span>. The liberal democratic tradition — from
-the Enlightenment through the American and French revolutions, upheavals that
-shared the conviction that legitimate power derives from the consent of the
-governed, not the will of a ruler.
+<span class="ll-phead">Cobalt blue</span>. The liberal democratic tradition —
+from the Enlightenment through the American and French revolutions, upheavals
+that shared the conviction that legitimate power derives from the consent of
+the governed, not the will of a ruler.
 
 In the past quarter century, the long trend toward democratization has slowed
 or reversed, most notably in the United States — not only my own country but
 also the nation that most symbolized democratic governance, due to its
 pioneering liberal-democratic revolution and its economic, military, and
-cultural prominence since World War I. Authoritarian politics is not inherently
-a phenomenon of the right, but recent anti-democratic movements have come
-predominantly from the populist right. The LoopLlama banner is intended as a
-symbolic gesture of resistance — to authoritarianism generally, and to its
-modern rightwing variants specifically.
+cultural prominence since World War I. Authoritarian politics is not
+inherently a phenomenon of the right, but recent anti-democratic movements
+have come predominantly from the populist right. The LoopLlama banner is
+intended as a symbolic gesture of resistance — to authoritarianism generally,
+and to its modern rightwing variants specifically. So should you be.
 
 --------
 

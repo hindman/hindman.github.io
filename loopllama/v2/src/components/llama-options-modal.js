@@ -241,7 +241,7 @@ class LlamaOptionsModal extends LitElement {
           ></sl-input>
         </div>
 
-        <div class="section-heading">Loop pad</div>
+        <div class="section-heading">Scratch loop pad</div>
 
         <div class="field-row">
           <span class="field-label">Start</span>

@@ -122,12 +122,12 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 
 | Key         | Operation
 | ----------- | ---------------------
-| `[[`        | Start: set now
+| `[[`        | Start: set to current time
 | `[⌫`        | Start: reset to video start
 | `[\`        | Start: edit
 | `[-`        | Start: decrease (supports count)
 | `[=`        | Start: increase (supports count)
-| `]]`        | End: set now
+| `]]`        | End: set to current time
 | `]⌫`        | End: reset to video end
 | `]\`        | End: edit
 | `]-`        | End: decrease (supports count)
@@ -138,14 +138,14 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 
 | Key         | Operation
 | ----------- | ---------------------
-| `Tab`       | Toggle focus: start/end
+| `Tab`       | Toggle active bound: start/end
 | `x`         | Toggle looping
-| `Left`      | Decrease: start/end
-| `Right`     | Increase: start/end
+| `Left`      | Decrease active bound
+| `Right`     | Increase active bound
 | `Down`      | Decrease: delta
 | `Up`        | Increase: delta
-| `Space`     | Play/pause near start/end
-| `⌫`         | Reset: start/end
+| `Space`     | Play/pause near active bound
+| `⌫`         | Reset active bound
 | `Enter`     | Exit mode
 | `Esc`       | Exit mode
 
