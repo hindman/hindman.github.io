@@ -1,10 +1,6 @@
 
 ## TODO: LoopLlama v2
 
-inv stats:
-  - Metrics for both prod/dev.
-  - Both to get the metrics and to keep the DBs active.
-
 Launch:
   - User docs: F5 post: draft
   - Make v2 the offial version.
@@ -26,16 +22,4 @@ Posts:
 - Video loads (all time + last 7 days)
 - Shares by type (loop vs. video)
 - Registered users count
-
-
-
-
-      .                   | 7 days | 30 days | All
-      -----------------------------------------------
-      Sessions            | .      | .       | .
-      Clients             | .      | .       | .
-      Users authenticated | .      | .       | .
-      Videos loaded       | .      | .       | .
-      Shared videos       | .      | .       | .
-      Shared loops        | .      | .       | .
 

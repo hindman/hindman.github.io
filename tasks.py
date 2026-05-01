@@ -23,11 +23,13 @@
 import json
 import os
 import re
+import requests
 import time
 
 from collections import deque
 from contextlib import contextmanager
 from datetime import datetime
+from dotenv import dotenv_values
 from invoke import task, Exit
 from pathlib import Path
 from textwrap import dedent
@@ -350,6 +352,70 @@ def test(c):
     with cd(a.cd):
         c.run(a.test_cmd)
 
+@task
+def stats(c):
+    '''
+    Reports LoopLlama usage stats for dev and prod
+    '''
+    # Setup.
+    secrets = read_json('loopllama/v2/secrets.json')
+    envs = [
+        ('dev',  'loopllama/v2/.env.development'),
+        ('prod', 'loopllama/v2/.env.production'),
+    ]
+
+    # Collect data from Supabase.
+    results = {}
+    for env, path in envs:
+        url = dotenv_values(path)['VITE_SUPABASE_URL']
+        key = secrets[env]
+        results[env] = dict(
+            sessions      = sb_count(url, key, 'events', {'event_type': 'eq.session_start'}),
+            clients       = sb_distinct(url, key, 'events', 'client_id', {'event_type': 'eq.session_start'}),
+            users         = sb_count(url, key, 'users'),
+            videos        = sb_count(url, key, 'events', {'event_type': 'eq.video_load'}),
+            shared_videos = sb_count(url, key, 'shares', {'share_type': 'eq.video'}),
+            shared_loops  = sb_count(url, key, 'shares', {'share_type': 'eq.loop'}),
+        )
+
+    # Organize the data into table form.
+    rd = results['dev']
+    rp = results['prod']
+    counts = [
+        {'dev': rd['sessions'],       'prod': rp['sessions']},
+        {'dev': rd['clients'],        'prod': rp['clients']},
+        {'dev': rd['users'],          'prod': rp['users']},
+        {'dev': rd['videos'],         'prod': rp['videos']},
+        {'dev': rd['shared_videos'],  'prod': rp['shared_videos']},
+        {'dev': rd['shared_loops'],   'prod': rp['shared_loops']},
+    ]
+
+    # Create the labels for the table.
+    labels = [
+        {'metric': 'Sessions',      'note': 'New tab or page load'},
+        {'metric': 'Clients',       'note': 'Unique devices, browsers, etc'},
+        {'metric': 'Users',         'note': 'Authenticated users'},
+        {'metric': 'Videos loaded', 'note': 'Newly loaded or opened from library'},
+        {'metric': 'Shared videos', 'note': '.'},
+        {'metric': 'Shared loops',  'note': '.'},
+    ]
+
+    # Merge labels and counts into rows.
+    rows = [
+        lab | cnt
+        for cnt, lab in zip(counts, labels)
+    ]
+
+    # Print the delimited table.
+    table = delimited_rows_text(
+        rows,
+        header = ['metric', 'prod', 'dev', 'note'],
+        delimiter = '|',
+        want_header = True,
+        align = True,
+    )
+    print(table)
+
 ####
 # Helpers.
 ####
@@ -422,4 +488,56 @@ def print_app_heading(a):
 
 def color_msg(msg, color):
     return color + msg + COLORS.reset
+
+def sb_count(base_url, key, table, filters = None):
+    # Takes a Supabase base URL, secret key, table name, and optional filters.
+    # Returns the N of rows.
+    # We can limit the returned payload to 1 since the count is available
+    # in the returned HTTP headers.
+
+    # Make HTTP request.
+    headers = {
+        'Prefer': 'count=exact',
+        **sb_auth_headers(key)
+    }
+    filters = filters or {}
+    params = {'limit': 1, **filters}
+    r = sb_request(base_url, table, params, headers)
+
+    # Parse HTTP header to get the count.
+    # The text has this format: START-END/TOTAL
+    content_range = r.headers.get('Content-Range', '*/0')
+    total = content_range.split('/')[-1]
+    return int(total)
+
+def sb_distinct(base_url, key, table, col, filters = None):
+    # Takes a Supabase base URL, secret key, table name, column name, and
+    # optional filters. Returns the N of distinct values in the column.
+
+    # Make HTTP request.
+    headers = sb_auth_headers(key)
+    filters = filters or {}
+    params = {'select': col, **filters}
+    r = sb_request(base_url, table, params, headers)
+
+    # Return N distinct values in the column.
+    uniq = set(row[col] for row in r.json() if row.get(col))
+    return len(uniq)
+
+def sb_auth_headers(key):
+    # Takes a Supabase secret key.
+    # Returns the auth-related headers for an HTTP request.
+    return {
+        'apikey': key,
+        'Authorization': f'Bearer {key}',
+    }
+
+def sb_request(base_url, table, params, headers):
+    # Takes a Supabase base URL, table name, HTTP params and headers.
+    # Makes HTTP request and returns the result object.
+    # Raises on failed request.
+    url = f'{base_url}/rest/v1/{table}'
+    r = requests.get(url, params = params, headers = headers)
+    r.raise_for_status()
+    return r
 
