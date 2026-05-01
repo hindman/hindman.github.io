@@ -1,11 +1,9 @@
 
-## TODO: LoopLlama v2
+## TODO
 
 Launch:
   - User docs: F5 post: draft
-  - Make v2 the offial version.
-
-## TODO: The Fifth Fret
+  - Make v2 the official version.
 
 Posts:
   - RH rudiments #2: Giuliani
@@ -16,10 +14,4 @@ Posts:
   - 76 reasons why the filibuster is a bad idea
   - Skepticism of the science of music practice: https://chatgpt.com/c/692dd380-d5d0-832c-ad74-a768b049c47b
   - Tommy Emmanuel vs Music Practice Inc [see writing-notes]
-
-- Sessions (all time + last 7 days)
-- Unique clients/approximate unique users (all time + last 7 days)
-- Video loads (all time + last 7 days)
-- Shares by type (loop vs. video)
-- Registered users count
 
