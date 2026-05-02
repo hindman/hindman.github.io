@@ -25,121 +25,409 @@ published: false
 
 ## What v1 was
 
-LoopLlama v1 was a single vanilla JavaScript file — no build step, no UI
-framework. User input came through the browser's built-in `prompt()` dialogs:
-functional, but crude. The core operations were simple: load a YouTube video,
-loop a range of it, adjust playback speed. It was a working prototype that
-proved the concept, not a finished tool.
+v1 had the essentials. As the screenshot below shows, the core controls were
+all there: seek, speed, a looping mechanism (what v2 calls the scratch loop,
+though v1 had no such term). The app also had the three bread-and-butter
+entity types — videos, loops, and marks — and a decent keyboard binding
+scheme to operate them. For simple use cases, it worked.
+
+![LoopLlama v1](/assets/images/loopllama-v1-screenshot.jpg)
+
+But v1 quickly became unwieldy for any serious in-depth work. The central
+problem was that none of the entities had names. Loops and marks were
+numbered: loop 1, loop 2, mark 1, mark 2. The key binding scheme was
+elegant in its way — `1` jumped to mark 1, `shift-1` set mark 1 to the
+current time — but the elegance collapsed as soon as you had more than a
+few of anything. "Do I want loop 4 or loop 5? What time ranges do they
+cover?" No labels, no visual feedback. Just raw times displayed as a dense
+wall of pipe-delimited text:
+
+```
+Marks  0:07 | 0:45 | 1:32 | 2:18 | ...
+Loops  0:07 - 0:45 | 1:32 - 2:18 | ...
+```
+
+Videos had a similar problem. The v1 model for remembered videos was
+"favorites," each carrying a short tag you supplied. That sounds fine until
+you accumulate a few dozen videos. Here is my actual favorites list from v1,
+as displayed in the interface:
+
+```
+Favorites: cb | cbm | ab | jack | nbf | nbf-hb | ww | mmr | hrs-ee |
+hrs-te | tim | tim2 | tim3 | ww.ca | ww.jr | am | am2 | ws | fv | th |
+du | fv2 | fv3 | htd | ft | ow | hrs-jj | lcw-ds | lcw-ho | bpdg |
+kh-dsp | leg | db-dsp | db-cs | pb-tf
+```
+
+I was the most experienced LoopLlama v1 user on the planet, and I cannot
+tell you what most of those tags mean today.
+
+Beyond metadata, v1 had two frustrations that came up constantly. First, no
+undo: a bad edit was permanent. Second, no jump history: if you accidentally
+jumped somewhere in a long video, you had no way to return to where you
+were. Both of these were minor nuisances in short sessions and genuine
+problems in long ones.
+
+The key binding story was similar. The core bindings were excellent —
+arguably more convenient than v2, because v1 could use single characters
+(`[` and `]` to set loop bounds) rather than two-character sequences (`[[`
+and `]]`). But single-character bindings are a finite resource, and once you
+ventured beyond the core operations, the scheme became hard to remember.
+Discoverability was essentially zero. The online help was a raw dump of
+fixed-width text in table form, and even I had to consult it regularly for
+anything non-routine.
 
 
 ## What v2 is
 
-v2 is a complete rewrite. No code carried forward from v1. The stack is
-modern: Lit web components, Shoelace UI primitives, Vite as the build tool.
-More importantly, the feature set expanded dramatically.
+v2 is a complete rewrite — no code carried from v1 — and the problems above
+drove most of the design.
 
-The app organizes information around five entity types that you can attach to
-any video:
+The most important change is that every entity now has a name. Videos have
+full titles (by default pulled from YouTube, editable). Loops, marks,
+sections, and chapters all carry user-supplied labels. That sounds simple,
+but it changes what the app is capable of. A named section called "Verse 2"
+or a named loop called "turnaround lick" is a navigational anchor, not just
+a time range you have to decode.
 
-- Sections and chapters annotate structure — dividing a video into named,
-  non-overlapping parts. The design intent is that chapters are larger
-  (songs in a concert) and sections are smaller (parts of a song), but
-  you can use them however you like.
-- Marks are simple time points — the lightest-weight way to note a moment.
-- Saved loops are named, reusable ranges that can overlap each other.
-- The scratch loop is the live working area: the bounds you're actively
-  experimenting with.
+Sections and chapters are new entity types that v1 did not have. Both
+arose from concrete problems, not feature-list thinking.
 
-Other features worth naming:
+Sections were central to the v2 design from early on. The primary use
+case for LoopLlama — studying or transcribing a guitar performance — has
+a natural unit of analysis: the song section. Intro, verse, chorus,
+bridge, solo. You learn a song a section at a time. Marks and loops get
+you through the early phrase-by-phrase phase, but the longer work of
+fully internalizing a song is section-oriented.
 
-- A clickable, hoverable visual timeline that shows all entities at once.
-- Zooming: constrains both the timeline view and the playhead to a range
-  (video, section, chapter, loop, or scratch loop).
-- Keyboard-first design with Vim-style two-character bindings for every
-  operation, alongside full mouse support.
-- Data management: export/import as JSON, share a video or scratch loop
-  via URL.
-- Optional cloud backup via Google or GitHub sign-in.
-- Undo/redo, jump history, and per-video settings.
+The risk with any new entity type is bureaucracy: open a form, fill in
+fields, confirm a dialog. That friction kills the tool. The design
+solution was convention over configuration — a phrase that will mean
+something to anyone who remembers Ruby on Rails. In LoopLlama, pressing
+`ss` creates a section instantly: no form, no confirmation. The section's
+start is now; its end is inferred from the start of the next section (or
+the video end). Names are optional. For many sections you never bother
+with one, and that's fine. For others — the ones you return to repeatedly
+— a name helps. The design leaves that decision to you.
+
+Chapters were not in the initial v2 plan. They arose from a problem the
+visual timeline exposed: what do you do with a long video? In a two-hour
+concert recording or a 90-minute instructional video, a 15-second scratch
+loop is a microscopic dot on the timeline — barely visible, let alone
+clickable. Even song sections in that context will be too small to use
+effectively.
+
+Two solutions followed. First, chapters: another non-overlapping
+partition, designed for larger divisions (songs in a concert, topics in a
+lecture). Second, timeline zooming. A two-hour concert could be organized
+with chapters for each song and sections for the parts of a song you are
+studying in depth — and you could zoom the timeline into any chapter or
+section, constraining both the visual display and the playhead to that
+range. Once zooming existed, it extended to other entities where it made
+sense: videos (when they have custom start and end times), saved loops,
+and the scratch loop.
+
+Marks remain, for cases where a simple time point is all you need.
+
+The visual timeline replaced the wall of pipe-delimited text. It sits below
+the video, shows all entities at once, supports hover for details, and
+supports click to jump. Zooming constrains both the timeline view and the
+playhead itself to a specific range — useful for detailed work inside a
+section or loop.
+
+The key binding problem was solved structurally. Every binding follows the
+same two-character scheme: an entity prefix (`v` for video, `s` for section,
+`c` for chapter, `l` for loop, `x` for scratch loop, `m` for mark, `a` for
+app) followed by a mnemonic for the operation (`e` for edit, `j` for jump,
+`d` for delete, and so on). As long as you know the prefix, the which-key
+overlay will show you the rest. Rarely-used bindings are effectively free,
+because the system will remind you what they do.
+
+Undo and jump history address the two biggest v1 frustrations directly.
+Undo covers the 20 most recent edits to the current video. Jump history
+stores up to 40 navigational jumps, so an accidental leap to the wrong place
+in a long video is easily reversed.
+
+Data management deserves its own treatment, because v1 and v2 tell
+different stories there too.
+
+v1 had one reasonable instinct: your LoopLlama data is valuable, so you
+should be able to export it to a readable format — JSON. I dutifully kept a
+copy of my export in a personal git repository. Import existed too, but in
+a form that was almost comical: a browser text box where you pasted a blob
+of JSON and the app performed a total replacement of everything in your
+library. One operation, no preview, no granularity. Nuclear mode only, with
+a size limit imposed by the browser.
+
+v2's export is roughly the same: you get a JSON file. But import is
+completely different. It uses a proper file-selection dialog (no size cap),
+and it operates at the video level rather than wholesale. Before anything
+happens, the app presents a full inventory of your videos, classifying each
+one into one of five categories: source only, source newer, destination
+only, destination newer, or same. Toggles let you decide which categories
+to act on, with defaults biased toward keeping newer data. You can be as
+surgical or as nuclear as you like; the choice is yours.
+
+Cloud backup is a further step. Export and import are a solid insurance
+policy, but they are clunky as a day-to-day tool — especially if you use
+LoopLlama on more than one device. The cloud backup feature (sign in via
+Google or GitHub, then `ds` to save and `dr` to read) is easier to use
+than the JSON round-trip and provides a more practical way to keep your
+library in sync across devices. It uses the same five-bucket review before
+applying any changes, so you retain the same control over what gets
+replaced.
 
 The help documentation covers all of this in detail. The summary here is
-just to give a sense of the distance traveled from v1.
+just meant to convey the distance traveled.
 
 
 ## Building it with an LLM
 
-[This section may or may not belong in the post. Notes below.]
+[DRAFT -- this section is rougher than the rest. Key open question: does
+it belong in this post at all, and if so, how much? Notes below are raw
+material to work from.]
 
 The privacy policy for LoopLlama states the situation plainly: I wrote the
 v1 code; the v2 code was written entirely by Claude Code. That is an unusual
-thing to put in a privacy policy, but it is accurate, and I think it is worth
-being honest about.
+thing to put in a privacy policy, but it is accurate, and worth being honest
+about.
 
-What follows are some observations from the experience — not a
-how-to, but a practitioner's notes on what the collaboration actually
-looked like.
+What follows are observations from the experience — not a how-to, but a
+practitioner's notes on what the collaboration actually looked like.
 
 
-### The LLM wrote code, not design
+### How it started
+
+After a couple of years of v1 usage, I had accumulated a lot of ideas about
+what a better version would need. Communicating all of that to an LLM was
+itself a project — many rounds of back-and-forth to establish the concept,
+discuss tech choices, and sort through tradeoffs. Early in that process, the
+LLM suggested creating a static mockup of the app before writing any real
+code. That turned out to be a good call.
+
+![LoopLlama v2 prototype mockup](/assets/images/v2-prototype.jpg)
+
+The screenshot above is that original mockup. Looking at it now alongside
+the finished app, the early vision held up reasonably well. Features were
+added along the way that had no place in the mockup — cloud backup,
+sharing, zooming, chapters — but the layout, the panel structure, the
+general feel of the interface is recognizable.
+
+What I remember from that moment: seeing the mockup for the first time got
+me excited in a specific way. "If we can build something that looks like
+that," I thought, "I'll be happy." The real app is considerably better than
+the mockup. That was somewhat surprising, because LLMs cannot see in the
+way a human designer can — I had real doubts about how the visual design
+would land.
+
+Those doubts didn't last. The first minimally functioning implementation
+looked good. I had specified a dark theme, but most of the visual choices
+— the blue button colors, the spacing, the component styling — just
+appeared without any design direction from me. The LLM made those calls,
+and they worked. Adding Shoelace as a UI component library was a similar
+moment: suddenly the dialogs and controls looked polished in a way that
+would have taken me considerable effort to achieve on my own. Each of those
+early moments had the same quality: a kind of relieved surprise that this
+might actually work and look like a real app.
+
+
+### Not vibe coding
+
+The media narrative around LLM-assisted development often sounds something
+like this: "I told the AI what I wanted, it wrote the code, and look at
+this neat app." A few prompts, a working product, minimal friction. That
+framing has a name now — vibe coding — and it describes something real for
+simple one-off tools.
+
+LoopLlama v2 was not that. The process felt much more like working on a
+software team — with the genuinely remarkable difference that implementation
+was nearly instantaneous. Where a small team might spend a sprint writing
+and integrating code, the LLM could produce a working draft in minutes.
+That is a real and significant change.
+
+But everything else was familiar from my years on software teams. Long
+discussions about design, policy, and tradeoffs. Careful thought about what
+would be intuitive and what would surprise or frustrate a user. Plans that
+looked good on paper, got built, and then turned out to be half-baked.
+Return trips to the drawing board.
+
+The core insight — easy to miss in the hype — is that making software hard
+to use is easy, and making it work well is hard. That remains true when code
+is cheap. If anything, cheap code removes one excuse and leaves the design
+problems more exposed.
+
+
+### A case study: cloud backup
+
+Cloud backup is a good illustration of what the process actually felt like.
+
+It started as a speculative idea — maybe something for a hypothetical v3.
+I raised it casually, and the LLM's response got me genuinely excited.
+Supabase looked like an ideal fit: a free hosted database with a JavaScript
+client, built-in authentication via Google and GitHub, and an API that the
+LLM clearly knew well. It sounded feasible, cool, and useful. So after a
+while on the back burner, I decided to dive in.
+
+The Supabase database setup was easy. Then came configuring Google and GitHub
+as OAuth providers. Nothing about it was technically difficult, but it
+required navigating several developer consoles, registering applications,
+managing callback URLs, and handling credentials across both development and
+production environments. The LLM helped a great deal, but it was still
+far from trivial — and it opened my eyes. This cloud-backup idea was not
+going to be free.
+
+We got things working at a basic level. Then, pretty quickly, we had opened
+what I can only describe as a pallet full of cans of worms.
+
+I remember trying to use `ds` and `dr` to keep my development and production
+data in sync, and getting myself confused more than once. The questions
+started multiplying. What should happen the first time a user signs in —
+should the app automatically read from the cloud, or wait for an explicit
+command? What if the local library is empty but the cloud has data? What if
+both have data and they conflict? What does "conflict" even mean at the
+video level — which video wins when both copies have been modified? If you
+use two devices alternately without coordinating, how do you avoid
+overwriting your own work? Should signing out remove your cloud data, or
+just end the session? Should the app remind a signed-out user to sign back
+in, and if so, how persistently?
+
+Some of these questions had clear answers once you thought them through.
+Others required committing to a design position and living with the tradeoffs.
+A few led to dead ends: we built a dirty indicator and a `beforeunload`
+browser prompt — the standard "you have unsaved changes, are you sure you
+want to leave?" warning — and then removed it after concluding the UX
+problems outweighed the benefit. The conflict detection went through at
+least one simpler version before arriving at the five-bucket categorization
+with per-category toggles that shipped.
+
+During that middle stretch, while the code and the design bounced around
+across multiple implementations, I had a feeling I recognized immediately.
+It was the feeling of being on a software team where the project has gotten
+itself into a difficult situation that seems intractable — where each
+proposed fix creates new problems, where the edge cases keep multiplying,
+where nothing seems to fully hold together. I had not expected to feel that
+on a small personal project. But there it was.
+
+"Oh," I thought. "Software is still really difficult."
+
+The breakthrough — whether it came all at once or accumulated gradually, I
+cannot quite recall — was landing on a simple mental model: cloud equals
+hard drive. Your hard drive does not do things automatically. It does not
+make decisions on your behalf. But if you use it deliberately — save before
+you switch machines, read when you arrive — it keeps things aligned across
+devices without requiring magic. Once that framing was in place, the rest
+of the design followed more naturally. The explicit `ds` and `dr` operations,
+the preference for user-initiated actions over automatic behavior, the nudge
+system that reminds a signed-out user they have backup enabled without
+forcing anything — all of it fits the mental model.
+
+It sounds obvious in retrospect. That is, I think, the right test for
+whether a design decision was actually good.
+
+
+### The legacy of scarce developer time
+
+One thing the LLM brought to the table that I had not anticipated: the
+accumulated wisdom — and baggage — of decades of software engineering
+culture.
+
+Developer time used to be the scarcest resource on any project. An entire
+industry of books, blog posts, conference talks, and consultants emerged to
+help teams answer questions like: how do you rank features and bug fixes?
+How do you decide whether to fix, migrate, or replace a codebase? How do
+you justify the cost of addressing technical debt? All of this thinking
+assumed that implementation was expensive and slow, because it was.
+
+That assumption is baked into the LLM's corpus, and it shows up in
+unexpected ways. Ask whether feature X is feasible, and the LLM will often
+respond with careful hedging: "doable, but not trivial — possibly not worth
+the cost." That is exactly the right answer for a world where
+implementation is expensive. It is a less useful answer when the LLM can
+deliver a working solution in ninety seconds.
+
+I would think over the LLM's caution, conclude the feature was worth it
+anyway, say so — and the code would appear. The feasibility warnings are
+honest, but they carry an old-world price tag that no longer applies. That
+is an adjustment that takes some getting used to.
+
+
+### The LLM wrote code, not design — and did not solve the big problems
 
 The architecture, the entity model, the keyboard scheme, the data model, the
-UX vision — all of that came from me. The LLM implemented a spec; it did not
-generate one. That distinction is important and often gets blurred in
-discussions of AI-assisted development. The tool is a capable implementer.
-It is not, in my experience, a capable designer.
+UX vision — the key insights for LoopLlama v2 mostly came from me. The LLM
+implemented specs; it did not generate them.
+
+I don't intend that as self-congratulation, or as a knock on the LLM.
+It is just an accurate account of where the design work happened. And it
+maps neatly onto something I noticed about my own experience as a software
+engineer: the parts of the work I liked most were the planning phases —
+designing new systems from scratch, working through difficult problems in
+existing ones. That is where the creativity and deep thinking live. The
+parts I liked least were the long implementation slogs: developers asking
+for more time, managers asking when it would ship, the codebase
+insufficiently tested and everyone knowing the resources to fix that would
+never materialize.
+
+LLMs seem capable of radically compressing the work I disliked. That is
+not a small thing.
+
+The LLM was also genuinely valuable as a sounding board — not a
+replacement for an optimal human expert with specific domain knowledge, but
+a widely-knowledgeable partner that is available whenever you need it. Ask
+a well-framed question, and it will help you think through tradeoffs, catch
+blind spots, and push your thinking toward something more coherent. That
+combination — skilled implementer plus available intellectual partner — is
+a meaningful new tool.
 
 
-### Experience matters on your side
+### Genius junior engineers
 
-A less seasoned developer might accept whatever the LLM produces. Having
-spent 20+ years writing software professionally, I could push back on
-complexity, recognize wrong approaches before they were built, specify
-constraints precisely, and catch errors during review. The quality of the
-output tracks the quality of the human's direction. That is probably not
-surprising, but it is easy to miss in the hype around these tools.
+The best analogy I have for working with the LLM is a junior engineer who
+has not just read the documentation but memorized it. The LLM's knowledge
+of technology, APIs, coding patterns, and best practices is encyclopedic.
+It is fast, tireless, and almost never stumped by a well-specified task.
 
+But junior engineers, however talented, are often myopic. They solve the
+problem in front of them without fully weighing the wider implications —
+other parts of the codebase, consistency with existing patterns, the
+coherence of the system as a whole. The LLM has the same tendency. Many
+times during v2, I identified a bug or a design problem, and the LLM
+offered a fix that would genuinely resolve the immediate issue while
+quietly introducing a new inconsistency or undermining a broader goal. A
+senior engineer would have paused and asked whether the fix was compatible
+with the rest of the system. The LLM often didn't.
 
-### Bugs survive refactoring
+A related instance: during a late testing pass, I found a bug where a
+function was replacing local data with itself — the wrong variable — instead
+of the incoming cloud version. The bug had survived multiple rounds of
+refactoring, invisible because the LLM was moving quickly across many files
+at once.
 
-During a testing pass late in the project, I caught a bug where a function
-was replacing local data with itself — the wrong variable — instead of
-substituting the incoming cloud version. The bug had survived multiple
-rounds of refactoring. LLMs introduce subtle logic errors during complex
-multi-file changes, and those errors don't announce themselves. Manual
-testing caught it; automated tests would not have, because the tests did
-not cover runtime behavior in a browser.
-
-
-### The process was iterative, not generative
-
-This was not a "write a prompt and ship the result" project. It involved
-phases, stages, multiple refactoring rounds, testing passes, and schema
-migrations. The development arc looked more like traditional software
-development than anything novel about AI. What changed was the speed of
-implementation, not the nature of the process. Maintaining continuity
-across sessions required real effort: project notes, architecture
-documentation, a canonical reference for UI text, and a memory system
-baked into the tooling.
-
-
-### Separating UI text from code
-
-One deliberate practice that paid off: keeping a canonical document that
-listed every user-facing message, menu item, modal label, and tooltip in the
-app, separate from the code. That made it possible to review the UX copy as
-a coherent whole — checking for consistency, tone, and completeness — rather
-than hunting for strings scattered across dozens of source files. It also
-gave the LLM a reliable reference when generating or revising messages.
+The myopia, I think, is largely downstream of context window limits. The
+LLM cannot hold the entire project in mind at once, so its attention is
+always partial. That is a real constraint today, and also one that seems
+likely to improve. An LLM with a genuinely encyclopedic context — one that
+could hold the full history of a long project in working memory — would be
+a qualitatively different partner. The potential in software engineering,
+research, writing, journalism seems large.
 
 
-### The context window is the real constraint
+### For writer's block, too
 
-The practical limit on this kind of collaboration is not what the LLM can
-do in a single exchange — it is what it can hold in memory across a long
-project. Context windows are large but not infinite. Long sessions degrade.
-State needs to be externalized in documents the LLM can read back. Managing
-that was a real engineering problem, and solving it was as much the user's
-responsibility as the tool's.
+A brief meta-observation: this post itself is an example of how useful
+LLMs are when you are staring at a blank page.
+
+Ninety minutes before writing this paragraph, the post was a dread. I had
+no idea what I wanted to say, no structure, no draft — just a vague sense
+that something should be written about the new version. I started by typing
+raw notes into the LLM: unpolished memories, half-formed observations,
+things I wanted to remember to mention. The LLM converted each batch of
+musings into rough but coherent prose. At each step, the task felt more
+tractable. Ideas accumulated. The blank page filled.
+
+The new problem is that there is now too much material. The task has shifted
+from generation to editing and pruning. Writer's block is gone — replaced by
+a different, more manageable kind of work.
 
 
 ## Links

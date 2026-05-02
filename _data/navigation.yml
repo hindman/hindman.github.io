@@ -4,7 +4,7 @@ main:
     url: /posts/
 
   - title: "LoopLlama"
-    url: /loopllama/v1/
+    url: /loopllama/
 
   - title: 'About'
     url: /about/
