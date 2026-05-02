@@ -23,8 +23,7 @@ Hosted at hindman.github.io/loopllama/.
   API. Flat, procedural, global-variable codebase. Uses browser `prompt()`
   dialogs for all user input. Superseded by v2.
 - v2: complete rewrite at `loopllama/v2/` using Lit + Vite + Shoelace.
-  Deployed and in production. Development is in final cleanup and
-  documentation phase.
+  Complete and deployed. Now the official version at hindman.github.io/loopllama/.
 
 ## LoopLlama v2
 
@@ -32,8 +31,9 @@ Live site: https://hindman.github.io/loopllama/v2/
 Local dev:  http://localhost:5173/ (run `inv serve` from project root)
 
 Key design decisions:
-- Three first-class entities: Chapters and Sections (structural dividers,
-  divider-based model), Loops (named reusable ranges), Marks (time points).
+- Five entity types: Videos, Sections and Chapters (structural dividers,
+  non-overlapping), Loops (named reusable ranges), Marks (time points).
+- Scratch loop is the active working area; distinct from saved loops.
 - Active loop is always a scratch loop; named entities are untouched until
   explicitly saved back.
 - Keyboard-first (Vim-style multi-key bindings) plus full mouse support.
