@@ -18,6 +18,62 @@ Posts:
 
 ## TODO
 
+    _posts/2026-05-01-v2-release.md
+
+Summary looks good.
+
+It took me a while to get here, but I think you were right. You said 2 essays,
+I said 1. Now I'm thinking 3.
+
+  - LL v2 announcement.
+    - Summary of v1 and especially v2.
+    - OK to provide a brief rundown.
+    - Low-key promotion of the app.
+    - Maybe a mention a few how-I-use it examples.
+      - Different music learning tasks.
+        - Transcribing.
+        - Quick learning of an idea, lick, etc.
+        - Super slow mo: for detailed investigation.
+      - Shed building videos.
+        - Noting key points I want to revisit.
+    - Nothing earth shattering, but reasonable material.
+
+  - Working with an LLM: deep thoughts
+
+  - LoopLlama and the tragedy of computer UX
+
+What do you think of that tentive plan?
+
+    The split is right. The three topics are genuinely distinct in audience, tone,
+    and purpose — combining them would dilute all three.
+
+    A few observations:
+
+    **Essay 1** is the easiest and closest to done. The use-case examples are a
+    good addition — concrete and relatable for anyone who hasn't thought about
+    why you'd want this kind of tool. Shed-building videos is a nice surprise; it
+    signals the app is general-purpose without having to say so directly.
+
+    **Essay 2** has the most polished existing material. The cloud-backup case
+    study is already strong. "Deep thoughts" is the right ambition — LL as the
+    occasion for the argument, not the subject of it. Worth asking: what's the
+    through-line? The existing draft has several good observations but they don't
+    yet add up to one sharp claim.
+
+    **Essay 3** is the most intellectually interesting and the most work. The raw
+    material is there but needs structural shaping. The risk: without care, it
+    reads as curmudgeon-shaking-fist-at-cloud. The things that prevent that are
+    (a) the realism qualifications, (b) the cognitive science grounding, and (c)
+    the ecosystem argument — which shifts the blame from users to platform
+    culture. All three are in the notes. How you sequence the argument will matter
+    a lot.
+
+    One question worth settling early: does Essay 3 use LL as the positive example
+    throughout, or does it stand more independently? The answer affects how much
+    explanation the reader needs to follow it.
+
+============================
+
 We're shifting from brainstorming to drafting:
 
     _posts/2026-05-01-v2-release.md
