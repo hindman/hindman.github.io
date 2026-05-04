@@ -647,15 +647,16 @@ class LlamaApp extends LitElement {
       jumpToStart:   () => {
         if (noVideo()) return;
         const video  = this._appState?.videos.find(v => v.id === this.currentVideoId);
-        const target = this.looping ? this.loopStart : (this.zoomSource?.start ?? video?.start ?? 0);
+        let target = this.looping ? this.loopStart : (this.zoomSource?.start ?? video?.start ?? 0);
+        if (this.zoomSource) target = Math.max(this.zoomSource.start, target);
         this._maybePushJump(this._vc?.getCurrentTime() ?? 0, target);
         this._vc?.seekTo(target);
         this._flash('time');
       },
       setLoopStart:  () => { if (noVideo()) return; this.loopStart = this._vc?.getCurrentTime() ?? 0; this._autoDisableLoopIfInvalid(); this._flash('loopStart'); },
       setLoopEnd:    () => { if (noVideo()) return; this.loopEnd   = this._vc?.getCurrentTime() ?? 0; this._autoDisableLoopIfInvalid(); this._flash('loopEnd'); },
-      resetLoopStart: () => { if (noVideo()) return; this.loopStart = 0; this._autoDisableLoopIfInvalid(); this._flash('loopStart'); },
-      resetLoopEnd:   () => { if (noVideo()) return; this.loopEnd = this.duration ?? 0; this._autoDisableLoopIfInvalid(); this._flash('loopEnd'); },
+      resetLoopStart: () => { if (noVideo()) return; this.loopStart = this.zoomSource?.start ?? 0; this._autoDisableLoopIfInvalid(); this._flash('loopStart'); },
+      resetLoopEnd:   () => { if (noVideo()) return; this.loopEnd = this.zoomSource?.end ?? this.duration ?? 0; this._autoDisableLoopIfInvalid(); this._flash('loopEnd'); },
       nudgeStartDown: (count = 1) => {
         if (noVideo()) return;
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
@@ -1297,9 +1298,9 @@ class LlamaApp extends LitElement {
     if (key === 'Backspace') {
       event.preventDefault();
       if (this.editScratchFocus === 'start') {
-        this.loopStart = 0;
+        this.loopStart = this.zoomSource?.start ?? 0;
       } else {
-        this.loopEnd = this.duration ?? 0;
+        this.loopEnd = this.zoomSource?.end ?? this.duration ?? 0;
       }
       this._autoDisableLoopIfInvalid();
       return;

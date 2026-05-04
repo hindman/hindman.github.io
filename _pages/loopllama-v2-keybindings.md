@@ -123,12 +123,12 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 | Key         | Operation
 | ----------- | ---------------------
 | `[[`        | Start: set to current time
-| `[⌫`        | Start: reset to video start
+| `[⌫`        | Start: reset to start (contextual)
 | `[\`        | Start: edit
 | `[-`        | Start: decrease (supports count)
 | `[=`        | Start: increase (supports count)
 | `]]`        | End: set to current time
-| `]⌫`        | End: reset to video end
+| `]⌫`        | End: reset to end (contextual)
 | `]\`        | End: edit
 | `]-`        | End: decrease (supports count)
 | `]=`        | End: increase (supports count)
@@ -145,7 +145,7 @@ Return to LoopLlama [help](/loopllama/v2/help/).
 | `Down`          | Delta: decrease
 | `Up`            | Delta: increase
 | `Space`         | Play/pause near active bound
-| `⌫`             | Reset active bound
+| `⌫`             | Reset active bound (contextual)
 | `Enter` · `Esc` | Exit mode
 
 ## Data

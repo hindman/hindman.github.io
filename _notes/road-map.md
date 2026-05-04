@@ -2,6 +2,7 @@
 ## TODO
 
 Launch:
+  - deploy: to get reset start/end adjustments
   - User docs: F5 post: draft
   - Make v2 the official version.
 

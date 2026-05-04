@@ -16,6 +16,7 @@
 #   inv deploy
 #   inv builds [--limit N]
 #   inv loc
+#   inv metrics
 #   inv test
 #
 ####
@@ -353,9 +354,9 @@ def test(c):
         c.run(a.test_cmd)
 
 @task
-def stats(c):
+def metrics(c):
     '''
-    Reports LoopLlama usage stats for dev and prod
+    Reports LoopLlama usage metrics for dev and prod
     '''
     # Setup.
     secrets = read_json('loopllama/v2/secrets.json')
