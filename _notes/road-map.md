@@ -3,9 +3,12 @@
 
 Files:
 
-    _posts/2026-05-01-v2-release.md
-    _posts/2026-05-01-v2-llms.md
-    _posts/2026-05-01-v2-ux.md
+    _posts/2026-05-01-v2-release.md | Announcement
+    _posts/2026-05-01-v2-llms.md    | Observsations about coding v2 with an LLM
+    _posts/2026-05-01-v2-ux.md      | LoopLlama V2 and the tragedy of modern UX
+
+    _pages/loopllama-v2-help.md        | Help
+    _pages/loopllama-v2-keybindings.md | Key bindings
 
 ## TODO
 
@@ -23,4 +26,6 @@ Posts:
   - 76 reasons why the filibuster is a bad idea
   - Skepticism of the science of music practice: https://chatgpt.com/c/692dd380-d5d0-832c-ad74-a768b049c47b
   - Tommy Emmanuel vs Music Practice Inc [see writing-notes]
+
+## CHAT AREA
 
