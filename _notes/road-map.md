@@ -4,7 +4,7 @@
 Files:
 
     _posts/2026-05-01-v2-release.md | Announcement
-    _posts/2026-05-01-v2-llms.md    | Observsations about coding v2 with an LLM
+    _posts/2026-05-01-v2-llms.md    | Observations about coding v2 with an LLM
     _posts/2026-05-01-v2-ux.md      | LoopLlama V2 and the tragedy of modern UX
 
     _pages/loopllama-v2-help.md        | Help
