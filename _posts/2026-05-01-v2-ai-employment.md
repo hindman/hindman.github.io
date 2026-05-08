@@ -1,5 +1,5 @@
 ---
-title: "Working with an LLM: deep thoughts"
+title: "AI and mass unemployment: an optimistic take"
 tags:
   - loopllama
   - software
@@ -7,7 +7,7 @@ tags:
 published: false
 ---
 
-## Outline
+## Rough outline
 
 The problem with AI:
   - In typical framing in the US media and policy discussion, there are two
@@ -15,9 +15,11 @@ The problem with AI:
       - Alignment: AI going rogue.
       - Employment: AI destroys jobs, leading to even worse inquality and/or
         large-scale unemployment.
-  - This essay focuses on the second problem, drawing on my background
-    studying economic history and my recent work with an AI coding agent on LL
-    v2.
+  - This essay focuses on the second problem
+    - I don't pretend to have a definitive answer.
+    - But my background in economic history and my recent work with an AI
+      coding agent on LL v2 make me quite skeptical of the typical worries on
+      the question of AI and employment.
 
 Economic hist training tells me that the unemployment concerns are confused.
 
@@ -31,30 +33,33 @@ Economic hist training tells me that the unemployment concerns are confused.
       - I did do a lot of planning, testing/checking, revising of plans,
         reassessments of the app as the LLM and I made progress.
     
-    - The biggest gains came in the form of smaller tasks, more tractable
-      things:
-      - AI is very good at implmenting small-to-medium, well-specified tasks.
-      - It's also quite good at generating prose with similar characteristics:
-        - Small to medium scale.
-        - With clear goals and criteria.
-      - The gains were more mixed -- in some cases non-existent -- on things
-        larger-scale or where the goals are not yet clear.
-        - AI could not create a good v2 plan
-        - Nor could it write posts on my behalf.
-      
+  - The biggest gains came for smaller tasks, more tractable things:
+    - AI is very good at implmenting small-to-medium, well-specified tasks.
+    - It's also quite good at generating prose with similar characteristics:
+      - Small to medium scale.
+      - With clear goals and criteria.
+    - The gains were more mixed -- in some cases non-existent -- on things
+      larger-scale or where the goals are not yet clear.
+      - AI could not create a good v2 plan
+      - Nor could it write posts on my behalf.
+    
     - But most jobs -- even well paid, professional positions -- are full of
       small-to-medium tasks with clear goals and criteria.
       - My jobs as a software engineer had many tasks like that.
   
     - So, yes, I do expect AI to lead to large productivity gains.
-    - That sounds bad if you think of employment in relatively static terms.
 
-But economic history tells us that things are not necessarily static:
+Economic history is never static:
 
-  - 19th debates at mechanization have many parallels with today's discussions
-    of AI.
+  - It AIs can do a lot of existing tasks, that sounds bad if you think of
+    employment in relatively static terms.
+    - Current jobs exist.
+    - If AI can do a job more cheaply, the AI will do the job, not a human.
+    - That sure looks like job destruction.
 
-  - Farming example, as one of many.
+  - 19c debates on mechanization have many parallels:
+
+  - Farming example, as one of many examples.
     - Massive productivity gains.
     - Massive job "destruction": agric is a tiny employment sector now.
     - But the result was not mass unemployment and definitely not increased
@@ -65,6 +70,13 @@ But economic history tells us that things are not necessarily static:
 
   - What happened:
     - We elevated our goals and wants.
+      - Products exist that didn't before.
+      - Same for services.
+      - We do a lot more:
+        - More knowledge production of many kinds:
+          - Academic 
+          - journalism
+          - government data
     - New jobs emerged to fullfill them.
 
   - On a micro-level, LL v2 illustrates this:
@@ -116,7 +128,7 @@ Why AI might be different:
 
     - I'm skeptical of that. The argument uses two very different historical
       dating standards.
-      - For mech, the standard is inclusive/expansive: eg 1780-1940.
+      - For mech, the standard is inclusive/expansive: eg 1760-1940 [figure out plausible dates]
       - For AI, is mypopic: ChatGPT to today.
 
       - But a similarly expansive dating for AI would cover the whole history
@@ -159,7 +171,7 @@ Why AI might be different:
     - But mechanization had similar waves of mutually-reinforcing dynamics
       that, for a time, accellerated progess.
       - Eventually, however, the limits of the paradigm began to hit.
-      - The flywheel didn't keep flywheeling.
+      - The flywheel didn't keep flywheeling forever.
 
   - We dont' know how far the current AI paradigm will go:
     
@@ -204,7 +216,9 @@ The worst case might be good indeed.
     - That means the ability to generate more economically useful goods and
       services with fewer inputs.
 
-    - That translates directly -- mathmatically, even -- into more wealth.
+    - That translates directly -- mathmatically, even -- into more income,
+      wealth, and prosperity.
+
     - One possibility is extreme inequality:
       - Poverty for many.
       - Wealth and power for a few.
@@ -215,8 +229,8 @@ The worst case might be good indeed.
       - But that's partly false.
         - The work week was shortened.
         - Modern humans in prosperous societies are wealthy not only in
-          material goods and luxurious services relative to their ancestors;
-          they also have more leisure time.
+          material goods and luxurious services relative to their 19c
+          ancestors; they also have more leisure time.
 
       - In a world where a computer can do all cognitive tasks and robots can
         perform most physical tasks.
@@ -225,7 +239,7 @@ The worst case might be good indeed.
 
         - Or it can be something where most humans do not have a labor to
           satisfy material desires.
-        - Things like "working" to meeet needs might become less important (ie
+        - Things like "working" to meet needs might become less important (ie
           even shorter work weeks) or might disappear.
 
         - I don't expect that kind of outcome -- in effect, the sort of
@@ -746,4 +760,55 @@ a different, more manageable kind of work.
 
 People often predict that AI will "write all code" within the coming months or a
 few years. But code generation is only one part of software creation.
+
+## CC top level reaction to outline
+
+Here are my top-level reactions.
+
+    **The argument is coherent and the arc is sound.** Skeptical of mass
+    unemployment fears → honest about AI's novelty → "worst case is still
+    politically manageable" is a defensible through-line for the
+    contrarian-but-humble framing you want.
+
+    **The strongest move** is the "worst case might be good" section.
+    Reframing mass unemployment as implying massive productivity, and then
+    shifting the inequality question from economic necessity to political
+    choice — that's genuinely sharp and underappreciated. It also gives the
+    essay a landing spot that isn't pessimistic or naively optimistic.
+
+    **The trickiest structural problem**: you have three overlapping hedges
+    — "history says it's fine," "but AI might be different," "but even the
+    worst case isn't as bad as feared." Each is defensible, but strung
+    together they risk making the reader unsure what the essay's actual claim
+    is. You'll want to make the hierarchy of those three positions explicit,
+    probably in the opening framing. Something like: "Here's the historical
+    baseline, here's why AI might diverge from it, here's why even the
+    divergence isn't the catastrophe people fear."
+
+    **The LL v2 micro-level illustration** is the essay's most original
+    contribution. But note a tension in your outline: "I wrote no code" could
+    sound like your labor disappeared — when the rest of the outline makes
+    clear it transformed into planning, design, and QA. That distinction needs
+    to be crisp early, or readers will think you're proving the wrong point.
+
+    **The Andy Hall reference** needs development or removal. As a bare
+    citation it reads as name-dropping; as a paragraph it could become a
+    strong corroborating data point.
+
+    **One gap worth noting**: the outline doesn't address transition costs.
+    Even if the long-run outcome of mechanization was good, the short-run
+    displacement was genuinely painful — Ricardo worried about this
+    explicitly. You don't need to dwell on it, but a brief acknowledgment
+    would inoculate the argument against the obvious objection that you're
+    being glib about real suffering in the near term.
+
+    **The flywheel section** is your most speculative, and the
+    counter-argument ("mechanization also had self-reinforcing dynamics that
+    eventually plateaued") is thinner than it appears. Unlike steam power, AI
+    could plausibly improve AI directly. You can still make the argument —
+    we don't know how far this paradigm goes — but the historical parallel
+    isn't as reassuring there as elsewhere.
+
+    Overall: plausible and coherent. The main work is tightening the hierarchy
+    of claims and sharpening the LL v2 illustration.
 
