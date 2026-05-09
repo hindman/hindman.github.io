@@ -812,8 +812,9 @@ class LlamaApp extends LitElement {
         }
         this.statusMsg = 'Loop: created.';
         this._pushUndoSnapshot();
-        addLoop(this.namedLoops, this.loopStart, this.loopEnd);
+        const newLoop   = addLoop(this.namedLoops, this.loopStart, this.loopEnd);
         this.namedLoops = [...this.namedLoops];
+        this.loopSrc    = { type: 'loop', id: newLoop.id, label: newLoop.name || null, start: newLoop.start, end: newLoop.end };
         this._saveCurrentState();
       },
       saveBack: () => {
