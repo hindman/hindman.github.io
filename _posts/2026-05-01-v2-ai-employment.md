@@ -1,25 +1,3 @@
----
-title: "AI and mass unemployment: an optimistic take"
-tags:
-  - loopllama
-  - software
-  - llm
-published: false
----
-
-## Rough outline
-
-The problem with AI:
-  - In typical framing in the US media and policy discussion, there are two
-    core concerns regarding AI.
-      - Alignment: AI going rogue.
-      - Employment: AI destroys jobs, leading to even worse inquality and/or
-        large-scale unemployment.
-  - This essay focuses on the second problem
-    - I don't pretend to have a definitive answer.
-    - But my background in economic history and my recent work with an AI
-      coding agent on LL v2 make me quite skeptical of the typical worries on
-      the question of AI and employment.
 
 Economic hist training tells me that the unemployment concerns are confused.
 
