@@ -395,7 +395,7 @@ def metrics(c):
     labels = [
         {'metric': 'Sessions',      'note': 'New tab or page load'},
         {'metric': 'Clients',       'note': 'Unique devices, browsers, etc'},
-        {'metric': 'Users',         'note': 'Authenticated users'},
+        {'metric': 'Users',         'note': 'Users who have saved to cloud'},
         {'metric': 'Videos loaded', 'note': 'Newly loaded or opened from library'},
         {'metric': 'Shared videos', 'note': '.'},
         {'metric': 'Shared loops',  'note': '.'},

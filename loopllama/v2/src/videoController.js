@@ -34,6 +34,7 @@ export function createVideoController({ onReady, onStateChange, onError } = {}) 
       player = new YT.Player(containerEl, {
         width: '100%',
         height: '100%',
+        playerVars: { controls: 0 },
         events: {
           onReady: () => {
             onReady?.();
