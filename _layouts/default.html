@@ -1,0 +1,49 @@
+---
+---
+{%- assign locale = page.locale | default: layout.locale | default: site.locale %}
+
+<!doctype html>
+{% include copyright.html %}
+<html lang="{{ locale | replace: '_', '-' | default: 'en' }}" class="no-js" dir="{{ page.direction | default: layout.direction | default: site.direction | default: 'ltr' }}">
+  <head>
+    {% include head.html locale=locale %}
+    {% include head/custom.html %}
+  </head>
+
+  <body class="layout--{{ page.layout | default: layout.layout }}{% if page.classes or layout.classes %}{{ page.classes | default: layout.classes | join: ' ' | prepend: ' ' }}{% endif %}">
+    {% include_cached skip-links.html locale=locale %}
+    {% include_cached masthead.html locale=locale %}
+
+    <div class="initial-content">
+      {{ content }}
+      {% include after-content.html %}
+    </div>
+
+    {% if site.search == true %}
+      <!--
+        LOCAL OVERRIDE (2026-05): For archive-family layouts (home, categories,
+        tags) the search panel has been moved inside #main in archive.html so the
+        author sidebar stays visible during search. Suppress it here for those
+        layouts to avoid a duplicate panel. All other layouts (single, page, etc.)
+        get the search panel here as the theme intended.
+
+        IF BROKEN IN 2030: see the companion comment in _layouts/archive.html and
+        the "Search panel" section of assets/css/custom.css.
+      -->
+      {% unless page.layout == 'home' or page.layout == 'categories' or page.layout == 'tags' %}
+        <div class="search-content">
+          {% include_cached search/search_form.html locale=locale %}
+        </div>
+      {% endunless %}
+    {% endif %}
+
+    <div id="footer" class="page__footer">
+      <footer>
+        {% include footer/custom.html %}
+        {% include_cached footer.html locale=locale %}
+      </footer>
+    </div>
+
+    {% include scripts.html locale=locale %}
+  </body>
+</html>

@@ -1,0 +1,61 @@
+---
+layout: default
+---
+{%- assign locale = page.locale | default: layout.locale | default: site.locale %}
+
+{% if page.header.overlay_color or page.header.overlay_image or page.header.image %}
+  {% include page__hero.html locale=locale %}
+{% elsif page.header.video.id and page.header.video.provider %}
+  {% include page__hero_video.html %}
+{% endif %}
+
+{% if page.url != "/" and site.breadcrumbs %}
+  {% unless paginator %}
+    {% include breadcrumbs.html locale=locale %}
+  {% endunless %}
+{% endif %}
+
+<div id="main" role="main">
+  {% include sidebar.html locale=locale %}
+
+  <div class="archive">
+    {% unless page.header.overlay_color or page.header.overlay_image %}
+      <h1 id="page-title" class="page__title"{% if page.locale %} lang="{{ page.locale }}"{% endif %}>{{ page.title }}</h1>
+    {% endunless %}
+    {{ content }}
+  </div>
+
+  {% if site.search == true %}
+    <!--
+      LOCAL OVERRIDE (2026-05): Search panel moved here from _layouts/default.html.
+
+      WHY: The theme places .search-content outside #main as a sibling of
+      .initial-content. When search is toggled, JS hides .initial-content
+      entirely (including the author sidebar image) and shows .search-content
+      as a full-width panel with a massive font. This made the sidebar disappear
+      and the search box misaligned with the content column.
+
+      FIX: Placing .search-content inside #main as a sibling of .archive puts it
+      in the same float layout as the post list. CSS in custom.css then:
+        1. Overrides the JS .is--hidden class on .initial-content so the sidebar
+           stays visible when search is active.
+        2. Hides only .archive (the post list), not the sidebar.
+        3. Mirrors .archive float rules onto #main .search-content so it occupies
+           the content column at the same position as the hidden post list.
+
+      COMPANION CHANGE: _layouts/default.html suppresses the original search panel
+      for archive-family layouts (home, categories, tags) to avoid a duplicate.
+
+      IF BROKEN IN 2030:
+        - Confirm .search-content is NOT rendered in default.html for these layouts.
+        - Confirm .search-content IS here inside #main, after .archive.
+        - Check the "Search panel" block in assets/css/custom.css.
+        - The theme's .archive float widths (260px / 300px) may have changed;
+          grep _site/assets/css/main.css for ".archive {" and update the matching
+          media query widths in custom.css to match.
+    -->
+    <div class="search-content">
+      {% include_cached search/search_form.html locale=locale %}
+    </div>
+  {% endif %}
+</div>

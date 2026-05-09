@@ -1,6 +1,15 @@
 /* Hide the taxonomy footer (tags/categories) under posts. */
 .page__taxonomy { display: none !important; }
 
+/* Drop "Recent Posts" label (home page) and year headings (posts page). */
+.archive__subtitle { display: none; }
+
+/* Drop year tally index (posts page). */
+.taxonomy__index { display: none; }
+
+/* Drop "Back to Top" link on archive pages. */
+.back-to-top { display: none; }
+
 /* Remove sidebar hover-fade */
 .sidebar,
 .sidebar:hover {
@@ -92,5 +101,99 @@ div.highlighter-rouge,
 figure.highlight {
   background: #2d3f48 !important;
   border: 1px solid #3d5260;
+}
+
+/* Prev/Next post nav: compact buttons at opposite ends of the nav bar.
+   Theme default is two 50%-wide floated slabs; this replaces that with
+   flexbox so buttons shrink to their content and space apart naturally.
+   margin-inline-start: auto on last-child pushes Next to the right edge
+   regardless of any inherited float/width context on the container. */
+nav.pagination[aria-label="Post pagination"] {
+  display: flex;
+}
+
+nav.pagination[aria-label="Post pagination"] .pagination--pager {
+  float: none;
+  width: auto;
+  padding: 0.4em 1.2em;
+  font-size: 0.85em;
+  background-color: #1a3d4a;
+}
+
+/* Restore full border-radius on both buttons (theme zeroed inner corners
+   to make the two slabs look joined). */
+nav.pagination[aria-label="Post pagination"] .pagination--pager:first-child {
+  border-start-end-radius: 4px;
+  border-end-end-radius: 4px;
+}
+
+nav.pagination[aria-label="Post pagination"] .pagination--pager:last-child {
+  margin-inline-start: auto;
+  border-start-start-radius: 4px;
+  border-end-start-radius: 4px;
+}
+
+nav.pagination[aria-label="Post pagination"] .pagination--pager:hover {
+  background-color: #00adb5;
+  color: #fff;
+}
+
+/* Search panel
+   ============
+   These rules are the CSS half of the search layout override. The HTML half
+   lives in _layouts/archive.html (see the comment there for the full picture).
+
+   Scale down the input: theme default ramps from 1.56em to 2.44em.
+   Also zero left padding explicitly — input[type=search] retains browser-
+   intrinsic left spacing even with the theme's padding:0 rule, so the
+   placeholder sits further right than the results list. */
+.search-content .search-input {
+  font-size: 1em !important;
+  -webkit-appearance: none;
+  appearance: none;
+  padding-inline-start: 0 !important;
+}
+
+/* When search is toggled, JS adds .is--hidden to .initial-content, which
+   would hide the sidebar image. Override it to keep the layout visible,
+   then hide only .archive (the post list) so the search panel can take
+   its place in the content column. */
+.initial-content.is--hidden {
+  display: block !important;
+  visibility: visible !important;
+}
+
+.initial-content.is--hidden .archive {
+  display: none !important;
+}
+
+/* Position the search panel in the content column alongside the sidebar.
+   Mirrors the .archive float rules from main.css. If the theme changes
+   those sidebar widths (currently 260px at 64em, 300px at 80em), update
+   these to match. */
+@media (min-width: 64em) {
+  #main .search-content {
+    float: inline-end;
+    width: calc(100% - 260px);
+  }
+}
+
+@media (min-width: 80em) {
+  #main .search-content {
+    width: calc(100% - 300px);
+  }
+}
+
+/* Remove the inner-wrap's padding-inline: 1em so the prompt and results
+   align with the post list's left edge (which has no left padding). */
+#main .search-content .search-content__inner-wrap {
+  padding-inline: 0;
+}
+
+/* The theme's generic "form { padding: 1em }" rule indents the search input
+   inside the form while leaving the results div (a sibling of the form, not
+   inside it) unaffected — producing the misalignment. */
+#main .search-content .search-content__form {
+  padding: 0;
 }
 
