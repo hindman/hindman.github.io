@@ -5,10 +5,6 @@ Files:
 
     _posts/2026-05-01-v2-release.md       | Announcement
     _posts/2026-05-01-v2-ai-employment.md | AI and mass unemployment
-
-    _posts/2026-05-01-v2-ai-reorg.md      | Ditto -- reorganized     # authoritative copy
-      __HERE__
-
     _posts/2026-05-01-v2-ux.md            | LoopLlama V2 and the tragedy of modern UX
 
     _pages/loopllama-v2-help.md        | Help
