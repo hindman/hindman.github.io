@@ -1,85 +1,59 @@
+---
+title: "AI and mass unemployment: an optimistic take"
+tags:
+  - loopllama
+  - software
+  - llm
+published: false
+---
 
-Economic hist training tells me that the unemployment concerns are confused.
-
-  - Explain the unemployment argument.
-
-  - AI might increase worker productivity substantially:
-    - I experienced that with LL v2.
-      - Massive increase in speed with which I could achieve the code
-        envisioned in my plan.
-      - I wrote no code; I edited no code.
-      - I did do a lot of planning, testing/checking, revising of plans,
-        reassessments of the app as the LLM and I made progress.
-    
-  - The biggest gains came for smaller tasks, more tractable things:
-    - AI is very good at implmenting small-to-medium, well-specified tasks.
-    - It's also quite good at generating prose with similar characteristics:
-      - Small to medium scale.
-      - With clear goals and criteria.
-    - The gains were more mixed -- in some cases non-existent -- on things
-      larger-scale or where the goals are not yet clear.
-      - AI could not create a good v2 plan
-      - Nor could it write posts on my behalf.
-    
-    - But most jobs -- even well paid, professional positions -- are full of
-      small-to-medium tasks with clear goals and criteria.
-      - My jobs as a software engineer had many tasks like that.
+- What I did on LL v2:
+    - I wrote no code; I edited no code.
+    - I did do a lot of planning, testing/checking, revising of plans,
+      reassessments of the app as the LLM and I made progress.
   
-    - So, yes, I do expect AI to lead to large productivity gains.
+- The biggest gains came for smaller tasks, more tractable things:
+  - AI is very good at implmenting small-to-medium, well-specified tasks.
+  - It's also quite good at generating prose with similar characteristics:
+    - Small to medium scale.
+    - With clear goals and criteria.
+  - The gains were more mixed -- in some cases non-existent -- on things
+    larger-scale or where the goals are not yet clear.
+    - AI could not create a good v2 plan
+    - Nor could it write posts on my behalf.
+  
+- Most jobs have many small-to-medium tasks with clear goals and criteria.
+  - My jobs as a software engineer had many tasks like that.
 
-Economic history is never static:
+- It AIs can do a lot of existing tasks, that sounds bad if you think of
+  employment in relatively static terms.
+  - Current jobs exist.
+  - If AI can do a job more cheaply, the AI will do the job, not a human.
+  - That sure looks like job destruction.
 
-  - It AIs can do a lot of existing tasks, that sounds bad if you think of
-    employment in relatively static terms.
-    - Current jobs exist.
-    - If AI can do a job more cheaply, the AI will do the job, not a human.
-    - That sure looks like job destruction.
-
-  - 19c debates on mechanization have many parallels:
-
-  - Farming example, as one of many examples.
-    - Massive productivity gains.
-    - Massive job "destruction": agric is a tiny employment sector now.
-    - But the result was not mass unemployment and definitely not increased
-      poverty.
-      - Modern humans living in middle-income and higher countries are
-        properous to a level that our ancestors probably could not have
-        imagined.
-
-  - What happened:
-    - We elevated our goals and wants.
-      - Products exist that didn't before.
-      - Same for services.
-      - We do a lot more:
-        - More knowledge production of many kinds:
-          - Academic 
-          - journalism
-          - government data
-    - New jobs emerged to fullfill them.
-
-  - On a micro-level, LL v2 illustrates this:
-    - My productivity was massively boosted.
-    - That didn't make me idle.
-    - It radically increased the goals:
-      - v2 is much more ambitious than ever envisioned.
-      - It was difficult/challenging work.
-      - But the work was different:
-        - Planning.
-        - Testing.
-        - Revising flawed plans.
-        - Expanding the list of features.
-        - Fine tuning, making things simpler, more consistent, more coherent.
-        - And no coding.
-    - On a personal level, this was rewarding:
-      - In my career as a software engineer, I most enjoyed the problem
-        solving part of the job: seeing a problem or need; developing a good
-        plan to solve it.
-      - The actual implementation work -- and the many less glamorous tasks
-        associated with implementation (eg testing) -- were much less
-        satisfying, much more of a grind at times.
-      - On LL v2, the AI did the parts of my former career that I liked least,
-        letting me focus on higher level and more rewarding tasks.
-      - Even more important, it allow me to increase my ambitions.
+- On a micro-level, LL v2 illustrates this:
+  - My productivity was massively boosted.
+  - That didn't make me idle.
+  - It radically increased the goals:
+    - v2 is much more ambitious than ever envisioned.
+    - It was difficult/challenging work.
+    - But the work was different:
+      - Planning.
+      - Testing.
+      - Revising flawed plans.
+      - Expanding the list of features.
+      - Fine tuning, making things simpler, more consistent, more coherent.
+      - And no coding.
+  - On a personal level, this was rewarding:
+    - In my career as a software engineer, I most enjoyed the problem
+      solving part of the job: seeing a problem or need; developing a good
+      plan to solve it.
+    - The actual implementation work -- and the many less glamorous tasks
+      associated with implementation (eg testing) -- were much less
+      satisfying, much more of a grind at times.
+    - On LL v2, the AI did the parts of my former career that I liked least,
+      letting me focus on higher level and more rewarding tasks.
+    - Even more important, it allow me to increase my ambitions.
 
   - Another example:
     - Andy Hall's research on LLMs and polical science research.

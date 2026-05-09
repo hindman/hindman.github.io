@@ -17,7 +17,9 @@ Files:
 ## TODO
 
 Launch:
-  - deploy: to get reset start/end adjustments
+  - deploy: to get:
+    - reset start/end adjustments
+    - ll: set scratch source
   - User docs: F5 post: draft
   - Make v2 the official version.
 
