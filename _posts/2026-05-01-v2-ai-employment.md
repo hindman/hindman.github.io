@@ -25,7 +25,6 @@ __HERE__
 #### Genius junior engineers
 ### Biggest gains came for smaller, well-specified tasks
 ## Deeper AI limits may not be solvable in current paradign
-### The static framing is the error
 ### complications
 ### LL v2 as a micro-level illustration
 ### Induced demand and task transformation
@@ -62,8 +61,11 @@ The employment fear is understandable and intuitive:
     tasks, AI will do most of that work, because it will be faster, cheaper.
   - That sure looks like job destruction.
   - And not just in one sector, but on a massive scale.
+  - Leading working for the frontier AI labs have predicted large scale job
+    replacement.
+    - [get quote or two]
 
-### Mechanization as a comparative case study
+## Mechanization as a comparative case study
 
 Mechanization overview:
 
@@ -72,11 +74,17 @@ Mechanization overview:
   - Reached a kind of peak in mid 20th with the development of assembly line
     production, most famously in the auto industry.
   - Mechanization substantially changed employment in the US.
-  - Like AI, mechanization was a general purpose technology.
-    - Able to compress costs dramatically.
-    - And to enable previously impossible things.
 
-US agriculture: helpful example to appreciate the scale of the change:
+AI work as the "computerization" of tasks:
+  - This terminology drives home the parallels with mechanization.
+  - Both are general purpose technologies:
+    - They could be applied to many industries and tasks.
+    - Mechanization operates in the physical realm.
+    - Computerization in the cognitive realm.
+    - Both able to compress costs dramatically.
+    - Both will enable previously impossible things.
+
+US agriculture: example to illustrate the scale of change via mechanization:
   - Consider the percentage of labor force working in agriculture:
 
         1870 | > 50
@@ -113,7 +121,7 @@ On mechanization, if not AI, we have the benefit of hindsight:
     - Agriculture illustrates this.
     - The old farming jobs simply don't exist.
 
-  - Mass unemployment did not occur:
+  - But mass unemployment did not occur:
     - Footnote:
       - Specifically, durable unemployment did not occur.
       - Cyclic events -- recessions and, most notably, the Great Depression --
@@ -139,14 +147,24 @@ On mechanization, if not AI, we have the benefit of hindsight:
         - Even as it increased in volume, variety, and quality level.
         - Footnote: On average, of course.
 
-Why not disaster?
+Why were the concerns about mechanization ill-founded?
+  - The worries of the Luddites, David Ricardo, and many other observers
+    sounded plausible and intuitive at the time.
   - Why didn't job destruction lead to mass unemployment and poverty?
 
-  - We elevated and expanded our goals and wants:
-    - Products exist that didn't before.
+  - In general terms the mistake derives from static analysis:
+    - In the employment context, error often called lump of labor fallacy.
+      - Misconception that there is a finite amount of work to be done.
+      - That's the lump.
+      - If AI does some of the existing jobs, because it is cheaper and/or
+        more effective than human works, unemployment necessarily follows.
+      - [cite: https://en.wikipedia.org/wiki/Lump_of_labour_fallacy]
+
+  - We know in the certainty of hindsight that jobs were not static:
+    - Products exist now that didn't before.
     - Same for services.
 
-    - We do a lot more:
+    - We also do more: ambitions, wants, needs, expectations expanded:
       - More knowledge production of many kinds:
         - Academic
         - journalism
@@ -154,16 +172,22 @@ Why not disaster?
       - More administrative and similar work.
       - [need other examples]
 
-  - Adjustments occurred along a few dimensions:
-    - New jobs to meet an expanded set of needs and goals.
-    - Some reduction in labor hours.
+So mechanization did cause massive job destruction:
+  - But it did not cause mass unemployment or impoverishment.
+  - Instead, adjustments occurred along a few dimensions:
+    - New jobs:
+      - To meet an expanded set of needs and goals.
+    - Less work:
+      - Some reduction in labor hours.
       - [get stats]
-    - Improvements in employment conditions:
+    - Improved employment conditions:
       - Less drudgery and otherwise unpleasant work.
       - Fewer injuries and medical side effects.
       - [other examples?]
 
 ### LL v2 as a case study
+
+My work with an AI coding agent on LL v2 illustrates those dimensions:
 
   __HERE__
 
@@ -439,20 +463,6 @@ Ability to learn:
     - Better able to see the full picture, to notice opportunites for
       good ideas, to have good taste for quality, coherence, the
       weighing of trade-offs.
-
-### The static framing is the error
-
-If AIs can do a lot of existing tasks, that sounds bad if you think of
-employment in static terms:
-
-  - Current jobs exist.
-  - AI can do them more cheaply.
-  - Thus, AI will do the job, not a human.
-  - That looks like job destruction.
-
-That framing misses the thing that economic history most clearly shows:
-economies are not static. The list of jobs, industries, goods, and
-services is not fixed.
 
 ### complications
 
