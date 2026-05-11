@@ -1,5 +1,8 @@
 ---
-title: "AI and mass unemployment: an optimistic take"
+title: "AI and mass unemployment: a skeptical take"
+excerpt: >
+  Like mechanization, computerization might make us
+  more prosperous, not unemployed.
 tags:
   - loopllama
   - software
@@ -187,7 +190,9 @@ So mechanization did cause massive job destruction:
 
 ### LL v2 as a case study
 
-My work with an AI coding agent on LL v2 illustrates those dimensions:
+My work with an AI coding agent on LL v2 is illustrative.
+
+Background:
 
   __HERE__
 
