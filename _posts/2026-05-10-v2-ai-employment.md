@@ -17,26 +17,13 @@ __HERE__
 ## The problem with AI
 ## Economic history says the unemployment concerns are confused
 ### Mass unemployment explained
-### Mechanization as a comparative case study
+## Mechanization as a comparative case study
 ### LL v2 as a case study
 ### MISC
-#### How it started
-#### Not vibe coding
 #### A case study: cloud backup
-#### The legacy of scarce developer time
-#### The LLM wrote code, not design
-#### Genius junior engineers
-### Biggest gains came for smaller, well-specified tasks
-## Deeper AI limits may not be solvable in current paradign
-### complications
-### LL v2 as a micro-level illustration
-### Induced demand and task transformation
-### Andy Hall's research as a second example
-### Writer's block: another example of the same dynamic
-## Why AI might be different
-### Flywheel of improvement
-### Qualification: transition costs are always difficult
-### How far does the current AI paradigm go?
+#### Limits of AI
+#### Limits of current AI paradign
+### Recursive improvement: computerization might be different than mechanization
 ## The worst case might be good indeed
 
 -->
@@ -200,7 +187,7 @@ Background:
 
 My work with an AI coding agent on LL v2 is illustrative: overview:
 
-  - AI massively increased my productivity as a software creator:
+AI massively increased my productivity as a software creator:
 
   - Speed:
     - Over 11K LOC.
@@ -213,239 +200,261 @@ My work with an AI coding agent on LL v2 is illustrative: overview:
     - The result far exceeded my plans and hopes.
       - Better aesthetics.
       - Many more features than initially planned/expected.
+        - Cloud backup, sharing, zooming, chapters, scratch nudging.
+        - Aesthetic polish.
 
-That framing is understandable but naive:
-  - It treats the jobs as fixed, with AI checking them off one by one.
-  - Lump of Labor Fallacy.
-  - But that's just economic theory:
-    - How can we back that up with examples?
+AI made a previously impossible thing possible:
+  - I was an experienced software engineer.
+    - But not a web developer -- its own domain of expertise.
+  - I lacked to expertise to create v2:
+    - More fundamentally, I lacked the interest in acquiring this expertise.
+    - Without an AI assistant to do the coding a v2 of this ambition would
+      have never occurred.
 
-My experience with LL v2:
-  - I wrote no code; I edited no code.
-  - I did do a lot of work: planning, testing, revising flawed plans,
-    reassessing the app as the LLM and I made progress.
-  - I was a manager, a planner — the person with the vision and goals — and a
-    QA tester.
+AI altered the type of work I did:
+  - Planning.
+  - Revising flawed plans.
+  - Assessment.
+  - QA/testing.
+  - Management: organizing the work.
+  - Expanding the feature list.
+  - Fine-tuning: making things simpler, more consistent, more coherent.
+  - Not coding.
+  - So the project did keep me occupied or "employed" in some sense
+    (technically, I'm retired).
+  - But the nature of the work changed substantially (no coding by me).
 
-I was not a web developer in any meaningful sense. I had cobbled
-together a primitive v1, but I lacked both the expertise and the desire
-to acquire the expertise necessary to create v2. The AI let me realize
-a vision for an application that did not otherwise exist. And achieving
-that vision was not labor-free: months of work, in small chunks, but
-overall a lot of time and effort. Human labor did not disappear. It
-became different. I was not plowing the field (writing code); I was
-directing a tractor from the comfort of my office.
+The AI did not eliminate work or make v2 "easy":
+  - This project did not look like vibe coding:
+    - Media examples of this are often small projects.
+    - In other coding work I have experienced this kind of thing:
+      - Ask the LLM to do something small.
+      - It finishes the work in one shot.
+      - And it works on the first try (or maybe very soon thereafter after a
+        coule of quick rounds of fixes/adjustments).
 
-The architecture, the entity model, the keyboard scheme, the data model, the
-UX vision — the key insights for LoopLlama v2 mostly came from me. The LLM
-implemented specs; it did not generate them.
+  - LL v2 would have been a large project for one software developer:
+    - On my part time approach to these efforts, it would have taken months of
+      work to acquire the expertise (as noted, I would have never done that)
+      and then perhaps as long as a year to code it.
 
-#### How it started
+  - Instead, the project not only become possible and the coding work itself
+    went very fast.
 
-After a couple of years of v1 usage, I had accumulated a lot of ideas
-about what a better version would need. Communicating all of that to
-the LLM was itself a project — many rounds of back-and-forth to
-establish the concept, discuss tech choices, and sort through
-tradeoffs. Early in that process, the LLM suggested creating a static
-mockup of the app before writing any real code. That turned out to be
-a good call.
+  - But the project was still difficult:
+    - Lots of thinking to develop the plan, with many back and forths with the
+      AI, both to get the AI up to speed but also to sanity check my own
+      ideas.
+    - Lots of rethinking after early implementation and subsequent usage
+      revealed gaps or inconstencies in the plan.
 
-More features in v2 than envisioned:
-  - cloud backup, sharing, zooming, chapters
+The changed nature of working on a software project is a good one for me:
+  - In my career as a software engineer: the parts I liked most were the
+    planning phases — designing new systems, working through difficult
+    problems.
+  - The parts I liked least were the long implementation slogs, the
+    insufficient test coverage, the managers asking when it would ship.
+  - AI seem capable of radically compressing the work I liked less, leaving me
+    free to envision the software I want to exist and using an AI to make that
+    happen much more rapidly.
 
-Those doubts didn't last. The first minimally functioning
-implementation looked good. I had specified a dark theme, but most of
-the visual choices — the blue button colors, the spacing, the component
-styling — just appeared without design direction from me. Each of those
-early moments had the same quality: a kind of relieved surprise that
-this might actually work and look like a real app.
+My academic and research background provides similar examples:
+  - All of the biggest projects in my academic career could have been
+    substantially helped by AIs. My team and I would have done more and
+    done it faster.
+  - Examples:
+    - Dissertation.
+    - Historical Statistics of the United States.
+    - MPC: IPUMS, etc
 
-#### Not vibe coding
-
-The media narrative around LLM-assisted development often sounds like
-this: "I told the AI what I wanted, it wrote the code, and look at
-this neat app." A few prompts, a working product, minimal friction.
-That framing has a name now — vibe coding — and it describes something
-real for simple one-off tools.
-
-LoopLlama v2 was not that. The process felt much more like working on
-a software team — with the genuinely remarkable difference that
-implementation was nearly instantaneous. Where a small team might spend
-a sprint writing and integrating code, the LLM could produce a working
-draft in minutes. That is a real and significant change.
-
-But everything else was familiar from my years on software teams. Long
-discussions about design, policy, and tradeoffs. Careful thought about
-what would be intuitive and what would surprise or frustrate a user.
-Plans that looked good on paper, got built, and then turned out to be
-half-baked. Return trips to the drawing board.
-
-The core insight — easy to miss in the hype — is that making software
-hard to use is easy, and making it work well is hard. That remains true
-when code is cheap. If anything, cheap code removes one excuse and
-leaves the design problems more exposed.
-
-The LLM was not great at generating strong ideas or coherent plans for
-medium-to-large problems. For a narrow task, yes — an LLM can create
-a solid plan and then generate workable code. But for anything bigger,
-a full essay or a medium-to-large software project, the LLM will not
-hand you a great solution.
-
-That said, LLMs are quite useful as an intellectual partner or sounding board
-for exploring tentative plans: finding gaps, brainstorming solutions, pushing
-thinking toward something more coherent. They won't give you a great answer
-for free, but they help you ask sharper questions and work incrementally
-toward a solid plan.
+  - Andy Hall's research on LLMs and political science reinforce this:
+    - using the productivity boost from AI to create more bold and expansive
+      research agendas.
+    - [get citation; add detail]
 
 #### A case study: cloud backup
 
-Cloud backup is a good illustration of what the process actually felt
-like.
+Cloud backup is a good illustration:
 
-It started as a speculative idea — maybe something for a hypothetical
-v3. I raised it casually, and the LLM's response got me genuinely
-excited. Supabase looked like an ideal fit: a free hosted database with
-a JavaScript client, built-in authentication via Google and GitHub, and
-an API that the LLM clearly knew well. So after a while on the back
-burner, I decided to dive in.
+  - It started as a speculative idea — maybe something for a hypothetical v3.
+  - AI suggested a free tier of Supabase:
+    - Hosted DB.
+    - JS client.
+    - Authentication via Google/GitHub.
 
-The Supabase database setup was easy. Then came configuring Google and
-GitHub as OAuth providers. Nothing about it was technically difficult,
-but it required navigating several developer consoles, registering
-applications, managing callback URLs, and handling credentials across
-both development and production environments. The LLM helped a great
-deal, but it was still far from trivial.
+But I put the feature on the backburner:
+  - It sounded promising.
+  - But both I and the AI carried the legacy of software planning culture.
+      - Developer time was typically the scarcest resource on any project I
+        had ever worked on.
+      - An entire industry of books, blog posts, conference talks, and
+        consultants emerged to help teams rank features, manage technical
+        debt, and weigh competing priorities.
+      - All of this thinking assumed implementation was expensive and slow,
+        because it was.
 
-Pretty quickly, I began to think we had opened a pallet load of worm cans.
-Questions started multiplying. What should happen the first time a user signs
-in? What if the local library is empty but the cloud has data? What if both
-have data and they conflict? What does "conflict" even mean at the video
-level? If you use two devices alternately without coordinating, how do you
-avoid overwriting your own work? Should the app remind a signed-out user to
-sign back in, and if so, how persistently?
+      - In this realm, adding a non-trivial feature like cloud backup late in
+        the development of a new version of an application -- that kind of
+        thing was the sort of reckless behavior that tended to cause software
+        projects to fail.
 
-Some of these questions had clear answers once you thought them
-through. Others required committing to a design position and living
-with the tradeoffs. A few led to dead ends: we built a dirty indicator
-and a beforeunload browser prompt, then removed it after concluding the
-UX problems outweighed the benefit. The conflict detection went through
-at least one simpler version before arriving at the five-bucket
-categorization with per-category toggles that shipped.
+  - Just as I had been trained in that software engineering culture, so to was
+    the AI model.
 
-The breakthrough was landing on a simple mental model: cloud equals
-hard drive. Your hard drive does not do things automatically. It does
-not make decisions on your behalf. But if you use it deliberately —
-save before you switch machines, read when you arrive — it keeps things
-aligned without requiring magic. Once that framing was in place, the
-rest of the design followed naturally.
+      - It training corpus included all of the books, materials, advice.
+      - That mentality was evident in many of our planning conversations,
+        including cloud backup.
 
-During that middle stretch I had a feeling I recognized immediately. It
-was the feeling of being on a software team where the project has
-gotten itself into a difficult situation: each proposed fix creates new
-problems, the edge cases keep multiplying, nothing seems to fully hold
-together. "Right," I thought. "Even with AI, software is still really
-difficult at times."
+      - We would discuss a possible feature addition or behavior change and
+        the AI would dutifully weigh the tradeoffs.
+        - The AI might conclude with a phrase like: "doable, but not trivial —
+          possibly not worth the cost."
 
-#### The legacy of scarce developer time
+      - But then I would decide to forge ahead the AI would write working code
+        within a few minutes.
 
-Developer time used to be the scarcest resource on any project. An entire
-industry of books, blog posts, conference talks, and consultants emerged to
-help teams rank features, manage technical debt, and weigh competing
-priorities. All of this thinking assumed implementation was expensive and
-slow, because it was.
+      - It took several rounds of this pattern before I started to realize —
+        sometimes dragging the LLM along with me — that old habits of mind
+        needed adjusting.
 
-That assumption is baked into the LLM's training corpus, and it shows
-up in unexpected ways. Ask whether feature X is feasible, and the LLM
-will often respond with careful hedging: "doable, but not trivial —
-possibly not worth the cost." That is exactly the right answer for a
-world where implementation is expensive. It is a less useful answer
-when the LLM can deliver a working solution in ninety seconds.
+After we had our initial plan, we divided the implementation work into several
+sub-stages.
+  - At that point, my work was mostly done.
+  - I would prompt the AI: please implement the next phase.
+  - Very quickly, we have our first working implementation of cloud backup.
 
-Both I and the LLM carried the mental legacy of old-world software
-engineering. This theme appeared in many planning discussions: "not a
-trivial change — maybe not worth it." But then the code appeared in
-a couple of minutes. It took several rounds of this pattern before I
-started to realize — sometimes dragging the LLM along with me — that
-old habits of mind needed adjusting.
+It didn't take long for the questions to start multiplying:
+  - What should happen the first time a user signs in?
+  - What if the local library is empty but the cloud has data?
+  - What if both have data and they conflict?
+  - What does "conflict" even mean at the video level?
+  - If you use two devices alternately without coordinating, how do you avoid
+    overwriting your own work?
+  - Should the app remind a signed-out user to sign back in, and if so, how
+    persistently?
 
-#### The LLM wrote code, not design
+I began to think we had opened a pallet load of worm cans:
+  - This, too, was a familiar feeling from my software engineering background.
+  - You are in the middle of implementing a plan and you realize that there
+    are fundamental open questions or not easily resolved tensions within the
+    plan.
 
-The architecture, the entity model, the keyboard scheme, the data
-model, the UX vision — the key design insights for LoopLlama v2 mostly
-came from me. The LLM implemented specs; it did not generate them.
+  - During that middle stretch I had a feeling I recognized immediately.
+    - It was the feeling of being on a software team where the project has
+      gotten itself into a difficult situation: each proposed fix creates new
+      problems, the edge cases keep multiplying, nothing seems to fully hold
+      together.
+    - I realized that even if the cost of generating code becomes very low,
+      creating usable, intuitive, coherent software would remain difficult, at
+      least for non-small projects.
 
-This is not self-congratulation or a knock on the LLM. It is just an
-accurate account of where the design work happened. And it maps neatly
-onto something I noticed about my own career as a software engineer:
-the parts I liked most were the planning phases — designing new
-systems, working through difficult problems. The parts I liked least
-were the long implementation slogs, the insufficient test coverage, the
-managers asking when it would ship.
+For a while, the AI and I spiraled a bit:
+  - Solutions were envisioned.
+  - Some were implemented, but then abandoned because they didn't cleanly
+    achieve a reasonable balancing of the tradeoffs.
 
-LLMs seem capable of radically compressing the work I disliked. That
-is not a small thing.
+I don't recall how the breakthrough arrived, maybe in a flash or maybe as an
+emergent thing:
+  - In any case, clarity settled in one we landed on a clear mental model:
+    - The cloud backup was not aiming to be any kind of live sync.
+    - Rather the cloud was analogous to a hard drive for your LL data.
+  - Hard drives don't do automatic things for the user or prompt them.
+    - That clarified what the app should do and not do regarding backup.
+  - A bit later we realized that the various data operations (save to cloud,
+    read from cloud, and import from JSON) needed to provide the user would a
+    more complete picture (an inventory, in effect).
+    - The conflict detection went through at least one simpler version before
+      arriving at the five-bucket categorization with per-category toggles
+      that shipped.
 
-The LLM was also genuinely valuable as a sounding board — not a
-replacement for an optimal human expert, but a widely-knowledgeable
-partner that is available whenever you need it. Ask a well-framed
-question and it will help you think through tradeoffs, catch blind
-spots, and push your thinking toward something more coherent. That
-combination — skilled implementer plus available intellectual partner —
-is a meaningful new tool.
+#### Limits of AI
 
-#### Genius junior engineers
+Design and plan:
+  - The architecture, the entity model, the keyboard scheme, the data model,
+    the UX vision — the key insights for LoopLlama v2 mostly came from me.
+  - The AI implemented specs; it did not generate them.
+  - The AI was a valuable planning sounding board, but rarely an strong
+    contributor to to the plan itself.
+  - That said, LLMs are quite useful as an intellectual partner or sounding
+    board for exploring tentative plans: finding gaps, brainstorming
+    solutions, pushing thinking toward something more coherent.
 
-The best analogy for working with the LLM: a junior engineer who has
-not just RTFM but memorized it. Encyclopedic knowledge of
-technology, APIs, coding patterns, and best practices. Fast, tireless,
-and almost never stumped by a well-specified task.
+    - They won't give you a great answer for free, but they help you ask sharper
+      questions and work incrementally toward a solid plan.
 
-But junior engineers, however talented, are often myopic. They solve
-the problem in front of them without fully weighing wider implications —
-other parts of the codebase, consistency with existing patterns, the
-coherence of the system as a whole. The LLM has the same tendency.
-Many times during v2, I identified a bug or a design problem, and the
-LLM offered a fix that would genuinely resolve the immediate issue
-while quietly introducing a new inconsistency or undermining a broader
-goal.
+    - AI is not a replacement for an optimal human expert.
+    - But for most tasks, most people lack direct access to such experts.
+    - Having a widely-knowledgeable AI partner that is available whenever you
+      need it can be extremely helpful, even if the AI will rarely give you a
+      full software plan or a complete idea for an essay.
 
-The myopia is largely downstream of context window limits. The LLM
-cannot hold the entire project in mind at once — and, just as
-important in many policy contexts, the history of the project and the
-accumulated reasoning behind its decisions. That is a real constraint
-today, and also one that seems likely to improve.
+      - Ask a well-framed question and it will help you think through
+        tradeoffs, catch blind spots, and push your thinking toward something
+        more coherent.
 
-An LLM with a genuinely encyclopedic context — one that could hold the full
-history of a long project in working memory — would be a qualitatively
-different partner. The potential in software engineering, research, writing,
-journalism seems large.
+    - That combination — skilled implementer plus available
+      intellectual partner — is a meaningful new tool.
 
-### Biggest gains came for smaller, well-specified tasks
-
-  - AI is very good at implementing small-to-medium, well-defined tasks.
+AI not good at creating strong ideas or coherent plans for medium-to-large
+problems.
+  - For a narrow task, yes — an LLM can create a solid plan and then generate
+    workable code.
   - It's also quite good at generating prose with similar characteristics:
     small to medium scale, with clear goals and criteria.
+  - But for anything bigger, a full essay or a medium-to-large software
+    project, the LLM will not hand you a great solution.
   - Gains were more mixed — sometimes non-existent — for larger-scale or
     open-ended problems:
     - AI could not create a good v2 plan.
     - Nor could it write the posts on my behalf.
-      - Even given a pile of raw notes, ideas, and points, it could not
-        organize them into a well structured essay outline.
+    - Even given a pile of raw notes, ideas, and points, it could not organize
+      them into a well structured essay outline.
 
-  - But most jobs — even well-paid professional positions — are full of
-    small-to-medium tasks with clear criteria.
-    - My software career had many tasks like that.
-  - So yes: large productivity gains are plausible.
+Genius junior engineers:
+  - That's the analogy I would use to describe current coding AIs.
+  - The AI is a junior engineer who has not just RTFM but memorized it.
+    - Encyclopedic knowledge of technology, APIs, coding patterns.
+    - Fast, tireless.
+    - Almost never stumped by a well-specified task.
 
-Part of the "small task" limitation appears tractable in the short term.
-Often those LLM lapses were downstream of context window limits. As
-those limits expand, one can envision an LLM with equally expansive
-knowledge and memory for an entire codebase — and for the project's
-development history and the reasoning behind it. That LLM would be a
-much better problem solver, less drawn to myopic quick-fixes and more
-likely to suggest solutions aligned with larger goals.
+  - But junior engineers, however talented, are often myopic.
+    - They solve the problem in front of them without fully weighing wider
+      implications — other parts of the codebase, consistency with existing
+      patterns, the coherence of the system as a whole.
 
-## Deeper AI limits may not be solvable in current paradign
+  - AIs have similar tendencies.
+    - Many times during v2, if a bug or design problem emerge, the LLM often
+      offered a fix that would genuinely resolve the immediate issue while
+      quietly introducing a new inconsistency or undermining a broader goal.
+
+That myopia seems downstream of context window limits.
+  - Although an AI knowledge of its training corpus is encyclopedic in some
+    sense, its knowledge of your project is not.
+  - After each prompt, the AI starts from ground zero:
+    - I reads your prompt.
+    - It can read some metadata files that provide some context about the
+      current project.
+    - But it doesn't remember all of the prior chats, all of the decisions
+      that led the project to its current state, and all of the project's core
+      goals and commitments.
+      - My memory of that project context, like all human memory, is fallible.
+      - But it was nonethless strikingly more complete than the AI's memory.
+
+#### Limits of current AI paradign
+
+Task size limitations might be tractable in the short to medium term:
+  - LLM lapses are downstream of context window limits.
+  - As those limits expand, one can envision an LLM with equally expansive
+    knowledge and memory for an entire codebase — and for the project's
+    development history and the reasoning behind it.
+  - That LLM would be a much better problem solver, less drawn to myopic
+    quick-fixes and more likely to suggest solutions aligned with larger
+    goals.
+  - An LLM with a genuinely encyclopedic context — one that could hold the
+    full history of a long project in working memory — would be a
+    qualitatively different partner.
+  - The potential in software engineering, research, writing, journalism seems
+    large.
 
 Genius without good ideas, widsom, insight:
   - You would think that an entity with encyclopedic grasp of all human
@@ -469,224 +478,81 @@ Ability to learn:
       good ideas, to have good taste for quality, coherence, the
       weighing of trade-offs.
 
-### complications
+### Recursive improvement: computerization might be different than mechanization
 
-Type of work:
-
-  - Mechanization replaced physical and manual labor.
-  - Displaced workers retreated into cognitive, creative, and social work.
-
-  - AI encroaches on cognitive tasks.
-  - Perhaps the combo -- AI for mental work, machine and robots for physical
-    -- leaves no escape value for new employment opportunities.
-
-Speed:
-  - Mechanization: call it 180 years: 1760-1940.
-  - AI: call it 85 years so far: 1941-2026.
-    - Footnote:
-      - 1941: Zuse Z3
-      - 1945: ENIAC.
-  - Some might object to my AI dating:
-    - But that would apply different historical dating criteria to these two
-      general purpose technologies.
-    - Mechanization in the 1700s, as impressive as it was, looked nothing like
-      the Ford assembly lines.
-  - It's true that computerization might be progressing notably faster than
-    mechanization did.
-      - But the different is closer to 2x than 10x.
-      - Computerization has happened over decades, not years.
-
-### LL v2 as a micro-level illustration
-
-My productivity was massively boosted. That didn't make me idle. It
-radically increased the goals:
-
-  - v2 is much more ambitious than I ever envisioned a v2 being.
-  - The work was difficult and challenging.
-  - But the work was different:
-    - Planning.
-    - Testing and checking.
-    - Revising flawed plans.
-    - Expanding the feature list.
-    - Fine-tuning: making things simpler, more consistent, more coherent.
-    - And no coding.
-
-  - On a personal level, this was rewarding:
-    - In my career as a software engineer, I most enjoyed the problem
-      solving part of the job: seeing a problem or need; developing a good
-      plan to solve it.
-    - The actual implementation work -- and the many less glamorous tasks
-      associated with implementation (eg testing) -- were much less
-      satisfying, much more of a grind at times.
-    - On LL v2, the AI did the parts of my former career that I liked least,
-      letting me focus on higher level and more rewarding tasks.
-    - Even more important, it allow me to increase my ambitions.
-
-AI did not destroy a job; it enabled a project that would not otherwise
-have existed.
-
-### Induced demand and task transformation
-
-LL v2:
-  - AI lowers the cost of software creation.
-  - That enables new demand that couldn't have materialized before (I
-    build v2).
-  - Human labor is still required, just transformed: planning, design,
-    QA instead of coding.
-
-Econ terms:
-  - Induced demand: cheaper supply creates demand that didn't exist.
-  - Task transformation: labor shifts rather than disappears.
-  - "Technology displaces tasks, not workers":
-    - [cite this and/or figure out precisely what it means]
-
-### Andy Hall's research as a second example
-
-Andy Hall's research on LLMs and political science: using the
-productivity boost from AI to create more bold and expansive research
-agendas.
-  - [get citation; add detail]
-
-My own research background confirms this point:
-  - Dissertation.
-  - Historical Statistics of the United States.
-  - MPC: IPUMS, etc
-  - All of the biggest projects in my academic career could have been
-    substantially helped by AIs. My team and I would have done more and
-    done it faster.
-
-### Writer's block: another example of the same dynamic
-
-A brief meta-observation: this post itself illustrates how LLMs are
-useful when staring at a blank page.
-
-Many writers say the hardest part of writing is the transition from
-nothing to something — even a crappy something. LLMs change that
-picture. Give the LLM a disorderly brain dump of ideas, notions,
-phrases, and concepts and it can quickly convert it into something
-resembling a rough outline or first draft. The task shifts from de-novo
-creation to editing, reworking, culling, and rethinking.
-
-Ninety minutes before a particular paragraph in this post, the post was
-a dread. No structure, no draft — just a vague sense that something
-should be written. Raw notes went into the LLM. The LLM converted each
-batch into rough but coherent prose. At each step, the task felt more
-tractable. Ideas accumulated. The blank page filled. The new problem:
-too much material, requiring editing and pruning rather than generation.
-
-This maps onto the same induced demand / task transformation pattern:
-cheaper generation enables more ambitious work; human effort shifts
-rather than disappears.
-
-## Why AI might be different
-
-### Flywheel of improvement
-
-AI, because it is cognitive and computer-based, might have the ability
-to begin improving itself. We see this already in the full history of
-computing:
-
+AI, because it is cognitive and computer-based, might have the ability to
+begin improving itself.
+  - We see this already in the full history of computing:
   - Early computers could do very little.
   - Now AI is visibly speeding up progress toward better AIs.
     - The big AI labs are reporting and demonstrating this.
 
 So perhaps the limits of AI that I observed:
-
   - Inability to solve large problems on its own.
   - Inability to come up with good plans and ideas.
   - Confusion as context grows large.
 
-Perhaps such limits are accurate but misleading. If AI starts to
-improve AI, the agents could become powerful enough that it becomes
-difficult to envision any white-collar job that would not be done
-better by a computer.
+Perhaps such limits are accurate but misleading.
+  - If AI starts to improve AI, the agents could become capable enough that it
+    becomes difficult to envision any white-collar job that would not be done
+    better by a computer.
 
-In that world: even as we increase our ambitions, the new jobs that
-emerge will just be best suited for more AIs. Paradoxically, only jobs
-in the physical world would be AI-proof — the reverse of the
-mechanization trend, which typically caused employment to become less
-physical, more mental.
+  - In that world: even as we increase our ambitions, the new jobs that emerge
+    will still be best suited for more AIs.
+  - Paradoxically, only jobs in the physical world would be AI-proof:
+    - the reverse of the mechanization trend, which typically caused
+      employment to become less physical, more mental.
 
-Counter-note: Mechanization had similar waves of mutually reinforcing dynamics
-that, for a time, accelerated progress. Eventually the limits of the paradigm
-began to hit. The flywheel didn't keep flywheeling forever. But mechanization
-couldn't improve mechanization; AI might be able to do exactly that. [This
-counter-note deserves more thought.]
-  - This part is thin.
-  - Unlike steam power, AI could plausibly improve AI directly. That
-    distinction is worth addressing honestly.
-
-### Qualification: transition costs are always difficult
-
-The economic effects of mechanization were inaraguably positive
-over the long term and in the aggregate.
-
-But in short term and local contexts, real jobs were destroyed,
-real households and communities disrupted.
-
-Even if computerization has similar long run aggregate effects,
-the transition will not be smooth or painless without good
-social policy.
-
-### How far does the current AI paradigm go?
-
-Some AI limits I observed on LL v2 seem tractable within the current
-framework:
-
-  - Many were linked to limits on context window size.
-  - I can envision current technologies improving substantially on that
-    front.
-  - That will increase the scale of tasks that AIs can handle well.
-
-But the deeper limits seem less tractable within the current framework:
-
-  - An entity with encyclopedic grasp of all human knowledge might be
-    expected to produce better ideas or more interesting essays. I have
-    not observed that.
-  - There still seems to be something "missing."
-  - AIs may be — and may become — better than most humans at cognitive
-    jobs involving small-to-medium tasks with well-defined criteria.
-    But our biggest challenges are not those.
-
-One thing that is clearly missing: the ability to learn post-training.
-
-  - AI models are trained on a massive corpus, then static.
-  - Humans become wiser over time, even as raw cognitive powers wane:
-    better able to see the full picture, notice opportunities, exercise
-    good taste, weigh tradeoffs.
-  - That's a real difference — and not obviously fixable within the
-    current LLM paradigm.
+  - And the combination -- AI for mental work, machines and robots for
+    physical -- leaves no escape value for new employment opportunities.
 
 ## The worst case might be good indeed
 
-Assume I'm wrong: AIs become something close to the extreme
-capabilities seen in fiction — Data in Star Trek.
+Assume I'm wrong: AIs become something close to the extreme capabilities seen
+in fiction — Data in Star Trek.
 
-The mass unemployment story ignores the full implications of its own
-scenario:
-
+The mass unemployment story ignores the full implications of its own scenario:
   - The unemployment, if it happens, also means massive productivity.
   - More economically useful goods and services with fewer inputs.
   - That translates directly — mathematically, even — into more income,
     wealth, and prosperity.
 
-One possibility is extreme inequality: poverty for many, wealth and
-power for a few. But that is a political outcome, not an economic
-necessity.
+One problem is transition costs:
+  - Over the long run and on average, mechanization led to much greater
+    prosperity: in goods, services, leisure time, quality, and variety.
+  - But in short term and local contexts, real jobs were destroyed, real
+    households and communities disrupted.
+  - Even if computerization has similar long run aggregate effects, the
+    transition will not be smooth or painless without good social policy.
 
-In a world where computers can do all cognitive tasks and robots can
-perform most physical tasks:
+And that points to the real challenge -- politics:
+  - A world where computers can do all cognitive tasks and robots can perform
+    most physical tasks -- that's a post-scarcity world.
 
-  - That is a post-scarcity society.
-  - It can be a dystopian hellscape with extreme inequality.
-  - Or it can be something where most humans need not labor to satisfy
-    material desires — even shorter work weeks, or work as an
-    opt-in activity.
+    - Or at least it could be.
+    - It could be a world where most humans need not labor to satisfy material
+      desires — even shorter work weeks, or work as an a vocation rather than
+      a necessity -- akin to my work on LL v2, an open software project that
+      others are free to use, learn from, even copy.
+    - The wealth that this technology could generate can be well distributed
+      and ways that generally encourage human flourishing, further supporting
+      and stimulating even more technological advances in the future.
 
-  - I don't expect that kind of outcome -- in effect, the sort of
-    post-scarcity world in Star Trek.
-  - But I know from the study of hsitory and economics that inequality is
-    always downstream from our political systems and the choices behind them.
+  - Alternatively it can be a dystopian hellscape with extreme inequality.
+    - One where those who claim physical and legal control over the technology
+      collect disproportionate share of the material rewards and exert
+      disproportionate economic and political power over societies dependent
+      on that tech.
+
+  - AIs radically emphasize the point that all technology truly does rest on
+    our shared inheritance rather than merely on the genius of specific
+    inventors or firms.
+    - Cutting edge AIs are trained on what is, to a first approximation, all
+      of human knowledge.
+    - It's easy to make ethical and practical arguments that whatever wealth
+      and prosperity flow from the capabilities of AI ought to benefit
+      everyone, not just those who control it in a narrowly legal or technical
+      sense.
 
   - If we invent super-capable machines, it's up to us (absent T2 alignment
     problems) to decide how the prosperity and wealth implied by that new
