@@ -17,13 +17,11 @@ __HERE__
 ## The problem with AI
 ## Economic history says the unemployment concerns are confused
 ### Mass unemployment explained
-## Mechanization as a comparative case study
-### LL v2 as a case study
-### MISC
-#### A case study: cloud backup
-#### Limits of AI
-#### Limits of current AI paradign
-### Recursive improvement: computerization might be different than mechanization
+### Mechanization as a comparative case study
+
+## LL v2 as a case study
+## Limits of AI
+## Recursive improvement: computerization might be different than mechanization
 ## The worst case might be good indeed
 
 -->
@@ -55,7 +53,7 @@ The employment fear is understandable and intuitive:
     replacement.
     - [get quote or two]
 
-## Mechanization as a comparative case study
+### Mechanization as a comparative case study
 
 Mechanization overview:
 
@@ -175,35 +173,24 @@ So mechanization did cause massive job destruction:
       - Fewer injuries and medical side effects.
       - [other examples?]
 
-### LL v2 as a case study
+## LL v2 as a case study
 
-My work with an AI coding agent on LL v2 is illustrative.
-
-Background:
-
-  __HERE__
-
-### MISC
-
-My work with an AI coding agent on LL v2 is illustrative: overview:
+My work with an AI coding agent on LL v2 is illustrative:
+  - Provides a concrete example of the kinds of shifts that occurred in
+    employment during mechanization.
+  - Shifts that we might also experience with computerization.
 
 AI massively increased my productivity as a software creator:
+  - Over 11K LOC.
+  - 2 months of calendar time.
+  - My effort was consistent (most days each week) but partial: 1 to 3 hours
+    was typical.
+  - Just as mechanization, allowed US agriculture to produce many more
+    agriculture goods and services with much less human employment,
+    so too did computerization allow me to generate much more
+    working software at a fraction of the effort.
 
-  - Speed:
-    - Over 11K LOC.
-    - 2 months of calendar time.
-    - My effort was consistent (most days each week) but partial: 1 to 3
-      hours was typical.
-
-  - Scope:
-    - The domain (web programming) was outside my expertise.
-    - The result far exceeded my plans and hopes.
-      - Better aesthetics.
-      - Many more features than initially planned/expected.
-        - Cloud backup, sharing, zooming, chapters, scratch nudging.
-        - Aesthetic polish.
-
-AI made a previously impossible thing possible:
+AI as an enabler: it made a previously impossible thing possible:
   - I was an experienced software engineer.
     - But not a web developer -- its own domain of expertise.
   - I lacked to expertise to create v2:
@@ -211,163 +198,188 @@ AI made a previously impossible thing possible:
     - Without an AI assistant to do the coding a v2 of this ambition would
       have never occurred.
 
-AI altered the type of work I did:
-  - Planning.
-  - Revising flawed plans.
-  - Assessment.
-  - QA/testing.
-  - Management: organizing the work.
-  - Expanding the feature list.
-  - Fine-tuning: making things simpler, more consistent, more coherent.
-  - Not coding.
-  - So the project did keep me occupied or "employed" in some sense
-    (technically, I'm retired).
-  - But the nature of the work changed substantially (no coding by me).
+  - The result in v2 far exceeded my plans and hopes.
+    - Many more features than initially planned/expected.
+      - Cloud backup, sharing, zooming, chapters, scratch nudging.
+      - Higher level of aesthetic polish.
 
-The AI did not eliminate work or make v2 "easy":
-  - This project did not look like vibe coding:
-    - Media examples of this are often small projects.
-    - In other coding work I have experienced this kind of thing:
-      - Ask the LLM to do something small.
-      - It finishes the work in one shot.
-      - And it works on the first try (or maybe very soon thereafter after a
-        coule of quick rounds of fixes/adjustments).
+  - Here, too, the parallel with mechanization is direct:
+    - Previously unimaginable products and services now exist.
+    - And the capabilities and qualities of even previously existing things is
+      now much higher.
+    - Just as human material living standards increased due to mechanization,
+      my ambitions -- the scope of my agenda -- for LL increased substantially
+      as a result of AI.
 
-  - LL v2 would have been a large project for one software developer:
-    - On my part time approach to these efforts, it would have taken months of
-      work to acquire the expertise (as noted, I would have never done that)
-      and then perhaps as long as a year to code it.
+  - While working on LL v2 I often reflected on my academic/research career:
+    - All of the biggest projects in my academic career could have been
+      substantially helped by AIs. My team and I would have done more and done
+      it faster.
+    - Examples:
+      - Dissertation.
+      - Historical Statistics of the United States.
+      - MPC: IPUMS, etc
+    - Footnote:
+      - Andy Hall's research on LLMs and political science reinforce this.
+      - Using the productivity boost from AI to create more bold and expansive
+        research agendas.
+      - [get citation; add detail]
 
-  - Instead, the project not only become possible and the coding work itself
-    went very fast.
+AI shifted the nature of the work, but did not eliminated it
 
-  - But the project was still difficult:
-    - Lots of thinking to develop the plan, with many back and forths with the
-      AI, both to get the AI up to speed but also to sanity check my own
-      ideas.
-    - Lots of rethinking after early implementation and subsequent usage
-      revealed gaps or inconstencies in the plan.
+  - My old familiar job -- as someone who writes code -- was destroyed.
+  - But I did not become unemployed.
+  - Instead I spent my effort on other things besides coding.
+  - This LL v2 experience mirrors that pattern noted for mechanization:
+    - New jobs emerged.
+    - Employment adjusted rather than collapsing.
 
-The changed nature of working on a software project is a good one for me:
-  - In my career as a software engineer: the parts I liked most were the
-    planning phases — designing new systems, working through difficult
-    problems.
-  - The parts I liked least were the long implementation slogs, the
-    insufficient test coverage, the managers asking when it would ship.
-  - AI seem capable of radically compressing the work I liked less, leaving me
-    free to envision the software I want to exist and using an AI to make that
-    happen much more rapidly.
+  - The focus of my work shifted:
+    - Planning:
+      - Developing an initial plan for v2.
+      - Often using AI as a sounding board.
+    - Management:
+      - Directing the AI step by step as it wrote the code across multiple
+        stages of work.
+    - Assessment:
+      - Using the app's new features as they were implemented.
+      - Identifying gaps, confusion, needless complexity, or incoherency.
+    - More planning:
+      - As unanticipated problems were identified, developing revised and
+        expanded plans to address the problems.
+      - Followed by additional rounds of mangement and assessment.
 
-My academic and research background provides similar examples:
-  - All of the biggest projects in my academic career could have been
-    substantially helped by AIs. My team and I would have done more and
-    done it faster.
-  - Examples:
-    - Dissertation.
-    - Historical Statistics of the United States.
-    - MPC: IPUMS, etc
+    - Testing and project QA:
+      - More in-depth, real-world usage of the app.
+      - Again, to find problems, weak points, etc.
+      - Again, with more rounds of planning and implementation management.
 
-  - Andy Hall's research on LLMs and political science reinforce this:
-    - using the productivity boost from AI to create more bold and expansive
-      research agendas.
-    - [get citation; add detail]
+    - More management:
+      - Several rounds of refactoring.
+      - Directing the AI to identify targets for code refactoring.
+      - Managing the implementation of those refactoring steps.
+      - Refactoring is a common part of software projects:
+        - Ensuring that names/concepts are used consistently.
+        - Removing code duplication.
+        - [etc; get more examples]
+      - But often in software projects the team lacks the resources to engage
+        in refactoring efforts: too many high-priority issues to address.
+        - That can lead, over time, to software than can get so bogged down in
+          tech debt that it has trouble responding to future needs or
+          problems.
+      - But with AI, coding is much less costly.
+        - So LL v2 was able to make numerous refactoring changes:
+        - Some of these were purely implementation issues:
+          - Better, more sensible software for anyone in the future reading
+            the code.
+        - But some of the refactoring work led to discoveries of additional
+          gaps, problems, etc with user-facing implicatins.
+      - So by making coding less costly and thus enabling me to perform
+        several rounds of refactoring, the project improved in significant
+        ways.
 
-#### A case study: cloud backup
+    - Writing:
+      - User facing documentation.
+      - Developer facing technical documentation;
+        - In essence, good notes for my future self and for any future AI to
+          get back up to speed on the project, remind ourselves of how it
+          works, and why certain decisions were made.
+        - Such documentation exists in well run software projects with
+          sufficient resources, but tends to fall by the wayside when they are
+          not.
+        - By making the cost of generating both code and technical
+          documentation so much less costly, LL v2 ended up resting on a solid
+          basis not only in terms of code refactoring but also in terms of
+          tech docs that will maybe serve as a basis for a v3.
 
-Cloud backup is a good illustration:
+  - That employment shift was favorable for me:
 
-  - It started as a speculative idea — maybe something for a hypothetical v3.
-  - AI suggested a free tier of Supabase:
-    - Hosted DB.
-    - JS client.
-    - Authentication via Google/GitHub.
+    - In my career as a software engineer: the parts I liked most were the
+      planning and problem-solving phases — designing new systems, working
+      through difficult problems, developing coherent and intutive software.
+    - The parts I liked least were the long implementation slogs, the
+      insufficient test coverage, the managers asking when it would ship.
+    - AI seem capable of radically compressing the work I liked less, leaving
+      me free to envision the software I want to exist and using an AI to make
+      that happen much more rapidly.
+    - At least for me, software creation became more humane:
+      - My efforts could focus on creativity, problem solving.
+      - Much of the drudgery -- writing routine code -- disappeared.
+      - In short, the conditions of my employment improved.
 
-But I put the feature on the backburner:
-  - It sounded promising.
-  - But both I and the AI carried the legacy of software planning culture.
-      - Developer time was typically the scarcest resource on any project I
-        had ever worked on.
+As that discussion of my work illustrates, LL v2 was not vibe coding:
+
+  - Even though the cost of generating code became very low, my experience on
+    v2 did not match the usual portrait of vibe coding.
+    - Namely, one where you tell the AI what you want and it creates it.
+    - For small, well-defined tasks, that model works:
+      - Vibe coding is real in that sense.
+      - I have experienced it on small tasks.
+
+  - But LL v2 was challenging work.
+    - But the difficulty, as discussed, focused upward to planning,
+      creativity, assessment, and reassessment.
+
+__HERE__
+
+V2's cloud backup feature provides as a concrete illustration of
+several of the dynamics noted above.
+
+  So if we cut that ending does the purpose of the cloud backup become the
+  following?
+
+    1. Massive cost decline for coding made it possible to contemplate
+       something that all of our prior training said was crazy: adding a
+       complex feature late in the game.
+
+    2. The most difficult work in adding this feature shifted upward: away
+       from routine code (now very fast) and toward planning and conceptual
+       issues. Effectively, an illustration of an employment shift.
+
+  - First half:
+    - Started as a speculative idea, maybe for v3.
+    - Developer time was typically the scarcest resource on any project I
+      had ever worked on.
       - An entire industry of books, blog posts, conference talks, and
         consultants emerged to help teams rank features, manage technical
         debt, and weigh competing priorities.
       - All of this thinking assumed implementation was expensive and slow,
         because it was.
+    - In this realm, adding a non-trivial feature like cloud backup late in
+      the development of a new version of an application -- that kind of
+      thing was the sort of reckless behavior that tended to cause software
+      projects to fail.
+    - Both the AI and I were carrying that assumption — hedging on
+      late-stage feature additions, weighing "implementation cost" that had
+      mostly evaporated.
+      - It took several rounds of that pattern before old habits of mind
+        started adjusting.
 
-      - In this realm, adding a non-trivial feature like cloud backup late in
-        the development of a new version of an application -- that kind of
-        thing was the sort of reckless behavior that tended to cause software
-        projects to fail.
+  - Second half:
+    - I decided to go for it.
+    - Implementation began and went quickly.
+    - Had an operational cloud backup in fairly short order.
 
-  - Just as I had been trained in that software engineering culture, so to was
-    the AI model.
+    - But questions multiplied quickly:
+      - What should happen the first time a user signs in?
+      - What if the local library is empty but the cloud has data?
+      - What if both have data and they differ?
+      - If you use two devices alternately without coordinating, how do you
+        avoid overwriting your own work?
+      - Should the app remind a signed-out user to sign back in, and if so,
+        how persistently?
 
-      - It training corpus included all of the books, materials, advice.
-      - That mentality was evident in many of our planning conversations,
-        including cloud backup.
+    - The difficulties were mostly conceptual:
+      - What should cloud backup promise and, just as important, not
+        promise.
+      - What should the mental model be?
+    - The breakthrough -- cloud-as-hard-drive, no automatic syncing -- came
+      from reasoning, not from writing more code.
+      - Once we had solutions to the conceptual questions, the
+        implementation changes were easy: the AI did them in a handful of
+        minutes.
 
-      - We would discuss a possible feature addition or behavior change and
-        the AI would dutifully weigh the tradeoffs.
-        - The AI might conclude with a phrase like: "doable, but not trivial —
-          possibly not worth the cost."
-
-      - But then I would decide to forge ahead the AI would write working code
-        within a few minutes.
-
-      - It took several rounds of this pattern before I started to realize —
-        sometimes dragging the LLM along with me — that old habits of mind
-        needed adjusting.
-
-After we had our initial plan, we divided the implementation work into several
-sub-stages.
-  - At that point, my work was mostly done.
-  - I would prompt the AI: please implement the next phase.
-  - Very quickly, we have our first working implementation of cloud backup.
-
-It didn't take long for the questions to start multiplying:
-  - What should happen the first time a user signs in?
-  - What if the local library is empty but the cloud has data?
-  - What if both have data and they conflict?
-  - What does "conflict" even mean at the video level?
-  - If you use two devices alternately without coordinating, how do you avoid
-    overwriting your own work?
-  - Should the app remind a signed-out user to sign back in, and if so, how
-    persistently?
-
-I began to think we had opened a pallet load of worm cans:
-  - This, too, was a familiar feeling from my software engineering background.
-  - You are in the middle of implementing a plan and you realize that there
-    are fundamental open questions or not easily resolved tensions within the
-    plan.
-
-  - During that middle stretch I had a feeling I recognized immediately.
-    - It was the feeling of being on a software team where the project has
-      gotten itself into a difficult situation: each proposed fix creates new
-      problems, the edge cases keep multiplying, nothing seems to fully hold
-      together.
-    - I realized that even if the cost of generating code becomes very low,
-      creating usable, intuitive, coherent software would remain difficult, at
-      least for non-small projects.
-
-For a while, the AI and I spiraled a bit:
-  - Solutions were envisioned.
-  - Some were implemented, but then abandoned because they didn't cleanly
-    achieve a reasonable balancing of the tradeoffs.
-
-I don't recall how the breakthrough arrived, maybe in a flash or maybe as an
-emergent thing:
-  - In any case, clarity settled in one we landed on a clear mental model:
-    - The cloud backup was not aiming to be any kind of live sync.
-    - Rather the cloud was analogous to a hard drive for your LL data.
-  - Hard drives don't do automatic things for the user or prompt them.
-    - That clarified what the app should do and not do regarding backup.
-  - A bit later we realized that the various data operations (save to cloud,
-    read from cloud, and import from JSON) needed to provide the user would a
-    more complete picture (an inventory, in effect).
-    - The conflict detection went through at least one simpler version before
-      arriving at the five-bucket categorization with per-category toggles
-      that shipped.
-
-#### Limits of AI
+## Limits of AI
 
 Design and plan:
   - The architecture, the entity model, the keyboard scheme, the data model,
@@ -440,8 +452,6 @@ That myopia seems downstream of context window limits.
       - My memory of that project context, like all human memory, is fallible.
       - But it was nonethless strikingly more complete than the AI's memory.
 
-#### Limits of current AI paradign
-
 Task size limitations might be tractable in the short to medium term:
   - LLM lapses are downstream of context window limits.
   - As those limits expand, one can envision an LLM with equally expansive
@@ -478,7 +488,7 @@ Ability to learn:
       good ideas, to have good taste for quality, coherence, the
       weighing of trade-offs.
 
-### Recursive improvement: computerization might be different than mechanization
+## Recursive improvement: computerization might be different than mechanization
 
 AI, because it is cognitive and computer-based, might have the ability to
 begin improving itself.
@@ -508,8 +518,9 @@ Perhaps such limits are accurate but misleading.
 
 ## The worst case might be good indeed
 
-Assume I'm wrong: AIs become something close to the extreme capabilities seen
-in fiction — Data in Star Trek.
+Assume I'm wrong about the limits of the current AI paradigm: AIs become
+something close to the extreme capabilities seen in fiction — Data in Star
+Trek.
 
 The mass unemployment story ignores the full implications of its own scenario:
   - The unemployment, if it happens, also means massive productivity.
