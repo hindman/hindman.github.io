@@ -102,6 +102,10 @@ Contemporary worries about mechanization paralleled our AI debates:
     - Triggered a serious "compensation debate" among classical economists
       that ran for decades.
 
+  - Gunnar Mydal:
+    - Debates over early spreadsheets?
+    - [investigate this]
+
 On mechanization, if not AI, we have the benefit of hindsight:
 
   - Yes, mechanization led to massive productivity gains.
@@ -198,7 +202,7 @@ AI as an enabler: it made a previously impossible thing possible:
     - Without an AI assistant to do the coding a v2 of this ambition would
       have never occurred.
 
-  - The result in v2 far exceeded my plans and hopes.
+  - In addition, the result in v2 far exceeded my plans and hopes.
     - Many more features than initially planned/expected.
       - Cloud backup, sharing, zooming, chapters, scratch nudging.
       - Higher level of aesthetic polish.
@@ -320,24 +324,18 @@ As that discussion of my work illustrates, LL v2 was not vibe coding:
     - But the difficulty, as discussed, focused upward to planning,
       creativity, assessment, and reassessment.
 
-__HERE__
-
 V2's cloud backup feature provides as a concrete illustration of
 several of the dynamics noted above.
 
-  So if we cut that ending does the purpose of the cloud backup become the
-  following?
+  - Cloud backup started as a speculative idea fairly late in the work on v2.
+    Backup was envisioned as an idea for a possible v3.
 
-    1. Massive cost decline for coding made it possible to contemplate
-       something that all of our prior training said was crazy: adding a
-       complex feature late in the game.
+    - It would provide a more convenient way for users to back up their LL
+      data and coordinate usage across multiple devices.
+    - In addition, it would support the sharing of video and scratch loop data
+      among users.
 
-    2. The most difficult work in adding this feature shifted upward: away
-       from routine code (now very fast) and toward planning and conceptual
-       issues. Effectively, an illustration of an employment shift.
-
-  - First half:
-    - Started as a speculative idea, maybe for v3.
+  - I say the feature was speculative mostly out of habit:
     - Developer time was typically the scarcest resource on any project I
       had ever worked on.
       - An entire industry of books, blog posts, conference talks, and
@@ -355,12 +353,17 @@ several of the dynamics noted above.
       - It took several rounds of that pattern before old habits of mind
         started adjusting.
 
-  - Second half:
-    - I decided to go for it.
-    - Implementation began and went quickly.
-    - Had an operational cloud backup in fairly short order.
+  - Here we see the first key point as it relates the the larger dicussion of
+    mechanization and computerization:
+    - Massive cost decline for coding made it possible to contemplate
+      something that all of our prior training said was crazy: adding a
+      complex feature late in the game.
 
-    - But questions multiplied quickly:
+  - Indeed, after I decided to pull the trigger, implementation went quickly:
+    - It took very little time to get a working cloud backup feature.
+    - Unfortunately, questions multiplied quickly:
+      - [tighten up list of examples, but without making it too generic for a
+        typical reader to grasp some of the challenge]
       - What should happen the first time a user signs in?
       - What if the local library is empty but the cloud has data?
       - What if both have data and they differ?
@@ -368,6 +371,14 @@ several of the dynamics noted above.
         avoid overwriting your own work?
       - Should the app remind a signed-out user to sign back in, and if so,
         how persistently?
+
+  - But here we see the second point:
+    - Even in a world with radically reduced cost of generating working code,
+      software develop is still very difficult at times.
+    - But that difficulty is pushed upward -- away from raw implementation to
+      toward planning and conceptual matters.
+    - In other words, the need for human work and decision making did not
+      disappear; it shifted.
 
     - The difficulties were mostly conceptual:
       - What should cloud backup promise and, just as important, not
@@ -380,6 +391,57 @@ several of the dynamics noted above.
         minutes.
 
 ## Limits of AI
+
+__HERE__
+
+Draft outline:
+
+  1. Framing beat
+
+    - AI is capable the LL v2 case study shows that.
+    - But its capabilities are genuinely bounded, in ways that sharpen the
+      employment picture. Two kinds of limits: one likely tractable, one less
+      so.
+
+  2. The genius junior engineer (central organizing analogy)
+
+    - Encyclopedic knowledge of APIs, patterns, technology
+    - Fast, tireless, almost never stumped by a well-specified task
+    - But myopic: solves the immediate problem without weighing broader
+      implications
+    - v2 example: fixes that quietly undermined a broader goal
+
+  3. The scope limit (same root as myopia)
+
+    - Strong at narrow, well-defined tasks; weak at medium-to-large,
+      open-ended ones
+    - v2: couldn't produce the architecture plan; couldn't organize raw essay
+      notes into a coherent outline
+    - Prose has the same shape: good at small-to-medium with clear criteria;
+      not good beyond that
+
+  4. Why: context window as explanation
+
+    - Training corpus: encyclopedic. Project knowledge: reset each session.
+    - Human project memory — fallible, but strikingly more complete
+    - Tractability caveat: context limits are expanding; a fully context-aware
+      AI would be qualitatively different
+
+  5. A deeper limit: no wisdom, judgment, or genuine ideas
+
+    - Counterintuitive given encyclopedic training data
+    - Something is missing — no need to over-theorize what
+    - AI is static after training; humans accumulate wisdom and taste over
+      time
+    - Less clearly tractable than the context problem
+
+  6. Nuance: the sounding board value
+
+    - Even where AI can't lead, it sharpens thinking
+    - Not a replacement for a great expert — but expert access is rare; AI is
+      always available
+    - Ask a sharp question: better tradeoffs, caught blind spots, more
+      coherent thinking
 
 Design and plan:
   - The architecture, the entity model, the keyboard scheme, the data model,
@@ -568,4 +630,173 @@ And that points to the real challenge -- politics:
   - If we invent super-capable machines, it's up to us (absent T2 alignment
     problems) to decide how the prosperity and wealth implied by that new
     technology is distributed.
+
+## Session notes: macroeconomic theory (2026-05-13)
+
+These notes summarize a chat session exploring the macroeconomics of a
+hypothetical highly automated economy. May or may not feed into the essay.
+
+### Background check: Myrdal and spreadsheets
+
+  - A podcast claimed Gunnar Myrdal and other academics wrote reports in
+    the late 1960s / early 1970s expressing concern that spreadsheet
+    technology would destroy accounting jobs.
+  - This claim is likely anachronistic or garbled:
+    - Electronic spreadsheets did not exist in that era. VisiCalc (1979)
+      was the first; Lotus 1-2-3 followed in 1983.
+    - What did exist in the 1960s: mainframe batch-processing systems,
+      IBM punch-card tabulating machines, and early payroll/ledger software.
+  - The broader concern about automation and white-collar jobs was real
+    and well-documented in the 1960s:
+    - "Ad Hoc Committee on the Triple Revolution" (1964): warned that
+      "cybernation" would cause mass structural unemployment.
+    - National Commission on Technology, Automation, and Economic
+      Progress: major report in 1966.
+    - Kennedy and Johnson both addressed automation anxiety publicly.
+  - Myrdal was engaged in automation/inequality debates in this period,
+    but I have no confirmed source for the specific spreadsheet/accounting
+    claim. Do not cite without a primary source.
+  - What actually happened after spreadsheets arrived (post-1979):
+    accounting and bookkeeping employment did not collapse -- it grew.
+    Spreadsheets made individual accountants more productive, lowered
+    cost, and expanded demand. A clean example of augmentation rather
+    than replacement. Often cited by David Autor and others.
+
+### Andy Hall: "The Politics of Jobless Prosperity"
+
+  - Article at freesystems.substack.com.
+  - Central argument: AI displacement may produce "jobless prosperity"
+    -- mass unemployment coinciding with economic growth -- which is
+    politically harder to manage than a recession, because displaced
+    workers can't appeal to universal hardship.
+  - Key points:
+    - Currently no clear AI-caused displacement in jobs data; AI does
+      not crack top 20 political concerns for Americans.
+    - Major historical labor settlements (New Deal, British welfare
+      state) emerged from conflict, not elite design.
+    - Tech company policy proposals (OpenAI's 32-hour workweek, public
+      wealth funds, etc.) will fail: authored by responsible parties,
+      lacking legitimacy, and already outpaced by populist demands.
+    - Hall's trigger hypothesis: sustained political backlash emerges
+      if unemployment rises 2+ points with clear AI attribution.
+    - Prescription: build measurement infrastructure, design
+      self-activating triggers tied to unemployment thresholds, and do
+      the economic research now before crisis forces bad choices.
+  - Concept from Douglass North: credible commitment -- design
+    institutions whose constraints are believable before you need them.
+  - Hall's view is that the political settlement will come through
+    conflict; the narrow window is for intellectual/institutional
+    preparation.
+
+### The distribution function of working
+
+  - Key concept identified in the chat.
+  - Labor in a capitalist economy serves two distinct functions:
+    1. Factor of production: labor produces goods and services.
+    2. Distribution mechanism: wages distribute purchasing power to
+       the population, enabling them to consume.
+  - These functions are normally bundled together; employment links them.
+  - Automation severs the bundle:
+    - Eliminates labor from production (function 1).
+    - Does not replace the distribution mechanism (function 2).
+    - Capitalism has no automatic mechanism to substitute for the
+      distribution function once labor is removed from production.
+  - This is the structural breakdown in a highly automated economy.
+
+### The circular flow breakdown
+
+  - Basic economic circuit: firms hire workers -> workers earn wages ->
+    workers spend -> firms sell output -> firms hire workers.
+  - Automation short-circuits the circuit: firms no longer need workers,
+    wages dry up, consumers lose purchasing power, output has no buyers.
+  - Capital owners have high savings rates; they cannot substitute for
+    mass consumer spending.
+  - Result: productive capacity without buyers.
+  - Historically this concern didn't materialize because automation
+    always created new job categories. The open question with AI is
+    whether that pattern continues.
+
+### Underconsumptionism
+
+  - Thesis: capitalism has a structural tendency to generate more
+    productive capacity than income to buy it.
+  - Associated with Rosa Luxemburg, Keynes, Kalecki, Minsky.
+  - Controversial in mainstream economics; pushed back on repeatedly.
+  - In a fully automated economy, the underconsumptionist critique
+    becomes hardest to dismiss.
+  - Related concept from Keynes/Kalecki: each firm wants to cut labor
+    costs; if all firms do it simultaneously, nobody has income to buy
+    output; value of owning productive apparatus collapses. Classic
+    prisoner's dilemma at civilizational scale.
+
+### Two polar outcomes of the thought experiment
+
+  Assuming an extreme case: machines perform most physical tasks,
+  AIs perform most cognitive tasks.
+
+  - Jobless prosperity: conditional on an effective distribution
+    mechanism replacing the lost income-distribution function of
+    employment. Broad ownership of capital, UBI, profit-sharing,
+    public ownership, or equivalent.
+
+  - Economic collapse / near-zero income: without a distribution
+    mechanism, the benefits of owning the robots/AIs evaporate.
+    No consumers, no income flows, wealth becomes economically inert.
+    A factory that can produce everything but sell to no one is
+    not actually valuable.
+
+  - "Wealth has no purpose without consumers": framing that captures
+    why extreme concentration is self-defeating in the limit case.
+    Wealth is meaningful only relative to a functioning exchange system,
+    which requires distributed purchasing power.
+
+### The political economy of redistribution under automation
+
+  - Standard pessimistic read: the wealthy will oppose redistribution
+    and hoard increasing wealth. Historical record supports this as
+    a strong tendency.
+  - Counter-argument (the user's insight): in a globally automated
+    economy, the exit options that normally weaken the feedback loop
+    vanish. You can't export to countries with intact consumer demand
+    if their jobs are automated too. The wealthy are trapped inside
+    the same macroeconomic logic as everyone else; hoarding becomes
+    self-defeating not just in aggregate but individually.
+  - The collective action framing:
+    - If all wealthy owners redistribute enough to sustain consumer
+      demand, wealth remains meaningful for everyone.
+    - Individual hoarding is profitable now; demand collapse is
+      collective and later. Wealthy actors discount the future
+      collective harm relative to immediate private gain.
+    - But when automation is global and comprehensive, the feedback
+      loop between hoarding and wealth-becoming-worthless tightens.
+  - Historical pattern: elites resist, underconsumption builds,
+    crisis hits, redistribution happens under duress. New Deal as
+    canonical case: FDR had support from business factions that
+    understood labor income needed shoring up.
+  - Total elite buy-in is not required: only a fraction of the
+    ownership class needs to defect from the blocking coalition.
+    The dispossessed (without jobs, income, or consumption) are
+    already mobilized. The political balance only needs to tilt
+    enough to implement a new distribution system.
+  - The question shifts from whether a distribution mechanism emerges
+    to what kind and at what cost -- including how destructive
+    the intervening crisis is.
+
+### Key terms and names
+
+  - Distribution function of working (our term)
+  - Circular flow of income (Keynesian macro)
+  - Underconsumptionism (Luxemburg, Keynes, Kalecki, Minsky)
+  - Jobless prosperity (Hall's term)
+  - Lump of labor fallacy (already in essay)
+  - Credible commitment (Douglass North)
+  - Prisoner's dilemma (collective action framing)
+  - Gunnar Myrdal (economist/sociologist; Nobel 1974; treat with care
+    re: specific spreadsheet claim)
+  - Andy Hall ("The Politics of Jobless Prosperity," Substack)
+  - David Autor (labor economist; augmentation vs. replacement research)
+  - VisiCalc (1979, first spreadsheet); Lotus 1-2-3 (1983)
+  - Ad Hoc Committee on the Triple Revolution (1964)
+  - National Commission on Technology, Automation, and Economic
+    Progress (1966 report)
 
