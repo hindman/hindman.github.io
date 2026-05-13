@@ -28,6 +28,10 @@ create table public.events (
 
 alter table public.events enable row level security;
 
+grant insert
+  on public.events
+  to anon, authenticated;
+
 create policy "insert_anon_auth"
   on public.events for insert
   to anon, authenticated
@@ -51,6 +55,10 @@ create table public.shares (
 ) tablespace pg_default;
 
 alter table public.shares enable row level security;
+
+grant select, insert
+  on public.shares
+  to anon, authenticated;
 
 create policy "insert_anon_auth"
   on public.shares for insert
@@ -80,6 +88,10 @@ create table public.users (
 ) tablespace pg_default;
 
 alter table public.users enable row level security;
+
+grant select, insert, update, delete
+  on public.users
+  to authenticated;
 
 create or replace function public.set_updated_at()
 returns trigger language plpgsql as $$
