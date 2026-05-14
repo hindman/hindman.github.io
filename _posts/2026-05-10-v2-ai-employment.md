@@ -2,7 +2,8 @@
 title: "AI and mass unemployment: a skeptical take"
 excerpt: >
   Like mechanization, computerization might make us
-  more prosperous, not unemployed.
+  more prosperous, not unemployed. Lessons from economic
+  history and LoopLlama.
 tags:
   - loopllama
   - software
@@ -45,11 +46,11 @@ This essay focuses on the second concern.
 The employment fear is understandable and intuitive:
 
   - AI is cognitive in nature.
-  - If it becomes more competant than the typical knowlege worker for most
+  - If it becomes more competent than the typical knowledge worker for most
     tasks, AI will do most of that work, because it will be faster, cheaper.
   - That sure looks like job destruction.
   - And not just in one sector, but on a massive scale.
-  - Leading working for the frontier AI labs have predicted large scale job
+  - Multiple leaders of the frontier AI labs have predicted large scale job
     replacement.
     - [get quote or two]
 
@@ -101,10 +102,6 @@ Contemporary worries about mechanization paralleled our AI debates:
       permanently harm workers.
     - Triggered a serious "compensation debate" among classical economists
       that ran for decades.
-
-  - Gunnar Mydal:
-    - Debates over early spreadsheets?
-    - [investigate this]
 
 On mechanization, if not AI, we have the benefit of hindsight:
 
@@ -158,11 +155,11 @@ Why were the concerns about mechanization ill-founded?
 
     - We also do more: ambitions, wants, needs, expectations expanded:
       - More knowledge production of many kinds:
-        - Academic
+        - healthcare
+        - government generally
         - journalism
-        - government data
-      - More administrative and similar work.
-      - [need other examples]
+        - academia
+        - [need other examples]
 
 So mechanization did cause massive job destruction:
   - But it did not cause mass unemployment or impoverishment.
@@ -181,18 +178,17 @@ So mechanization did cause massive job destruction:
 
 My work with an AI coding agent on LL v2 is illustrative:
   - Provides a concrete example of the kinds of shifts that occurred in
-    employment during mechanization.
-  - Shifts that we might also experience with computerization.
+    employment during mechanization and might occur with computerization.
 
 AI massively increased my productivity as a software creator:
   - Over 11K LOC.
   - 2 months of calendar time.
   - My effort was consistent (most days each week) but partial: 1 to 3 hours
     was typical.
-  - Just as mechanization, allowed US agriculture to produce many more
-    agriculture goods and services with much less human employment,
-    so too did computerization allow me to generate much more
-    working software at a fraction of the effort.
+  - Just as mechanization allowed US agriculture to produce many more
+    agriculture goods and services with much less human employment, so too did
+    computerization allow me to generate much more working software at a
+    fraction of the effort.
 
 AI as an enabler: it made a previously impossible thing possible:
   - I was an experienced software engineer.
@@ -238,7 +234,7 @@ AI shifted the nature of the work, but did not eliminated it
     - New jobs emerged.
     - Employment adjusted rather than collapsing.
 
-  - The focus of my work shifted:
+  - The focus of my work shifted, away from coding and toward:
     - Planning:
       - Developing an initial plan for v2.
       - Often using AI as a sounding board.
@@ -259,6 +255,7 @@ AI shifted the nature of the work, but did not eliminated it
       - Again, with more rounds of planning and implementation management.
 
     - More management:
+      - [section very long relative to its contribution to the argument]
       - Several rounds of refactoring.
       - Directing the AI to identify targets for code refactoring.
       - Managing the implementation of those refactoring steps.
@@ -321,11 +318,42 @@ As that discussion of my work illustrates, LL v2 was not vibe coding:
       - I have experienced it on small tasks.
 
   - But LL v2 was challenging work.
-    - But the difficulty, as discussed, focused upward to planning,
+    - The difficulty, as discussed, focused upward to planning,
       creativity, assessment, and reassessment.
 
-V2's cloud backup feature provides as a concrete illustration of
-several of the dynamics noted above.
+AIs as genius junior engineers:
+  - To frame this upward shift in the kind of work I did on LL, one can view
+    an AI coding agent as a genius junior engineer:
+  - The AI is like a new hire who has not just RTFM but memorized it.
+    - Encyclopedic knowledge of technology, APIs, coding patterns.
+    - Fast, tireless.
+    - Almost never stumped by a well-specified task.
+
+  - But junior engineers, however talented, are often myopic.
+    - They solve the problem in front of them without fully weighing wider
+      implications — other parts of the codebase, consistency with existing
+      patterns, the coherence of the system as a whole.
+    - And they are typically unable to propose workable solutions to project's
+      hardest problems -- again, because they lack the information needed to
+      weigh the competing tradeoffs.
+
+  - AIs have similar tendencies.
+    - Many times during v2, if a bug or design problem emerge, the LLM often
+      offered a fix that would genuinely resolve the immediate issue while
+      quietly introducing a new inconsistency or undermining a broader goal.
+    - Had I passively accepted every short-term solution to problems that v2
+      encountered along the way -- in other words, had I merely been "vibe
+      coding" -- I suspect that the end result would have been much less
+      coherent and useful that the v2 that resulted.
+    - To the extent that v2 was a success -- and my current verdict is that it
+      very much was -- that success was due to the human-AI combo, not just
+      one half or the other.
+
+V2's cloud backup feature provides as a concrete illustration of several of
+the dynamics noted above, most notably that complex endeavors like software
+engineering remain difficult, and thus require both human and AI
+contributions, even in the presence of radical reductions in the cost of code
+generation.
 
   - Cloud backup started as a speculative idea fairly late in the work on v2.
     Backup was envisioned as an idea for a possible v3.
@@ -335,7 +363,7 @@ several of the dynamics noted above.
     - In addition, it would support the sharing of video and scratch loop data
       among users.
 
-  - I say the feature was speculative mostly out of habit:
+  - The feature was speculative mostly out of habit:
     - Developer time was typically the scarcest resource on any project I
       had ever worked on.
       - An entire industry of books, blog posts, conference talks, and
@@ -363,7 +391,7 @@ several of the dynamics noted above.
     - It took very little time to get a working cloud backup feature.
     - Unfortunately, questions multiplied quickly:
       - [tighten up list of examples, but without making it too generic for a
-        typical reader to grasp some of the challenge]
+        typical reader to grasp some of the specific challenges]
       - What should happen the first time a user signs in?
       - What if the local library is empty but the cloud has data?
       - What if both have data and they differ?
@@ -375,7 +403,7 @@ several of the dynamics noted above.
   - But here we see the second point:
     - Even in a world with radically reduced cost of generating working code,
       software develop is still very difficult at times.
-    - But that difficulty is pushed upward -- away from raw implementation to
+    - But that difficulty is pushed upward -- away from raw implementation,
       toward planning and conceptual matters.
     - In other words, the need for human work and decision making did not
       disappear; it shifted.
@@ -392,24 +420,35 @@ several of the dynamics noted above.
 
 ## Limits of AI
 
+As the LL v2 case shows, AI is highly capable:
+  - But its abilities are genuinely bounded, in ways that sharpen the
+    employment picture.
+  - I will focus on two kinds of limits, one of them likely to be tractable in
+    the short-to-medium term, one less so.
+
+  - Genius junior engineers:
+    - That's the analogy I would use to describe current coding AIs.
+    - The AI is a junior engineer who has not just RTFM but memorized it.
+      - Encyclopedic knowledge of technology, APIs, coding patterns.
+      - Fast, tireless.
+      - Almost never stumped by a well-specified task.
+
+    - But junior engineers, however talented, are often myopic.
+      - They solve the problem in front of them without fully weighing wider
+        implications — other parts of the codebase, consistency with existing
+        patterns, the coherence of the system as a whole.
+      - And they are typically unable to propose workable solutions to the
+        organization's primary problems -- again, because they lack the
+        information needed to weigh the competing tradeoffs.
+
+    - AIs have similar tendencies.
+      - Many times during v2, if a bug or design problem emerge, the LLM often
+        offered a fix that would genuinely resolve the immediate issue while
+        quietly introducing a new inconsistency or undermining a broader goal.
+
 __HERE__
 
-Draft outline:
-
-  1. Framing beat
-
-    - AI is capable the LL v2 case study shows that.
-    - But its capabilities are genuinely bounded, in ways that sharpen the
-      employment picture. Two kinds of limits: one likely tractable, one less
-      so.
-
-  2. The genius junior engineer (central organizing analogy)
-
-    - Encyclopedic knowledge of APIs, patterns, technology
-    - Fast, tireless, almost never stumped by a well-specified task
-    - But myopic: solves the immediate problem without weighing broader
-      implications
-    - v2 example: fixes that quietly undermined a broader goal
+Draft outline for rest of material:
 
   3. The scope limit (same root as myopia)
 
@@ -479,27 +518,33 @@ problems.
     project, the LLM will not hand you a great solution.
   - Gains were more mixed — sometimes non-existent — for larger-scale or
     open-ended problems:
-    - AI could not create a good v2 plan.
+    - AI could not create a good v2 plan:
+      - Indeed, it often failed, by itself, to create good plans for
+        invididual features or subsets of v2.
+      - Footnote: which isn't to say that the AI wasn't a useful partner
+        during planning work; it was!
     - Nor could it write the posts on my behalf.
-    - Even given a pile of raw notes, ideas, and points, it could not organize
-      them into a well structured essay outline.
-
-Genius junior engineers:
-  - That's the analogy I would use to describe current coding AIs.
-  - The AI is a junior engineer who has not just RTFM but memorized it.
-    - Encyclopedic knowledge of technology, APIs, coding patterns.
-    - Fast, tireless.
-    - Almost never stumped by a well-specified task.
-
-  - But junior engineers, however talented, are often myopic.
-    - They solve the problem in front of them without fully weighing wider
-      implications — other parts of the codebase, consistency with existing
-      patterns, the coherence of the system as a whole.
-
-  - AIs have similar tendencies.
-    - Many times during v2, if a bug or design problem emerge, the LLM often
-      offered a fix that would genuinely resolve the immediate issue while
-      quietly introducing a new inconsistency or undermining a broader goal.
+      - While planning for this essay, I experimented a few different times to
+        gauge the AI's ability to speed my progress.
+      - Create a full essay:
+        - Given a few rough ideas connecting AI, mass unemployment worries,
+          and LL v2 as a case study.
+        - No success prompting the AI to create a satisfactory essay plan.
+      - Convert raw material into an argument:
+        - Given a pile of raw notes, ideas, examples from economic history,
+          and observsations from the development of LL v2.
+        - Asked the AI to organize the material into a well structured essay
+          outline.
+        - In other words, I provided a lot more raw input.
+        - And I asked for simpler output: not polished prose, but simply and
+          outline ordering the presentation of arguments, examples, and
+          rhetorical connections.
+        - The result was not good:
+          - It did not form a coherent, connected argument.
+          - The AI stuck too rididly to much of the phrasing (and verbosity)
+            of my original raw notes.
+          - The result was even more repetition and less clarity:
+            - Now I had roughly 2x the material, slightly different.
 
 That myopia seems downstream of context window limits.
   - Although an AI knowledge of its training corpus is encyclopedic in some
