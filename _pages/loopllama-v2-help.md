@@ -51,14 +51,14 @@ plus a clickable visual timeline, provide similar access.
 
 ## Quick start {#quick-start}
 
-<span class="ll-phead">Load URL</span>. To load a YouTube video into
+<span class="phead">Load URL.</span> To load a YouTube video into
 LoopLlama, see the **Video › Load URL** menu item. Notice its two key
 bindings: `vl` or `y`. When you run the operation, you can paste either a full
 URL or just the YouTube video ID (an example to try: `QQ5XMmV7-bY`). After the
 video loads, notice that video name and YouTube ID are shown in the
 **Current** panel.
 
-<span class="ll-phead">Basic controls</span>. Operations to play, pause, seek,
+<span class="phead">Basic controls.</span> Operations to play, pause, seek,
 and adjust the playback speed are available in familiar buttons, text boxes,
 and dropdowns in the app's main controls. Key bindings for the most common
 actions are the following:
@@ -75,7 +75,7 @@ actions are the following:
 | `⌫`     | Speed: reset to 100%
 | `jj`    | Jump to a time
 
-<span class="ll-phead">Basic looping</span>. The controls in the **Scratch
+<span class="phead">Basic looping.</span> The controls in the **Scratch
 Loop** area allow you to loop a specific part of a video. If looping is
 toggled on, video playback and seek will adhere to the loop bounds: when the
 playhead reaches the end it will wrap around to the loop start; and seek
@@ -88,7 +88,7 @@ key bindings:
 | `[[`  | Set loop start to current time
 | `]]`  | Set loop end to current time
 
-<span class="ll-phead">Informational elements</span>. The app provides
+<span class="phead">Informational elements.</span> The app provides
 information in various ways.
 
   - **Current panel**: lists information about the current video.
@@ -104,13 +104,13 @@ information in various ways.
   - **Key binding help**: displayed in the footer area when the user types the
     first character of a two-character binding.
 
-<span class="ll-phead">Gotcha: app focus</span>. If you click anywhere in the
+<span class="phead">Gotcha: app focus.</span> If you click anywhere in the
 YouTube frame, the LoopLlama app loses focus and its key bindings become
 inactive. When that occurs, a warning is shown in the footer. The fix is
 simple: click anywhere in the app outside of the YouTube frame. The clickable
 LoopLlama timeline makes clicking in the YouTube frame rarely necessary.
 
-<span class="ll-phead">Entities: the next step</span>. For many users — those
+<span class="phead">Entities: the next step.</span> For many users — those
 who simply want to loop or change the speed of YouTube videos using an
 efficient user interface — everything you need to know has been covered. But
 if you work with some videos in depth (for example, transcribing a musical
@@ -125,7 +125,7 @@ LoopLlama, the app remembers the video and how you last left it: the current
 playhead position, the playback speed, the scratch loop endpoints, and any
 other information about the entities that a video can have.
 
-<span class="ll-phead">Load examples</span>. Use `he` for **Help › Load
+<span class="phead">Load examples.</span> Use `he` for **Help › Load
 examples**, which will load two example videos pre-configured with various
 sections, chapters, marks, and loops. You can use those examples along with
 the help documentation to learn how the app works.
@@ -135,7 +135,7 @@ the help documentation to learn how the app works.
 | **Ex1** | Catfish blues  | Song with all entities
 | **Ex2** | Edith Pageaud  | Concert with songs as chapters
 
-<span class="ll-phead">Open</span>. Use `vo` for **Video › Open** to open a
+<span class="phead">Open.</span> Use `vo` for **Video › Open** to open a
 video you loaded previously into LoopLlama.
 
 <div class="notice--primary" markdown="1">
@@ -152,12 +152,12 @@ video you loaded previously into LoopLlama.
 
 </div>
 
-<span class="ll-phead">Edit</span>. Use `ve` for **Video › Edit** to change
+<span class="phead">Edit.</span> Use `ve` for **Video › Edit** to change
 the video name (by default, the title provided by the YouTube player) or to
 set custom start and end times for the video — for example, to exclude filler
 material that you rarely watch when looping or zooming a video.
 
-<span class="ll-phead">Zoom</span>. Use `vz` for **Video › Zoom** to focus the
+<span class="phead">Zoom.</span> Use `vz` for **Video › Zoom** to focus the
 timeline view to a video's custom start-end range, if you have set one.
 
 <div class="notice--primary" markdown="1">
@@ -171,20 +171,20 @@ timeline view to a video's custom start-end range, if you have set one.
 
 </div>
 
-<span class="ll-phead">Scratch</span>. Use `vx` for **Video › Scratch** to
+<span class="phead">Scratch.</span> Use `vx` for **Video › Scratch** to
 loop an entire video (or the range defined by its custom start/end values).
 The [scratch operation](#scratch-operation) loads the start and end times into
 the scratch loop — the app's work area for looping.
 
-<span class="ll-phead">Info</span>. Use `vi` for **Video › Info** to see all
+<span class="phead">Info.</span> Use `vi` for **Video › Info** to see all
 of the LoopLlama information about a video.
 
-<span class="ll-phead">Delete</span>. Use `vd` for **Video › Delete**, which
+<span class="phead">Delete.</span> Use `vd` for **Video › Delete**, which
 allows you to select a video for deletion. The app also provides an operation
 to [delete data in bulk](#bulk-delete) and an [unstash
 operation](#video-unstash) to restore a previously deleted video.
 
-<a id="video-unstash"></a><span class="ll-phead">Unstash</span>. Use `vu` for
+<a id="video-unstash"></a><span class="phead">Unstash.</span> Use `vu` for
 **Video › Unstash**, which restores a video from a stashed copy. A stash is
 created whenever a video is deleted (via **Video › Delete** or **Data ›
 Delete**) or replaced (via **Data › Import**, **Data › Read from cloud**, a
@@ -201,25 +201,25 @@ those segments represent is up to you: a musician might label them Intro,
 Verse, Chorus, Solo; someone studying a lecture might label them by topic; a
 language learner might use them to mark speaker turns.
 
-<span class="ll-phead">Create</span>. Use `ss` for **Section › Create**, which
+<span class="phead">Create.</span> Use `ss` for **Section › Create**, which
 creates a new section with its start at the playhead position. After creating
 a section, notice the visual change in the timeline. The section end is
 inferred from the start of the next section (or the video end).
 
-<span class="ll-phead">Edit</span>. Use `se` for **Section › Edit**, mainly to
+<span class="phead">Edit.</span> Use `se` for **Section › Edit**, mainly to
 give the current section a name or to adjust its start/end values. The section
 name will appear in the timeline area, below the blue progress bar.
 
-<span class="ll-phead">Scratch</span>. Use `sx` for **Section › Scratch**,
+<span class="phead">Scratch.</span> Use `sx` for **Section › Scratch**,
 which loads the section's start and end into the scratch loop.
 
-<span class="ll-phead">Jump</span>. Use `sj` for **Section › Jump**, which
+<span class="phead">Jump.</span> Use `sj` for **Section › Jump**, which
 allows you to select any section and jump the playhead to its start.
 
-<span class="ll-phead">Zoom</span>. Use `sz` for **Section › Zoom**, which
+<span class="phead">Zoom.</span> Use `sz` for **Section › Zoom**, which
 will focus the timeline on the current section (see [zooming](#zooming)).
 
-<span class="ll-phead">Delete</span>. Use `sd` for **Section › Delete**,
+<span class="phead">Delete.</span> Use `sd` for **Section › Delete**,
 which allows you to select a section for deletion.
 
 <div class="notice--primary" markdown="1">
@@ -248,13 +248,13 @@ parallel to the section bindings, but with the `c` prefix rather than `s`.
 So if you understand sections, you also understand chapters. But there are two
 differences worth pointing out:
 
-<span class="ll-phead">Default timeline view</span>. By default, the timeline
+<span class="phead">Default timeline view.</span> By default, the timeline
 area shows sections, not chapters. That view can be toggled via `at` for **App
 › Toggle timeline**. LoopLlama will remember each video's most recent setting.
 Regardless of the timeline's current display status, the current chapter and
 section, if defined, are both listed in the **Current** panel.
 
-<span class="ll-phead">Design intent</span>. The app was built with the
+<span class="phead">Design intent.</span> The app was built with the
 premise that chapters are bigger (for example, songs in a concert) and
 sections are smaller (for example, the parts of a song), but you are not
 required to follow that model.
@@ -266,7 +266,7 @@ displayed as yellow dots in the timeline, below the sections/chapters. The
 operations and key bindings are simple and follow the conventions already
 established for sections and chapters (see the **Mark** menu).
 
-<span class="ll-phead">Current mark</span>. The only wrinkle is how
+<span class="phead">Current mark.</span> The only wrinkle is how
 "current" is defined for **Mark › Edit**: it is the nearest mark at
 or before the playhead.
 
@@ -282,12 +282,12 @@ via their start and end. They are more generic because their purpose is not to
 partition a video into non-overlapping parts: saved loops can overlap, which
 has two important implications.
 
-  - <span class="ll-phead">Current saved loop</span>. Operations that apply to
+  - <span class="phead">Current saved loop.</span> Operations that apply to
     the current saved loop, based on playhead position, go through an
     interactive picker to select the loop of interest whenever there are
     multiple loops at the playhead (related [details](#menu-ellipses)).
 
-  - <span class="ll-phead">Timeline display</span>. Saved loops are displayed
+  - <span class="phead">Timeline display.</span> Saved loops are displayed
     at the bottom of the timeline area as brown line segments. This part of
     the timeline has two "lanes" — enough real estate to display up to two
     overlapping loops unambiguously. When the number of overlaps is greater
@@ -299,22 +299,22 @@ has two important implications.
 The key bindings and menu items for saved loops are similar to those for
 sections and chapters.
 
-<span class="ll-phead">Create</span>. Use `ll` for **Loop › Create**, which
+<span class="phead">Create.</span> Use `ll` for **Loop › Create**, which
 creates a new saved loop using the current bounds of the scratch loop.
 
-<span class="ll-phead">Edit</span>. Use `le` for **Loop › Edit** to edit the
+<span class="phead">Edit.</span> Use `le` for **Loop › Edit** to edit the
 current loop's name or adjust its bounds.
 
-<span class="ll-phead">Jump</span>. Use `lj` for **Loop › Jump** to select
+<span class="phead">Jump.</span> Use `lj` for **Loop › Jump** to select
 a saved loop and move the playhead to its start.
 
-<span class="ll-phead">Zoom</span>. Use `lz` for **Loop › Zoom** to focus the
+<span class="phead">Zoom.</span> Use `lz` for **Loop › Zoom** to focus the
 timeline on the bounds of the current saved loop (see [zooming](#zooming)).
 
-<span class="ll-phead">Delete</span>. Use `ld` for **Loop › Delete** to
+<span class="phead">Delete.</span> Use `ld` for **Loop › Delete** to
 select a saved loop for deletion.
 
-<span class="ll-phead">Scratch</span>. Use `lx` for **Loop › Scratch** to load
+<span class="phead">Scratch.</span> Use `lx` for **Loop › Scratch** to load
 the current loop's bounds into the scratch loop — our next topic.
 
 ### Scratch loop
@@ -324,10 +324,10 @@ bounds produce a valid loop — meaning start less than end — the text boxes
 display the values in regular font (red font when the bounds are invalid). If
 the scratch loop is valid, the following operations are supported.
 
-<span class="ll-phead">Toggle</span>. Use `xx` for **Scratch › Toggle** to
+<span class="phead">Toggle.</span> Use `xx` for **Scratch › Toggle** to
 turn looping on/off.
 
-<span class="ll-phead">Zoom</span>. Use `xz` for **Scratch › Zoom** to focus
+<span class="phead">Zoom.</span> Use `xz` for **Scratch › Zoom** to focus
 the timeline on the bounds of the scratch loop (see [zooming](#zooming)).
 
 ### Scratch operation {#scratch-operation}
@@ -391,39 +391,39 @@ As noted above, the **Scratch** operation loads the bounds of a saved entity
 into the scratch loop. If you navigate to a section and then press `sx` to
 scratch the current section, there are several things to notice:
 
-  - <span class="ll-phead">Looping</span>. Toggled on.
+  - <span class="phead">Looping.</span> Toggled on.
 
-  - <span class="ll-phead">Current panel</span>. Indicates the name and range
+  - <span class="phead">Current panel.</span> Indicates the name and range
     of the scratch loop source.
 
-  - <span class="ll-phead">Scratch bounds larger than source</span>. The
+  - <span class="phead">Scratch bounds larger than source.</span> The
     scratch loop bounds are set slightly larger than the source bounds. This
     is done to provide a small bit of lead-in and lead-out time as you play
     the loop. Loop padding is done for sections and chapters, but not for
     videos or saved loops. You can adjust the padding via
     [Options](#app-options).
 
-  - <span class="ll-phead">Yellow bound when playhead outside source</span>.
+  - <span class="phead">Yellow bound when playhead outside source.</span>
     Press `Space` to play the video and then `Enter` to jump to the scratch
     loop start. After you do that, notice that whenever the playhead sits in
     the padded region beyond the source bounds, the relevant scratch loop
     bound is highlighted yellow.
 
-  - <span class="ll-phead">Yellow **Current** panel range when scratch and
-    source diverge</span>. If you modify the scratch loop bounds, notice that
+  - <span class="phead">Yellow **Current** panel range when scratch and
+    source diverge.</span> If you modify the scratch loop bounds, notice that
     the time range in the **Current** panel is displayed in yellow font.
 
 When the scratch loop has a source, additional operations are available:
 
-  - <span class="ll-phead">Save to source</span>. Press `xs` to update the
+  - <span class="phead">Save to source.</span> Press `xs` to update the
     source entity's bounds based on the current scratch loop bounds (after
     controlling for padding, where applicable).
 
-  - <span class="ll-phead">Reset to source</span>. Press `xr` to return the
+  - <span class="phead">Reset to source.</span> Press `xr` to return the
     scratch loop bounds to match those of the source (also controlling for
     padding).
 
-  - <span class="ll-phead">Unlink source</span>. Press `xu` to remove the
+  - <span class="phead">Unlink source.</span> Press `xu` to remove the
     source linkage: after that the scratch loop will have no connection to the
     source and it will behave as if you had set the bounds manually.
 
@@ -437,17 +437,17 @@ bottom. For both the progress bar and saved entities — sections, chapters,
 marks, and loops — hover to display name and time information, and click to
 jump to the start of an entity.
 
-<span class="ll-phead">Playhead zone</span>. Mimics the YouTube progress bar:
+<span class="phead">Playhead zone.</span> Mimics the YouTube progress bar:
 a thick line with a dot marking the playhead. The elapsed portion is blue, the
 remainder gray.
 
-<span class="ll-phead">Section/chapter zone</span>. Displays sections or
+<span class="phead">Section/chapter zone.</span> Displays sections or
 chapters as shaded regions. Press `at` for **App › Toggle timeline** to change
 the display.
 
-<span class="ll-phead">Mark zone</span>. Displays marks as yellow dots.
+<span class="phead">Mark zone.</span> Displays marks as yellow dots.
 
-<span class="ll-phead">Loop zone</span>. Displays loops as colored line
+<span class="phead">Loop zone.</span> Displays loops as colored line
 segments: blue for the scratch loop (in its own lane), brown for saved loops
 (in two lanes).
 
@@ -458,25 +458,25 @@ covered in the [quick start](#quick-start): play, pause, speed control,
 seeking, and jumping to specific times or entities. LoopLlama supports a few
 other navigational methods:
 
-<span class="ll-phead">Jump to start</span>. Press `Enter` to jump the
+<span class="phead">Jump to start.</span> Press `Enter` to jump the
 playhead to the "start", which is contextual: start of scratch loop, if
 looping; start of zoom, if zoomed; otherwise, start of video.
 
-<span class="ll-phead">Jump to previous/next entity</span>. Near the app's
+<span class="phead">Jump to previous/next entity.</span> Near the app's
 seek controls are buttons and a dropdown to support navigation by entity. The
 dropdown (accessible via the `/` binding) controls the entity type. The
 previous/next buttons surrounding the dropdown (or the `,` and `.` key
 bindings) allow you to navigate to the start of the previous/next chapter,
 section, loop, or mark.
 
-<a id="jump-history"></a><span class="ll-phead">Jump history</span>.
+<a id="jump-history"></a><span class="phead">Jump history.</span>
 Navigational jumps of more than 15 seconds are stored in a jump history that
 you can traverse. Although the history holds up to the last 40 jumps for a
 video, the primary intent is to allow a user to return to their prior location
 after an inadvertent jump. The jump history operations and key bindings are
 listed on the **App** menu.
 
-<span class="ll-phead">Super slow motion</span>. To examine a video in super
+<span class="phead">Super slow motion.</span> To examine a video in super
 slow motion, a useful technique is to pause the video, set the seek delta
 to 0.1 seconds, and then "watch" the video (without sound) using the
 `Left`/`Right` arrows.
@@ -510,7 +510,7 @@ LoopLlama provides several ways to share your LoopLlama data with others,
 back up your data to your computer, sync your data across multiple browsers and
 devices, or perform bulk deletions.
 
-<span class="ll-phead">Share video</span>. Use `dv` for **Data › Share video**
+<span class="phead">Share video.</span> Use `dv` for **Data › Share video**
 to copy a LoopLlama sharing URL to your clipboard. Anyone with the URL can
 load a copy of your data for that video into their LoopLlama. If the URL
 recipient already has the same video, the app will prompt the user with a
@@ -519,15 +519,15 @@ information is stashed and then the shared video information is loaded into
 the library. Later, the recipient can return to the prior video information
 via [**Unstash**](#video-unstash).
 
-<span class="ll-phead">Share scratch loop</span>. Use `dx` for **Data › Share
+<span class="phead">Share scratch loop.</span> Use `dx` for **Data › Share
 scratch loop**, which is like **Share video**, but the data covers only the
 scratch loop bounds.
 
-<span class="ll-phead">Export</span>. Use `de` for **Data › Export** to save
+<span class="phead">Export.</span> Use `de` for **Data › Export** to save
 your LoopLlama data as a JSON file. If you understand how to use the app, the
 data in the file will make sense.
 
-<span class="ll-phead">Import</span>. Use `di` for **Data › Import**, which
+<span class="phead">Import.</span> Use `di` for **Data › Import**, which
 performs that process in reverse, loading the data from an exported JSON file
 into LoopLlama — for example, on a different browser or computer (see [data
 review](#data-review)). The export-import operations can also be used to
@@ -551,44 +551,44 @@ you might want to reverse.
 
 </div>
 
-<span class="ll-phead">Inspect</span>. Use `dI` for **Data › Inspect**,
+<span class="phead">Inspect.</span> Use `dI` for **Data › Inspect**,
 which displays your LoopLlama data directly in the browser.
 
-<a id="bulk-delete"></a><span class="ll-phead">Bulk deletion</span>. Use `d⌫`
+<a id="bulk-delete"></a><span class="phead">Bulk deletion.</span> Use `d⌫`
 for **Data › Delete** to delete data in bulk — either entire videos or the
 entities within a single video. Deleted videos can be restored via
 [**Unstash**](#video-unstash).
 
 ## Cloud storage and sign-in {#why-sign-in}
 
-<span class="ll-phead">Sign-in is optional</span>. LoopLlama does not require
+<span class="phead">Sign-in is optional.</span> LoopLlama does not require
 signing in, but doing so with Google or GitHub (via the **Account** menu) lets
 you back up your LoopLlama data to the cloud — providing a more convenient
 insurance mechanism against lost data (for example, caused by clearing your
 browser cache) and a simpler way to coordinate LoopLlama usage across multiple
 browsers or devices.
 
-<span class="ll-phead">Cloud as hard drive</span>. LoopLlama's cloud storage
+<span class="phead">Cloud as hard drive.</span> LoopLlama's cloud storage
 is a backup-restore facility, not a true multi-device sync. The correct mental
 model for this feature is *cloud as hard drive*: the browser's
 [localStorage][localStorage] is your working copy; the cloud is a saved copy.
 Multi-device users can use LoopLlama successfully if they organize their saves
 and reads to align with their device switches.
 
-<span class="ll-phead">Save to cloud</span>. Use `ds` for **Data › Save to
+<span class="phead">Save to cloud.</span> Use `ds` for **Data › Save to
 cloud**, which writes library data to the cloud (see [data
 review](#data-review)).
 
-<span class="ll-phead">Read from cloud</span>. Use `dr` for **Data › Read
+<span class="phead">Read from cloud.</span> Use `dr` for **Data › Read
 from cloud**, which writes cloud data to your library (see [data
 review](#data-review)).
 
-<span class="ll-phead">Compare</span>. Use `dc` for **Data › Compare**, which
+<span class="phead">Compare.</span> Use `dc` for **Data › Compare**, which
 opens an informational review showing an inventory of your videos across the
 same five categories as the [data review](#data-review) — without any toggles
 or action.
 
-<span class="ll-phead">Remove cloud data</span>. See the **Account** menu to
+<span class="phead">Remove cloud data.</span> See the **Account** menu to
 sign out and remove all of your cloud data.
 
 ## App menu
@@ -597,7 +597,7 @@ The **App** menu contains a variety of operations and settings. [Jump
 history](#jump-history) has already been covered. The others are the
 following:
 
-<span class="ll-phead">Undo</span>. Use `au` for **App › Undo** to reverse a
+<span class="phead">Undo.</span> Use `au` for **App › Undo** to reverse a
 prior edit to the current video. LoopLlama stores data snapshots for the 20
 most recent edits. Snapshotting covers explicit changes to the current video's
 direct attributes, as well as those of its chapters, sections, loops, and
@@ -606,27 +606,27 @@ looping controls (current location and speed, jump history, navigation
 settings, scratch loop bounds), even though those settings are remembered per
 video. Switching to a different video clears the edit history.
 
-<span class="ll-phead">Redo</span>. Use `ar` for **App › Redo** to apply an
+<span class="phead">Redo.</span> Use `ar` for **App › Redo** to apply an
 edit that was undone.
 
-<span class="ll-phead">Clear history</span>. Use `a⌫` for **App › Clear
+<span class="phead">Clear history.</span> Use `a⌫` for **App › Clear
 history** to discard the undo and redo stacks entirely. This operation is
 not undoable.
 
-<span class="ll-phead">Recall message</span>. Use `am` for **App › Recall
+<span class="phead">Recall message.</span> Use `am` for **App › Recall
 message** to recall the most recent message emitted in the message footer.
 
-<span class="ll-phead">Copy time</span>. Use `ac` for **App › Copy time** to
+<span class="phead">Copy time.</span> Use `ac` for **App › Copy time** to
 copy the current playhead time to the clipboard.
 
-<span class="ll-phead">Toggle timeline</span>. Use `at` for **App › Toggle
+<span class="phead">Toggle timeline.</span> Use `at` for **App › Toggle
 timeline** to change whether the timeline displays sections or chapters.
 
-<span class="ll-phead">Zoom off</span>. Use `az` for **App › Zoom off** to
+<span class="phead">Zoom off.</span> Use `az` for **App › Zoom off** to
 turn off any type of timeline zoom (video, chapter, section, saved loop, or
 scratch loop).
 
-<a id="app-options"></a><span class="ll-phead">Options</span>. Use `ao` for
+<a id="app-options"></a><span class="phead">Options.</span> Use `ao` for
 **App › Options** to customize various settings. Two of the settings are
 per-video defaults: applied when you first load a new video, then remembered
 per video:
@@ -653,39 +653,39 @@ The other options are global:
 
 ### Privacy policy {#privacy-policy}
 
-<span class="ll-phead">Personal project</span>. LoopLlama is a personal
+<span class="phead">Personal project.</span> LoopLlama is a personal
 project managed and designed by me, Monty Hindman. I wrote the v1 code; v2
 code was written entirely by Claude Code. Although simply a personal project,
 it is nonetheless serious: a great deal of care was put into planning its
 features, designing its user interface, and checking that the app functions
 correctly.
 
-<span class="ll-phead">Hosting</span>. The project is hosted by GitHub, as
+<span class="phead">Hosting.</span> The project is hosted by GitHub, as
 part of its GitHub Pages feature.
 
-<span class="ll-phead">YouTube handles the videos</span>. YouTube provides and
+<span class="phead">YouTube handles the videos.</span> YouTube provides and
 streams all video content via its standard embed API. LoopLlama simply uses
 that API.
 
-<span class="ll-phead">Browser storage by default</span>. Your LoopLlama data
+<span class="phead">Browser storage by default.</span> Your LoopLlama data
 is stored only in your web browser, in [localStorage][localStorage]. The app
 does not use cookies.
 
-<span class="ll-phead">Transparent</span>. The data that LoopLlama stores can
+<span class="phead">Transparent.</span> The data that LoopLlama stores can
 be viewed directly via `de` for **Data › Export**. The resulting JSON file
 provides an accurate representation of your LoopLlama data.
 
-<span class="ll-phead">Cloud backup is optional</span>. If you sign in via
+<span class="phead">Cloud backup is optional.</span> If you sign in via
 Google or GitHub (see the **Account** menu), LoopLlama backs up your data in
 the cloud, using [Supabase][supabase], which offers a free database service
 for small projects like LoopLlama.
 
-<span class="ll-phead">Authentication via known, reliable third
-parties</span>. LoopLlama does not manage user authentication or know anything
+<span class="phead">Authentication via known, reliable third
+parties.</span> LoopLlama does not manage user authentication or know anything
 about your credentials. Those details are handled by the authentication
 provider you choose — Google or GitHub.
 
-<span class="ll-phead">LoopLlama does not store your email address</span>.
+<span class="phead">LoopLlama does not store your email address.</span>
 None of the LoopLlama database tables contain your email address. The table
 holding a backup copy of your LoopLlama data does have an ID that can be
 linked to a Supabase table holding your email address (Supabase needs to store
@@ -694,28 +694,28 @@ data). But the LoopLlama project will never issue queries linking your email
 address and your cloud backup, other than to investigate problems or requests
 initiated by you.
 
-<span class="ll-phead">Cloud data is not shared</span>. The copy of your
+<span class="phead">Cloud data is not shared.</span> The copy of your
 LoopLlama data stored in the cloud requires valid authentication to access.
 That means other internet users cannot access it, unless you share your
 credentials with them.
 
-<span class="ll-phead">Cloud data can be accessed by infrastructure
-staff</span>. The LoopLlama app, and developers on the LoopLlama project, can
+<span class="phead">Cloud data can be accessed by infrastructure
+staff.</span> The LoopLlama app, and developers on the LoopLlama project, can
 access your data. But the project commits to accessing this information only for
 the purpose of allowing the app to function or to investigate specific
 problems or requests submitted by you to the LoopLlama team. Similarly, some
 Supabase staff can access the data in the LoopLlama database, but their access
 is governed in similar ways by Supabase policies.
 
-<span class="ll-phead">User-driven access to your cloud data</span>. The
+<span class="phead">User-driven access to your cloud data.</span> The
 LoopLlama app interacts with your cloud data only in response to your explicit
 requests to save your browser data to the cloud or to read data from the cloud
 into your browser.
 
-<span class="ll-phead">Cloud data can be removed</span>. You can remove your
+<span class="phead">Cloud data can be removed.</span> You can remove your
 cloud data at any time (see the **Account** menu).
 
-<span class="ll-phead">No user-data tracking</span>. LoopLlama does not use
+<span class="phead">No user-data tracking.</span> LoopLlama does not use
 cookies and does not sell, share, or transfer your data to any third parties —
 other than backing up your data in Supabase, as noted above. The application
 does track some events for the purpose of collecting aggregate metrics for the
@@ -726,13 +726,13 @@ that helps us count unique visitors. That ID is not linked to your identity.
 Further, in the data that holds the YouTube ID for the video, the app
 purposely omits the client ID.
 
-<span class="ll-phead">Shared data is publicly available, but opaque</span>.
+<span class="phead">Shared data is publicly available, but opaque.</span>
 If you ask LoopLlama to create a URL to share either a video or a scratch
 loop, the shared data can be accessed by anyone with the correct URL. That URL
 includes a random ID generated by the app, so it is not something anyone can
 guess or tie to your identity.
 
-<span class="ll-phead">LoopLlama is free</span>. We do not charge to use the
+<span class="phead">LoopLlama is free.</span> We do not charge to use the
 app and do not rely on advertising. The project has no commercial
 relationships of any kind. Cloud backup is provided via a free tier from
 Supabase. If the volume of cloud usage becomes prohibitively large — very
@@ -761,27 +761,27 @@ traditions of movements that fought against fascism and authoritarianism. The
 color order reads as a loose narrative arc, from the darkest symbols of
 resistance toward warmer symbols of hope.
 
-<span class="ll-phead">Charcoal black</span>. Anarchism and
+<span class="phead">Charcoal black.</span> Anarchism and
 anarcho-syndicalism, the oldest visual language of anti-fascist organizing.
 
-<span class="ll-phead">Crimson</span>. Organized labor and the socialist left,
+<span class="phead">Crimson.</span> Organized labor and the socialist left,
 broadly construed — a color that runs through more anti-authoritarian
 traditions than any other.
 
-<span class="ll-phead">Deep purple</span>. The Second Spanish Republic, whose
+<span class="phead">Deep purple.</span> The Second Spanish Republic, whose
 defense drew volunteers from dozens of countries — perhaps the broadest
 anti-fascist coalition before World War II.
 
-<span class="ll-phead">Chalk white</span>. Peace and nonviolent resistance —
+<span class="phead">Chalk white.</span> Peace and nonviolent resistance —
 the center band, as a pivot between the harder symbols and the warmer ones.
 
-<span class="ll-phead">Old gold</span>. The German democratic tradition —
+<span class="phead">Old gold.</span> The German democratic tradition —
 colors the Nazis rejected and the Federal Republic later reclaimed.
 
-<span class="ll-phead">Forest green</span>. Pan-African resistance and the
+<span class="phead">Forest green.</span> Pan-African resistance and the
 struggle against colonial and racial authoritarianism.
 
-<span class="ll-phead">Cobalt blue</span>. The liberal democratic tradition —
+<span class="phead">Cobalt blue.</span> The liberal democratic tradition —
 from the Enlightenment through the American and French revolutions, upheavals
 that shared the conviction that legitimate power derives from the consent of
 the governed, not the will of a ruler.
