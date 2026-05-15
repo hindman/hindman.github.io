@@ -13,166 +13,68 @@ published: false
 
 <!--
 
-__HERE__
-
-## The problem with AI
-## Economic history says the unemployment concerns are confused
-### Mass unemployment explained
-### Mechanization as a comparative case study
-
-## LL v2 as a case study
-## Limits of AI
-## Recursive improvement: computerization might be different than mechanization
-## The worst case might be good indeed
-
 -->
 
-## The problem with AI
+## 95 theses
 
-Two core concerns dominate US media and policy discussion:
-  - Alignment: AI going rogue.
-  - Employment: AI destroys jobs, leading to extreme inequality and
-    large-scale unemployment.
+I've been following the AI-employment debate with some interest — namely, the
+idea that AI will to large-scale unemployemtn. I have an academic background
+in economic history and recently finished a software project,
+[LoopLlama][/loopllama/v2], using an AI coding agent. Below I offer several
+observations drawing on that background. None of them are particularly
+original, but collectively they suggest that our AI future could be brighter —
+or at least more uncertain — than typical doom-and-gloom presentations of this
+topic in popular discourse often suggest.
 
-This essay focuses on the second concern.
-  - No claim to a definitive answer.
-  - But a background in economic history and direct experience building LL v2
-    with an AI coding agent make me skeptical of the typical worries.
+<span class="phead">The fear is intuitive.</span> If AI can do most cognitive
+work faster and cheaper than humans, employers will use AI instead. Several
+leaders of major frontier AI labs have claimed that they expect this to
+happen, and some macroeconomists take the idea seriously. [get citations].
 
-## Economic history says the unemployment concerns are confused
+<span class="phead">And based on a fallacy.</span> Many economists and
+historians would also point out that the fear — at least when expressed simply
+— rests on the [lump of labor fallacy][lump_of_labor]: the assumption that
+there's a fixed amount of work to be done, so if machines take some of it,
+humans get less.
 
-### Mass unemployment explained
+<span class="phead">Mechanization is is obvious historical parallel.</span>
+The industrial revolution mechanized physical work starting in the mid-18th
+century and reached a peak with assembly-line production in the mid-20th. Like
+AI, it was a general-purpose technology applicable across industries; like AI,
+it compressed costs dramatically and enabled previously impossible things. The
+main difference is that mechanization operated in the physical realm, AI in
+the cognitive.
 
-The employment fear is understandable and intuitive:
+<span class="phead">Agriculture illustrates the scale of change.</span> Over
+50 percent of the US labor force worked in agriculture in 1870; today the
+figure is under 2 percent. Viewed one way, the mechanization of agriculture —
+and many other sectors — destroyed of most jobs that existed in the past.
 
-  - AI is cognitive in nature.
-  - If it becomes more competent than the typical knowledge worker for most
-    tasks, AI will do most of that work, because it will be faster, cheaper.
-  - That sure looks like job destruction.
-  - And not just in one sector, but on a massive scale.
-  - Multiple leaders of the frontier AI labs have predicted large scale job
-    replacement.
-    - [get quote or two]
+<span class="phead">Contemporary observers saw catastrophe coming.</span> The
+Luddites were skilled textile workers who famously destroyed machinery in the
+1810s, fearing displacement. David Ricardo, one of the most influential
+economists from that period, witnessed the effects of mechanization and
+reversed his earlier position, acknowledging that machinery could permanently
+harm workers, triggering a debate among classical economists that ran for
+decades. [add citation: Principles (1821): 3rd edition: added a chapter "On
+Machinery"] The parallels to current AI discourse are hard to miss.
 
-### Mechanization as a comparative case study
+<span class="phead">Catastrophe did not occur.</span> Mechanization produced
+neither mass unemployment nor impoverishment. By almost any material measure,
+people living in countries with modern, developed countries are vastly more
+prosperous than their 19th-century ancestors. As one example among many, US
+household spending on necessities — food, clothing, housing — fell from
+roughly 80 percent of budgets in 1900 to under 50 percent today, even as the
+quality and variety of those necessity goods expanded substantially.
 
-Mechanization overview:
-
-  - The industrial revolution started mid 1700s in England.
-  - Spread to other areas, including the US, in the early 19th century.
-  - Reached a kind of peak in mid 20th with the development of assembly line
-    production, most famously in the auto industry.
-  - Mechanization substantially changed employment in the US.
-
-AI work as the "computerization" of tasks:
-  - This terminology drives home the parallels with mechanization.
-  - Both are general purpose technologies:
-    - They could be applied to many industries and tasks.
-    - Mechanization operates in the physical realm.
-    - Computerization in the cognitive realm.
-    - Both able to compress costs dramatically.
-    - Both will enable previously impossible things.
-
-US agriculture: example to illustrate the scale of change via mechanization:
-  - Consider the percentage of labor force working in agriculture:
-
-        1870 | > 50
-        1900 | 40
-        1940 | 17
-        1960 | 8
-        Now  | < 2
-
-        [Need to source this. Check HSUS]
-
-  - Viewed through one lens, that looks like the destruction of fully half of
-    the jobs that existed in the mid 19c.
-  - To put it crudely, were tractors the AI of farming?
-
-Contemporary worries about mechanization paralleled our AI debates:
-  - Observers of mechanization during its early phases:
-    - Such matters were discussed on both popular and intellectual levels.
-
-  - Luddites (1811–16) are as famous case:
-    - Skilled textile workers destroying machinery, fearing displacement.
-
-  - David Ricardo:
-    - [need to confirm citation]
-    - Principles (1821): 3rd edition: added a chapter "On Machinery".
-    - Reversed his earlier position and acknowledging that machinery could
-      permanently harm workers.
-    - Triggered a serious "compensation debate" among classical economists
-      that ran for decades.
-
-On mechanization, if not AI, we have the benefit of hindsight:
-
-  - Yes, mechanization led to massive productivity gains.
-  - Yes, many types of jobs were destroyed or radically changed:
-    - Agriculture illustrates this.
-    - The old farming jobs simply don't exist.
-
-  - But mass unemployment did not occur:
-    - Footnote:
-      - Specifically, durable unemployment did not occur.
-      - Cyclic events -- recessions and, most notably, the Great Depression --
-        were common, of course.
-
-  - Nor did impoverishment:
-    - The opposite occured.
-    - Modern Americans are undeniably prosperous in economic terms.
-      - More goods.
-      - More services.
-      - More leisure time.
-    - A illustrative metric:
-      - Percent of household spending on necessities:
-      - Necessity means: food, clothing, housing.
-
-            1900  | 80%
-            Today | < 50%
-
-            [confirm data; get cite]
-
-      - Necessity consumption:
-        - Smaller share of budget.
-        - Even as it increased in volume, variety, and quality level.
-        - Footnote: On average, of course.
-
-Why were the concerns about mechanization ill-founded?
-  - The worries of the Luddites, David Ricardo, and many other observers
-    sounded plausible and intuitive at the time.
-  - Why didn't job destruction lead to mass unemployment and poverty?
-
-  - In general terms the mistake derives from static analysis:
-    - In the employment context, error often called lump of labor fallacy.
-      - Misconception that there is a finite amount of work to be done.
-      - That's the lump.
-      - If AI does some of the existing jobs, because it is cheaper and/or
-        more effective than human works, unemployment necessarily follows.
-      - [cite: https://en.wikipedia.org/wiki/Lump_of_labour_fallacy]
-
-  - We know in the certainty of hindsight that jobs were not static:
-    - Products exist now that didn't before.
-    - Same for services.
-
-    - We also do more: ambitions, wants, needs, expectations expanded:
-      - More knowledge production of many kinds:
-        - healthcare
-        - government generally
-        - journalism
-        - academia
-        - [need other examples]
-
-So mechanization did cause massive job destruction:
-  - But it did not cause mass unemployment or impoverishment.
-  - Instead, adjustments occurred along a few dimensions:
-    - New jobs:
-      - To meet an expanded set of needs and goals.
-    - Less work:
-      - Some reduction in labor hours.
-      - [get stats]
-    - Improved employment conditions:
-      - Less drudgery and otherwise unpleasant work.
-      - Fewer injuries and medical side effects.
-      - [other examples?]
+<span class="phead">Employment adjusted rather than collapsing.</span> Old
+jobs were genuinely destroyed — those farming jobs simply don't exist. But new
+jobs emerged to meet an expanded set of wants and ambitions, in sectors like
+education, healthcare, government, finance, media, and, of course, various
+engineering and technical fields to maintain the ever-growing roster of
+machinery. Work also became less brutal: fewer injuries, less drudgery,
+shorter hours. Labor was not a lump: human employment was not fixed; it
+evolved as we became more mechanized and more prosperous.
 
 ## LL v2 as a case study
 
@@ -417,183 +319,6 @@ generation.
       - Once we had solutions to the conceptual questions, the
         implementation changes were easy: the AI did them in a handful of
         minutes.
-
-## Limits of AI
-
-As the LL v2 case shows, AI is highly capable:
-  - But its abilities are genuinely bounded, in ways that sharpen the
-    employment picture.
-  - I will focus on two kinds of limits, one of them likely to be tractable in
-    the short-to-medium term, one less so.
-
-  - Genius junior engineers:
-    - That's the analogy I would use to describe current coding AIs.
-    - The AI is a junior engineer who has not just RTFM but memorized it.
-      - Encyclopedic knowledge of technology, APIs, coding patterns.
-      - Fast, tireless.
-      - Almost never stumped by a well-specified task.
-
-    - But junior engineers, however talented, are often myopic.
-      - They solve the problem in front of them without fully weighing wider
-        implications — other parts of the codebase, consistency with existing
-        patterns, the coherence of the system as a whole.
-      - And they are typically unable to propose workable solutions to the
-        organization's primary problems -- again, because they lack the
-        information needed to weigh the competing tradeoffs.
-
-    - AIs have similar tendencies.
-      - Many times during v2, if a bug or design problem emerge, the LLM often
-        offered a fix that would genuinely resolve the immediate issue while
-        quietly introducing a new inconsistency or undermining a broader goal.
-
-__HERE__
-
-Draft outline for rest of material:
-
-  3. The scope limit (same root as myopia)
-
-    - Strong at narrow, well-defined tasks; weak at medium-to-large,
-      open-ended ones
-    - v2: couldn't produce the architecture plan; couldn't organize raw essay
-      notes into a coherent outline
-    - Prose has the same shape: good at small-to-medium with clear criteria;
-      not good beyond that
-
-  4. Why: context window as explanation
-
-    - Training corpus: encyclopedic. Project knowledge: reset each session.
-    - Human project memory — fallible, but strikingly more complete
-    - Tractability caveat: context limits are expanding; a fully context-aware
-      AI would be qualitatively different
-
-  5. A deeper limit: no wisdom, judgment, or genuine ideas
-
-    - Counterintuitive given encyclopedic training data
-    - Something is missing — no need to over-theorize what
-    - AI is static after training; humans accumulate wisdom and taste over
-      time
-    - Less clearly tractable than the context problem
-
-  6. Nuance: the sounding board value
-
-    - Even where AI can't lead, it sharpens thinking
-    - Not a replacement for a great expert — but expert access is rare; AI is
-      always available
-    - Ask a sharp question: better tradeoffs, caught blind spots, more
-      coherent thinking
-
-Design and plan:
-  - The architecture, the entity model, the keyboard scheme, the data model,
-    the UX vision — the key insights for LoopLlama v2 mostly came from me.
-  - The AI implemented specs; it did not generate them.
-  - The AI was a valuable planning sounding board, but rarely an strong
-    contributor to to the plan itself.
-  - That said, LLMs are quite useful as an intellectual partner or sounding
-    board for exploring tentative plans: finding gaps, brainstorming
-    solutions, pushing thinking toward something more coherent.
-
-    - They won't give you a great answer for free, but they help you ask sharper
-      questions and work incrementally toward a solid plan.
-
-    - AI is not a replacement for an optimal human expert.
-    - But for most tasks, most people lack direct access to such experts.
-    - Having a widely-knowledgeable AI partner that is available whenever you
-      need it can be extremely helpful, even if the AI will rarely give you a
-      full software plan or a complete idea for an essay.
-
-      - Ask a well-framed question and it will help you think through
-        tradeoffs, catch blind spots, and push your thinking toward something
-        more coherent.
-
-    - That combination — skilled implementer plus available
-      intellectual partner — is a meaningful new tool.
-
-AI not good at creating strong ideas or coherent plans for medium-to-large
-problems.
-  - For a narrow task, yes — an LLM can create a solid plan and then generate
-    workable code.
-  - It's also quite good at generating prose with similar characteristics:
-    small to medium scale, with clear goals and criteria.
-  - But for anything bigger, a full essay or a medium-to-large software
-    project, the LLM will not hand you a great solution.
-  - Gains were more mixed — sometimes non-existent — for larger-scale or
-    open-ended problems:
-    - AI could not create a good v2 plan:
-      - Indeed, it often failed, by itself, to create good plans for
-        invididual features or subsets of v2.
-      - Footnote: which isn't to say that the AI wasn't a useful partner
-        during planning work; it was!
-    - Nor could it write the posts on my behalf.
-      - While planning for this essay, I experimented a few different times to
-        gauge the AI's ability to speed my progress.
-      - Create a full essay:
-        - Given a few rough ideas connecting AI, mass unemployment worries,
-          and LL v2 as a case study.
-        - No success prompting the AI to create a satisfactory essay plan.
-      - Convert raw material into an argument:
-        - Given a pile of raw notes, ideas, examples from economic history,
-          and observsations from the development of LL v2.
-        - Asked the AI to organize the material into a well structured essay
-          outline.
-        - In other words, I provided a lot more raw input.
-        - And I asked for simpler output: not polished prose, but simply and
-          outline ordering the presentation of arguments, examples, and
-          rhetorical connections.
-        - The result was not good:
-          - It did not form a coherent, connected argument.
-          - The AI stuck too rididly to much of the phrasing (and verbosity)
-            of my original raw notes.
-          - The result was even more repetition and less clarity:
-            - Now I had roughly 2x the material, slightly different.
-
-That myopia seems downstream of context window limits.
-  - Although an AI knowledge of its training corpus is encyclopedic in some
-    sense, its knowledge of your project is not.
-  - After each prompt, the AI starts from ground zero:
-    - I reads your prompt.
-    - It can read some metadata files that provide some context about the
-      current project.
-    - But it doesn't remember all of the prior chats, all of the decisions
-      that led the project to its current state, and all of the project's core
-      goals and commitments.
-      - My memory of that project context, like all human memory, is fallible.
-      - But it was nonethless strikingly more complete than the AI's memory.
-
-Task size limitations might be tractable in the short to medium term:
-  - LLM lapses are downstream of context window limits.
-  - As those limits expand, one can envision an LLM with equally expansive
-    knowledge and memory for an entire codebase — and for the project's
-    development history and the reasoning behind it.
-  - That LLM would be a much better problem solver, less drawn to myopic
-    quick-fixes and more likely to suggest solutions aligned with larger
-    goals.
-  - An LLM with a genuinely encyclopedic context — one that could hold the
-    full history of a long project in working memory — would be a
-    qualitatively different partner.
-  - The potential in software engineering, research, writing, journalism seems
-    large.
-
-Genius without good ideas, widsom, insight:
-  - You would think that an entity with encyclopedic grasp of all human
-    knowledge would be better and coming up with good ideas, or writing
-    interesting essays.
-  - But I have not observed that.
-  - So there still seems to be something "missing".
-    - AIs may be -- and maybe become -- better than most humans and most
-      cognitive jobs involing small-to-medium tasks with well-defined
-      criteria and goals.
-    - But our biggest challenges are not those.
-
-Ability to learn:
-  - This is also missing.
-  - AI models are trained on a massive corpus.
-  - But after that, they are static.
-  - That's a real difference:
-    - Humans become wise over time, even if their raw cognitive powers
-      wane a bit.
-    - Better able to see the full picture, to notice opportunites for
-      good ideas, to have good taste for quality, coherence, the
-      weighing of trade-offs.
 
 ## Recursive improvement: computerization might be different than mechanization
 
@@ -844,4 +569,183 @@ hypothetical highly automated economy. May or may not feed into the essay.
   - Ad Hoc Committee on the Triple Revolution (1964)
   - National Commission on Technology, Automation, and Economic
     Progress (1966 report)
+
+## Limits of AI [old section; dropping it]
+
+As the LL v2 case shows, AI is highly capable:
+  - But its abilities are genuinely bounded, in ways that sharpen the
+    employment picture.
+  - I will focus on two kinds of limits, one of them likely to be tractable in
+    the short-to-medium term, one less so.
+
+  - Genius junior engineers:
+    - That's the analogy I would use to describe current coding AIs.
+    - The AI is a junior engineer who has not just RTFM but memorized it.
+      - Encyclopedic knowledge of technology, APIs, coding patterns.
+      - Fast, tireless.
+      - Almost never stumped by a well-specified task.
+
+    - But junior engineers, however talented, are often myopic.
+      - They solve the problem in front of them without fully weighing wider
+        implications — other parts of the codebase, consistency with existing
+        patterns, the coherence of the system as a whole.
+      - And they are typically unable to propose workable solutions to the
+        organization's primary problems -- again, because they lack the
+        information needed to weigh the competing tradeoffs.
+
+    - AIs have similar tendencies.
+      - Many times during v2, if a bug or design problem emerge, the LLM often
+        offered a fix that would genuinely resolve the immediate issue while
+        quietly introducing a new inconsistency or undermining a broader goal.
+
+Draft outline for rest of material:
+
+  3. The scope limit (same root as myopia)
+
+    - Strong at narrow, well-defined tasks; weak at medium-to-large,
+      open-ended ones
+    - v2: couldn't produce the architecture plan; couldn't organize raw essay
+      notes into a coherent outline
+    - Prose has the same shape: good at small-to-medium with clear criteria;
+      not good beyond that
+
+  4. Why: context window as explanation
+
+    - Training corpus: encyclopedic. Project knowledge: reset each session.
+    - Human project memory — fallible, but strikingly more complete
+    - Tractability caveat: context limits are expanding; a fully context-aware
+      AI would be qualitatively different
+
+  5. A deeper limit: no wisdom, judgment, or genuine ideas
+
+    - Counterintuitive given encyclopedic training data
+    - Something is missing — no need to over-theorize what
+    - AI is static after training; humans accumulate wisdom and taste over
+      time
+    - Less clearly tractable than the context problem
+
+  6. Nuance: the sounding board value
+
+    - Even where AI can't lead, it sharpens thinking
+    - Not a replacement for a great expert — but expert access is rare; AI is
+      always available
+    - Ask a sharp question: better tradeoffs, caught blind spots, more
+      coherent thinking
+
+Design and plan:
+  - The architecture, the entity model, the keyboard scheme, the data model,
+    the UX vision — the key insights for LoopLlama v2 mostly came from me.
+  - The AI implemented specs; it did not generate them.
+  - The AI was a valuable planning sounding board, but rarely an strong
+    contributor to to the plan itself.
+  - That said, LLMs are quite useful as an intellectual partner or sounding
+    board for exploring tentative plans: finding gaps, brainstorming
+    solutions, pushing thinking toward something more coherent.
+
+    - They won't give you a great answer for free, but they help you ask sharper
+      questions and work incrementally toward a solid plan.
+
+    - AI is not a replacement for an optimal human expert.
+    - But for most tasks, most people lack direct access to such experts.
+    - Having a widely-knowledgeable AI partner that is available whenever you
+      need it can be extremely helpful, even if the AI will rarely give you a
+      full software plan or a complete idea for an essay.
+
+      - Ask a well-framed question and it will help you think through
+        tradeoffs, catch blind spots, and push your thinking toward something
+        more coherent.
+
+    - That combination — skilled implementer plus available
+      intellectual partner — is a meaningful new tool.
+
+AI not good at creating strong ideas or coherent plans for medium-to-large
+problems.
+  - For a narrow task, yes — an LLM can create a solid plan and then generate
+    workable code.
+  - It's also quite good at generating prose with similar characteristics:
+    small to medium scale, with clear goals and criteria.
+  - But for anything bigger, a full essay or a medium-to-large software
+    project, the LLM will not hand you a great solution.
+  - Gains were more mixed — sometimes non-existent — for larger-scale or
+    open-ended problems:
+    - AI could not create a good v2 plan:
+      - Indeed, it often failed, by itself, to create good plans for
+        invididual features or subsets of v2.
+      - Footnote: which isn't to say that the AI wasn't a useful partner
+        during planning work; it was!
+    - Nor could it write the posts on my behalf.
+      - While planning for this essay, I experimented a few different times to
+        gauge the AI's ability to speed my progress.
+      - Create a full essay:
+        - Given a few rough ideas connecting AI, mass unemployment worries,
+          and LL v2 as a case study.
+        - No success prompting the AI to create a satisfactory essay plan.
+      - Convert raw material into an argument:
+        - Given a pile of raw notes, ideas, examples from economic history,
+          and observsations from the development of LL v2.
+        - Asked the AI to organize the material into a well structured essay
+          outline.
+        - In other words, I provided a lot more raw input.
+        - And I asked for simpler output: not polished prose, but simply and
+          outline ordering the presentation of arguments, examples, and
+          rhetorical connections.
+        - The result was not good:
+          - It did not form a coherent, connected argument.
+          - The AI stuck too rididly to much of the phrasing (and verbosity)
+            of my original raw notes.
+          - The result was even more repetition and less clarity:
+            - Now I had roughly 2x the material, slightly different.
+
+That myopia seems downstream of context window limits.
+  - Although an AI knowledge of its training corpus is encyclopedic in some
+    sense, its knowledge of your project is not.
+  - After each prompt, the AI starts from ground zero:
+    - I reads your prompt.
+    - It can read some metadata files that provide some context about the
+      current project.
+    - But it doesn't remember all of the prior chats, all of the decisions
+      that led the project to its current state, and all of the project's core
+      goals and commitments.
+      - My memory of that project context, like all human memory, is fallible.
+      - But it was nonethless strikingly more complete than the AI's memory.
+
+Task size limitations might be tractable in the short to medium term:
+  - LLM lapses are downstream of context window limits.
+  - As those limits expand, one can envision an LLM with equally expansive
+    knowledge and memory for an entire codebase — and for the project's
+    development history and the reasoning behind it.
+  - That LLM would be a much better problem solver, less drawn to myopic
+    quick-fixes and more likely to suggest solutions aligned with larger
+    goals.
+  - An LLM with a genuinely encyclopedic context — one that could hold the
+    full history of a long project in working memory — would be a
+    qualitatively different partner.
+  - The potential in software engineering, research, writing, journalism seems
+    large.
+
+Genius without good ideas, widsom, insight:
+  - You would think that an entity with encyclopedic grasp of all human
+    knowledge would be better and coming up with good ideas, or writing
+    interesting essays.
+  - But I have not observed that.
+  - So there still seems to be something "missing".
+    - AIs may be -- and maybe become -- better than most humans and most
+      cognitive jobs involing small-to-medium tasks with well-defined
+      criteria and goals.
+    - But our biggest challenges are not those.
+
+Ability to learn:
+  - This is also missing.
+  - AI models are trained on a massive corpus.
+  - But after that, they are static.
+  - That's a real difference:
+    - Humans become wise over time, even if their raw cognitive powers
+      wane a bit.
+    - Better able to see the full picture, to notice opportunites for
+      good ideas, to have good taste for quality, coherence, the
+      weighing of trade-offs.
+
+--------
+
+[lump_of_labor]: https://en.wikipedia.org/wiki/Lump_of_labour_fallacy
 
