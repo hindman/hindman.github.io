@@ -13,10 +13,6 @@ Files:
 
 ## TODO
 
-YT frame:
-  - Maybe drop how we turned off YT timeline.
-  - It is functional: hover to see thumbnail views
-
 Launch:
   - deploy: to get:
     - reset start/end adjustments

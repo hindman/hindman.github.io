@@ -13,6 +13,8 @@ published: false
 
 <!--
 
+__HERE__
+
 ## They took our jobs!
 ## Mechanization
 ## LoopLlama as an illustration
@@ -128,52 +130,38 @@ of intelligence or the other.
 
 ## Computerization might be different
 
-<span class="phead">But the limits I observed may be temporary.</span> The AI
-I worked with was genuinely impressive within a well-scoped task, but
-struggled with the larger picture: it couldn't hold the whole codebase in
-mind, rarely anticipated downstream consequences, and had no real agenda of
-its own. I supplied the vision and judgment; it supplied the execution. That
-division of labor is what made the mechanization analogy feel apt. But AI is
-different from a loom or an assembly line in one critical respect: it is a
-cognitive technology running on computers, which means it can, in principle,
-be turned on itself. We already see this happening — frontier AI labs report
-that AI is materially accelerating progress toward better AI. If that loop
-continues, the limits I observed are not a ceiling; they are a snapshot.
+<span class="phead">AI limits might be temporary.</span> AI is different from
+a loom or an assembly line in one critical respect: it is a cognitive
+technology running on computers, which means it can, in principle, be turned
+on itself. We already see this happening in limited ways, with frontier AI
+labs reporting that AI is accelerating progress toward better AI. If that loop
+continues, the limits I observed — difficulty with larger or open-ended tasks,
+mypopia regarding downstream consquences, failures when weighing tradeoffs
+among project goals, and inability to generate out-of-the-box solutions in
+those situations — those limits might represent a snapshot rather than a
+ceiling.
 
-<span class="phead">Capable enough to do it all.</span> Extrapolate the trend
-far enough, and you reach a threshold where AI agents can not only execute
-tasks but generate the plans, goals, and judgments that humans currently
-supply. At that point the analogy to mechanization starts to break down. When
-the spinning jenny put hand-spinners out of work, those workers could
-eventually find employment in other sectors — factory floor jobs, clerical
-work, professions — because mechanization was physical and cognitive work
-remained a human advantage. But if AI is capable enough to handle virtually
-any cognitive task, new cognitive jobs that emerge are still best suited to
-AI. The refuge that cognitive work offered during the industrial era would
-simply not exist.
-
-<span class="phead">The mechanization trend reversed.</span> The historical
-arc of industrialization made work progressively less physical and more
-mental: the farm laborer became the factory worker, the factory worker became
-the office worker, and so on. AI-plus-robotics inverts that arc. Physical
-jobs, long viewed as lower-status and more vulnerable to automation, could
-ironically be among the last refuges of employment — because the combination
-of AI handling cognitive work and robots handling physical work closes off
-both escape routes simultaneously. That is a genuinely different situation
-from any prior wave of automation, and it is at least worth taking seriously
-even if the timeline remains deeply uncertain.
+<span class="phead">No escape valve.</span> Extrapolate the trend, and perhaps
+AI agents will not only execute tasks but generate the plans, goals, and
+judgments that humans currently supply — while robotics extends automation
+further into physical work. At that point, the reassuring analogy to
+mechanization breaks down. As mechanization proceeded in the 19th and 20th
+centuries, employment shifted toward office and professional jobs. But the
+combination of increasingly capable AIs for cognitive work and machines for
+physical work leaves no obvious employment realm where human labor holds a
+structural advantage.
 
 ## The worst case might be good indeed
 
 <span class="phead">The doom scenario undermines itself.</span> Assume the
-most extreme version: AI handles virtually all cognitive work, robots handle
-most physical work, and mass unemployment follows. But mass unemployment in
-that scenario is also mass productivity — an economy generating an enormous
-quantity of goods and services with a tiny fraction of the labor previously
-required. That translates directly into vastly greater wealth and income, at
-least in the aggregate. The scenario that is supposed to be catastrophic for
-humanity implies, by its own logic, that humanity has never been materially
-richer. Something has to give.
+most extreme version: AI and machines handle virtually all work, and mass
+unemployment follows. But mass unemployment in that scenario is also mass
+productivity — an economy generating an enormous quantity of goods and
+services with a tiny fraction of the labor previously required. That
+translates into vastly greater wealth, at least in the aggregate and at least
+in theory.
+
+__HERE__
 
 <span class="phead">What gives is the distribution mechanism.</span> Labor in
 a market economy serves two distinct functions. It is a factor of production
