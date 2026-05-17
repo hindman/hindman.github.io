@@ -1,15 +1,19 @@
 ---
 title: "AI and mass unemployment: doom in three acts"
+
 excerpt: >
+
   The fear that AI will cause mass unemployment is intuitive, historically
   informed, and — in its simplest form — incoherent. Are we doomed? An
   exploration in three acts.
+
 tags:
   - AI
   - economics
   - history
   - employment
   - loopllama
+
 published: false
 ---
 
@@ -25,7 +29,7 @@ published: false
 
 I have been following the AI-employment debate with some interest. I have an
 academic background in economic history and recently finished a software
-project, [LoopLlama][/loopllama/v2], using an AI coding agent. Below I draw on
+project, [LoopLlama](/loopllama/v2), using an AI coding agent. Below I draw on
 both to offer some ideas that are well-known to economists and historians but
 underrepresented in popular discourse — and, on balance, more reassuring.
 
@@ -38,9 +42,9 @@ happen, and some macroeconomists take the idea seriously. [get citations].
 
 <span class="phead">And based on a fallacy.</span> Many economists and
 historians would also point out that the fear — at least when expressed simply
-— rests on the [lump of labor fallacy][lump_of_labor]: the assumption that
-there is a fixed amount of work to be done, so if machines take some of it,
-humans get less.
+— rests on the [lump of labor fallacy][wiki_lump_of_labor]: the assumption
+that there is a fixed amount of work to be done, so if machines take some of
+it, humans get less.
 
 ## Doom averted: what happened last time
 
@@ -113,17 +117,17 @@ what it produced, identifying gaps and inconsistencies, then planning and
 directing again. The human effort moved upward, toward judgment about the
 whole project rather than execution of individual coding tasks.
 
-<span class="phead">AI as a genius junior engineer.</span> An AI coding agent
-is like a new hire who has not just RTFM but memorized it: encyclopedic
-knowledge of APIs, frameworks, and coding patterns; work ethic out the wazoo;
-and rarely stumped by a well-specified task. But like talented junior
-engineers, AIs tend toward myopia. Given a bug or design problem, the AI
-sometimes offered a fix that resolved the immediate issue while quietly
-introducing trouble elsewhere. Had I passively accepted every short-term fix
-the AI proposed — in the style of "vibe coding", where you simply tell a
-computer what you want and it happens — the result would have been much less
-coherent. The success of v2 derived from human-AI collaboration, not one type
-of intelligence or the other.
+<span class="phead">It shifted because AI has limits.</span> An AI coding
+agent is like a genius new hire who has not just [RTFM][wiki_rtfm] but
+memorized it: encyclopedic knowledge of APIs, frameworks, and coding patterns;
+work ethic out the wazoo; and rarely stumped by a well-specified task. But
+like talented junior engineers, AIs tend toward myopia. Given a bug or design
+problem, the AI sometimes offered a fix that resolved the immediate issue
+while quietly introducing trouble elsewhere. Had I passively accepted every
+short-term fix the AI proposed — in the style of "vibe coding", where you
+simply tell a computer what you want and it happens — the result would have
+been much less coherent. The success of v2 derived from human-AI
+collaboration, not one type of intelligence or the other.
 
 ## Doom reconsidered: this time might actually be different
 
@@ -151,18 +155,18 @@ structural advantage.
 ## Doom inverted: the worst case might be great
 
 <span class="phead">The doom scenario leads to contraction.</span> Assume the
-most extreme version: AI and machines handle virtually all work, and mass
-unemployment follows. But mass unemployment in that scenario is also mass
-productivity — an economy generating an enormous quantity of goods and
-services with a tiny fraction of the labor previously required. That
-translates into vastly greater wealth, at least in the aggregate. But who
-among the jobless will purchase this river of goods and services?
+most extreme version: AIs and machines handle virtually all work, and mass
+unemployment follows. But that scenario also implies mass productivity — an
+economy generating an enormous quantity of goods and services with a tiny
+fraction of the labor previously required. That translates into vastly greater
+wealth, at least in the aggregate. But who among the jobless will purchase
+this river of goods and services?
 
 <span class="phead">Door #1: the problem of distribution.</span> Labor in a
 market economy serves two distinct functions. It is a factor of production —
-labor makes things. It is also the primary mechanism by which income reaches
-the population: wages give workers the purchasing power to buy what the
-economy produces. Employment bundles those two functions, but extreme
+labor makes and does things. It is also the primary mechanism by which income
+reaches the population: wages give workers the purchasing power to buy what
+the economy produces. Employment bundles those two functions, but extreme
 automation severs the bundle: no employment, no wages, no demand, no reason to
 engage the capable AIs and machines in the first place. The gears grind to a
 halt. Down this branch of the thought experiment lies one extreme outcome:
@@ -170,32 +174,36 @@ supreme technological capability amid system-wide impoverishment.
 
 <span class="phead">Door #2: seizing the means of distribution.</span> Down
 this branch lies broad prosperity that mimics or even dwarfs what occurred
-during mechanization: shorter work weeks, labor as vocation rather than
-necessity, material abundance without drudgery. For that to happen, one or
-more mechanisms must replace wages as the means by which income reaches
-people: broad capital ownership, profit-sharing, a universal basic income
-(UBI), public ownership of productive capacity. 
+during mechanization: shorter work weeks, material abundance without drudgery,
+labor as vocation rather than necessity — each of us crafting our own
+LoopLlamas. For that to happen, one or more mechanisms must replace wages as
+the means by which income reaches people: broad capital ownership,
+profit-sharing, a [universal basic income][wiki_ubi] (UBI), public ownership
+of productive capacity. 
 
-<span class="phead">The pessimist's objection.</span> Very few people find
-talk of UBI and broadly shared AI prosperity reassuring. The default stance is
-pessimistic: those who control the technology will resist redistribution,
-accumulate disproportionate wealth and power, and the rest of humanity will
-suffer. History offers plenty of examples of elites doing exactly that.
+<span class="phead">The pessimist's objection.</span> Very few regular folks
+find talk of UBI and broadly shared AI prosperity reassuring. The default
+stance I observe in the US is pessimistic: those who control the technology
+will resist redistribution, accumulate disproportionate wealth and power, and
+the rest of humanity will suffer. History offers plenty of examples of elites
+doing exactly that.
 
 <span class="phead">Elites without an exit strategy.</span> Extreme automation
 closes off the escape routes that normally let the wealthy insulate themselves
 from inequality's consequences. If automation is global and comprehensive,
 there are no intact consumer economies to export to, no untouched labor
-markets to arbitrage. The owners of the robots are trapped inside the same
-macroeconomic logic as everyone else, and hoarding becomes self-defeating.
-History offers a partial answer to the pessimist's objection: redistributive
-reforms have occurred before, driven not by universal elite buy-in but by
-popular pressure combined with defections from enough elites to break the
-blocking coalition. Whether that happens early or late, smoothly or
+markets to arbitrage. The owners of the AIs and robots are trapped inside the
+same macroeconomic logic as everyone else, and hoarding becomes
+self-defeating. History offers a partial answer to the pessimist's objection:
+redistributive reforms have occurred before, driven not by universal elite
+buy-in but by popular pressure combined with defections from enough elites to
+break the blocking coalition. Whether that happens early or late, smoothly or
 catastrophically, is the real open question — not whether advanced AI and
-machines produce enough wealth to go around.
+machines can produce enough wealth to make us all prosperous.
 
 --------
 
-[lump_of_labor]: https://en.wikipedia.org/wiki/Lump_of_labour_fallacy
+[wiki_lump_of_labor]: https://en.wikipedia.org/wiki/Lump_of_labour_fallacy
+[wiki_rtfm]: https://en.wikipedia.org/wiki/RTFM
+[wiki_ubi]: https://en.wikipedia.org/wiki/Universal_basic_income
 
