@@ -49,7 +49,7 @@ it, humans get less.
 
 ## Doom averted: what happened last time
 
-<span class="phead">Mechanization is is obvious historical parallel.</span>
+<span class="phead">Mechanization is the obvious historical parallel.</span>
 The [industrial revolution][wiki_ind_rev] started automating physical work
 starting in the mid-18th century and reached a peak with
 [assembly-line][wiki_assembly] production in the mid-20th. Like AI, it was a
