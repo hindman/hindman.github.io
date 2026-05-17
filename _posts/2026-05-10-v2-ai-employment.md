@@ -1,36 +1,33 @@
 ---
-title: "AI and mass unemployment: a skeptical take"
+title: "AI and mass unemployment: doom in three acts"
 excerpt: >
-  Like mechanization, computerization might make us
-  more prosperous, not unemployed. Lessons from economic
-  history and LoopLlama.
+  The fear that AI will cause mass unemployment is intuitive, historically
+  informed, and — in its simplest form — incoherent. Are we doomed? An
+  exploration in three acts.
 tags:
+  - AI
+  - economics
+  - history
+  - employment
   - loopllama
-  - software
-  - llm
 published: false
 ---
 
 <!--
 
-__HERE__
-
 ## They took our jobs!
-## Mechanization
+## Doom averted: what happened last time
 ## LoopLlama as an illustration
-## Computerization might be different
-## The worst case might be good indeed
+## Doom reconsidered: this time might actually be different
+## Doom inverted: the worst case might be great
 
 -->
 
-I've been following the AI-employment debate with some interest — namely, the
-idea that AI will to large-scale unemployment. I have an academic background
-in economic history and recently finished a software project,
-[LoopLlama][/loopllama/v2], using an AI coding agent. Below I offer several
-observations drawing on that background. None of them are particularly
-original, but collectively they suggest that our AI future could be brighter —
-or at least more uncertain — than typical doom-and-gloom presentations of this
-topic in popular discourse often suggest.
+I have been following the AI-employment debate with some interest. I have an
+academic background in economic history and recently finished a software
+project, [LoopLlama][/loopllama/v2], using an AI coding agent. Below I draw on
+both to offer some ideas that are well-known to economists and historians but
+underrepresented in popular discourse — and, on balance, more reassuring.
 
 ## They took our jobs!
 
@@ -45,7 +42,7 @@ historians would also point out that the fear — at least when expressed simply
 there is a fixed amount of work to be done, so if machines take some of it,
 humans get less.
 
-## Mechanization
+## Doom averted: what happened last time
 
 <span class="phead">Mechanization is is obvious historical parallel.</span>
 The industrial revolution started automating physical work starting in the
@@ -128,7 +125,7 @@ computer what you want and it happens — the result would have been much less
 coherent. The success of v2 derived from human-AI collaboration, not one type
 of intelligence or the other.
 
-## Computerization might be different
+## Doom reconsidered: this time might actually be different
 
 <span class="phead">AI limits might be temporary.</span> AI is different from
 a loom or an assembly line in one critical respect: it is a cognitive
@@ -151,63 +148,52 @@ combination of increasingly capable AIs for cognitive work and machines for
 physical work leaves no obvious employment realm where human labor holds a
 structural advantage.
 
-## The worst case might be good indeed
+## Doom inverted: the worst case might be great
 
-<span class="phead">The doom scenario undermines itself.</span> Assume the
+<span class="phead">The doom scenario leads to contraction.</span> Assume the
 most extreme version: AI and machines handle virtually all work, and mass
 unemployment follows. But mass unemployment in that scenario is also mass
 productivity — an economy generating an enormous quantity of goods and
 services with a tiny fraction of the labor previously required. That
-translates into vastly greater wealth, at least in the aggregate and at least
-in theory.
+translates into vastly greater wealth, at least in the aggregate. But who
+among the jobless will purchase this river of goods and services?
 
-__HERE__
+<span class="phead">Door #1: the problem of distribution.</span> Labor in a
+market economy serves two distinct functions. It is a factor of production —
+labor makes things. It is also the primary mechanism by which income reaches
+the population: wages give workers the purchasing power to buy what the
+economy produces. Employment bundles those two functions, but extreme
+automation severs the bundle: no employment, no wages, no demand, no reason to
+engage the capable AIs and machines in the first place. The gears grind to a
+halt. Down this branch of the thought experiment lies one extreme outcome:
+supreme technological capability amid system-wide impoverishment.
 
-<span class="phead">What gives is the distribution mechanism.</span> Labor in
-a market economy serves two distinct functions. It is a factor of production
-— labor makes things. But it is also the primary mechanism by which income
-reaches the population: wages give workers the purchasing power to buy what
-the economy produces. Normally these functions are bundled; employment links
-them. Extreme automation severs the bundle. Production continues; wages do
-not. And a capitalist economy has no automatic substitute for wages as a
-distribution mechanism. The wealth implied by all that productivity has
-nowhere to go.
+<span class="phead">Door #2: seizing the means of distribution.</span> Down
+this branch lies broad prosperity that mimics or even dwarfs what occurred
+during mechanization: shorter work weeks, labor as vocation rather than
+necessity, material abundance without drudgery. For that to happen, one or
+more mechanisms must replace wages as the means by which income reaches
+people: broad capital ownership, profit-sharing, a universal basic income
+(UBI), public ownership of productive capacity. 
 
-<span class="phead">Which produces two very different worlds.</span> One
-possibility is broadly shared prosperity — shorter work weeks, work as
-vocation rather than necessity, material comfort without drudgery — but only
-if some mechanism replaces wages as the means by which income reaches people:
-broad capital ownership, profit-sharing, a universal basic income, public
-ownership of productive capacity, or some equivalent. The other possibility is
-stagnation despite technological abundance: AI systems and factories capable
-of producing anything, but no consumers with money to buy it. A factory that
-can produce everything and sell to no one is not actually valuable, and wealth
-without a functioning exchange system to give it meaning is largely inert.
+<span class="phead">The pessimist's objection.</span> Very few people find
+talk of UBI and broadly shared AI prosperity reassuring. The default stance is
+pessimistic: those who control the technology will resist redistribution,
+accumulate disproportionate wealth and power, and the rest of humanity will
+suffer. History offers plenty of examples of elites doing exactly that.
 
-<span class="phead">Even the good outcome has a painful transition.</span>
-Mechanization's long-run result was broadly shared prosperity, but the road
-was not smooth — real mills closed, real households were disrupted, real
-communities hollowed out, and the political battles over redistribution were
-long and often brutal. The same would hold for a highly automated future, even
-one that ends well in aggregate. This is part of what makes the politics
-central: transition costs are where actual people live, and managing them well
-requires deliberate policy, not just confidence in long-run outcomes.
-
-<span class="phead">Which world we get is a political question.</span> The
-standard pessimistic read is familiar: those who control the technology will
-resist redistribution, accumulate disproportionate wealth and power, and the
-rest of humanity loses. History lends the pessimists some support. But the
-extreme scenario also closes off exit routes that normally let the wealthy
-avoid the consequences of inequality. If automation is global and
-comprehensive, there are no intact consumer economies to export to, no
-untouched labor markets to arbitrage. The owners of the robots are trapped
-inside the same macroeconomic logic as everyone else, and hoarding becomes
-self-defeating not just in aggregate but eventually for each individual
-hoarder. The historical pattern — elite resistance, building crisis,
-redistribution under duress — has played out before, and it does not require
-universal elite buy-in, only enough defections from the blocking coalition.
-Whether that happens early or late, smoothly or catastrophically, is the real
-open question — not whether advanced AI produces enough wealth to go around.
+<span class="phead">Elites without an exit strategy.</span> Extreme automation
+closes off the escape routes that normally let the wealthy insulate themselves
+from inequality's consequences. If automation is global and comprehensive,
+there are no intact consumer economies to export to, no untouched labor
+markets to arbitrage. The owners of the robots are trapped inside the same
+macroeconomic logic as everyone else, and hoarding becomes self-defeating.
+History offers a partial answer to the pessimist's objection: redistributive
+reforms have occurred before, driven not by universal elite buy-in but by
+popular pressure combined with defections from enough elites to break the
+blocking coalition. Whether that happens early or late, smoothly or
+catastrophically, is the real open question — not whether advanced AI and
+machines produce enough wealth to go around.
 
 --------
 
