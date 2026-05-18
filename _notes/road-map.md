@@ -34,3 +34,9 @@ Posts:
 
 ## CHAT AREA
 
+I'm reviewing the draft outline in this file and section:
+
+    _posts/2026-05-11-v2-ux.md
+
+    ## DRAFT PLAN
+
