@@ -18,6 +18,7 @@ Launch:
     - reset start/end adjustments
     - ll: set scratch source
     - scratch delta: 5s > 1s
+  - Edit release post (last section) to describe the other 2 posts accurately
   - User docs: F5 post: draft
   - Make v2 the official version.
 
@@ -32,8 +33,4 @@ Posts:
   - Tommy Emmanuel vs Music Practice Inc [see writing-notes]
 
 ## CHAT AREA
-
-Still working ...
-
-    _posts/2026-05-10-v2-ai-employment.md
 

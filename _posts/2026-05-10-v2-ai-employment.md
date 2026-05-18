@@ -17,16 +17,6 @@ tags:
 published: false
 ---
 
-<!--
-
-## Prologue: they took our jobs!
-## Doom averted: what happened last time
-## Interlude: the case of LoopLlama
-## Doom reconsidered: this time might actually be different
-## Doom inverted: the worst case might be great
-
--->
-
 I have been following the AI-employment debate with some interest. I have an
 academic background in economic history and recently finished a software
 project, [LoopLlama](/loopllama/v2), using an AI coding agent. Below I draw on
@@ -38,31 +28,30 @@ underrepresented in popular discourse — and, on balance, more reassuring.
 <span class="phead">The fear is intuitive.</span> If AI can do most cognitive
 work faster and cheaper than humans, employers will use AI instead. Several
 [leaders][amodei_adolescence] of major frontier [AI labs][gpts_are_gpts] have
-claimed that they expect this to happen, and and the question is [seriously
+claimed that they expect this to happen, and the question is [seriously
 debated][frey_osborne] among [macroeconomists][acemoglu].
 
 <span class="phead">And based on a fallacy.</span> Many economists and
-historians would also point out that the fear — at least when expressed simply
-— rests on the [lump of labor fallacy][wiki_lump_of_labor]: the assumption
-that there is a fixed amount of work to be done, so if machines take some of
-it, humans get less.
+historians would also point out that the fear — at least when expressed
+simply — rests on the [lump of labor fallacy][wiki_lump_of_labor]: the
+assumption that there is a fixed amount of work to be done, so if machines
+take some of it, humans get less.
 
 ## Doom averted: what happened last time
 
 <span class="phead">Mechanization is the obvious historical parallel.</span>
-The [industrial revolution][wiki_ind_rev] started automating physical work
-starting in the mid-18th century and reached a peak with
-[assembly-line][wiki_assembly] production in the mid-20th. Like AI, it was a
-general-purpose technology applicable across industries; like AI, it
-compressed costs dramatically and enabled previously impossible things. The
-main difference is that mechanization operated in the physical realm, AI in
-the cognitive.
+The [industrial revolution][wiki_ind_rev] began automating physical work in
+the mid-18th century and peaked with [assembly-line][wiki_assembly] production
+in the mid-20th. Like AI, it was a general-purpose technology applicable
+across industries; like AI, it compressed costs dramatically and enabled
+previously impossible things. The main difference is that mechanization
+operated in the physical realm, AI in the cognitive.
 
 <span class="phead">Agriculture illustrates the scale of change.</span> Over
 [50 percent][hsus_ag_labor] of the US labor force worked in agriculture in
 1870; today the figure is under [2 percent][wb_ag_labor]. Viewed one way, the
-mechanization of agriculture — and many other sectors — destroyed most jobs
-that existed in the past.
+mechanization of agriculture — and many other sectors — destroyed most
+jobs that existed in the past.
 
 <span class="phead">Contemporary observers saw catastrophe coming.</span> The
 [Luddites][wiki_luddite] were skilled textile workers who famously destroyed
@@ -79,7 +68,7 @@ people living in countries with modern, developed economies are vastly more
 prosperous than their 19th-century ancestors. As one example among many, US
 household spending on necessities — food, clothing, housing — fell from
 roughly 80 percent of budgets in 1900 to under 50 percent today, even as the
-quanity, quality, and variety of those necessity goods expanded
+quantity, quality, and variety of those necessity goods expanded
 substantially.[^1]
 
 <span class="phead">Employment shifted rather than collapsing.</span> Old jobs
@@ -102,15 +91,15 @@ web developer — its own domain of expertise, one I had no interest in
 acquiring. Without an AI coding agent, v2 would not have existed.
 
 <span class="phead">And ambition.</span> As an example, consider the
-application's cloud backup feature, which was originally raised fairly late in
-the coding process, as a speculative idea for a future v3. Exercising such
-caution was how I was trained to think as a software engineer, because adding
-a major feature late in a development cycle is one way software projects fail.
-But the premise behind that old wisdom — namely, that generating code is
-costly — had evaporated. Even though the move felt a bit crazy in the moment,
-we decided to add the feature and the app is much better for it. More
-generally, cloud backup is just one example among many where the existence of
-the AI significantly expanded the scope of my ambition for the project.[^2]
+application's cloud backup feature, which came up late in the coding process
+as a speculative idea for a future v3. Exercising such caution was how I was
+trained to think as a software engineer, because adding a major feature late
+in a development cycle is one way software projects fail. But the premise
+behind that old wisdom — namely, that generating code is costly — had
+evaporated. Even though the move felt a bit crazy in the moment, we decided to
+add the feature and the app is much better for it. More generally, cloud
+backup is just one example among many where the existence of the AI
+significantly expanded the scope of my ambition for the project.[^2]
 
 <span class="phead">Employment did not disappear — it shifted.</span> My old
 job, writing code, largely evaporated. What replaced it? Planning the
@@ -128,8 +117,8 @@ problem, the AI sometimes offered a fix that resolved the immediate issue
 while quietly introducing trouble elsewhere. Had I passively accepted every
 short-term fix the AI proposed — in the style of [vibe
 coding][wiki_vibe_coding], where you simply tell a computer what you want and
-it happens — the result would have been much less coherent. The success of v2
-derived from human-AI collaboration, not one type of intelligence or the
+it happens — the result would have been much less coherent. The success of
+v2 derived from human-AI collaboration, not one type of intelligence or the
 other.
 
 ## Doom reconsidered: this time might actually be different
@@ -140,8 +129,8 @@ technology running on computers, which means it can, in principle, be turned
 on itself. We already see this happening in limited ways, with frontier AI
 labs reporting, or at least predicting, that AI is accelerating progress
 toward better AI.[^3] If that loop continues, the limits I observed —
-difficulty with larger or open-ended tasks, mypopia regarding downstream
-consquences, failures when weighing tradeoffs among project goals, and
+difficulty with larger or open-ended tasks, myopia regarding downstream
+consequences, failures when weighing tradeoffs among project goals, and
 inability to generate outside-the-box solutions in those situations — those
 limits might represent a snapshot rather than a ceiling.
 
@@ -188,8 +177,8 @@ ownership][bruenig_swf], profit-sharing, a [universal basic income][wiki_ubi]
 find talk of UBI and broadly shared AI prosperity reassuring. The default
 stance I observe in the US is pessimistic: those who control the technology
 will resist redistribution, accumulate disproportionate wealth and power, and
-the rest of humanity will suffer. History offers plenty of examples of elites
-doing exactly that.
+leave the rest of humanity to suffer. History offers plenty of examples of
+elites doing exactly that.
 
 <span class="phead">Elites without an exit strategy.</span> Extreme automation
 closes off the escape routes that normally let the wealthy insulate themselves
@@ -254,8 +243,8 @@ all prosperous.
 
 [^3]: See [Dario Amodei][amodei_loving] for predictions. In
     [various][claude_write_claude1] interviews, employees at Anthropic
-    [report][claude_write_claude2] that most of the code in Claude Code is
-    now written by the AI model, with human management and judgement now as
-    the gating factor on the rate of progress — similar to the description of
-    my role in LoopLlama v2.
+    [report][claude_write_claude2] that most of the code in Claude Code is now
+    written by the AI model, with human management and judgment now as the
+    gating factor on the rate of progress — similar to the description of my
+    role in LoopLlama v2.
 
