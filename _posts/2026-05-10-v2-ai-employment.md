@@ -75,7 +75,7 @@ current AI discourse are hard to miss.
 
 <span class="phead">Prosperity, not catastrophe.</span> Mechanization produced
 neither mass unemployment nor impoverishment. By almost any material measure,
-people living in countries with modern, developed countries are vastly more
+people living in countries with modern, developed economies are vastly more
 prosperous than their 19th-century ancestors. As one example among many, US
 household spending on necessities — food, clothing, housing — fell from
 roughly 80 percent of budgets in 1900 to under 50 percent today, even as the
@@ -142,7 +142,7 @@ labs reporting, or at least predicting, that AI is accelerating progress
 toward better AI.[^3] If that loop continues, the limits I observed —
 difficulty with larger or open-ended tasks, mypopia regarding downstream
 consquences, failures when weighing tradeoffs among project goals, and
-inability to generate out-of-the-box solutions in those situations — those
+inability to generate outside-the-box solutions in those situations — those
 limits might represent a snapshot rather than a ceiling.
 
 <span class="phead">No escape valve.</span> Extrapolate the trend, and perhaps
@@ -168,8 +168,8 @@ this river of goods and services?
 <span class="phead">Door #1: the problem of distribution.</span> Labor in a
 market economy serves two distinct functions. It is a factor of production —
 labor makes and does things. It is also the primary mechanism by which income
-reaches the population: wages give workers the purchasing power to buy what
-the economy produces. Employment bundles those two functions, but extreme
+is distributed: wages give workers the purchasing power to buy what the
+economy produces. Employment bundles those two functions, but extreme
 automation severs the bundle: no employment, no wages, no demand, no reason to
 engage the capable AIs and machines in the first place. The gears grind to a
 halt. Down this branch of the thought experiment lies one extreme outcome:
@@ -180,9 +180,9 @@ this branch lies broad prosperity that mimics or even dwarfs what occurred
 during mechanization: shorter work weeks, material abundance without drudgery,
 labor as vocation rather than necessity — each of us crafting our own
 LoopLlamas. For that to happen, one or more mechanisms must replace wages as
-the means by which income reaches people: broad capital ownership,
-profit-sharing, a [universal basic income][wiki_ubi] (UBI), public ownership
-of productive capacity.
+the means by which income reaches people: [broad capital
+ownership][bruenig_swf], profit-sharing, a [universal basic income][wiki_ubi]
+(UBI), public ownership of productive capacity.
 
 <span class="phead">The pessimist's objection.</span> Very few regular folks
 find talk of UBI and broadly shared AI prosperity reassuring. The default
@@ -232,6 +232,7 @@ all prosperous.
 [amodei_loving]: https://darioamodei.com/essay/machines-of-loving-grace
 [claude_write_claude1]: https://x.com/lennysan/status/1930711568385466577
 [claude_write_claude2]: https://www.nytimes.com/2026/02/24/opinion/ezra-klein-podcast-jack-clark.html
+[bruenig_swf]: https://www.peoplespolicyproject.org/projects/social-wealth-fund/
 [wiki_ubi]: https://en.wikipedia.org/wiki/Universal_basic_income
 [wiki_new_deal]: https://en.wikipedia.org/wiki/New_Deal
 [wiki_prog_era]: https://en.wikipedia.org/wiki/Progressive_Era
@@ -240,14 +241,14 @@ all prosperous.
     Spending][bls_consumer_spending], notably Chart 1, page 3.
 
 [^2]: I often wonder about the impact that our current AI technology would
-    have had on the largest research projects of my academic career, such as
+    have had on the largest projects of my academic career, such as
     [Historical Statistics of the United States][hsus_main],
     [IPUMS][www_ipums], and my [dissertation][diss_rfwt] on the history of US
     state taxation. In every case, I think the multiplier would have been
     large, substantially increasing what my teams and I could have
     accomplished. The political scientist Andy Hall writes frequently on such
     matters and encourages academics to figure out how to use AI to scale up
-    the [ambition of their research agenda][hall_research_ambition] and, more
+    the [ambition of their research agendas][hall_research_ambition] and, more
     directly in political science itself, to scale up our ambitions for
     [democracy itself][hall_polit_super].
 
