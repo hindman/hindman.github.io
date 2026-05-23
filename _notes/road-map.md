@@ -13,6 +13,9 @@ Files:
 
 ## TODO
 
+timeline: scratch loop:
+  - should color differ when looping on/off?
+
 Launch:
   - deploy: to get:
     - reset start/end adjustments
@@ -34,8 +37,10 @@ Posts:
 
 ## CHAT AREA
 
-I'm working on this file:
+Please draft S2.
 
     _posts/2026-05-11-v2-ux.md
 
+As before, put the prose at the top of the section, but don't delete the
+outline.
 
