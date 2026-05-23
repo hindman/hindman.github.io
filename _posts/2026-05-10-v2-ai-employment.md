@@ -141,8 +141,8 @@ further into physical work. At that point, the reassuring analogy to
 mechanization breaks down. As mechanization proceeded in the 19th and 20th
 centuries, employment shifted toward office and professional jobs. But the
 combination of increasingly capable AIs for cognitive work and machines for
-physical work leaves no obvious employment realm where human labor holds a
-structural advantage.
+physical work leaves no obvious area where human labor holds a structural
+advantage.
 
 ## Doom inverted: the worst case might be great
 
@@ -177,22 +177,21 @@ ownership][bruenig_swf], profit-sharing, a [universal basic income][wiki_ubi]
 find talk of UBI and broadly shared AI prosperity reassuring. The default
 stance I observe in the US is pessimistic: those who control the technology
 will resist redistribution, accumulate disproportionate wealth and power, and
-leave the rest of humanity to suffer. History offers plenty of examples of
-elites doing exactly that.
+leave the rest of humanity to suffer.
 
-<span class="phead">Elites without an exit strategy.</span> Extreme automation
-closes off the escape routes that normally let the wealthy insulate themselves
-from inequality's consequences. If automation is global and comprehensive,
-there are no intact consumer economies to export to, no untouched labor
-markets to arbitrage. The owners of the AIs and robots are trapped inside the
-same macroeconomic logic as everyone else, and hoarding becomes
-self-defeating. History offers a partial answer to the pessimist's objection:
-[redistributive reforms][wiki_new_deal] have [occurred before][wiki_prog_era],
-driven not by universal elite buy-in but by popular pressure combined with
-defections from enough elites to break the blocking coalition. Whether that
-happens early or late, smoothly or catastrophically, is the real open question
-— not whether advanced AI and machines can produce enough wealth to make us
-all prosperous.
+<span class="phead">Elites without an exit strategy.</span> But extreme
+automation closes off the escape routes that normally let the wealthy insulate
+themselves from inequality's consequences. If automation is global and
+comprehensive, there are no intact consumer economies to export to, no
+untouched labor markets to arbitrage. The owners of the AIs and robots are
+trapped inside the same macroeconomic logic as everyone else, and hoarding
+becomes self-defeating. History offers a partial answer to the pessimist's
+objection: [redistributive reforms][wiki_new_deal] have [occurred
+before][wiki_prog_era], driven not by universal elite buy-in but by popular
+pressure combined with defections from enough elites to break the blocking
+coalition. Whether that happens early or late, smoothly or catastrophically,
+is the real open question — not whether advanced AI and machines can produce
+enough wealth to make us all prosperous.
 
 --------
 
