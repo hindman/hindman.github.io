@@ -37,7 +37,7 @@ Posts:
 
 ## CHAT AREA
 
-Please draft S2.
+We are drafting S2 in this file.
 
     _posts/2026-05-11-v2-ux.md
 
