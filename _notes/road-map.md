@@ -37,13 +37,14 @@ Posts:
 
 ## CHAT AREA
 
-We are drafting S4 in this file.
+We are drafting S5 in this file.
 
     _posts/2026-05-11-v2-ux.md
 
 Please draft the prose for the part of the outline with this heading:
 
-    Overview of the Cat:
+    What makes a good mode:
 
-Put the prose at the top of the section, but don't delete the outline.
+Put the prose where it belongs in the essay, above the outline heading. Leave
+the outline as-is, so I can refer to it when reviewing the text.
 
