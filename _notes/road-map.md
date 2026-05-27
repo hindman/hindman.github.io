@@ -37,10 +37,13 @@ Posts:
 
 ## CHAT AREA
 
-We are drafting S2 in this file.
+We are drafting S4 in this file.
 
     _posts/2026-05-11-v2-ux.md
 
-As before, put the prose at the top of the section, but don't delete the
-outline.
+Please draft the prose for the part of the outline with this heading:
+
+    Overview of the Cat:
+
+Put the prose at the top of the section, but don't delete the outline.
 
