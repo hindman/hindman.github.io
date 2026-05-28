@@ -37,7 +37,7 @@ Posts:
 
 ## CHAT AREA
 
-We are drafting S5 in this file.
+We are drafting S6 in this file.
 
     _posts/2026-05-11-v2-ux.md
 
