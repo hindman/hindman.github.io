@@ -43,7 +43,7 @@ We are drafting S6 in this file.
 
 Please draft the prose for the part of the outline with this heading:
 
-    Modes create real estate:
+    LoopLlama as a worked example:
 
 Put the prose where it belongs in the essay, above the outline heading. Leave
 the outline as-is, so I can refer to it when reviewing the text.
