@@ -37,13 +37,13 @@ Posts:
 
 ## CHAT AREA
 
-We are drafting S8 in this file.
+We are editing this file.
 
     _posts/2026-05-11-v2-ux.md
 
-The argument claims that the prevailing UX paradigm exerts a force
-on developers building new apps -- in effect, stacking the deck
-in favor of mouse, menus, and modifier-based binding schemes.
+Please read the post and help me assess it, focusing on first-order concerns
+like argument, ordering of points, transitions, essay and heading titles,
+effectiveness of evidences and examples, appropriate level of detail for
+the various points and parts, etc. (We will deal with mid-level and low-level
+editing improvements on subsequent passes.)
 
-But how true is that? In what specific ways does the OS, existing
-tooling, libraries, etc actually stack the deck?
