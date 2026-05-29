@@ -1,8 +1,11 @@
 ---
 title: "Fingerstyle rhythmic rudiments: a systematic approach"
+
 excerpt: >
+
   GuitarPro files with 256 exercises covering every eighth-note
   melody rhythm against an alternating bass.
+
 tags:
   - fingerstyle guitar
   - right hand
