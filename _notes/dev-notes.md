@@ -81,6 +81,69 @@ LoopLlama: lines of code:
 
         inv loc
 
+## Post editing process
+
+### High-level review
+
+Included:
+  - The argument.
+  - The ordering of points.
+  - The staging of examples.
+  - Logical and rhetorical/framming transitions.
+  - Essay title.
+  - Section titles.
+  - Essay excerpt.
+  - Factual claims: are they sufficiently supported via logic, common sense,
+    or sourcing?
+
+Not included:
+  - Wording or specific phrasing (except as it relates to the argument and
+    framing points noted above).
+  - Routine copyediting: typos, grammar, formatting consistency, etc.
+  
+### Mid-level review
+
+Process:
+  - Usually a section at a time.
+  - Focused on improving/sharpening the writing.
+
+Included:
+  - Wordiness and redundancy.
+  - Tightening the writing at the paragraph level to make the same points in
+    fewer sentences or words.
+  - Weak or vague words.
+  - Hedging or qualification without necessity or purpose.
+  - Throat-clearing.
+  - Sentence rhythm — monotony in length or structure.
+  - Paragraph topic sentences.
+  - Paragraph unity — paragraphs trying to do two things at once.
+  - Transitions between paragraphs.
+  - Repetition — same word or phrase used too close together without
+    intentional effect.
+  - Tone consistency.
+  - AI tells: the points above will mostly handle this indirectly, but if
+    anything jumps out, please flag it.
+
+Excluded (unless something glaring jumps out):
+  - Essay argument and structure — already handled at the top level; don't
+    relitigate.
+  - Factual claims and link accuracy — already covered.
+  - Typos, spelling, punctuation — save for final copyediting pass.
+  - Markdown/formatting — save for final copyediting pass.
+  - Essay and heading titles -- already covered and nailed down.
+  - Essay excerpt -- already covered and nailed down.
+
+### Low-level review
+
+Included:
+  - Typos.
+  - Grammar.
+  - Formatting and syntax consistency.
+  - Correct ordering for footnotes and links.
+
+Excluded (unless something glaring jumps out):
+  - Mid-level (writing) and high-level (argument) concerns.
+
 ## Testing scenarios
 
 ### Deleting all video stashes
