@@ -42,8 +42,8 @@ We are editing this file.
     _posts/2026-05-11-v2-ux.md
 
 Please read the post and help me assess it, focusing on first-order concerns
-like argument, ordering of points, transitions, essay and heading titles,
-effectiveness of evidences and examples, appropriate level of detail for
-the various points and parts, etc. (We will deal with mid-level and low-level
-editing improvements on subsequent passes.)
+like argument, ordering of points, transitions, effectiveness of evidences and
+examples, appropriate level of detail for the various points and parts, etc.
+This is our second round of top level review. (We will deal with mid-level and
+low-level editing improvements on subsequent passes.)
 
