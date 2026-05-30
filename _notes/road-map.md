@@ -41,9 +41,40 @@ We are editing this file.
 
     _posts/2026-05-11-v2-ux.md
 
-Please read the post and help me assess it, focusing on first-order concerns
-like argument, ordering of points, transitions, effectiveness of evidences and
-examples, appropriate level of detail for the various points and parts, etc.
-This is our second round of top level review. (We will deal with mid-level and
-low-level editing improvements on subsequent passes.)
+We've completed two top-level reviews of the essay looking at the overall
+argument, the ordering of points, the staging of examples. We also did a
+review focused on factual accuracy and sourcing/linking.
+
+Now we are doing a mid-level review, a section at a time, focused on
+improving/sharpening the writing.
+
+  - Example of what is included:
+
+    - Wordiness and redundancy.
+    - Tightening the writing at the paragraph level to make the same points in
+      fewer sentences or words.
+    - Weak or vague words.
+    - Hedging or qualification without necessity or purpose.
+    - Throat-clearing.
+    - Sentence rhythm — monotony in length or structure.
+    - Paragraph topic sentences.
+    - Paragraph unity — paragraphs trying to do two things at once.
+    - Transitions between paragraphs.
+    - Repetition — same word or phrase used too close together without
+      intentional effect.
+    - Tone consistency.
+    - AI tells: the points above will mostly handle this indirectly, but if
+      anything jumps out, please flag it.
+
+  - Excluded (unless something glaring jumps out):
+
+    - Essay argument and structure — already handled at the top level; don't
+      relitigate.
+    - Factual claims and link accuracy — already covered.
+    - Typos, spelling, punctuation — save for final copyediting pass.
+    - Markdown/formatting — save for final copyediting pass.
+    - Essay and heading titles -- already covered and nailed down.
+    - Essay excerpt -- already covered and nailed down.
+
+Before we begin, any concerns, suggestions, or clarifying questions?
 
