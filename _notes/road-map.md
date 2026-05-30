@@ -38,13 +38,14 @@ Posts:
 ## CHAT AREA
 
     x ## The trouble with mice
-      ## The command-line tradition and its constraints
-      ## Raskin's case against modes
-      ## The Canon Cat: when theory meets practice
+    x ## The command-line and its constraints
+    x ## Raskin's case against modes
+      ## The Canon Cat: theory meets practice
       ## There will be modes
       ## Modes all the way down
       ## The Llama
       ## The tragedy
+
 
 We are editing this file.
 
