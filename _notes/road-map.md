@@ -41,8 +41,8 @@ Posts:
     x ## The command-line and its constraints
     x ## Raskin's case against modes
     x ## The Canon Cat: theory meets practice
-      ## There will be modes
-      ## Modes all the way down
+    x ## There will be modes
+    x ## Modes all the way down
       ## The Llama
       ## The tragedy
 
