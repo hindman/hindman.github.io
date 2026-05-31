@@ -37,26 +37,29 @@ Posts:
 
 ## CHAT AREA
 
-    x ## The trouble with mice
-    x ## The command-line and its constraints
-    x ## Raskin's case against modes
-    x ## The Canon Cat: theory meets practice
-    x ## There will be modes
-    x ## Modes all the way down
+      ## The trouble with mice
+      ## The command-line and its constraints
+      ## Raskin's case against modes
+      ## The Canon Cat: theory meets practice
+      ## There will be modes
+      ## Modes all the way down
       ## The Llama
       ## The tragedy
-
 
 We are editing this file.
 
     _posts/2026-05-11-v2-ux.md
 
-We've completed two top-level reviews of the essay looking at the overall
-argument, the ordering of points, the staging of examples. We also did a
-review focused on factual accuracy and sourcing/linking.
+So far we have done:
+  - Two rounds of top-level review: overall argument, the ordering of points,
+    the staging of examples.
+  - Review of factual accuracy and sourcing/linking.
+  - One round of mid-level review: writing, sentences, words, tone.
 
-Now we are doing a mid-level review, a section at a time, focused on
-improving/sharpening the writing.
+Now we are doing a second round of mid-level review, a section at a time,
+focused on improving/sharpening the writing. The criteria are the same
+(below). We are under no obligation to find more problems, but if the past is
+any guide, a second look might surface some insights.
 
   - Example of what is included:
 
