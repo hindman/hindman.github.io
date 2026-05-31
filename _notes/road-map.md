@@ -40,7 +40,7 @@ Posts:
     x ## The trouble with mice
     x ## The command-line and its constraints
     x ## Raskin's case against modes
-      ## The Canon Cat: theory meets practice
+    x ## The Canon Cat: theory meets practice
       ## There will be modes
       ## Modes all the way down
       ## The Llama
@@ -87,4 +87,5 @@ improving/sharpening the writing.
     - Essay excerpt -- already covered and nailed down.
 
 Before we begin, any concerns, suggestions, or clarifying questions?
+
 
