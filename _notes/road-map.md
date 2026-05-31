@@ -37,7 +37,12 @@ Posts:
 
 ## CHAT AREA
 
-      ## The trouble with mice
+  __NEXT__
+    - section by section
+    - MH read/edit => then CC => then edit
+
+    x Intro
+    x ## The trouble with mice
       ## The command-line and its constraints
       ## Raskin's case against modes
       ## The Canon Cat: theory meets practice
@@ -45,6 +50,7 @@ Posts:
       ## Modes all the way down
       ## The Llama
       ## The tragedy
+      Excerpt: revisit; seems off.
 
 We are editing this file.
 
@@ -90,5 +96,8 @@ any guide, a second look might surface some insights.
     - Essay excerpt -- already covered and nailed down.
 
 Before we begin, any concerns, suggestions, or clarifying questions?
-
+Regarding process, our first round went section by section, yielding about
+a dozen issue per section. Do you suggest a similar approach again,
+or would a single pass work just as well for the LLM? Let's resolve
+that before starting the editing pass.
 
