@@ -40,8 +40,8 @@ Posts:
   __NEXT__
     x Excerpt.
     x Footnotes: ordering.
-    - MH: full read/edit.
-    - Mid-level: round 3
+    x MH: full read/edit.
+    x Mid-level: round 3
     - Low-level: round 1
     - Low-level: round 2
 
@@ -63,12 +63,13 @@ So far we have done:
   - Two rounds of top-level review: overall argument, the ordering of points,
     the staging of examples.
   - Review of factual accuracy and sourcing/linking.
-  - Two rounds of mid-level review: writing, sentences, words, tone.
+  - Three rounds of mid-level review: writing, sentences, words, tone.
 
 Now we are doing a 3rd round of mid-level review, a section at a time, focused
 on improving/sharpening the writing. The criteria are the same (below). We are
-under no obligation to find more problems, but if the past is any guide,
-another look might surface some insights.
+under no obligation to find more problems, but I just completed a full
+read/edit pass and might have introduced new problems, or we might spot
+something new.
 
   - Example of what is included:
 
@@ -99,8 +100,9 @@ another look might surface some insights.
     - Essay excerpt -- already covered and nailed down.
 
 Before we begin, any concerns, suggestions, or clarifying questions?
-Regarding process, our first round went section by section, yielding about
-a dozen issue per section. Do you suggest a similar approach again,
-or would a single pass work just as well for the LLM? Let's resolve
-that before starting the editing pass.
+Regarding process, the Claude Code interface often suggests that I should
+try "fan out subagents" to parallelize work. Is this mid-level
+review a candidate, where each agent could assess one section? If so,
+what are the best logistists: each agent writes its findings in an
+small markdown report, or something else? Please adivse.
 
