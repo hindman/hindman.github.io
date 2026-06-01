@@ -3,27 +3,29 @@
 
 Files:
 
-    _posts/2026-05-01-v2-release.md                     | Announcement
-    _posts/2026-05-10-v2-ai-employment.md               | AI and mass unemployment
-    _posts/2026-05-11-v2-ux.md                          | LoopLlama V2 and the tragedy of modern UX
-    _posts/2026-02-20-fingerstyle-rhythmic-rudiments.md | Rudiments
+    2026-02-20-fingerstyle-rhythmic-rudiments.md
+    2026-05-29-v2-release.md
+    2026-05-30-ai-employment.md
+    2026-05-31-mice-menus.md
 
-    _pages/loopllama-v2-help.md        | Help
-    _pages/loopllama-v2-keybindings.md | Key bindings
+    _pages/loopllama-v2-help.md
+    _pages/loopllama-v2-keybindings.md
 
 ## TODO
 
-timeline: scratch loop:
-  - should color differ when looping on/off?
-
 Launch:
+  x Make v2 the official version.
+  x Excerpt.
+  x Footnotes: ordering.
+  x MH: full read/edit.
+  x Mid-level: round 3
+  x Low-level
+  x release post: edit last paragraph
   - deploy: to get:
     - reset start/end adjustments
     - ll: set scratch source
     - scratch delta: 5s > 1s
-  - Edit release post (last section) to describe the other 2 posts accurately
   - User docs: F5 post: draft
-  - Make v2 the official version.
 
 Posts:
   - RH rudiments #2: Giuliani
@@ -36,14 +38,6 @@ Posts:
   - Tommy Emmanuel vs Music Practice Inc [see writing-notes]
 
 ## CHAT AREA
-
-  __NEXT__
-    x Excerpt.
-    x Footnotes: ordering.
-    x MH: full read/edit.
-    x Mid-level: round 3
-    - Low-level: round 1
-    - Low-level: round 2
 
     x Intro
     x ## The trouble with mice
@@ -65,44 +59,35 @@ So far we have done:
   - Review of factual accuracy and sourcing/linking.
   - Three rounds of mid-level review: writing, sentences, words, tone.
 
-Now we are doing a 3rd round of mid-level review, a section at a time, focused
-on improving/sharpening the writing. The criteria are the same (below). We are
-under no obligation to find more problems, but I just completed a full
-read/edit pass and might have introduced new problems, or we might spot
-something new.
+Now we are doing a low-level review, focusing on the following:
 
-  - Example of what is included:
+  Included:
+    - Typos and misspellings.
+    - Grammar.
+    - Punctuation consistency: em-dash style, serial comma, footnote marker
+      placement relative to punctuation.
+    - Capitalization consistency: proper nouns, heading style (sentence case
+      throughout, or title case throughout).
+    - Backtick usage: consistent application to key names, code, and inline
+      technical terms.
+    - Custom formatting elements (e.g., `<span class="phead">`): consistent
+      syntax and usage.
+    - Number formatting: counts and quantities used statistically should be
+      numerals, not words.
+    - Link completeness: all used labels defined; no orphaned definitions.
+    - Link and footnote ordering: text order for both markers and definitions.
+    - Frontmatter: required fields present (title, excerpt, tags, published
+      flag).
 
-    - Wordiness and redundancy.
-    - Tightening the writing at the paragraph level to make the same points in
-      fewer sentences or words.
-    - Weak or vague words.
-    - Hedging or qualification without necessity or purpose.
-    - Throat-clearing.
-    - Sentence rhythm — monotony in length or structure.
-    - Paragraph topic sentences.
-    - Paragraph unity — paragraphs trying to do two things at once.
-    - Transitions between paragraphs.
-    - Repetition — same word or phrase used too close together without
-      intentional effect.
-    - Tone consistency.
-    - AI tells: the points above will mostly handle this indirectly, but if
-      anything jumps out, please flag it.
-
-  - Excluded (unless something glaring jumps out):
-
-    - Essay argument and structure — already handled at the top level; don't
-      relitigate.
-    - Factual claims and link accuracy — already covered.
-    - Typos, spelling, punctuation — save for final copyediting pass.
-    - Markdown/formatting — save for final copyediting pass.
-    - Essay and heading titles -- already covered and nailed down.
-    - Essay excerpt -- already covered and nailed down.
+  Excluded (unless something glaring jumps out):
+    - Writing quality — wordiness, rhythm, transitions, paragraph structure
+      (mid-level).
+    - Argument, structure, factual claims (high-level).
+    - Essay title, section titles, excerpt — nailed down at higher levels.
 
 Before we begin, any concerns, suggestions, or clarifying questions?
-Regarding process, the Claude Code interface often suggests that I should
-try "fan out subagents" to parallelize work. Is this mid-level
-review a candidate, where each agent could assess one section? If so,
-what are the best logistists: each agent writes its findings in an
-small markdown report, or something else? Please adivse.
+Do you think we can do this review in one shot -- especially since we
+probably caught many grammar/typo issues during our mid-level reviews?
+Or do you advise section-by-section? If the latter, is this a good task
+for fan out subagents?
 

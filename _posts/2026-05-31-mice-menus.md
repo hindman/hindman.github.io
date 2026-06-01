@@ -112,7 +112,7 @@ capacity.
 
 The dominant answer to that constraint was keyboard expansion, along two
 pathways. One was additive: function keys, a dedicated row of extra keys above
-the main keyboard, provided twelve new binding slots.
+the main keyboard, provided 12 new binding slots.
 
 The second was multiplicative: modifier keys. A keyboard's default behavior is
 to emit a character on each keypress; a modifier intercepts that signal and
@@ -151,13 +151,13 @@ menus and long days of point and click.
 
 One response to those constraints was a call to embrace expertise — to stop
 complaining about the difficulty of keyboard mastery and invest the effort to
-achieve it. No one made that case more vividly than Neal Stephenson in [In the
-Beginning... Was the Command Line][stephenson_essay]: Linux as a freely
-available tank, Windows as a breakdown-prone station wagon, and Mac as an
-elegant but confining sports car. Stephenson understood why so many users
-opted for the initial ease and reassurance of purchasing from a friendly
-dealer, but he upheld the virtues of the few who would invest the time to
-learn how to drive and maintain a tank.
+achieve it. No one made that case more vividly than [Neal
+Stephenson][stephenson_essay] in the 1999 essay, "In the Beginning... Was the
+Command Line", which portrayed Linux as a freely available tank, Windows as a
+breakdown-prone station wagon, and Mac as an elegant but confining sports car.
+Stephenson understood why so many users opted for the initial ease and
+reassurance of purchasing from a friendly dealer, but he upheld the virtues of
+the few who would invest the time to learn how to drive and maintain a tank.
 
 Stephenson's case addresses a minority; a related question about expertise
 applies broadly. Because their needs do not justify it, most people will never
@@ -181,7 +181,7 @@ almost as opaque as the command-line systems they replaced, with deep menu
 hierarchies that required users to know where to look when trying to perform a
 task — a mnemonic burden in a new form.
 
-In 2000 Raskin published [The Humane Interface][humane_interface], which
+In 2000 Raskin published [*The Humane Interface*][humane_interface], which
 brought together critiques he had been developing since the 1980s. The book's
 guiding claims were that interfaces should prioritize alignment with human
 cognition rather than computer internals and that design should aim to
@@ -200,7 +200,7 @@ consciously rather than automatically.
 Raskin identified modes as the most systematic of these failures. A mode is a
 state of the interface in which the same user action produces different
 results. The computing environment of the 1980s and 1990s supplied vivid
-examples: the Caps Lock key, inherited from the typewriter, which silently
+examples: the `Caps Lock` key, inherited from the typewriter, which silently
 converted letter key presses to uppercase; word processors that toggled
 between inserting and overwriting text; image editors and presentation tools
 that required the user to track which drawing tool was active; and vi, the
@@ -369,7 +369,7 @@ having. Several criteria matter:
 
 Two classic examples illustrate how the criteria play out:
 
-  - Caps Lock fails on most of them. Its indicator — at most, a small LED on
+  - `Caps Lock` fails on most of them. Its indicator — at most, a small LED on
     some keyboards — is easy to overlook. Accidental activation is common
     because the key occupies prime real estate, where an errant pinky can
     easily land. And the task it serves — sustained all-caps typing — is
@@ -559,15 +559,6 @@ tragedy is that we looked away.
     components.
 
 [^3]: A text object is a structural element that an editor recognizes as a
-    target for navigation or editing: a word, sentence, paragraph, line, or —
-    in code-aware editors — a parenthesized expression, quoted string, or
-    indented block. Rather than searching for a literal string to position the
-    cursor, the user names the unit and the editor locates its boundaries
-    automatically. "Move to the next sentence" and "delete the current
-    paragraph" are text-object operations; searching for a literal string is
-    not.
-
-[^4]: A text object is a structural element that an editor recognizes as a
     target for navigation or editing: a word, sentence, paragraph, line, or —
     in code-aware editors — a parenthesized expression, quoted string, or
     indented block. The user names the unit and the editor locates its

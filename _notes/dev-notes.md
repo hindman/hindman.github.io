@@ -149,7 +149,9 @@ Included:
   - Number formatting: counts and quantities used statistically should be
     numerals, not words.
   - Link completeness: all used labels defined; no orphaned definitions.
-  - Link and footnote ordering: text order for both markers and definitions.
+  - Link and footnote ordering: text order for both markers and definitions
+    (for links in footnotes, use the note's appearance in the main text as the
+    position for ordering).
   - Frontmatter: required fields present (title, excerpt, tags, published
     flag).
 
