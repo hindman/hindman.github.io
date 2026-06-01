@@ -12,6 +12,7 @@
 title: The Fifth Fret
 description: Essays on guitar, history, and politics.
 search: true
+search_full_content: true
 
 # Build settings.
 markdown: kramdown

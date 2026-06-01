@@ -8,16 +8,20 @@ excerpt: >
   experimentation and a better alternative: modal, multi-key, grammar-based
   keyboard systems. Building LoopLlama provides an occasion to examine what
   was lost.
-
-tags:
-  - loopllama
-  - software
-  - mouse
-  - keyboard
-  - key bindings
-
-published: false
 ---
+
+<!--
+
+## The trouble with mice
+## The command-line and its constraints
+## Raskin's case against modes
+## The Canon Cat: theory meets practice
+## There will be modes
+## Modes all the way down
+## The Llama
+## The tragedy
+
+-->
 
 All software faces a basic question: how does the user tell it what to do?
 Since the 1980s the dominant model has been drearily consistent: reach for the

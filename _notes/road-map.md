@@ -1,10 +1,6 @@
 
 ## TODO
 
-F5 post:
-  - draft
-  - post
-
 Posts:
   - RH rudiments #2: Giuliani
   - Practicing right-hand rudiments: muting

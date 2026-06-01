@@ -8,6 +8,26 @@ toc_label: 'Contents'
 toc_icon: 'guitar'
 ---
 
+<!--
+
+## Playback
+## Navigation
+## Jump
+## Video
+## Chapter
+## Section
+## Mark
+## Loop
+## Scratch loop
+## Scratch loop bounds
+## Scratch loop edit mode
+## Data
+## App
+## Help
+## Menu activation
+
+-->
+
 Return to LoopLlama [help](/loopllama/v2/help/).
 
 ## Playback

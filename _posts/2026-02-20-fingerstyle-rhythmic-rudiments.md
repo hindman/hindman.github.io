@@ -5,12 +5,22 @@ excerpt: >
 
   GuitarPro files with 256 exercises covering every eighth-note
   melody rhythm against an alternating bass.
-
-tags:
-  - fingerstyle guitar
-  - right hand
-  - rudiments
 ---
+
+<!--
+
+## Second-hand knowledge
+## The rudiments explained
+## How to eat an elephant
+## Whole elephant too much?
+## Travis picking patterns
+## Quarter elephant: my favorites
+## Finding the music
+## When to say when
+## Variations to consider or reject
+## The goods
+
+-->
 
 ## Second-hand knowledge
 

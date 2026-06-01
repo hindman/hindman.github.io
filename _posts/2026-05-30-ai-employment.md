@@ -6,16 +6,17 @@ excerpt: >
   The fear that AI will cause mass unemployment is intuitive, historically
   informed, and — in its simplest form — incoherent. Are we doomed? An
   exploration in three acts.
-
-tags:
-  - AI
-  - economics
-  - history
-  - employment
-  - loopllama
-
-published: false
 ---
+
+<!--
+
+## Prologue: they took our jobs!
+## Doom averted: what happened last time
+## Interlude: the case of LoopLlama
+## Doom reconsidered: this time might actually be different
+## Doom inverted: the worst case might be great
+
+-->
 
 I have been following the AI-employment debate with some interest. I have an
 academic background in economic history and recently finished a software
