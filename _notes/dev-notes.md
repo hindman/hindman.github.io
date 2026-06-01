@@ -136,13 +136,28 @@ Excluded (unless something glaring jumps out):
 ### Low-level review
 
 Included:
-  - Typos.
+  - Typos and misspellings.
   - Grammar.
-  - Formatting and syntax consistency.
-  - Correct ordering for footnotes and links.
+  - Punctuation consistency: em-dash style, serial comma, footnote marker
+    placement relative to punctuation.
+  - Capitalization consistency: proper nouns, heading style (sentence case
+    throughout, or title case throughout).
+  - Backtick usage: consistent application to key names, code, and inline
+    technical terms.
+  - Custom formatting elements (e.g., `<span class="phead">`): consistent
+    syntax and usage.
+  - Number formatting: counts and quantities used statistically should be
+    numerals, not words.
+  - Link completeness: all used labels defined; no orphaned definitions.
+  - Link and footnote ordering: text order for both markers and definitions.
+  - Frontmatter: required fields present (title, excerpt, tags, published
+    flag).
 
 Excluded (unless something glaring jumps out):
-  - Mid-level (writing) and high-level (argument) concerns.
+  - Writing quality — wordiness, rhythm, transitions, paragraph structure
+    (mid-level).
+  - Argument, structure, factual claims (high-level).
+  - Essay title, section titles, excerpt — nailed down at higher levels.
 
 ## Testing scenarios
 

@@ -38,8 +38,8 @@ Posts:
 ## CHAT AREA
 
   __NEXT__
-    - Excerpt.
-    - Footnotes: ordering.
+    x Excerpt.
+    x Footnotes: ordering.
     - MH: full read/edit.
     - Mid-level: round 3
     - Low-level: round 1
