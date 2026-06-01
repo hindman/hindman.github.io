@@ -19,19 +19,6 @@ tags:
 published: false
 ---
 
-<!--
-
-## The trouble with mice
-## The command-line and its constraints
-## Raskin's case against modes
-## The Canon Cat: theory meets practice
-## There will be modes
-## Modes all the way down
-## The Llama
-## The tragedy
-
--->
-
 All software faces a basic question: how does the user tell it what to do?
 Since the 1980s the dominant model has been drearily consistent: reach for the
 mouse, navigate into an application's menus, and click the needed operation.
@@ -115,7 +102,7 @@ pathways. One was additive: function keys, a dedicated row of extra keys above
 the main keyboard, provided 12 new binding slots.
 
 The second was multiplicative: modifier keys. A keyboard's default behavior is
-to emit a character on each keypress; a modifier intercepts that signal and
+to emit a character on each key press; a modifier intercepts that signal and
 redirects it, allowing the same key to serve double duty. As modifiers
 accumulated over time — `Ctrl` in early terminals, `Alt` from the IBM PC,
 `Cmd` and `Option` from the Mac — the available binding space grew
@@ -181,7 +168,7 @@ almost as opaque as the command-line systems they replaced, with deep menu
 hierarchies that required users to know where to look when trying to perform a
 task — a mnemonic burden in a new form.
 
-In 2000 Raskin published [*The Humane Interface*][humane_interface], which
+In 2000, Raskin published [*The Humane Interface*][humane_interface], which
 brought together critiques he had been developing since the 1980s. The book's
 guiding claims were that interfaces should prioritize alignment with human
 cognition rather than computer internals and that design should aim to
@@ -225,7 +212,7 @@ quasimode cannot be easily forgotten because it is tactile.
 
 Although Raskin had played a leading role in an early phase of the Macintosh
 project, he was disappointed by the result — mouse-heavy, dependent on menus,
-prone to modal interruptions. In 1987 he led the design of an alternative: the
+prone to modal interruptions. In 1987, he led the design of an alternative: the
 [Canon Cat][wiki_canon_cat], a word-processing computer that put into practice
 the [interface principles][cat_promo] he would later codify in *The Humane
 Interface*.
@@ -379,7 +366,7 @@ Two classic examples illustrate how the criteria play out:
 
   - Vi's insert and normal modes tell the other story. The task distinction is
     meaningful: typing text versus issuing commands. Switching cost is low:
-    one keypress in each direction. The risk from mode errors is real but
+    one key press in each direction. The risk from mode errors is real but
     substantially mitigated by vi's strong undo system. The main shortcoming
     is visibility: a cursor-shape change alone — the mechanism used by the Cat
     — is too subtle. On balance, these modes earn their place.
