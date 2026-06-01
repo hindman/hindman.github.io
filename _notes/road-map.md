@@ -38,19 +38,22 @@ Posts:
 ## CHAT AREA
 
   __NEXT__
-    - section by section
-    - MH read/edit => then CC => then edit
+    - Excerpt.
+    - Footnotes: ordering.
+    - MH: full read/edit.
+    - Mid-level: round 3
+    - Low-level: round 1
+    - Low-level: round 2
 
     x Intro
     x ## The trouble with mice
     x ## The command-line and its constraints
     x ## Raskin's case against modes
     x ## The Canon Cat: theory meets practice
-      ## There will be modes
-      ## Modes all the way down
-      ## The Llama
-      ## The tragedy
-      Excerpt: revisit; seems off.
+    x ## There will be modes
+    x ## Modes all the way down
+    x ## The Llama
+    x ## The tragedy
 
 We are editing this file.
 
@@ -60,12 +63,12 @@ So far we have done:
   - Two rounds of top-level review: overall argument, the ordering of points,
     the staging of examples.
   - Review of factual accuracy and sourcing/linking.
-  - One round of mid-level review: writing, sentences, words, tone.
+  - Two rounds of mid-level review: writing, sentences, words, tone.
 
-Now we are doing a second round of mid-level review, a section at a time,
-focused on improving/sharpening the writing. The criteria are the same
-(below). We are under no obligation to find more problems, but if the past is
-any guide, a second look might surface some insights.
+Now we are doing a 3rd round of mid-level review, a section at a time, focused
+on improving/sharpening the writing. The criteria are the same (below). We are
+under no obligation to find more problems, but if the past is any guide,
+another look might surface some insights.
 
   - Example of what is included:
 
