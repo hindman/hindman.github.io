@@ -9,6 +9,7 @@ Posts:
   - Triads: lots to say.
   - 76 reasons why the filibuster is a bad idea
   - Skepticism of the science of music practice: https://chatgpt.com/c/692dd380-d5d0-832c-ad74-a768b049c47b
+    - See Noa Kageyama YouTube: he provides citations.
   - Tommy Emmanuel vs Music Practice Inc [see writing-notes]
 
 Post/pages:
