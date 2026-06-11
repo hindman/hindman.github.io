@@ -1476,6 +1476,7 @@ class LlamaApp extends LitElement {
         const restartAt = (this.looping && this.loopStart < this.loopEnd)
           ? Math.max(this.zoomSource.start, this.loopStart)
           : this.zoomSource.start;
+        this._maybePushJump(this.currentTime, restartAt);
         this._vc?.seekTo(restartAt);
       }
       this._vc?.play();
@@ -1522,6 +1523,7 @@ class LlamaApp extends LitElement {
     if (!this.zoomSource) return;
     const t = this._vc?.getCurrentTime() ?? this.currentTime;
     if (t < this.zoomSource.start || t > this.zoomSource.end) {
+      this._maybePushJump(t, this.zoomSource.start);
       this._vc?.seekTo(this.zoomSource.start);
     }
   }
@@ -1532,6 +1534,7 @@ class LlamaApp extends LitElement {
     const t = this._vc?.getCurrentTime();
     if (t == null) return;
     if (t < this.loopStart || t >= this.loopEnd) {
+      this._maybePushJump(t, this.loopStart);
       this._vc.seekTo(this.loopStart);
     }
   }
@@ -1704,6 +1707,7 @@ class LlamaApp extends LitElement {
       this.looping   = true;
       this.loopSrc   = { id: loop.id, label: loop.name || null, type: 'loop', start: loop.start, end: loop.end };
       this.statusMsg = 'Loop: scratched.';
+      this._seekIntoLoopIfNeeded();
     } else if (op === 'zoom') {
       if (loop.start === 0 && loop.end === this.duration) {
         this._setWarning('Cannot zoom a range spanning entire video.');
@@ -1829,6 +1833,7 @@ class LlamaApp extends LitElement {
     this.looping   = true;
     this.loopSrc   = { id: entity?.id ?? null, label: entity?.name || null, type, start: bounds.start, end: bounds.end };
     this.statusMsg = `${label}: scratched.`;
+    this._seekIntoLoopIfNeeded();
   }
 
   _setDivider(type) {
