@@ -564,9 +564,8 @@ class LlamaApp extends LitElement {
   // Snapshot the full video registry and current video ID.
   // Playback state (speed, looping, scratch loop) is not included.
   // Call after setting statusMsg, before the mutation.
-  // _appState.video has current array state (sections/marks/etc.) but scratch
-  // loop may lag if nudge was the last op (nudge skips _saveCurrentState).
-  // Inject reactive scratch loop state directly so the snapshot is accurate.
+  // Inject reactive scratch loop state directly (rather than trusting
+  // _appState.video) as a safety net in case it hasn't been flushed yet.
   _pushUndoSnapshot() {
     const vid = this._appState.videos.find(v => v.id === this.currentVideoId);
     if (!vid) return;
@@ -653,15 +652,15 @@ class LlamaApp extends LitElement {
         this._vc?.seekTo(target);
         this._flash('time');
       },
-      setLoopStart:  () => { if (noVideo()) return; this.loopStart = this._vc?.getCurrentTime() ?? 0; this._autoDisableLoopIfInvalid(); this._flash('loopStart'); },
-      setLoopEnd:    () => { if (noVideo()) return; this.loopEnd   = this._vc?.getCurrentTime() ?? 0; this._autoDisableLoopIfInvalid(); this._flash('loopEnd'); },
-      resetLoopStart: () => { if (noVideo()) return; this.loopStart = this.zoomSource?.start ?? 0; this._autoDisableLoopIfInvalid(); this._flash('loopStart'); },
-      resetLoopEnd:   () => { if (noVideo()) return; this.loopEnd = this.zoomSource?.end ?? this.duration ?? 0; this._autoDisableLoopIfInvalid(); this._flash('loopEnd'); },
+      setLoopStart:  () => { if (noVideo()) return; this.loopStart = this._vc?.getCurrentTime() ?? 0; this._commitLoopChange(); this._flash('loopStart'); },
+      setLoopEnd:    () => { if (noVideo()) return; this.loopEnd   = this._vc?.getCurrentTime() ?? 0; this._commitLoopChange(); this._flash('loopEnd'); },
+      resetLoopStart: () => { if (noVideo()) return; this.loopStart = this.zoomSource?.start ?? 0; this._commitLoopChange(); this._flash('loopStart'); },
+      resetLoopEnd:   () => { if (noVideo()) return; this.loopEnd = this.zoomSource?.end ?? this.duration ?? 0; this._commitLoopChange(); this._flash('loopEnd'); },
       nudgeStartDown: (count = 1) => {
         if (noVideo()) return;
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
         this.loopStart = nudgeLoopStart(-this.loopNudgeDelta * count, state);
-        this._autoDisableLoopIfInvalid();
+        this._commitLoopChange();
         this._enforceLoopBoundsOnPlayhead();
         this._flash('loopStart');
       },
@@ -669,7 +668,7 @@ class LlamaApp extends LitElement {
         if (noVideo()) return;
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
         this.loopStart = nudgeLoopStart(+this.loopNudgeDelta * count, state);
-        this._autoDisableLoopIfInvalid();
+        this._commitLoopChange();
         this._enforceLoopBoundsOnPlayhead();
         this._flash('loopStart');
       },
@@ -677,7 +676,7 @@ class LlamaApp extends LitElement {
         if (noVideo()) return;
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
         this.loopEnd = nudgeLoopEnd(-this.loopNudgeDelta * count, state);
-        this._autoDisableLoopIfInvalid();
+        this._commitLoopChange();
         this._enforceLoopBoundsOnPlayhead();
         this._flash('loopEnd');
       },
@@ -685,7 +684,7 @@ class LlamaApp extends LitElement {
         if (noVideo()) return;
         const state = { loopStart: this.loopStart, loopEnd: this.loopEnd, duration: this.duration };
         this.loopEnd = nudgeLoopEnd(+this.loopNudgeDelta * count, state);
-        this._autoDisableLoopIfInvalid();
+        this._commitLoopChange();
         this._enforceLoopBoundsOnPlayhead();
         this._flash('loopEnd');
       },
@@ -730,6 +729,7 @@ class LlamaApp extends LitElement {
         this.looping         = true;
         this.loopSrc         = null;
         this.statusMsg       = 'Video: scratched.';
+        this._saveCurrentState();
       },
       zoomVideo: () => {
         if (this.zoomSource?.trigger === 'video') {
@@ -896,7 +896,7 @@ class LlamaApp extends LitElement {
         this.loopStart = Math.max(0, this.loopSrc.start - padStart);
         this.loopEnd   = Math.min(this.duration ?? Infinity, srcEnd + padEnd);
         this._clearZoomIfOutside(this.loopStart, this.loopEnd);
-        this._autoDisableLoopIfInvalid();
+        this._commitLoopChange();
         this.statusMsg = 'Scratch loop: reset to source.';
       },
       unlinkLoopSource: () => {
@@ -1265,7 +1265,7 @@ class LlamaApp extends LitElement {
       } else {
         this.loopEnd = Math.max(0, Math.min(this.loopEnd + delta, maxT));
       }
-      this._autoDisableLoopIfInvalid();
+      this._commitLoopChange();
       this._enforceLoopBoundsOnPlayhead();
       return;
     }
@@ -1303,7 +1303,7 @@ class LlamaApp extends LitElement {
       } else {
         this.loopEnd = this.zoomSource?.end ?? this.duration ?? 0;
       }
-      this._autoDisableLoopIfInvalid();
+      this._commitLoopChange();
       return;
     }
 
@@ -1497,8 +1497,12 @@ class LlamaApp extends LitElement {
     return this.loopStart < this.loopEnd;
   }
 
-  _autoDisableLoopIfInvalid() {
+  // Disable looping if the current bounds are invalid, then persist the
+  // scratch loop (start/end/looping) so it survives closing the app.
+  // Call after any user action that changes loopStart/loopEnd/looping.
+  _commitLoopChange() {
     if (this.looping && !this._isLoopValid()) this.looping = false;
+    this._saveCurrentState();
   }
 
   _enforceLoopBoundsOnPlayhead() {
@@ -1555,6 +1559,7 @@ class LlamaApp extends LitElement {
     this.looping = !this.looping;
     if (this.looping) this._seekIntoLoopIfNeeded();
     this.statusMsg = `Scratch loop: ${this.looping ? 'on' : 'off'}.`;
+    this._saveCurrentState();
   }
 
   _onToggleLoop() {
@@ -1565,24 +1570,24 @@ class LlamaApp extends LitElement {
   _onSetLoopStartNow() {
     if (!this.currentVideoId) return;
     this.loopStart = this.currentTime;
-    this._autoDisableLoopIfInvalid();
+    this._commitLoopChange();
   }
 
   _onSetLoopEndNow() {
     if (!this.currentVideoId) return;
     this.loopEnd = this.currentTime;
-    this._autoDisableLoopIfInvalid();
+    this._commitLoopChange();
   }
 
   _onLoopStartChange(e) {
     this.loopStart = e.detail.value;
-    this._autoDisableLoopIfInvalid();
+    this._commitLoopChange();
     this._enforceLoopBoundsOnPlayhead();
   }
 
   _onLoopEndChange(e) {
     this.loopEnd = e.detail.value;
-    this._autoDisableLoopIfInvalid();
+    this._commitLoopChange();
     this._enforceLoopBoundsOnPlayhead();
   }
 
@@ -1708,6 +1713,7 @@ class LlamaApp extends LitElement {
       this.loopSrc   = { id: loop.id, label: loop.name || null, type: 'loop', start: loop.start, end: loop.end };
       this.statusMsg = 'Loop: scratched.';
       this._seekIntoLoopIfNeeded();
+      this._saveCurrentState();
     } else if (op === 'zoom') {
       if (loop.start === 0 && loop.end === this.duration) {
         this._setWarning('Cannot zoom a range spanning entire video.');
@@ -1834,6 +1840,7 @@ class LlamaApp extends LitElement {
     this.loopSrc   = { id: entity?.id ?? null, label: entity?.name || null, type, start: bounds.start, end: bounds.end };
     this.statusMsg = `${label}: scratched.`;
     this._seekIntoLoopIfNeeded();
+    this._saveCurrentState();
   }
 
   _setDivider(type) {
