@@ -3,6 +3,7 @@
 
 Posts:
   - RH rudiments #2: Giuliani
+  - On fartsniffing
   - Making wealth taxes work: cc/model-tax
   - Practicing right-hand rudiments: muting
   - Blues turnarounds: a systematic approach
@@ -13,6 +14,7 @@ Posts:
   - Skepticism of the science of music practice: https://chatgpt.com/c/692dd380-d5d0-832c-ad74-a768b049c47b
     - See Noa Kageyama YouTube: he provides citations.
   - Tommy Emmanuel vs Music Practice Inc [see writing-notes]
+  - Against cluster analysis (typological analysis, political typology).
 
 Post/pages:
 
@@ -26,10 +28,7 @@ Post/pages:
 
 ## RH rudiments #2: Giuliani 120
 
-Working on: 2026-07-03-giuliani-120.md
+Working on:
 
-I reviewed all 120 and grouped them up under our skill-oriented categories.
-Now shifting to think about how to structure this piece.
+    2026-07-03-giuliani-120.md
 
-See the md file. Given the chat, the background, and the notes taken so far,
-what thoughts do you have on structuring and motivating the piece?
