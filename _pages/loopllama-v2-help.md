@@ -110,6 +110,12 @@ inactive. When that occurs, a warning is shown in the footer. The fix is
 simple: click anywhere in the app outside of the YouTube frame. The clickable
 LoopLlama timeline makes clicking in the YouTube frame rarely necessary.
 
+<span class="phead">Gotcha: captions reappearing.</span> If a video's captions
+appear and you do not want them, click in the YouTube frame, press `c`, and
+then click outside the frame. Depending on your web browser, this preference
+might reset later — for example, after a browser restart. To make the fix
+permanent, allow third-party cookies for the LoopLlama web page.[^1]
+
 <span class="phead">Entities: the next step.</span> For many users — those
 who simply want to loop or change the speed of YouTube videos using an
 efficient user interface — everything you need to know has been covered. But
@@ -795,6 +801,15 @@ inherently a phenomenon of the right, but recent anti-democratic movements
 have come predominantly from the populist right. The LoopLlama banner is
 intended as a symbolic gesture of resistance — to authoritarianism generally,
 and to its modern rightwing variants specifically. So should you be.
+
+[^1]: The YouTube frame's memory of your caption preference lives in
+    third-party cookies/storage, which many browsers block or clear by
+    default. Allowing that storage for the LoopLlama page lets YouTube
+    remember the preference across sessions. In the Brave browser, for
+    example, click the Shields icon in the address bar, open Advanced Options,
+    and change the cookie setting from "Block third-party cookies" to "Allow
+    all cookies." In other browsers, look for a comparable per-site setting
+    for third-party cookies or site data.
 
 --------
 

@@ -4,16 +4,22 @@
 ## Overview of documents
 ## Project setup
 ## Common dev tasks
+## Post editing process
+  ### High-level review
+  ### Mid-level review
+  ### Low-level review
 ## Testing scenarios
-### Deleting all video stashes
-### Creating a cloud-newer video
-### Testing: Supabase down
+  ### Deleting all video stashes
+  ### Creating a cloud-newer video
+  ### Testing: Supabase down
+## Known issues
+  ### YouTube captions auto-reappearing
 ## Markdown notes
 ## V3 ideas: other video sources
-### Vimeo
-### Other online platforms
-### Local video files
-### Open-source LoopLlama project
+  ### Vimeo
+  ### Other online platforms
+  ### Local video files
+  ### Open-source LoopLlama project
 
 -->
 
@@ -217,6 +223,40 @@ Steps:
     Request conditions =>
     Block =>
     Pattern =>  *://*.supabase.co/*
+
+## Known issues
+
+### YouTube captions auto-reappearing
+
+Symptom: YouTube's closed captions turn themselves on in the embedded
+player, usually on the first video of a new browser session. Not an LL
+bug -- documented as a Quick start gotcha in loopllama-v2-help.md.
+
+Cause: YouTube's player stores a preference key
+(yt-player-caption-persistence) in the iframe's own localStorage under
+www.youtube.com, recording whether captions default on or off. The YT
+iframe is a third-party context relative to LL's page, and browsers
+with strict cross-site tracking protection (Brave's default "Block
+third-party cookies" setting, Safari's Intelligent Tracking
+Prevention, and likely others) block or clear that iframe's storage
+between sessions. With no stored key, YouTube falls back to its own
+default, which now appears to be captions-on. Confirmed causally:
+manually clearing the iframe's localStorage for www.youtube.com under
+LL reproduced the bug; loosening Brave's third-party cookie setting
+for LL's page (Shields icon > Advanced Options > Cookies > "Allow all
+cookies") fixed it for good.
+
+Dead end worth remembering: the YouTube embed parameter
+cc_load_policy only forces captions ON (value 1). At 0 or unset it has
+no "force off" effect -- confirmed by testing it live and still seeing
+captions. It cannot fix this.
+
+Rejected fix: calling the undocumented YT IFrame API method
+player.unloadModule('captions') on every PLAYING transition did stop
+the symptom, but was the wrong fix -- it would silently strip captions
+for any user who actually wants/needs them (accessibility, language
+learning). Reverted in favor of the help-doc gotcha above; never
+committed, so no trace of it in git history.
 
 ## Markdown notes
 
