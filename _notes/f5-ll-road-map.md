@@ -1,6 +1,18 @@
 
 ## TODO
 
+_pages/
+    about.md
+    loopllama-v1.md
+    loopllama-v2-help.md
+    loopllama-v2-keybindings.md
+
+_posts/
+    2026-02-20-fingerstyle-rhythmic-rudiments.md
+    2026-05-29-v2-release.md
+    2026-05-30-ai-employment.md
+    2026-05-31-mice-menus.md
+
 Posts:
   - RH rudiments #2: Giuliani
   - On fartsniffing

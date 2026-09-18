@@ -3,7 +3,7 @@ title: "Fingerstyle rhythmic rudiments: a systematic approach"
 
 excerpt: >
 
-  GuitarPro files with 256 exercises covering every eighth-note
+  Guitar Pro files with 256 exercises covering every eighth-note
   melody rhythm against an alternating bass.
 ---
 
@@ -25,25 +25,23 @@ excerpt: >
 ## Second-hand knowledge
 
 Guitar instruction is organized around the left hand: chord charts, scale
-diagrams, fretboard maps. Intuitive enough. Watch someone play and the left
-hand commands the attention: fingers moving across the neck, chord shapes
-forming, notes changing. The right hand appears to be doing little more than
-triggering what the left hand prepared — a button pusher.
+diagrams, fretboard maps, even tablature itself. The left hand certainly has
+more dramatic potential as fingers fly and the hand shifts. The right hand
+seems to be a mere button pusher, triggering what the left hand has carefully
+prepared.
 
-Of course, the right hand is not ignored entirely. Teachers address technique:
-how to hold the pick, where to anchor the hand, how classical players shape
-their nails and control the angle of attack. Intermediate students working on
-speed spend real time on right-hand mechanics: alternate picking, economy
-picking, general shredding. But this attention tends to cluster at the
-extremes — foundational setup on one end, advanced facility on the other.
+Of course, the right hand is not ignored entirely. Beginners are taught how to
+hold a pick, classical players learn how to place their fingers and what angle
+of attack to use. Intermediate metal and bluegrass students might spend a lot
+of time on flatpicking speed.
 
 Fingerstyle guitar, our genre, does devote some early energy to the right hand
 in the form of picking patterns, notably various Travis or roll-based
-patterns. A student might learn a few of these or perhaps even a dozen of
-them. What tends not to happen, at least outside of classical guitar
-education, is a systematic approach to right-hand rhythmic coordination:
-developing the ability to play melody notes at any point in a measure while
-keeping a desired bass rhythm chugging along.
+patterns. A student might learn a few of these or perhaps even a dozen. What
+tends not to happen, at least outside of classical guitar education, is a
+systematic approach to right-hand coordination: developing the ability to play
+melody notes at any point in a measure while keeping a desired bass rhythm
+chugging along.
 
 This post tries to fill that gap with 256 exercises — a number every software
 engineer loves. That might seem excessive, a kind of completist insanity. All I
@@ -53,13 +51,13 @@ notably the exercises presented here. Later I will say more about how I worked
 on this material.
 
 Collectively, the exercises pose this challenge: can you play any rhythmic
-combination of melody 8th notes while keeping a typical alternating bass
+combination of melody eighth notes while keeping a typical alternating bass
 going? Drummers build these kinds of coordination skills by practicing
 rudiments — the foundational sticking patterns and rhythmic patterns they need
 to play a variety of musical styles. This collection of fingerstyle rudiments
 has a similar goal. If you can play all of them, you will have the core skills
 to quickly learn almost any fingerstyle pattern or melody within an
-alternating or steady-bass context on an 8th-note grid.[^1] That is a deep and
+alternating or steady-bass context on an eighth-note grid.[^1] That is a deep and
 broad musical terrain.
 
 ## The rudiments explained
@@ -68,7 +66,7 @@ The bass is the same across all of the rudiments: the thumb plays alternating
 quarter notes, cycling through the root and fifth of whatever chord is
 underneath. That is the backbone.
 
-Also constant is the harmony and structure. Every rudiment consists of eight
+Also constant are the harmony and structure. Every rudiment consists of eight
 bars: two each of Am, Dm7, E7, and Am again. The chord voicings are
 deliberately easy — open chords you already know — and the melody notes are
 simple, just two or three notes played on the upper strings. The left hand has
@@ -208,15 +206,10 @@ static-melody rudiment but come alive when the melody moves.
 A different way to reduce scope is to focus on the lower values of N. Whether
 you aim to practice all 256 rudiments or just the favorites listed above, the
 best return on your practice time will come from the first few files. As N
-increases beyond 3 or 4, the melodic field becomes dense and the musical
-payoff shrinks accordingly (the static-melody caveat still applies).
-
-That said, I found real value in working through the higher-N rudiments. As
-the number of melody notes increases, the challenge shifts: you are no longer
-training your hands to play; you are training them not to play. The difficulty
-becomes protecting the spaces between notes and resisting the pull toward
-rhythmic grooves internalized from prior exercises. That is a distinct and
-useful skill.
+increases beyond 3 or 4, the field becomes dense and the musical payoff
+shrinks somewhat. That said, I think I benefited from working through all
+of the rudiments. As the number of melody notes increases, the challenge
+becomes protecting the spaces between notes.
 
 ## Finding the music
 
@@ -241,11 +234,7 @@ When have you finished a rudiment? My approach was to set a target tempo and
 stop when I could play the exercise with control and accuracy at that speed.
 The Guitar Pro files are set at 120 BPM, which is generally where I stopped.
 For exercises that were more musically appealing, I sometimes raised the bar.
-
-The right tempo target depends on your goals. Speed was not a primary concern
-for me. I have never been drawn to particularly fast playing styles, and my
-main objective was basic hand coordination. When raw speed is needed for a
-specific song, I tend to address it in context rather than in the abstract.
+Speed was not a primary concern for me.
 
 ## Variations to consider or reject
 
@@ -254,8 +243,8 @@ than intervals, swing eighth notes rather than straight, a steady bass rather
 than alternating, or a different chord progression.
 
 The first variation — reducing to a single melody note — is the best
-simplification for beginners because it narrows the scope to the core rhythmic
-skill: coordinating the alternating thumb with a single, static melody note.
+simplification for beginners because it narrows the scope to just rhythmic
+coordination between an alternating thumb and a single melody note.
 
 I am less certain about the other variations. I did not practice these
 rudiments with swing eighths, though I play a fair amount of music with swing
