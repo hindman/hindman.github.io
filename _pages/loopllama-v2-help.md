@@ -762,45 +762,38 @@ can also contact Monty Hindman directly, as [detailed here][mh_contact].
 
 ### The LoopLlama banner
 
-The colored banner at the top of the page is a composite drawn from the visual
-traditions of movements that fought against fascism and authoritarianism. The
-color order reads as a loose narrative arc, from the darkest symbols of
-resistance toward warmer symbols of hope.
+The colored banner at the top of the page draws from the visual traditions
+of movements that fought against fascism and authoritarianism.
 
-<span class="phead">Charcoal black.</span> Anarchism and
-anarcho-syndicalism, the oldest visual language of anti-fascist organizing.
+<span class="phead">Charcoal black.</span> Anarchism and anarcho-syndicalism,
+forms of anti-authoritarianism older than fascism itself.
 
-<span class="phead">Crimson.</span> Organized labor and the socialist left,
-broadly construed — a color that runs through more anti-authoritarian
-traditions than any other.
+<span class="phead">Crimson.</span> Organized labor and the socialist left.
 
 <span class="phead">Deep purple.</span> The Second Spanish Republic, whose
-defense drew volunteers from dozens of countries — perhaps the broadest
-anti-fascist coalition before World War II.
+defense drew volunteers from dozens of countries in one of the broadest
+anti-fascist coalitions before World War II.
 
-<span class="phead">Chalk white.</span> Peace and nonviolent resistance —
-the center band, as a pivot between the harder symbols and the warmer ones.
+<span class="phead">Chalk white.</span> Peace and nonviolent resistance.
 
 <span class="phead">Old gold.</span> The German democratic tradition —
-colors the Nazis rejected and the Federal Republic later reclaimed.
+a color the Nazis rejected and the Federal Republic later reclaimed.
 
 <span class="phead">Forest green.</span> Pan-African resistance and the
 struggle against colonial and racial authoritarianism.
 
-<span class="phead">Cobalt blue.</span> The liberal democratic tradition —
-from the Enlightenment through the American and French revolutions, upheavals
-that shared the conviction that legitimate power derives from the consent of
-the governed, not the will of a ruler.
+<span class="phead">Cobalt blue.</span> The liberal democratic movements from
+the Enlightenment through the American and French revolutions.
 
 In the past quarter century, the long trend toward democratization has slowed
 or reversed, most notably in the United States — not only my own country but
 also the nation that most symbolized democratic governance, due to its
-pioneering liberal-democratic revolution and its economic, military, and
-cultural prominence since World War I. Authoritarian politics is not
-inherently a phenomenon of the right, but recent anti-democratic movements
-have come predominantly from the populist right. The LoopLlama banner is
-intended as a symbolic gesture of resistance — to authoritarianism generally,
-and to its modern rightwing variants specifically. So should you be.
+pioneering democratic revolution and its economic, military, and cultural
+prominence since World War I. Authoritarian politics is not inherently a
+phenomenon of the right, but recent anti-democratic movements have come
+predominantly from the populist right. The LoopLlama banner is intended as a
+symbolic gesture of resistance — to authoritarianism generally, and to its
+modern rightwing variants specifically. So should you be.
 
 [^1]: The YouTube frame's memory of your caption preference lives in
     third-party cookies/storage, which many browsers block or clear by
