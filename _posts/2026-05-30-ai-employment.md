@@ -33,10 +33,10 @@ claimed that they expect this to happen, and the question is [seriously
 debated][frey_osborne] among [macroeconomists][acemoglu].
 
 <span class="phead">And based on a fallacy.</span> Many economists and
-historians would also point out that the fear — at least when expressed
-simply — rests on the [lump of labor fallacy][wiki_lump_of_labor]: the
-assumption that there is a fixed amount of work to be done, so if machines
-take some of it, humans get less.
+historians would point out that the fear, at least when expressed simply,
+rests on the [lump of labor fallacy][wiki_lump_of_labor], the assumption that
+there is a fixed amount of work to be done, so if machines take some of it,
+humans get less.
 
 ## Doom averted: what happened last time
 
@@ -88,7 +88,7 @@ it evolved as we became more mechanized and more prosperous.
 over 11,000 lines of code, built in roughly two months of part-time effort —
 typically an hour or two per day. More importantly, the AI did not merely
 speed up work I would have done anyway. I am a software engineer, but not a
-web developer — its own domain of expertise, one I had no interest in
+web developer — a separate domain of expertise, one I had no interest in
 acquiring. Without an AI coding agent, v2 would not have existed.
 
 <span class="phead">And ambition.</span> As an example, consider the
@@ -135,64 +135,59 @@ consequences, failures when weighing tradeoffs among project goals, and
 inability to generate outside-the-box solutions in those situations — those
 limits might represent a snapshot rather than a ceiling.
 
-<span class="phead">No escape valve.</span> Extrapolate the trend, and perhaps
-AI agents will not only execute tasks but generate the plans, goals, and
-judgments that humans currently supply — while robotics extends automation
-further into physical work. At that point, the reassuring analogy to
-mechanization breaks down. As mechanization proceeded in the 19th and 20th
-centuries, employment shifted toward office and professional jobs. But the
-combination of increasingly capable AIs for cognitive work and machines for
-physical work leaves no obvious area where human labor holds a structural
-advantage.
+<span class="phead">No escape valve.</span> Extrapolate the trend and the
+reassuring analogy to mechanization breaks down. As mechanization proceeded in
+the 19th and 20th centuries, employment shifted toward office and professional
+jobs. But the combination of increasingly capable AIs for cognitive work and
+robots for physical work leaves no obvious area where human labor holds a
+structural advantage.
 
 ## Doom inverted: the worst case might be great
 
 <span class="phead">The doom scenario leads to contraction.</span> Assume the
 most extreme version: AIs and machines handle virtually all work, and mass
-unemployment follows. But that scenario also implies mass productivity — an
-economy generating an enormous quantity of goods and services with a tiny
-fraction of the labor previously required. That translates into vastly greater
-wealth, at least in the aggregate. But who among the jobless will purchase
-this river of goods and services?
+unemployment follows. But that scenario also implies huge gains in
+productivity, an economy generating goods and services with a small fraction
+of the labor previously required. That translates into vastly greater income,
+at least in the aggregate. But who among the jobless will purchase this river
+of goods and services?
 
 <span class="phead">Door #1: the problem of distribution.</span> Labor in a
-market economy serves two distinct functions. It is a factor of production —
-labor makes and does things. It is also the primary mechanism by which income
-is distributed: wages give workers the purchasing power to buy what the
-economy produces. Employment bundles those two functions, but extreme
-automation severs the bundle: no employment, no wages, no demand, no reason to
-engage the capable AIs and machines in the first place. The gears grind to a
-halt. Down this branch of the thought experiment lies one extreme outcome:
-supreme technological capability amid system-wide impoverishment.
+market economy serves two functions. It is an input: labor makes and does
+things. It is also a mechanism to distribute income: wages give workers the
+money to buy what the economy produces. Employment bundles the two
+functions, but extreme automation severs the bundle: no employment, no wages,
+no demand, no reason to engage the capable AIs and machines in the first
+place. The gears grind to a halt. Down this branch of the thought experiment
+lies one extreme outcome: supreme technological capability amid system-wide
+impoverishment.
 
 <span class="phead">Door #2: seizing the means of distribution.</span> Down
 this branch lies broad prosperity that mimics or even dwarfs what occurred
 during mechanization: shorter work weeks, material abundance without drudgery,
 labor as vocation rather than necessity — each of us crafting our own
-LoopLlamas. For that to happen, one or more mechanisms must replace wages as
-the means by which income reaches people: [broad capital
+LoopLlamas. For that to happen, something else must replace wages as the means
+by which income reaches people. Examples include [broad capital
 ownership][bruenig_swf], profit-sharing, a [universal basic income][wiki_ubi]
-(UBI), public ownership of productive capacity.
+(UBI), or public ownership of productive capacity.
 
-<span class="phead">The pessimist's objection.</span> Very few regular folks
-find talk of UBI and broadly shared AI prosperity reassuring. The default
-stance I observe in the US is pessimistic: those who control the technology
-will resist redistribution, accumulate disproportionate wealth and power, and
-leave the rest of humanity to suffer.
+<span class="phead">The pessimist's objection: deep inequality.</span> Very
+few regular folks find talk of UBI and broadly shared AI prosperity
+reassuring. The default stance I observe in the US is pessimistic: those who
+control the technology will resist redistribution, accumulate more wealth and
+power, and leave the rest of humanity to suffer.
 
-<span class="phead">Elites without an exit strategy.</span> But extreme
-automation closes off the escape routes that normally let the wealthy insulate
-themselves from inequality's consequences. If automation is global and
-comprehensive, there are no intact consumer economies to export to, no
-untouched labor markets to arbitrage. The owners of the AIs and robots are
-trapped inside the same macroeconomic logic as everyone else, and hoarding
-becomes self-defeating. History offers a partial answer to the pessimist's
-objection: [redistributive reforms][wiki_new_deal] have [occurred
-before][wiki_prog_era], driven not by universal elite buy-in but by popular
-pressure combined with defections from enough elites to break the blocking
-coalition. Whether that happens early or late, smoothly or catastrophically,
-is the real open question — not whether advanced AI and machines can produce
-enough wealth to make us all prosperous.
+<span class="phead">Politics happens.</span> That pessimism assumes economics
+settles the outcome on its own. But elites factionalize and compete; at times
+populations organize and resist. In the US, concentrated economic power has
+provoked exactly the discontent the pessimist describes, sometimes followed by
+redistributive reforms: trust-busting and the income tax in the [Progressive
+Era][wiki_prog_era], labor law and Social Security in the [New
+Deal][wiki_new_deal], civil rights and anti-poverty legislation in the [Great
+Society][wiki_great_society]. Whether that happens at all, and if so how —
+early or late, smoothly or catastrophically — is the relevant question, not
+whether advanced AI and machines can produce enough wealth to make us all
+prosperous.
 
 --------
 
@@ -223,6 +218,7 @@ enough wealth to make us all prosperous.
 [claude_write_claude2]: https://www.nytimes.com/2026/02/24/opinion/ezra-klein-podcast-jack-clark.html
 [bruenig_swf]: https://www.peoplespolicyproject.org/projects/social-wealth-fund/
 [wiki_ubi]: https://en.wikipedia.org/wiki/Universal_basic_income
+[wiki_great_society]: https://en.wikipedia.org/wiki/Great_Society
 [wiki_new_deal]: https://en.wikipedia.org/wiki/New_Deal
 [wiki_prog_era]: https://en.wikipedia.org/wiki/Progressive_Era
 
