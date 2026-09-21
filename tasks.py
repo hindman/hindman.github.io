@@ -18,11 +18,13 @@
 #   inv loc
 #   inv metrics
 #   inv test
+#   inv render PATH
 #
 ####
 
 import json
 import os
+import pyperclip
 import re
 import requests
 import time
@@ -416,6 +418,16 @@ def metrics(c):
         align = True,
     )
     print(table)
+
+@task
+def render(c, path):
+    '''
+    Renders markdown as plain text, copies to clipboard: PATH
+    '''
+    cmd = f'pandoc {path} -f markdown -t plain --wrap=none'
+    result = c.run(cmd, hide = True)
+    pyperclip.copy(result.stdout)
+    print('# Page text copied.')
 
 ####
 # Helpers.

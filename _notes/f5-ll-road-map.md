@@ -11,8 +11,8 @@ Phase 1:
 
     _posts/
     x   2026-02-20-fingerstyle-rhythmic-rudiments.md
-        2026-05-29-v2-release.md [see check on PG]
-        2026-05-30-ai-employment.md
+    x   2026-05-29-v2-release.md
+    .   2026-05-30-ai-employment.md
         2026-05-31-mice-menus.md
 
 Posts:
