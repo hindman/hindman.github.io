@@ -12,8 +12,12 @@ Phase 1:
     _posts/
     x   2026-02-20-fingerstyle-rhythmic-rudiments.md
     x   2026-05-29-v2-release.md
-    .   2026-05-30-ai-employment.md
+    x   2026-05-30-ai-employment.md
         2026-05-31-mice-menus.md
+
+Phase 2:
+  - Retest (edit if needed).
+  - Reread.
 
 Posts:
   - RH rudiments #2: Giuliani
