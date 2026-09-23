@@ -421,7 +421,7 @@ def metrics(c):
     print(table)
 
 @task
-def render(c, path, should_print):
+def render(c, path, should_print = False):
     '''
     Renders markdown as plain text and copies/prints: PATH [--print]
     '''
