@@ -16,8 +16,9 @@ Phase 1:
         2026-05-31-mice-menus.md
 
 Phase 2:
-  - Retest (edit if needed).
-  - Reread.
+  x Retest. [done except mice-menus]
+  - Reread (edit if needed).
+  - Retest (if edited).
 
 Posts:
   - RH rudiments #2: Giuliani

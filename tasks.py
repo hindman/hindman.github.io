@@ -18,7 +18,7 @@
 #   inv loc
 #   inv metrics
 #   inv test
-#   inv render PATH
+#   inv render PATH [--print]
 #
 ####
 
@@ -28,6 +28,7 @@ import pyperclip
 import re
 import requests
 import time
+import yaml
 
 from collections import deque
 from contextlib import contextmanager
@@ -420,14 +421,32 @@ def metrics(c):
     print(table)
 
 @task
-def render(c, path):
+def render(c, path, should_print):
     '''
-    Renders markdown as plain text, copies to clipboard: PATH
+    Renders markdown as plain text and copies/prints: PATH [--print]
     '''
+    # Parse YAML front matter to get title and abstract,
+    # which would be omitted by pandoc.
+    text = read_file(path)
+    fm_match = re.match(r'^---\n(.*?\n)---\n', text, re.DOTALL)
+    fm = yaml.safe_load(fm_match.group(1)) if fm_match else {}
+    parts = [
+        'TITLE. ' + fm.get('title', '').strip(),
+        'ABSTRACT. ' + fm.get('excerpt', '').strip(),
+    ]
+
+    # Add the essay text.
     cmd = f'pandoc {path} -f markdown -t plain --wrap=none'
     result = c.run(cmd, hide = True)
-    pyperclip.copy(result.stdout)
-    print('# Page text copied.')
+    parts.append(result.stdout.strip())
+
+    # Print or copy.
+    text = '\n\n'.join(parts)
+    if should_print:
+        print(text)
+    else:
+        pyperclip.copy(text)
+        print('# Page text copied.')
 
 ####
 # Helpers.

@@ -3,11 +3,10 @@ title: "Of mice and menus: an interface tragedy"
 
 excerpt: >
 
-  The mouse was never the right tool for issuing routine commands — a point
-  its inventors understood. The early history of computing produced genuine
-  experimentation and a better alternative: modal, multi-key, grammar-based
-  keyboard systems. Building LoopLlama provides an occasion to examine what
-  was lost.
+  The mouse was never the right tool for issuing routine commands, a point its
+  inventors understood. The early history of computing produced a better
+  alternative: modal, multi-key, grammar-based keyboard systems.
+
 ---
 
 <!--
@@ -23,24 +22,20 @@ excerpt: >
 
 -->
 
-All software faces a basic question: how does the user tell it what to do?
-Since the 1980s the dominant model has been drearily consistent: reach for the
-mouse, navigate into an application's menus, and click the needed operation.
-Ordinary navigational tasks are similar, minus the menus: reach, point,
-scroll, click. Keyboard shortcuts for some of those operations exist. Nearly
-all users learn a handful — copy, paste, print, arrow keys — and stop there.
-Some users invest real effort to learn the key bindings of applications they
-use heavily, but even the office expert in Excel hits a ceiling: the brain
-will hold only so many arbitrary `Ctrl-Alt` combinations.
+Since the 1980s the dominant interface model has been the same: reach, point,
+scroll, click. Many common operations have keyboard shortcuts and most users
+stop after learning a handful of basics like copy, paste, and print. Some push
+further, but even the office Excel expert hits a ceiling. Only so many
+arbitrary `Ctrl-Alt` combinations fit in memory.
 
 I recently completed [LoopLlama][llv2], a browser-based tool for close study
 of YouTube videos. The application has menus and familiar mouse-oriented
 controls such as buttons, dropdowns, and toggles. But at its core, LoopLlama
 has a keyboard-first design: my goal was to control everything with simple key
 presses while holding a guitar and wearing a thumb pick. Building it sharpened
-my convictions, and the application is a distilled example of a better
-interface paradigm — one with strong historical precedents that computing
-culture ignored as it solidified in the late twentieth century.
+my convictions. The application is a distilled example of a better interface —
+one with strong historical precedents that computing culture ignored as it
+solidified in the late twentieth century.
 
 ## The trouble with mice
 
