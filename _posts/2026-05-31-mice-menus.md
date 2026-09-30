@@ -39,23 +39,11 @@ solidified in the late twentieth century.
 
 ## The trouble with mice
 
-The mouse is an instrument tuned for spatial actions: pointing, dragging,
-positioning, drawing — tasks with a direct mapping between hand movement and
-cursor position.
-
-Command input is not that. When a user reaches for the mouse to invoke a menu
-item or to navigate, nothing about the operation requires pointing. The action
-is discrete: the user wants to save a file, undo a change, or toggle a
-setting. The mouse arrives at the target by the same mechanism it uses to draw
-a curve — slow physical travel, target acquisition, and click — but the
-curve-drawing precision is wasted. You do not need a pointing instrument to
-say "save." Like a caveman, you point for routine actions only because you
-lack the words.
-
-The costs are individually tiny, but across a day of mousing the ergonomic and
-time tax adds up. Mouse operations are also not readily chained or scripted.
-The keyboard, by contrast, is already where the hands are, and its input is
-precise and composes naturally into automated operations.
+The mouse is tuned for spatial actions like pointing, dragging, or drawing.
+Routine commands like move-to-start, save-file, undo-change, or toggle-setting
+do not require aiming at anything. Reaching for a mouse to do them is slower
+than pressing a key or two. The costs are small one at a time, but they add
+up.
 
 The problem was recognized early in computing history. Two examples will
 suffice:
@@ -196,11 +184,8 @@ results depending on application state that the user had to remember.
 
 In such interfaces, mode errors can occur any time the user becomes too
 preoccupied or rushed. Such errors were bothersome for novice users, but
-Raskin's deeper critique emphasized how they undermined the automaticity that
-experts depend on. The same automaticity that makes experts efficient makes
-them particularly vulnerable to mode errors: the more fluidly an expert works,
-the longer they operate in the wrong mode before noticing — and the more
-damage accumulates.
+Raskin's deeper critique emphasized how experts are especially vulnerable:
+they work fast, so mistakes pile up before a mode error is noticed.
 
 Raskin's prescription followed from the diagnosis: modes should be eliminated
 whenever possible. Where they could not be, his preferred alternative was the
