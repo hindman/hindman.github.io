@@ -330,23 +330,19 @@ having. Several criteria matter:
     users a mental model: they implicitly know the current mode because they
     know what they are doing.
 
-  - Switching cost-benefit. The transition should be easy and deliberate —
-    frictionless when you mean to switch, specific enough to prevent
-    accidents. And the mode's value should justify the real estate cost of its
-    entry binding.
+  - Switching cost-benefit. Changing mode should be effortless when intended
+    and hard to trigger by accident. And a mode's value should justify the
+    keyboard real estate its entry binding costs.
 
-  - Risk. Some mode errors are easily reversible; others can destroy work. The
-    severity is part of the cost-benefit ledger.
+  - Risk. Some mode errors are easily reversed; others can destroy work.
 
-Two classic examples illustrate how the criteria play out:
+We can apply those criteria to two classic examples from the modes literature:
 
-  - `Caps Lock` fails on most of them. Its indicator — at most, a small LED on
-    some keyboards — is easy to overlook. Accidental activation is common
-    because the key occupies prime real estate, where an errant pinky can
-    easily land. And the task it serves — sustained all-caps typing — is
-    infrequent for most users, with cheap workarounds in any modern editor.
-    Valuable real estate, frequent mistakes, uncommon task: the cost-benefit
-    is badly skewed.
+  - `Caps Lock` fails on most of them. Its indicator — at most a small LED —
+    is easy to overlook. Sitting on prime keyboard real estate, it is often
+    triggered by mistake. And its task, sustained all-caps typing, is rare and
+    has easy alternatives in most editors. Valuable real estate, frequent
+    mistakes, uncommon task: the cost-benefit is badly skewed.
 
   - Vi's insert and normal modes tell the other story. The task distinction is
     meaningful: typing text versus issuing commands. Switching cost is low:
@@ -355,74 +351,45 @@ Two classic examples illustrate how the criteria play out:
     is visibility: a cursor-shape change alone — the mechanism used by the Cat
     — is too subtle. On balance, these modes earn their place.
 
-Raskin's core concern about modes was automaticity — that users would have to
-maintain conscious awareness of the current mode, and that this overhead would
-prevent frequent actions from becoming practiced habits. The concern is valid
-for poorly designed modes, but it gets the causation backward for
-well-designed ones. A mode organized around a clear task distinction does not
-burden the user's cognitive apparatus — it becomes part of it. In vi, normal
-and insert modes do not interfere with each other because the system's
-organization is sensible. The modes become an organizing hook — similar to the
-conceptual order that applications supply at a higher level.
+Raskin's automaticity concern — that tracking the current mode would stop
+frequent actions from becoming habits — holds for poorly designed modes, but
+gets the causation backward for well-designed ones. A mode built around a
+clear task distinction doesn't burden the user's cognition; it becomes part of
+it, an organizing hook like the conceptual structure supplied by applications
+at a higher level.
 
 ## Modes all the way down
 
 Accepting that modes are inevitable and cognitively sound closes the case
 against them and reopens the keyboard real estate strategy Raskin had
-foreclosed: using modes to solve the problem directly.
+foreclosed: using modes to solve the problem directly. Once text entry has its
+own mode, letters, digits, and punctuation become available as bindings
+everywhere else.
 
-That problem was a mismatch between command vocabulary size and available
-binding slots, producing the approaches already described: function keys,
-modifiers, and surrender to menus. All of them shared an assumption: that the
-keyboard's default job is to emit characters, so bindings must be carved out
-against that baseline.
-
-A dedicated typing mode dissolves the assumption. Once the application has a
-specific mode for text entry, ordinary characters become available in every
-other mode. The letters, digits, and punctuation marks become binding real
-estate — no modifier required, no awkward reaches. Every key has the potential
-to carry meaning directly (`d` for delete, `w` for word, `-` for decrease).
-None of the keys are pure abstractions the way the modifiers are. A typing
-mode is an architectural move that restructures the real estate problem.
-
-That expansion is the first step. The second adds structure to the binding
-scheme, making it more meaningful and memorable. The normal-mode bindings of
-vi are illustrative. That command space is not a flat list of bindings to be
-memorized; it is built from a small vocabulary of atoms governed by a grammar,
-and the grammar generates operations combinatorially.
-
-The atoms come in three roles. Verbs express operations, such as `d` for
-delete, `y` for yank (copy), and `c` for change. Nouns name text objects or
-navigation targets: for example, `w` for word start, `ap` for a paragraph
-including its following blank lines, or `L` for the last line on the screen.
-Quantifiers are numeric prefixes that scale the verb, the noun, or both. Users
-learn those atoms, and the grammar makes their combinations largely derivable:
-`dw` deletes a word; `d5w` deletes five; `3yap` yanks three paragraphs
-starting with the current. Some verbs can act as stand-alone imperatives — `i`
-to enter insert mode, `p` to paste — with no noun required. A modest
-vocabulary of verbs and nouns can generate a wide variety of commands. The
-grammar does most of the memorization work.
+That expansion is the first step; the second adds structure to the binding
+scheme, making it more meaningful and memorable. Vi's normal mode, for
+example, rests on a small vocabulary of atoms governed by a grammar. There are
+verbs for operations, such as `d` for delete, `y` for yank (copy), and `c` for
+change. Nouns name text objects or navigation targets: for example, `w` for
+word start, `ap` for a paragraph and the blank lines following it, or `L` for
+the last line on the screen. Quantifiers are optional numeric prefixes that
+scale the verb, the noun, or both. Users learn those atoms and can combine
+them according to the grammar: `dw` deletes a word; `d5w` deletes five; `3yap`
+yanks three paragraphs starting with the current.
 
 The arithmetic is striking. A modifier strategy starting with 26 letters and
-adding `Shift` yields 52 binding slots. A multi-key strategy using the same 26
-letters as two-character sequences yields 676 (plus another 676 if we bother
-with `Shift`). But the raw count understates the advantage, because the two
-approaches differ not just in quantity but in mnemonic quality. A modified
-binding requires two key presses but only one of them carries meaning. In a
-multi-key scheme, both keys can do so: the first key is a prefix that
-organizes a family of related commands; the second identifies the specific
-operation within that family.
+adding `Shift` yields only 52 binding slots. A multi-key strategy using the
+same 26 letters as two-character sequences produces 676 (plus another 676 if
+we bother with `Shift`). But the raw count understates the advantage, because
+the two approaches differ not just in quantity but in mnemonic quality. A
+modified binding requires two key presses but only one of them carries
+meaning. In a multi-key scheme, both keys can do so: the first key is a prefix
+that organizes a family of related commands; the second identifies the
+specific operation within that family.
 
-A multi-key scheme dominates a modifier scheme not just quantitatively but
-ergonomically: no awkward stretches, hand shifts, or simultaneous presses.
-
-Finally, such binding systems have a deeper advantage. Every fluent speaker
-uses a grammatical system orders of magnitude more complex than any
-application's command vocabulary. The cognitive machinery for structured,
-rule-governed recall is not exotic; it is among the most practiced
-capabilities humans have. Multi-key, grammar-based bindings plug into that
-machinery. Modifier-based bindings do not — they are arbitrary pairings the
-brain must hold by rote.
+Finally, a multi-key scheme dominates a modifier scheme not just
+quantitatively but ergonomically: no awkward stretches, hand shifts, or
+simultaneous presses.
 
 ## The Llama
 
@@ -451,16 +418,13 @@ part, because it carries the connotation of "scratch out." A related example
 is the collection of bindings for the looping start and end points. Each point
 has a prefix — `[` for start and `]` for end — and the bracket pair carries
 the connotation of an enclosed loop. Although direct mnemonic connections are
-preferred, indirect ones serve when necessary. The grammar carries most of the
-cognitive load; a few departures do not break it.
+preferred, indirect ones serve when necessary.
 
 <span class="phead">Multi-key structure enables discoverability</span>. When
 the user presses any binding prefix, a compact display of available
-completions appears at the bottom of the screen. The user encounters the hint
-at the moment of need — already reaching for the command, not browsing a
-reference page. This is the scalable version of what the Canon Cat attempted
-with its printed key labels: contextual, just-in-time, and
-hardware-independent.
+completions appears at the bottom of the screen — contextual help during use.
+This is the scalable version of what the Canon Cat attempted with its printed
+key labels.
 
 The cognitive demands of learning LoopLlama's binding system are lower than
 those of learning its features — which the user has to master regardless. The
@@ -485,16 +449,13 @@ brought modal, grammar-based editing to Unix in the late 1970s. Even the
 mouse-and-menus of the Mac — although a prime target of this essay's critique
 — was truly innovative. Raskin responded by designing the Canon Cat and
 eventually writing *The Humane Interface*. Those efforts had their flaws, but
-the field was alive to the problem. Then the Windows and Mac operating systems
-won commercially, and the exploration largely ended. The major platform makers
-have issued new versions for decades with minimal change to the input model.
+at least the field was alive to the problem. Then the Windows and Mac
+operating systems won commercially, and the exploration largely ended.
 
-That stagnation is conspicuous. Computing is the field most associated
-with relentless change. Processing power, storage, networking, displays,
-software distribution, and application domains have all been transformed since
-the 1980s. The direct, tactile question of how the user tells the computer
-what to do has not. A better approach was visible from the beginning. The
-tragedy is that we looked away.
+Processing power, storage, networking, displays, software distribution, and
+application domains have all been transformed since the 1980s. The direct
+question of how the user tells the computer what to do has not. A better
+approach was visible from the beginning. We looked away.
 
 --------
 
@@ -524,15 +485,13 @@ tragedy is that we looked away.
     hand, used as a dedicated command interface while the mouse hand was
     occupied.
 
-[^2]: [Fitts's Law][fitts_law] predicts target-acquisition time as a function
-    of target distance and size, and the [Keystroke-Level
-    Model][keystroke_model] predicts task completion time from its physical
-    components.
+[^2]: [Fitts's Law][fitts_law] says pointing takes longer the farther or
+    smaller the target is. The [Keystroke-Level Model][keystroke_model]
+    predicts the time for an expert user to complete a task by adding up the
+    times for its smaller steps (keystrokes, mouse moves, and so forth).
 
-[^3]: A text object is a structural element that an editor recognizes as a
-    target for navigation or editing: a word, sentence, paragraph, line, or —
-    in code-aware editors — a parenthesized expression, quoted string, or
-    indented block. The user names the unit and the editor locates its
-    boundaries automatically: "move to the next sentence," "delete the current
-    paragraph."
+[^3]: A text object is a structural element such as a word, line, sentence,
+    paragraph, parenthesized expression, quoted string, or indented block.
+    They allow a user to perform an edit or navigation without selecting the
+    object's boundaries explicitly.
 
