@@ -296,8 +296,8 @@ interfaces. Cramming Excel into a text editor will not cut it.
 <span class="phead">Applications are modes</span>. Each application's
 interface is a mode — a state in which the same keyboard and mouse inputs
 produce different results. To grant that different applications require their
-own interfaces — and there is no plausible argument against — is to grant that
-some modes are unavoidable.
+own interfaces — and there is no plausible argument against it — is to grant
+that some modes are unavoidable.
 
 <span class="phead">Modes within applications</span>. The same reasoning
 applies at the next level down. Many applications need to support multiple
