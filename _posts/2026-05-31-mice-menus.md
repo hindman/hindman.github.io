@@ -228,7 +228,7 @@ innovated][cat_keyboard] on that approach in two ways:
 The Cat sold poorly and was discontinued after [six months][cat_six_months] on
 the market. That failure could be attributed to bad timing or business
 strategy, but my judgment is that the Cat was built on a deeply flawed vision.
-Three problems stand out:
+Three problems stand out.
 
 The first flaw was that the Cat ultimately embraced the surrender strategy.
 The GUI market surrendered by exiling lower-priority operations to menus. The
@@ -354,9 +354,9 @@ We can apply those criteria to two classic examples from the modes literature:
 Raskin's automaticity concern — that tracking the current mode would stop
 frequent actions from becoming habits — holds for poorly designed modes, but
 gets the causation backward for well-designed ones. A mode built around a
-clear task distinction doesn't burden the user's cognition; it becomes part of
-it, an organizing hook like the conceptual structure supplied by applications
-at a higher level.
+clear task distinction does not burden the user's cognition; it becomes part
+of it, an organizing hook like the conceptual structure supplied by
+applications at a higher level.
 
 ## Modes all the way down
 
