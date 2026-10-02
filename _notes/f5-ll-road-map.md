@@ -1,34 +1,6 @@
 
 ## TODO
 
-Phase 2:
-  x Retest.
-  - Reread (edit if needed).
-  - Retest (if edited).
-
-        _pages/
-            about.md
-            loopllama-v1.md
-            loopllama-v2-help.md
-            loopllama-v2-keybindings.md
-
-        _posts/
-            2026-02-20-fingerstyle-rhythmic-rudiments.md
-            2026-05-29-v2-release.md
-            2026-05-30-ai-employment.md
-            2026-05-31-mice-menus.md
-
-        URLS
-            https://hindman.github.io/about/
-            https://hindman.github.io/loopllama/v1/overview/
-            https://hindman.github.io/loopllama/v2/help/
-            https://hindman.github.io/loopllama/v2/keybindings/
-            https://hindman.github.io/
-            https://hindman.github.io/mice-menus/
-            https://hindman.github.io/ai-employment/
-            https://hindman.github.io/v2-release/
-            https://hindman.github.io/fingerstyle-rhythmic-rudiments/
-
 Posts:
   - RH rudiments #2: Giuliani
   - On fartsniffing
