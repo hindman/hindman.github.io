@@ -31,7 +31,7 @@ Post/pages:
 
 Working on:
 
-    2026-07-03-giuliani-120.md
+    2026-10-05-giuliani-120.md
 
 ---------------------------
 
