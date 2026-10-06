@@ -41,6 +41,8 @@ exclude:
   # Others.
   - _notes/
   - tmp/
+  - CLAUDE.md
+  - loopllama/v2/src/
 
 # Disable jekyll-relative-links (pulled in by theme; incompatible with Ruby 3.4).
 relative_links:
