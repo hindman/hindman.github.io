@@ -35,15 +35,3 @@ Working on:
 
 ---------------------------
 
-## Structural (brief, possibly already decided)
-
-- The post ends on the last example with no closing line. Even one sentence
-  back to the ring-finger story, or a pointer to the next post, would give it
-  an ending.
-
-      POSSIBLE ENDING -- not super compelling
-
-      These days I don't revisit the 120 much. I've moved on to Giuliani's Op. 48,
-      a set of full-length etudes that put these right-hand skills to work in real
-      music, and that are even more fun to learn. More on those in a future post.
-
