@@ -2,7 +2,6 @@
 ## TODO
 
 Posts:
-  - RH rudiments #2: Giuliani
   - On fartsniffing
   - Making wealth taxes work: cc/model-tax
   - Practicing right-hand rudiments: muting
@@ -23,15 +22,10 @@ Post/pages:
     2026-05-29-v2-release.md
     2026-05-30-ai-employment.md
     2026-05-31-mice-menus.md
+    2026-10-08-giuliani-120.md
 
     loopllama-v2-help.md
     loopllama-v2-keybindings.md
-
-## RH rudiments #2: Giuliani 120
-
-Working on:
-
-    2026-10-05-giuliani-120.md
 
 ---------------------------
 
