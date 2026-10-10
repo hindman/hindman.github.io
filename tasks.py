@@ -334,8 +334,8 @@ def loc(c):
     Reports lines of code for LoopLlama v2
     '''
     root = PATHS.ll_root
-    exclude = '\/(node_modules|assets)\/'
-    exts = '\.(js|css|html)$'
+    exclude = '/(node_modules|assets)/'
+    exts = r'\.(js|css|html)$'
     cmd = f"wc -l $(find {root} | ack -v '{exclude}' | ack '{exts}')"
     c.run(cmd)
 
