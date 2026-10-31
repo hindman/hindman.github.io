@@ -1,6 +1,10 @@
 
 ## TODO
 
+Notes when releasing a post:
+  - Document process.
+  - Include note to manually request page indexing at Google Search Console.
+
 Posts:
   - On fartsniffing
   - Making wealth taxes work: cc/model-tax
