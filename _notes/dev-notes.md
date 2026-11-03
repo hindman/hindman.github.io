@@ -1,25 +1,26 @@
 
-<!--
+<!-- TOC
 
-## Overview of documents
-## Project setup
-## Common dev tasks
-## Post editing process
-  ### High-level review
-  ### Mid-level review
-  ### Low-level review
-## Testing scenarios
-  ### Deleting all video stashes
-  ### Creating a cloud-newer video
-  ### Testing: Supabase down
-## Known issues
-  ### YouTube captions auto-reappearing
-## Markdown notes
-## V3 ideas: other video sources
-  ### Vimeo
-  ### Other online platforms
-  ### Local video files
-  ### Open-source LoopLlama project
+    ## Overview of documents
+    ## Project setup
+    ## Common dev tasks
+    ## OAuth clients | keeping Google happy
+    ## Post editing process
+      ### High-level review
+      ### Mid-level review
+      ### Low-level review
+    ## Testing scenarios
+      ### Deleting all video stashes
+      ### Creating a cloud-newer video
+      ### Testing    | Supabase down
+    ## Known issues
+      ### YouTube captions auto-reappearing
+    ## Markdown notes
+    ## V3 ideas      | other video sources
+      ### Vimeo
+      ### Other online platforms
+      ### Local video files
+      ### Open-source LoopLlama project
 
 -->
 
@@ -86,6 +87,46 @@ LoopLlama: running tests:
 LoopLlama: lines of code:
 
         inv loc
+
+## OAuth clients: keeping Google happy
+
+Google emails periodically saying that the OAuth clients for LL prod and dev
+have not been used and will be deleted soon.
+
+Steps to refresh the last-used date of an OAuth client:
+
+  - Repeat for each LL environment (dev and prod)
+
+    - Go to LL and sign out.
+    - Close all LL-related and Google-related tabs.
+    - Open www.google.com
+    - Sign out of Google account.
+    - Go to LL.
+      - Accounts => Sign in with Google.
+
+Steps to see what Google thinks is the last-used date of an OAuth client:
+
+  - Navigate to the Google Auth Platform:
+
+    - Shortcut (use these URLs if they still work):
+
+        https://console.cloud.google.com/auth/clients?project=loopllama-dev
+        https://console.cloud.google.com/auth/clients?project=loopllama-prod
+
+    - Longer route (but more robust to URL rot):
+
+      - Go to Google Cloud home page:
+
+          https://console.cloud.google.com
+
+      - Select the app/project: prod or dev.
+      - Click "View all products".
+      - Click Google Auth Platform.
+      - Click Clients.
+
+  - Click the link to LoopLlama Prod (or Dev)
+  - Check the last-used date.
+  - Note that the date can lag a few days.
 
 ## Post editing process
 
