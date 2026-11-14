@@ -43,8 +43,8 @@ What mastery gives you:
 
 - Which shape sits next to which, and where the roots are in each.
 
-- If taught with intervals, where the 3rd and 5th sit in each shape.
-  Defenders lean on this the most, and it's often skipped.
+- If taught with intervals, where the 3rd and 5th sit in each shape. (That
+  is an extension; see "CAGED vs. a triad system.")
 
 That's the full list: a map of one chord type, the major triad, plus a way
 to divide the neck into five regions that comes with it.
@@ -98,6 +98,237 @@ dispute.
 Confidence: high on the core and the sequence. Lower on the history, such
 as who coined the name and how much of the broad version early sources like
 Fretboard Logic included.
+
+## How proponents define the kernel
+
+Concern: do the practical critiques (e.g., most shapes can't be fully
+barred) lean too hard on reading CAGED as "move the cowboy chords up the
+neck as barre chords"? A survey of definitional statements finds at least
+four framings of the kernel, plus a possible fifth.
+
+1. Movable barre chords. Replace the nut with a barre and play the five
+   open shapes anywhere. Wikipedia (CAGED is a subsection of "Bar chord,"
+   not its own article), D'Addario ("When moved up the neck, it forms
+   barre chords").
+
+2. Visual map: shapes as landmarks or regions, seen rather than played.
+   Stringjoy ("visualize the chord shapes without the capo"), Premier
+   Guitar ("five buckets where I can stash fretboard information"), Pickup
+   Music ("fretboard landmarks"). This is the most common proponent
+   framing.
+
+3. Octave shapes. Guitar Chalk: the shapes are "made of" octaves, and
+   "there are five octave shapes and each one relates to a common open
+   chord that we already know."
+
+4. Triad containers. Each shape is a grouping of major-triad voicings by
+   string set. Pickup Music's triad lesson, TrueFire's "CAGED Triads,"
+   Molly Miller's Guitar World material. Usually presented as an
+   application of CAGED rather than its definition.
+
+5. Tuning logic (low confidence). Fretboard Logic's subtitle, "The
+   Reasoning Behind the Guitar's Unique Tuning," suggests Edwards framed
+   the chord forms as consequences of the tuning. Seen via title and
+   reviews only; the book itself wasn't examined.
+
+Assessment of each framing:
+
+- 1, barre chords: the truest kernel. It's the source of the name, and in
+  YouTube teaching it dominates the initial definitions (user observation).
+  The capo doesn't rescue it. A real capo makes one shape fully playable
+  at one location, which is transposition, not neck mapping; it also
+  blocks everything behind it, so you can't traverse C-A-G-E-D for a chord
+  in real time. In CAGED teaching the capo is usually imaginary ("imagine
+  a capo here," then "visualize the chord shapes without the capo"). It is
+  demonstrated and then removed, leaving a visual pattern. So a proponent
+  who invokes the capo has already retreated to framing 2. It also
+  sharpens the critique: the barre was supposed to be a movable nut, and
+  for most shapes a finger can't do a capo's job.
+
+- 2, visual map (movable patterns shaped like cowboy chords): a less
+  strict variant of 1. It concedes some Shapes aren't very playable but
+  keeps them as a visual structure to hang other things on. More
+  defensible, but it slides quickly into 3; that slide is visible in
+  several of the sources above.
+
+- 3, octave shapes: even more defensible, but CAGED is lost. Every system
+  must use and adhere to octave shapes.
+
+- 4, triad containers: a better foundation, but the Shapes aren't fully
+  triadic (they merge power chords and triads), and it raises the question
+  of what CAGED adds that a triad-based framework wouldn't handle better.
+
+- 5, tuning logic: if the forms are presented as consequences of the
+  tuning, this collapses into 3. Set aside.
+
+Structure: 2 and 3 are relaxations of 1, each dropping a requirement
+(playability, then chord shape). 4 is a substitution: a different
+foundation under the CAGED name. Relaxation leaves less and less of CAGED;
+substitution leaves only the name.
+
+Implications:
+
+- The barre-chord reading is the truest kernel, though proponents often
+  retreat to 2 or 3 when defending it. The "can't barre most shapes"
+  critique hits framing 1 squarely and the others only indirectly.
+
+- Against framing 2 the practical critique survives in its stronger form,
+  as the transfer premise: the cowboy chords are only a visual mnemonic,
+  which advertises a motor familiarity it doesn't deliver (see "Visual
+  vs. motor transfer").
+
+- Framing 3 is answered in "The octave-shape defense," framing 4 in
+  "Building blocks: triads and power chords" and the chunking collapse.
+
+- Pattern: each framing retreats further from the cowboy chords, and the
+  more defensible it gets, the less CAGED-specific it is. That's a
+  motte-and-bailey. The bailey ("you already know these chords; just move
+  them") does the selling; the motte (octaves, triads, visualization) does
+  the defending, and belongs to everyone.
+
+Side note on Wikipedia's thin coverage: Wikipedia tracks citable secondary
+sources, and CAGED lives mostly in the commercial lesson market, with
+little scholarly or reference literature. The CAGED subsection itself cites
+a MusicRadar lesson, a 1999 David Mead book, and Tom Hess. So its
+modest footprint there likely reflects sourcing, not importance.
+
+## CAGED vs. a triad system
+
+Taking the "system" claim seriously means comparing CAGED against an
+alternative, stated with equal strictness and no extensions.
+
+### Triad system (user's statement)
+
+- Define it precisely and compactly.
+
+- Rule:
+
+  - Pick a key/root (e.g., C).
+
+  - On each set of three contiguous strings, find the 1-3-5 chord tones.
+
+  - Those are your triad inversions.
+
+- Learn that small library of movable shapes for each chord quality: major,
+  minor, etc.
+
+Anyone fluent in it would know a lot of useful, playable material. Not
+everything about music (no system offers that), but a massive advantage
+over their prior self.
+
+### CAGED, framing 2 (visual map), stated as strictly
+
+Framings 5 (unclear), 4 (not true: the Shapes aren't fully triadic), and 3
+(not CAGED-specific) are set aside. Framing 1 is the truest kernel; 2 is
+the more robust. Framing 2 stated narrowly:
+
+- Pick a root (e.g., C).
+
+- Take five fixed inputs: the open C, A, G, E, and D major chords, each
+  with its known root locations.
+
+- Slide each shape until its root sits on the chosen root, treating the
+  nut as an imagined capo at that fret.
+
+- The five placed shapes, in order C-A-G-E-D, cover the neck. Those are
+  your five regions.
+
+- Learn the five shapes as visual patterns; playability not required.
+
+### Where the strict statement goes soft
+
+- Inputs are a list, not a rule. The triad system takes chord quality as a
+  parameter. CAGED's inputs are five specific open chords that exist as
+  easy open chords only for major (Cm and Gm aren't open chords; Am, Em,
+  and Dm are). The triad system's "etc." line can't be written for CAGED.
+  This isn't an extension; it's the same parameter the triad statement
+  includes.
+
+- Shapes aren't fully defined: which strings belong to A, C, and D is left
+  to the teacher (see "Coverage gaps").
+
+- No note roles. The triad rule labels every note 1, 3, or 5 as part of how
+  it works. A CAGED shape learned as a picture carries only its root;
+  knowing which dot is the 3rd requires added interval teaching, an
+  extension.
+
+- "Seen, not played" is written into the definition. The triad system's
+  output is playable by construction.
+
+### Deliverables compared
+
+    Feature          Triad system                  CAGED (visual map)
+    Rule             Generated from chord tones    Lookup of five open
+                     and string sets               chords
+    Chord qualities  Any, by parameter             Major (minor partly)
+    Units            12 playable shapes per        5 patterns, partly
+                     chord quality                 playable
+    Note roles       Built in (1, 3, 5)            Root only
+    Definition       Exact                         Which strings count
+                                                   is unclear
+    Organized by     String set                    Position (neck region)
+
+### Neck regions: not distinct either
+
+CAGED provides neck regions: five vertical slices. But the triad system
+has its own regions. Triads on adjacent string sets share two strings and
+glue into "triad stacks" (strings 1-2-3 joined to 2-3-4, and so on down to
+4-5-6). Because of the tuning, the stacks run at an angle across the neck
+rather than straight up and down. They follow almost directly from the
+triad rule, so they count as own-content, not an extension.
+
+What remains of CAGED's contribution is only orientation: vertical rather
+than diagonal. And vertical windows can be derived from triads too: the
+triads on every string set within one 4-5 fret window yield the notes of a
+CAGED shape.
+
+Fair point for the vertical slice: it keeps the hand in one position,
+which suits position playing, reading, and chord-melody; diagonal stacks
+involve shifts. A real trade-off, but a choice of slicing, not CAGED
+content.
+
+Concession: vertical regions are genuinely useful, since the guitar itself
+is vertically defined at the nut. The triad system doesn't do everything.
+The fair claim is that triads connect to vertical regions, not that they
+make them unnecessary.
+
+### Triads connect outward
+
+A triad orientation connects well to what a player already knows (cowboy
+chords) and to what they learn later (advanced voicings, other scales). For
+example, a player learning triad stacks can find the stack that overlaps
+most with the CAGED E shape and see exactly where the two diverge.
+
+Worked example, C chord, E shape at fret 8 (8-10-10-9-8-8, C G C E G C):
+
+- Strings 4-3-2: triad C-E-G (frets 10-9-8), matches the E shape.
+
+- Strings 5-4-3: triad G-C-E (frets 10-10-9), matches.
+
+- Strings 6-5-4: the E shape has C-G-C (frets 8-10-10), a power chord, not
+  a triad. The stack gets its third note by moving string 6 to E at fret
+  12.
+
+Divergence is on string 6. And the note the stack moves to (E, string 6,
+fret 12) is the same note the coverage-gap example found no standard CAGED
+shape includes. The triad stacks fill the gap the CAGED shapes leave:
+triads reach the CAGED shapes, but not the reverse.
+
+### Bottom line
+
+Method: restrict each system to its own content (no extensions) and ask
+what it delivers. Triads: a lot. CAGED: a little, with lingering questions.
+
+The key difference: CAGED's own content teaches you only roots. The triad
+system teaches the locations of 1, 3, and 5; learning the inversions bakes
+those facts into the method. Any note roles beyond the root in CAGED come
+from added interval teaching, an extension.
+
+Stated strictly, CAGED framing 2 is a five-item lookup table with a
+placement rule. For major chords it has roughly the same note content as
+triads, but with less defined units, no note roles, and no way to vary
+chord quality. Even its neck regions have a triad counterpart (stacks),
+leaving only the vertical orientation, which triads can also produce.
 
 ## Is CAGED systematic?
 
@@ -361,6 +592,47 @@ them is borrowed credit.
 Open question (historical): when and how the five pentatonic and diatonic
 patterns acquired the CAGED label.
 
+## The octave-shape defense
+
+The defense: CAGED isn't really about cowboy chords; its kernel is octave
+shapes (root locations across strings). The chord shapes merely align with
+those roots.
+
+Verdict: it doesn't rescue CAGED. It trades "unsystematic" for "trivial,"
+moving CAGED onto the precise-but-tiny horn of the dilemma.
+
+What the octave-shape version gets right: it's coherent, fully
+specifiable, and exhaustive. The count of five even has a clean derivation:
+
+- Within any 12-fret span, each string has a given pitch class exactly
+  once: six root locations.
+
+- Of the open strings E A D G B E, only the two Es share a pitch class, and
+  they always share a fret.
+
+- So every pitch class falls on exactly five distinct frets per octave.
+  C's roots: string 2 fret 1, string 5 fret 3, string 3 fret 5, strings 6
+  and 1 fret 8, string 4 fret 10.
+
+Why it fails as a rescue:
+
+- The five comes from the tuning, not from the open chords. Octave shapes
+  are what they are; every system works within them and every guitarist
+  who learns octaves gets them. They don't distinguish CAGED from other
+  systems.
+
+- It gives up what made CAGED distinctive: root geography carries no chord
+  type and no chord tones, no beginner on-ramp from familiar shapes, and
+  the name "CAGED" no longer describes anything.
+
+- It escapes some critiques (transfer premise, coverage gaps, major-chord
+  bias), but only by becoming content that belongs to everyone.
+
+Small qualification: one remaining distinctive claim is methodological,
+namely organizing the neck around root locations rather than fingering
+(3NPS) or intervals. That's a stance, not a system, and it doesn't need
+the CAGED shapes.
+
 ## Corrections to initial assumptions
 
 - Jens Larsen: no critique of CAGED found. Forum posts say he teaches CAGED
@@ -469,6 +741,25 @@ count CAGED as one tool among several.
 - A defense, for contrast: Jon MacLennan, [What's So BAD About The CAGED
   System][mm]
 
+Kernel-definition sources:
+
+- [Wikipedia, Bar chord: CAGED System][wp]
+- [D'Addario, What is the CAGED System?][dad]
+- [Stringjoy, Using the CAGED System][sj]
+- [Premier Guitar, The Guitarist's Guide to the CAGED System][pgg]
+- [Pickup Music, What is the CAGED system][pum]
+- [Guitar Chalk, What is the CAGED system][gc]
+- [Pickup Music, triads and CAGED][put]
+- [TrueFire, Chord Navigator: CAGED Triads][tf]
+
+[wp]: https://en.wikipedia.org/wiki/Bar_chord#CAGED_System
+[dad]: https://www.daddario.com/the-lesson-room/guitar/guitarists-guide-to-the-caged-system/
+[sj]: https://stringjoy.com/caged-system
+[pgg]: https://www.premierguitar.com/the-guitarists-guide-to-the-caged-system
+[pum]: https://www.pickupmusic.com/blog/what-is-the-caged-system
+[gc]: https://www.guitarchalk.com/what-is-the-caged-system/
+[put]: https://www.pickupmusic.com/blog/mastering-triad-shapes-on-the-guitar-applying-the-caged-system
+[tf]: https://truefire.com/c1011
 [z]: https://www.musictheoryforguitar.com/whythecagedscalesystemsucks.html
 [h]: https://tomhess.net/WhyTheCAGEDSystemHurtsYourGuitarPlaying.aspx
 [pg]: https://www.premierguitar.com/lessons/caged/why-i-don-t-teach-the-caged-system
