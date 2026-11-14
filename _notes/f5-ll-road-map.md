@@ -7,6 +7,7 @@ Notes when releasing a post:
 
 Posts:
   - On fartsniffing
+    - https://www.nytimes.com/2026/11/11/opinion/post-trump-republicans.html
   - Making wealth taxes work: cc/model-tax
   - Practicing right-hand rudiments: muting
   - Blues turnarounds: a systematic approach

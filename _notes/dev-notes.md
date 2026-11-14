@@ -4,7 +4,7 @@
     ## Overview of documents
     ## Project setup
     ## Common dev tasks
-    ## OAuth clients | keeping Google happy
+    ## OAuth clients: keeping Google happy
     ## Post editing process
       ### High-level review
       ### Mid-level review
@@ -12,11 +12,11 @@
     ## Testing scenarios
       ### Deleting all video stashes
       ### Creating a cloud-newer video
-      ### Testing    | Supabase down
+      ### Testing: Supabase down
     ## Known issues
       ### YouTube captions auto-reappearing
     ## Markdown notes
-    ## V3 ideas      | other video sources
+    ## V3 ideas: other video sources
       ### Vimeo
       ### Other online platforms
       ### Local video files
