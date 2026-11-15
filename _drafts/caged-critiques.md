@@ -1,16 +1,120 @@
 ---
-title: "Critiques of the CAGED system: a survey"
+title: "CAGED confusion: three meanings, five labels, no system"
 
 excerpt: >
 
-  CAGED is the most popular way to map the guitar fretboard, and it has
-  plenty of detractors. A survey of the criticisms: what they are, who makes
-  them, and which ones hold up.
+  Many guitar teachers invoke the CAGED system. But what is it, exactly? The
+  definitions slide among bar chords, visual maps, and octave shapes, and none
+  survives scrutiny. What remains is a handful of awkward shape labels. Triads
+  offer a better path.
 
 ---
 
+## TODO
+
+- Find a few Guthrie Trapp and Molly Miller lessons to examine as case
+  studies of unreliable narrators. In memory they are prominent examples
+  of (a) great guitar players (b) who wrap their teaching in CAGED lingo,
+  but (c) whose playing or teaching rarely seems truly CAGED. For each,
+  take the claimed CAGED connection apart step by step (see "CAGED at
+  advanced levels").
+
+- Historical: when and how the five pentatonic and diatonic patterns
+  acquired the CAGED label; whether Bill Edwards (Fretboard Logic) invented
+  CAGED or codified earlier teaching.
+
+- Possibly examine Fretboard Logic itself, to settle framing 5 (tuning
+  logic).
+
+- Sources unread during research: Guitar9 column series (404), jazzguitar.be
+  and JustinGuitar forum threads (403).
+
+## Post outline
+
+Two targets, stated in the opening: (1) CAGED's claim to be a system, and
+(2) the loose thinking that keeps the label alive (much pedagogy labeled
+"CAGED" rarely is).
+
+0. The claim, and the two targets. Grant the beginner's need: a map of the
+   neck built from what they already know.
+
+1. What a system owes us. Four fixed criteria, with triads as a benchmark
+   that passes all four:
+
+   - Specified: can be stated so two people produce the same result.
+
+   - Generative: a rule, not a list.
+
+   - Delivers: usable, complete output with real content of its own.
+
+   - Distinctive: its content belongs to it, not to the tuning or to
+     everyone.
+
+2. Which CAGED? The kernel problem: proponents define it at least three
+   ways (bar chords, visual map, octave shapes). Preview the retreat
+   from one to the next.
+
+3. CAGED as bar chords. Test against the criteria. Shape-by-shape
+   playability, Paul Davids case study, major-only, coverage gaps. Its
+   own, ambitious, but fails to deliver.
+
+4. CAGED as visual map. Lookup table, roots only, pegboard. Its own, but
+   vague and thin.
+
+5. CAGED as octave shapes. Passes (precise, generative, exhaustive), but
+   belongs to the tuning, not to CAGED. Seven octave shapes as a short
+   aside.
+
+6. Verdict. Trilemma across the three framings: CAGED can be specified,
+   substantive, or its own, but never all three. What's left is a
+   vocabulary, and position naming shows it's not even a necessary one.
+   (Treat the trilemma as provisional until the draft tests it; framing 1
+   is the least clean fit.)
+
+7. Why the label persists. Answers the objection "if CAGED is so thin, why
+   do great players swear by it?"
+
+   - Label creep: scale patterns and Larsen's red-root diagrams carry the
+     CAGED name without CAGED content.
+
+   - Unfalsifiable coverage: any lesson lands in some region.
+
+   - Unreliable narration of expertise (Nisbett and Wilson).
+
+   - Market incentives (speculative; flag or drop).
+
+   - One Trapp or Miller lesson examined step by step.
+
+8. Coda: learn triads.
+
+Discipline rules:
+
+- Fixed criteria: none introduced after section 1.
+
+- Each test section ends with a one-line verdict against the criteria.
+
+- One running example chord throughout.
+
+- Quote proponents' own words for each framing.
+
+- Tightness test: every paragraph must serve target 1 or target 2, or it
+  goes, however good it is.
+
+- Reader is a learner: define jargon lightly on first use (triad
+  inversion, string set, octave shape).
+
+Cut or spin off:
+
+- The critique survey (3NPS and technique debate): a sentence or footnote
+  at most.
+
+- Seven octave shapes and triad extensions: strong enough for their own
+  posts; here only as brief asides.
+
 <!-- TOC
 
+    ## TODO
+    ## Post outline
     ## What CAGED is trying to do
       ### The narrow version
       ### The broad version
@@ -47,7 +151,6 @@ excerpt: >
     ## How the field divides
     ## Gaps
     ## Overall verdict
-    ## TODO
     ## Sources
 
 -->
@@ -72,7 +175,7 @@ The contents:
   finding the root on a given string.
 
 Problem it solves: most beginners know the open chords and maybe the E-shape
-and A-shape barre chords, and the rest of the neck is a blur. The tuning's
+and A-shape bar chords, and the rest of the neck is a blur. The tuning's
 irregularity (the major 3rd between G and B) makes moving patterns around
 unpredictable. CAGED builds that irregularity into shapes the student already
 knows, so it teaches by connecting new material to old.
@@ -146,13 +249,13 @@ Fretboard Logic included.
 
 Concern: do the practical critiques (e.g., most shapes can't be fully
 barred) lean too hard on reading CAGED as "move the cowboy chords up the
-neck as barre chords"? A survey of definitional statements finds at least
+neck as bar chords"? A survey of definitional statements finds at least
 four framings of the kernel, plus a possible fifth.
 
-1. Movable barre chords. Replace the nut with a barre and play the five
+1. Movable bar chords. Replace the nut with a bar and play the five
    open shapes anywhere. Wikipedia (CAGED is a subsection of "Bar chord,"
    not its own article), D'Addario ("When moved up the neck, it forms
-   barre chords").
+   bar chords").
 
 2. Visual map: shapes as landmarks or regions, seen rather than played.
    Stringjoy ("visualize the chord shapes without the capo"), Premier
@@ -176,7 +279,7 @@ four framings of the kernel, plus a possible fifth.
 
 Assessment of each framing:
 
-- 1, barre chords: the truest kernel. It's the source of the name, and in
+- 1, bar chords: the truest kernel. It's the source of the name, and in
   YouTube teaching it dominates the initial definitions (user observation).
   The capo doesn't rescue it. A real capo makes one shape fully playable
   at one location, which is transposition, not neck mapping; it also
@@ -185,7 +288,7 @@ Assessment of each framing:
   a capo here," then "visualize the chord shapes without the capo"). It is
   demonstrated and then removed, leaving a visual pattern. So a proponent
   who invokes the capo has already retreated to framing 2. It also
-  sharpens the critique: the barre was supposed to be a movable nut, and
+  sharpens the critique: the bar was supposed to be a movable nut, and
   for most shapes a finger can't do a capo's job.
 
 - 2, visual map (movable patterns shaped like cowboy chords): a less
@@ -211,8 +314,8 @@ substitution leaves only the name.
 
 Implications:
 
-- The barre-chord reading is the truest kernel, though proponents often
-  retreat to 2 or 3 when defending it. The "can't barre most shapes"
+- The bar-chord reading is the truest kernel, though proponents often
+  retreat to 2 or 3 when defending it. The "can't bar most shapes"
   critique hits framing 1 squarely and the others only indirectly.
 
 - Against framing 2 the practical critique survives in its stronger form,
@@ -427,7 +530,7 @@ you try to extend the five Shapes to other chord qualities.
 
 - G: the most problematic. An open Gm voicing exists, 310033 (G Bb D G D
   G), and it's playable, but not easily, and it isn't a standard cowboy
-  chord. Barred up the neck it's a no-go: an index barre on strings 4-3, a
+  chord. Barred up the neck it's a no-go: an index bar on strings 4-3, a
   note one fret up on string 5, and three notes three frets up on
   non-adjacent strings 6, 2, and 1. In practice, a movable Gm means
   converting to the E shape. The G Shape has no usable movable minor form.
@@ -519,7 +622,7 @@ shapes don't move well:
   triads (xxx224). The A shape retreats into triads and practical
   power-chord shapes.
 
-- C: same, but more so. Some tunes use a true barre of the C shape, but it's
+- C: same, but more so. Some tunes use a true bar of the C shape, but it's
   an intermediate-to-advanced voicing to execute fluently. Triad subsets
   are far more practical and common.
 
@@ -528,7 +631,7 @@ shapes don't move well:
   top three strings (xxx454) or nearby voicings (xx6454) that shade into the
   C shape. A practical failure and a conceptual mess.
 
-- G: probably the least movable. Triad subsets, yes (Hendrix). A barred G
+- G: probably the least movable. Triad subsets, yes (Hendrix). A bar G
   shape, almost nobody.
 
 One out of five is a poor batting average for a system whose first promise
@@ -595,7 +698,7 @@ the CAGED frame.
     consistency from the start ("wait, I can't easily move these shapes")
     and loses relevance later.
 
-- Full barre chords: the E- and A-shape barres (in practical forms like
+- Full bar chords: the E- and A-shape bars (in practical forms like
   x2444x) are real full-chord rhythm voicings. But every method teaches
   them, CAGED or not, so they aren't CAGED's contribution.
 
@@ -668,7 +771,7 @@ a reasonable, sensible one, judging from a lot of his material. That makes
 him a strong test case: a fair-minded proponent, not a salesman.
 
 - Definition: the usual one, shifting familiar open chords up the neck via
-  a barre (framing 1).
+  a bar (framing 1).
 
 - He admits people tend to change fingerings when doing this. The result
   looks more like partial triad stacks than true shifts of the CAGED
@@ -1028,7 +1131,7 @@ Is there a modest beginner value to concede? On scrutiny, no. Candidates:
   cowboy chords deliver the same one (move the top three strings of an
   open D).
 
-- E- and A-shape barre chords: every method teaches them.
+- E- and A-shape bar chords: every method teaches them.
 
 - A learning sequence: triads have one too; the chunking advantage already
   collapsed.
@@ -1041,28 +1144,6 @@ popularity reveals a real beginner need, a map of the neck that grows out
 of what students already know. The need is genuine and CAGED addresses it;
 the argument is that triads meet it better. That keeps the post fair
 without crediting CAGED with value the analysis can't find.
-
-## TODO
-
-- Find a few Guthrie Trapp and Molly Miller lessons to examine as case
-  studies of unreliable narrators. In memory they are prominent examples
-  of (a) great guitar players (b) who wrap their teaching in CAGED lingo,
-  but (c) whose playing or teaching rarely seems truly CAGED. For each,
-  take the claimed CAGED connection apart step by step (see "CAGED at
-  advanced levels").
-
-- Rewatch the Paul Davids video to confirm the notes and the [11:23]
-  quote.
-
-- Historical: when and how the five pentatonic and diatonic patterns
-  acquired the CAGED label; whether Bill Edwards (Fretboard Logic) invented
-  CAGED or codified earlier teaching.
-
-- Possibly examine Fretboard Logic itself, to settle framing 5 (tuning
-  logic).
-
-- Sources unread during research: Guitar9 column series (404), jazzguitar.be
-  and JustinGuitar forum threads (403).
 
 ## Sources
 
