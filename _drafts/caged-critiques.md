@@ -19,9 +19,11 @@ excerpt: >
   take the claimed CAGED connection apart step by step (see "CAGED at
   advanced levels").
 
-- Historical: when and how the five pentatonic and diatonic patterns
-  acquired the CAGED label; whether Bill Edwards (Fretboard Logic) invented
-  CAGED or codified earlier teaching.
+- Historical: partly answered (see "History"). Still open: whether the
+  1975 Guitar Player article used the name "CAGED"; what Howard Roberts's
+  GIT materials called it; when the pentatonic and diatonic patterns
+  acquired the label. Primary sources (the 1975 article, Fretboard Logic,
+  GIT materials) would settle most of it.
 
 - Possibly examine Fretboard Logic itself, to settle framing 5 (tuning
   logic).
@@ -115,6 +117,7 @@ Cut or spin off:
 
     ## TODO
     ## Post outline
+    ## History
     ## What CAGED is trying to do
       ### The narrow version
       ### The broad version
@@ -154,6 +157,93 @@ Cut or spin off:
     ## Sources
 
 -->
+
+## History
+
+Short version: the shapes are old, the name dates from the mid-1970s, and
+no single inventor is established. Several sources are blogs or sellers
+with a stake; confidence is noted per item.
+
+### The underlying idea
+
+The five movable shapes predate the name. Secondary sources say the Eddie
+Lang Guitar Method (1935) and George Barnes Guitar Method (1943) build
+solos from the same five shapes (plausible, unverified). Bill Edwards
+reportedly said the real originator is whoever settled on standard tuning,
+which matches the octave-shape point.
+
+### Candidates for naming it (mid-1970s to early 1980s)
+
+- Keith Allen, Blue Bear School of Music, San Francisco. A May 1975 Guitar
+  Player feature ("Blue Bear Waltzes," by Jon Sievert) reportedly lays out
+  five interlocking scales labeled E-D-C-A-G. Caveats: the claim comes from
+  Castalia, publisher of Allen's The Guitar Poster (1980), which has a
+  commercial stake; and even their account says only that the system is
+  "now called" CAGED, not that the article used the name.
+
+- Howard Roberts and GIT (Guitar Institute of Technology), late 1970s.
+  Keith Wyatt says he first met CAGED as a late-'70s GIT student, through
+  course material Roberts wrote. Medium confidence: secondhand report; the
+  article itself couldn't be read.
+
+- Bill Edwards, Fretboard Logic (volumes copyrighted 1983 and 1987;
+  combined SE edition 1997). Reportedly first titled "The CAGED System."
+  The earliest known source packaging CAGED as a complete system covering
+  chords, scales, and lead patterns. Edwards reportedly said he didn't
+  invent it.
+
+- Joe Pass. Often linked to CAGED, but disputed: the claim is that he used
+  the five shapes to picture chords, not as a scale system. Joe Pass Guitar
+  Style (Mel Bay) was reportedly co-written with Bill Thrasher; date not
+  confirmed.
+
+### Names before "CAGED"
+
+No single earlier name found. Teachers mostly spoke of "chord forms" and
+"positions"; Berklee's Leavitt method used numbered positions. Gypsy-jazz
+players reportedly use a three-shape variant called "ACE."
+
+### Popularizers
+
+- 1980s-90s: The Guitar Poster, GIT/Musicians Institute, Fretboard Logic.
+
+- Internet era: Justin Sandercoe (JustinGuitar) as a major entry point,
+  then the YouTube teachers (Paul Davids and others).
+
+User's experience fits: exposure through the 1980s-2000s came from chord
+books, song books, and scale-pattern books, with little CAGED talk. On this
+evidence CAGED was a niche framework through the 1980s and 90s (GIT,
+Fretboard Logic, a wall poster) and became ubiquitous with web and YouTube
+teaching. That last step is inference, but consistent with the evidence.
+
+### Relevance to the essay
+
+The "system" claim appears to come from a later packaging, mainly
+Fretboard Logic, layered on long-standing shapes. That fits the thesis:
+the shapes are old and generic; the systemhood is the newer addition.
+
+### History sources
+
+- [Castalia, Origin of the C-A-G-E-D System][h-cast]
+- [Guitar Noises, The History of the CAGED System][h-gn]
+- [Guitar Noises, Why Is the CAGED System So Important?][h-gn2]
+- [Guitar Player, Keith Wyatt: What I learned at GIT][h-kw]
+- [Yamaha Hub, Using the CAGED System][h-yam]
+- [Bill Edwards interview, Guitar Noise][h-be] (couldn't read, 403)
+- [Fretboard Logic contents listing][h-fl]
+- [JustinGuitar, CAGED System module][h-jg]
+- [jazzguitar.be, ChatGPT and the origin of CAGED][h-jgb] (couldn't read,
+  403)
+
+[h-cast]: https://www.castaliapub.com/origins-of-the-c-a-g-e-d-system/
+[h-gn]: https://guitarnoise.substack.com/p/the-history-of-the-caged-system
+[h-gn2]: https://guitarnoise.substack.com/p/why-is-the-caged-system-so-important
+[h-kw]: https://www.guitarplayer.com/lessons/you-want-to-play-blues-well-heres-a-better-way-to-do-it-keith-wyatt-what-i-learned-at-git
+[h-yam]: https://hub.yamaha.com/guitars/g-how-to/using-the-caged-system-to-expand-your-guitar-vocabulary/
+[h-be]: https://www.guitarnoise.com/blog/bill-edwards-interview/
+[h-fl]: https://www.kioessay.greeceathensaegeaninfo.com/guitar-method-fretboard-logic-edwards-p3.html
+[h-jg]: https://justinguitar.com/modules/caged-system
+[h-jgb]: https://www.jazzguitar.be/forum/getting-started/102775-chatgpt-origin-caged-guitar-instruction.html
 
 ## What CAGED is trying to do
 
