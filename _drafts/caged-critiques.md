@@ -10,26 +10,129 @@ excerpt: >
 
 ---
 
+<!-- TOC
+
+    ## TODO
+    ## Post form
+    ## Post outline
+    ## History
+      ### The underlying idea
+      ### Candidates for naming it (mid-1970s to early 1980s)
+      ### Names before "CAGED"
+      ### Popularizers
+      ### Relevance to the essay
+      ### History sources
+    ## What CAGED is trying to do
+      ### The narrow version
+      ### The broad version
+      ### What it doesn't give you
+      ### The honest deliverable
+    ## How proponents define the kernel
+    ## CAGED vs. a triad system
+      ### Triad system (user's statement)
+      ### CAGED, framing 2 (visual map), stated as strictly
+      ### Where the strict statement goes soft
+      ### Two systems compared
+      ### Neck regions: not distinct either
+      ### Triads connect outward
+      ### Triads extend to other chord qualities
+      ### Bottom line
+    ## The major-only problem
+    ## Is CAGED systematic?
+      ### Candidate criteria
+      ### Coverage gaps
+    ## The transfer premise
+      ### The defense, and what it gives up
+      ### Visual vs. motor transfer
+      ### Building blocks: triads and power chords
+      ### What survives: almost nothing
+      ### On calling it bogus
+    ## CAGED at advanced levels
+      ### Jens Larsen: CAGED-labeled scale diagrams
+    ## Case study: Paul Davids
+    ## Case study: Guthrie Trapp
+      ### Part 1
+      ### Part 2
+    ## Case study: Molly Miller
+    ## Case study: Jofsess
+    ## Case study: Guitar Noise (Hackett)
+      ### The history article
+      ### The importance article
+    ## Generative systems vs. CAGED labels
+    ## The octave-shape defense
+      ### Seven octave shapes
+      ### Talking vs. thinking
+    ## Position patterns
+      ### The algorithm
+      ### Terminology
+      ### Why they align with the octave shapes
+      ### Why this suits CAGED
+    ## Corrections to initial assumptions
+    ## The critiques
+    ## How the field divides
+    ## Gaps
+    ## Overall verdict
+    ## Sources
+
+-->
+
 ## TODO
 
-- Find a few Guthrie Trapp and Molly Miller lessons to examine as case
-  studies of unreliable narrators. In memory they are prominent examples
-  of (a) great guitar players (b) who wrap their teaching in CAGED lingo,
-  but (c) whose playing or teaching rarely seems truly CAGED. For each,
-  take the claimed CAGED connection apart step by step (see "CAGED at
-  advanced levels").
+## Post form
 
-- Historical: partly answered (see "History"). Still open: whether the
-  1975 Guitar Player article used the name "CAGED"; what Howard Roberts's
-  GIT materials called it; when the pentatonic and diatonic patterns
-  acquired the label. Primary sources (the 1975 article, Fretboard Logic,
-  GIT materials) would settle most of it.
+Tentative decision: write the post in the labeled-paragraph form used in
+the AI-employment post (`_posts/2026-05-30-ai-employment.md`).
 
-- Possibly examine Fretboard Logic itself, to settle framing 5 (tuning
-  logic).
+- Headings group related points.
 
-- Sources unread during research: Guitar9 column series (404), jazzguitar.be
-  and JustinGuitar forum threads (403).
+- Each paragraph opens with a short label (a `phead` span) that condenses
+  its goal, topic, or key idea: a compressed topic sentence.
+
+- Read in sequence, the labels sum up the argument at a high level and
+  give the reader a thread to follow. They are handholds or nodes for
+  skimming, not just layout.
+
+Why it fits this post:
+
+- It enforces discipline: every paragraph must have a point that fits in
+  a phrase, which keeps the writing tight.
+
+- It suits a conceptual takedown. The critique already follows a ladder of
+  proponent retreats (bar chords, visual map, octave shapes, triad
+  containers; see "How proponents define the kernel"). Each heading can be
+  one rung: steelman first, then the rebuttal, so the reader sees each
+  retreat closed off.
+
+- Steelman paragraphs get labels phrased as a proponent would put them
+  ("The beginner's need is real"). That makes the honest grappling
+  visible, and lets the rebuttal labels be blunt without seeming unfair.
+
+Working decisions:
+
+- Case studies (Davids, Trapp, Miller, Hackett) appear as evidence
+  paragraphs within the relevant section, not as standalone sections.
+
+- Supporting diagrams, tables, and images can follow the paragraph that
+  introduces them; they don't break the form.
+
+- No fixed length limit, but cut extraneous material, assessed as we go.
+  ("Position patterns" and the history are candidates for an aside or a
+  separate post.)
+
+- Process: draft the skeleton first (headings plus every paragraph label,
+  no prose). If the labels alone read as a coherent argument, the post
+  works; if not, the gaps show.
+
+Precedents: philosophers' addressable units (Wittgenstein's numbered
+remarks, Spinoza's propositions), marginal summaries (Hobbes's Leviathan,
+Blackstone's Commentaries), and point headings in legal briefs. Numbering
+suits the philosophers' goals; here the pithy labels are part of the
+rhetorical appeal.
+
+Naming the form: open. The typographic term is "run-in heading," but the
+goal is a name for the rhetorical function. Rejected so far: threaded
+argument, spine, glossed argument, claim-line prose. The handhold or node
+image is closer to the idea.
 
 ## Post outline
 
@@ -113,51 +216,6 @@ Cut or spin off:
 - Seven octave shapes and triad extensions: strong enough for their own
   posts; here only as brief asides.
 
-<!-- TOC
-
-    ## TODO
-    ## Post outline
-    ## History
-    ## What CAGED is trying to do
-      ### The narrow version
-      ### The broad version
-      ### What it doesn't give you
-      ### The honest deliverable
-    ## How proponents define the kernel
-    ## CAGED vs. a triad system
-      ### Triad system (user's statement)
-      ### CAGED, framing 2 (visual map), stated as strictly
-      ### Where the strict statement goes soft
-      ### Deliverables compared
-      ### Neck regions: not distinct either
-      ### Triads connect outward
-      ### Bottom line
-    ## The major-only problem
-    ## Is CAGED systematic?
-      ### Candidate criteria
-      ### Coverage gaps
-    ## The transfer premise
-      ### The defense, and what it gives up
-      ### Visual vs. motor transfer
-      ### Building blocks: triads and power chords
-      ### What survives: almost nothing
-      ### On calling it bogus
-    ## CAGED at advanced levels
-      ### Jens Larsen: CAGED-labeled scale diagrams
-    ## Case study: Paul Davids
-    ## Generative systems vs. CAGED labels
-    ## The octave-shape defense
-      ### Seven octave shapes
-      ### Talking vs. thinking
-    ## Corrections to initial assumptions
-    ## The critiques
-    ## How the field divides
-    ## Gaps
-    ## Overall verdict
-    ## Sources
-
--->
-
 ## History
 
 Short version: the shapes are old, the name dates from the mid-1970s, and
@@ -166,11 +224,21 @@ with a stake; confidence is noted per item.
 
 ### The underlying idea
 
-The five movable shapes predate the name. Secondary sources say the Eddie
-Lang Guitar Method (1935) and George Barnes Guitar Method (1943) build
-solos from the same five shapes (plausible, unverified). Bill Edwards
-reportedly said the real originator is whoever settled on standard tuning,
-which matches the octave-shape point.
+The five movable shapes predate the name. Secondary sources (Guitar Noise,
+among others) say the Eddie Lang Guitar Method (1935) and George Barnes
+Guitar Method (1943) build solos from the same five shapes. Checked by the
+user (PDFs of both): neither has anything CAGED-like.
+
+- Lang: ordinary chord diagrams of all kinds, much like the chord books of
+  the 1970s-80s, with no CAGED framing.
+
+- Barnes: no guitar-style chord diagrams at all. He works in standard
+  notation, frames guitar chording as a different problem from piano
+  chording, and assumes a student with a proper musical education.
+
+Bill Edwards said the real originators are the "unsung heroes" who settled
+on standard tuning (Fretboard Logic Vol. 1, p. 5). True of every pedagogy;
+see "The octave-shape defense."
 
 ### Candidates for naming it (mid-1970s to early 1980s)
 
@@ -180,6 +248,25 @@ which matches the octave-shape point.
   Castalia, publisher of Allen's The Guitar Poster (1980), which has a
   commercial stake; and even their account says only that the system is
   "now called" CAGED, not that the article used the name.
+
+    - The article actually supplies 7 scale diagrams.
+    - It does frame them around bar chord versions of E-D-C-A-G.
+    - But it supplies two different scale patterns for the A and G diagrams.
+
+  Verdict (user, from the article): a real precedent, but a muddled one.
+  Seven patterns, not five, because the generating rule wasn't pinned down
+  (see "Position patterns"). And the motive isn't barring the open chords:
+  the goal is practical scale patterns, with CAGED-like labels overlaid
+  for readers who know some chords. So a precedent mainly for the
+  narrowest form of CAGED, a framing organized around the five positional
+  octave shapes.
+
+- The Guitar Poster (Keith Allen, 1980). From an image (text not legible):
+  a full-neck diagram of the major scale (yellow dots) with every other
+  note labeled (blue dots), plus chord diagrams. Its "Basic Chords" grid is
+  CAGED-like: 15 chords in rows for major, minor, and dom7, and columns for
+  the five shapes ordered E D C A G. Verdict: a CAGED precedent, surrounded
+  by general facts about notes, scales, and theory.
 
 - Howard Roberts and GIT (Guitar Institute of Technology), late 1970s.
   Keith Wyatt says he first met CAGED as a late-'70s GIT student, through
@@ -191,6 +278,18 @@ which matches the octave-shape point.
   The earliest known source packaging CAGED as a complete system covering
   chords, scales, and lead patterns. Edwards reportedly said he didn't
   invent it.
+
+  Vol. 1, checked by the user ([full text, all three volumes][h-fl-all]):
+  full-blown CAGED. Page 1 is "The Five Basic Chord Forms"; page 2 moves
+  them up the neck; page 5 introduces the "CAGED sequence" and credits the
+  tuning's "unsung heroes"; page 14 presents the five position patterns as
+  "C Scale Form," "A Scale Form," and so on. Edwards calls it a sequence,
+  not a system. The volume is short, efficient, and well presented.
+
+  The tuning appeal connects a real fact (standard tuning was probably
+  settled to make as many in-demand chords playable as possible) to a
+  rhetorical framing (CAGED talk). Every pedagogy starts from standard
+  tuning, so the tuning can't be used to sell one framework over another.
 
 - Joe Pass. Often linked to CAGED, but disputed: the claim is that he used
   the five shapes to picture chords, not as a scale system. Joe Pass Guitar
@@ -231,6 +330,10 @@ the shapes are old and generic; the systemhood is the newer addition.
 - [Yamaha Hub, Using the CAGED System][h-yam]
 - [Bill Edwards interview, Guitar Noise][h-be] (couldn't read, 403)
 - [Fretboard Logic contents listing][h-fl]
+- [Fretboard Logic, Volumes I-III (Yumpu)][h-fl-all]
+- [Klaus Crow, What Is the CAGED System][h-kc1]
+- [Klaus Crow, The 5 Major Scale CAGED Shapes][h-kc2]
+- [Applied Guitar Theory, CAGED Guitar Theory System][h-agt]
 - [JustinGuitar, CAGED System module][h-jg]
 - [jazzguitar.be, ChatGPT and the origin of CAGED][h-jgb] (couldn't read,
   403)
@@ -242,6 +345,10 @@ the shapes are old and generic; the systemhood is the newer addition.
 [h-yam]: https://hub.yamaha.com/guitars/g-how-to/using-the-caged-system-to-expand-your-guitar-vocabulary/
 [h-be]: https://www.guitarnoise.com/blog/bill-edwards-interview/
 [h-fl]: https://www.kioessay.greeceathensaegeaninfo.com/guitar-method-fretboard-logic-edwards-p3.html
+[h-fl-all]: https://www.yumpu.com/en/document/read/55351302/fretboard-logic-volumes-i-ii-iii/61
+[h-kc1]: https://www.guitarhabits.com/what-is-the-caged-system-the-keys-to-the-fretboard/
+[h-kc2]: https://www.guitarhabits.com/the-5-major-scale-caged-shapes-positions/
+[h-agt]: https://appliedguitartheory.com/lessons/caged-guitar-theory-system/
 [h-jg]: https://justinguitar.com/modules/caged-system
 [h-jgb]: https://www.jazzguitar.be/forum/getting-started/102775-chatgpt-origin-caged-guitar-instruction.html
 
@@ -362,10 +469,11 @@ four framings of the kernel, plus a possible fifth.
    Molly Miller's Guitar World material. Usually presented as an
    application of CAGED rather than its definition.
 
-5. Tuning logic (low confidence). Fretboard Logic's subtitle, "The
-   Reasoning Behind the Guitar's Unique Tuning," suggests Edwards framed
-   the chord forms as consequences of the tuning. Seen via title and
-   reviews only; the book itself wasn't examined.
+5. Tuning logic. Fretboard Logic's subtitle, "The Reasoning Behind the
+   Guitar's Unique Tuning," and Vol. 1 itself (p. 5: the "CAGED sequence"
+   credited to the tuning's "unsung heroes") confirm that Edwards frames
+   the chord forms as consequences of the tuning. Guitar Noise's history
+   article makes the same appeal.
 
 Assessment of each framing:
 
@@ -840,9 +948,8 @@ the frame does no work triads, intervals, and chord tones couldn't do. At
 advanced levels CAGED survives as a label and a visualization habit, while
 the musical work is done by other things.
 
-To do for the post: pick one or two specific Trapp or Miller lessons and
-take the claimed CAGED connection apart step by step. Without a concrete
-example, the claim reads as assertion.
+Concrete examples: see the case studies of Guthrie Trapp (the strongest
+example) and Molly Miller.
 
 ### Jens Larsen: CAGED-labeled scale diagrams
 
@@ -888,6 +995,217 @@ Significance:
 - It partly answers the to-do under "CAGED at advanced levels": a
   concrete, examinable lesson where the claimed CAGED connection does
   little work and the triads do the rest.
+
+## Case study: Guthrie Trapp
+
+Sources: [The CAGED System explained for guitar][gt1] and [part 2][gt2]
+(YouTube). Notes are the user's, from watching the videos.
+
+[gt1]: https://www.youtube.com/watch?v=gaTvJNa_IUc
+[gt2]: https://www.youtube.com/watch?v=0m092CAYQLs
+[gt2-jam]: https://youtu.be/0m092CAYQLs?t=879
+
+Trapp is a great player but a somewhat chaotic teacher: the videos are
+casual and conversational rather than tight presentations.
+
+### Part 1
+
+- The sequence point. In the key of E you know the open E chord; the next
+  letter in C-A-G-E-D is D, so the D shape is the next E up the neck. The
+  order itself is just the order of the octave regions along the neck,
+  which comes from the tuning (see "The octave-shape defense").
+
+- He says knowing how the shapes connect along the neck gives freedom for
+  chord and melody ideas. But he plays some nifty examples and immediately
+  follows with "that's just triads." It is.
+
+- He demonstrates playing a chord progression in a compact position on the
+  neck. The answer is triads.
+
+Verdict: the classic unreliable narrator. The rhetorical framing is CAGED;
+the execution is triads. The user's guess is that, if pressed, Trapp would
+say "triads are CAGED," which is framing 4, the substitution that leaves
+only the name (see "How proponents define the kernel"). He doesn't think
+rigorously about the boundary between CAGED and not-CAGED. An honest
+narrator, but an unreliable one.
+
+### Part 2
+
+- Trapp opens by saying he wants to clarify things because "this is getting
+  waaaaay too out of control," presumably in response to confused comments
+  or debates. The clarifications aren't very on-topic.
+
+- Several revolve around the naming ("an E-shaped A chord"). After playing
+  the five shapes for a C chord: "Yes, that spells out CAGED, which is a
+  clever little name that somebody came up with. Little did they know that
+  they were going to confuse the living shit out of the entire guitar
+  community for years and years to come."
+
+- The user's reading of the confusion (an inference): commenters weren't
+  sure how to apply the sequence outside the key of C, perhaps assuming
+  the "first" chord must be the C shape. In E, the first chord is the
+  E-shaped E. The likely source is the naming overload: there are E chords
+  and there are E shapes. Trapp's fix is to write the sequence twice
+  (CAGEDCAGED), so you can start at any letter and read off the order up
+  the neck. Surprising, since CAGED is usually taken to be simple; it
+  apparently throws some people for a loop.
+
+- He then trips over the naming himself: "... an A-shaped G ... sorry,
+  D ... I hate this fucking thing. It's confusing because it's a
+  letter-shape but you're in another chord." His way out is to refer to
+  the chords as I, IV, and V: a good idea, and not CAGED.
+
+- He then jams for a few minutes ([at 14:39][gt2-jam]): superb Nashville
+  soloing, with no visible CAGED grips; intervals and triads throughout.
+  Caveat: this can't rule out CAGED as a mental map (framing 2), since
+  visualization isn't visible on video. That makes the visual-map defense
+  untestable this way, which is a weakness of the defense, not of the
+  observation.
+
+Significance:
+
+- A prominent proponent finds the vocabulary confusing, for himself and
+  for his audience, and abandons it mid-lesson for scale-degree names.
+  This qualifies the claim in "Talking vs. thinking" that CAGED names work
+  in conversation.
+
+- Like Davids, the lesson ends with triads doing the work under a CAGED
+  banner.
+
+## Case study: Molly Miller
+
+Cursory review, and treated as done-enough at that level. The user skimmed
+parts of her 90-minute YouTube video explaining CAGED.
+
+- All happy path. Unlike some of Justin Sandercoe's early YouTube videos,
+  which freely admit that some barred cowboy chords aren't playable, Miller
+  glosses over the difficulties.
+
+- The material is pitched at beginners, but she plays voicings no beginner
+  could manage (e.g., a barred G shape). That is the transfer-premise
+  problem, hidden by a player for whom the hard shapes are easy.
+
+## Case study: Jofsess
+
+Dustin Jofsess
+    - https://www.youtube.com/watch?v=3NINqKWr_NE
+    - Points out the obvious: bar cowboy chords are mostly not playable.
+    - Promise to show the "practical CAGED shapes".
+    - But the shapes are just triads or 4-string triad stacks.
+
+## Case study: Guitar Noise (Hackett)
+
+Two Guitar Noise articles by Hackett, one on CAGED's history and one on
+its importance. Notes are the user's, from reading the articles and
+checking the cited primary sources. A good illustration of sloppy
+thinking on CAGED's behalf.
+
+### The history article
+
+Source: [The History of the CAGED System][h-gn].
+
+- Step 1, the tuning appeal. Hackett implies CAGED is a product of
+  standard tuning. Every guitar pedagogy is such a product, so this can't
+  distinguish CAGED from anything. The most charitable reading, that the
+  shapes are discovered rather than invented, is the octave-shape defense,
+  and it turns against him: whatever the tuning supplies belongs to every
+  method (see "The octave-shape defense").
+
+- Step 2, predecessors. Lang, Barnes, Django, and Hendrix.
+
+  - Lang and Barnes: the user checked both methods; neither has anything
+    CAGED-like (details under "History").
+
+  - Hendrix: "He never learned 'the CAGED system' since it hadn't really
+    been defined yet in his lifetime, but the triadic, shape-shifting logic
+    running through his rhythm playing is the same pattern." Triads don't
+    need CAGED, and neither did Hendrix. This is the same move seen in
+    "CAGED at advanced levels": triad playing gets claimed for CAGED.
+
+- Step 3, the 1975 Guitar Player piece on Keith Allen. A real precedent,
+  but a muddled one: seven scale patterns, labeled for readers who know
+  some chords, not driven by barring the open chords. It anticipates only
+  the narrowest form of CAGED (details under "History").
+
+- Steps 4-5, The Guitar Poster (1980) and Fretboard Logic (1983). The
+  poster is a CAGED precedent inside a general theory reference.
+  Fretboard Logic is full-blown CAGED, and makes the same tuning appeal
+  as Hackett (details under "History").
+
+Pattern: the article pads the lineage. The two oldest names don't hold
+up; Hendrix is triads; the first real precedent (1975) is partial. The
+history that survives starts in the mid-1970s, as the "History" section
+already concluded.
+
+### The importance article
+
+Source: [Why Is the CAGED System So Important?][h-gn2].
+
+Hackett concedes the definition problem: "One problem I've run into with
+CAGED, is that it's taught in so many different ways" (see critique 11).
+
+He offers three explainers as good examples. None adds anything beyond
+the standard presentation:
+
+- [Klaus Crow, What Is the CAGED System][h-kc1]: the typical framing.
+  Convert the five open chords to bar chords and use the shapes as a
+  visual map of the neck (framings 1 and 2).
+
+- [Klaus Crow, The 5 Major Scale CAGED Shapes][h-kc2]: the five position
+  patterns, well presented. They don't depend on CAGED (see "Position
+  patterns").
+
+- [Applied Guitar Theory, CAGED Guitar Theory System][h-agt]: another
+  typical presentation.
+
+He claims three benefits.
+
+1. CAGED shortens the learning curve.
+
+   The comparison that matters is CAGED's own-content against the
+   own-content of major triads, not a full triad course. (A full course,
+   with minor, diminished, and augmented triads, is more material.) On
+   that comparison it's not clear which is easier to learn; a tentative
+   lean toward triads:
+
+   - The shapes are tiny and modular.
+
+   - They are very playable, so the reward is immediate: any major chord,
+     up and down the neck. CAGED doesn't deliver that to a beginner (the
+     user's own experience).
+
+   - While teaching the 9 (or 12) major triad shapes, the material can
+     show that they're embedded in every open chord the student already
+     knows. So triads also build on prior knowledge, which is the on-ramp
+     CAGED claims as its own.
+
+   Tentative verdict: the two are about equally easy to teach and
+   memorize. But triads give far more immediate practical and theory
+   gains, while CAGED keeps the student in the open-chord mentality they
+   arrived with. Triads open up possibilities; CAGED keeps banging the
+   same drum. A short learning curve isn't unique to CAGED, and what's at
+   the end of the curve matters more.
+
+2-3. CAGED applies theory to the guitar from a guitar-thinking
+   perspective (two points combined). True enough, but the
+   guitar-centrism is the source of the trouble:
+
+   - It limits the own-content. CAGED offers few practical ways to play
+     many chords. A triad framework gives a great deal of neck-traversing
+     power with simple, closely related fingerings: learn the major
+     shapes, and the minor shapes follow easily; diminished and augmented
+     are small variations. CAGED also teaches little about chord tones.
+     Wrapping scale patterns around the octave shapes does supply chord and
+     scale tones, but those position patterns aren't CAGED; they exist and
+     can be taught without it. See "CAGED vs. a triad system."
+
+   - It limits extension. Intermediate and advanced theory never drops
+     triads as a building block and reference point, but has almost no
+     use for CAGED framing. See "CAGED at advanced levels."
+
+Pattern: the benefits are real but not distinctive. Triads share the
+short learning curve, and the guitar-centric framing is what keeps CAGED
+small.
 
 ## Generative systems vs. CAGED labels
 
@@ -1062,6 +1380,13 @@ another how to play a specific voicing in this lingo?
   framing that fails in practice (the shapes don't really move) is what
   makes the names work in conversation (both players can picture them).
 
+- But the picture tangles whenever the shape letter differs from the chord
+  letter, which is four times out of five ("an A-shape G ... sorry, D").
+  Guthrie Trapp, a prominent proponent, trips over exactly this mid-lesson
+  ("I hate this ... thing") and switches to I, IV, V (see "Case study:
+  Guthrie Trapp"). So the conversational advantage is weaker than it
+  looks, even among proponents.
+
 - How players actually communicate voicings: fret numbers or tab
   ("x-7-9-9-9-x," exact and universal); CAGED names ("A shape at the 7th,"
   quick and approximate); triad terms ("E triad, top three strings, root
@@ -1115,6 +1440,112 @@ Small qualification: one remaining distinctive claim is methodological,
 namely organizing the neck around root locations rather than fingering
 (3NPS) or intervals. That's a stance, not a system, and it doesn't need
 the CAGED shapes.
+
+## Position patterns
+
+The five classic major-scale patterns (the ones usually labeled "CAGED
+scale patterns") can be stated and generated without reference to CAGED.
+
+### The algorithm
+
+Start from 3NPS and add one proviso:
+
+- 3NPS: walk up the scale string by string, three notes per string.
+
+- Position patterns: three notes per string, unless the third note would
+  make a whole-whole on that string (a 4-fret reach); then two.
+
+So each string holds one of three building blocks: half-whole, whole-half,
+or a lone whole step. In perfect-4ths tuning the rule produces a repeating
+cycle, read from the lowest string up:
+
+    string   degrees   block
+      5th    5 6       W         <- next string starts one fret lower
+      4th    2 3 4     WH
+      3rd    6 7 1     WH
+      2nd    3 4 5     HW
+      1st    7 1 2     HW
+
+The cycle is five strings and 14 notes (two octaves) long. Each of the five
+patterns is a six-string window onto it, starting at a different point.
+That is where the count of five comes from. The string-starting degrees
+(7, 3, 6, 2, 5) form a chain of fourths; the lowest string must start on
+one of them.
+
+    low-string start   blocks (low to high)     shape
+    7  (HW)            HW HW WH WH W  HW        E
+    3  (HW)            HW WH WH W  HW HW        C
+    6  (WH)            WH WH W  HW HW WH        G
+    2  (WH)            WH W  HW HW WH WH        D
+    5  (W)             W  HW HW WH WH W         A
+
+Standard tuning adds a one-fret shift up at the B string. Where it cancels
+the cycle's one-fret shift down, the pattern fits in four frets (E, C).
+Elsewhere one fret sticks out and needs a stretch: G string in the G
+shape, D and G strings in the D shape, B string in the A shape. The
+stretch always falls right after the two-note string.
+
+This connects to Sievert's 1975 article, which gives two variants for the
+A and G patterns. The variant trades the stretch for a whole-whole on the
+two-note string (as in the open-G scale, D string frets 0-2-4). That is a
+step toward 3NPS. By this logic the D pattern is equally eligible for a
+variant.
+
+This derivation is an alternative to the pentatonic-plus-two derivation in
+"Generative systems vs. CAGED labels." It needs no pentatonic starting
+point and gets the count of five from the cycle length.
+
+### Terminology
+
+The name "position patterns" describes the goal of the rule: whole-whole
+is outlawed in order to stay as close to one position as possible. 3NPS
+deliberately gives up that goal, which makes its patterns diagonal rather
+than vertical.
+
+Alternatives considered:
+
+- Compact: the user's earlier term.
+
+- Box patterns: widely used, informal, and less technical-sounding; maybe
+  the better choice for an essay. Drawback: in pentatonic teaching "box"
+  already names a different set of shapes.
+
+- 2/3NPS: precise and parallel to 3NPS, but clunky in prose.
+
+- CAGED patterns: avoided, since the point is that the patterns don't
+  depend on CAGED.
+
+Leavitt (Berklee) is not a direct precedent for the name. He organized
+fingerings by position, but labeled the patterns "Type 1-4" (plus
+derivatives 1A-1D and 4A-4D). Whether his types map onto these five
+patterns is unverified.
+
+### Why they align with the octave shapes
+
+The typical octave shapes rest on the same principle. Other octave pairings
+are equally valid in theory but get ignored because they don't fit in a
+position.
+
+So both sets are the result of one filter, "stay in one position," applied
+to the same neck in the same tuning. That is why each scale pattern pairs
+with one octave shape and the two sets tile the neck in step. The shared
+count of five is a consequence of the shared principle, not the cause of
+the alignment.
+
+### Why this suits CAGED
+
+CAGED needs patterns that sit in one region of the neck around a root
+layout. Position patterns and the octave shapes both do, so they map onto
+CAGED's five shapes cleanly. 3NPS patterns run diagonally through several
+regions, so they don't.
+
+The fit is due to the positional nature of all three, not to the chord
+shapes. The barre that motivates CAGED doesn't survive into the scale
+patterns: they don't consistently have a barre on the nut side (in the E
+pattern the lowest fret holds the 7th, below the root). What organizes
+each pattern is its root and octave layout, which is the positional
+principle again. This supports the earlier conclusion that the CAGED label
+on the scale patterns is borrowed credit.
 
 ## Corrections to initial assumptions
 
