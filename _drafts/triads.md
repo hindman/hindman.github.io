@@ -176,23 +176,110 @@ A possible sequence:
 
 4. Last: one-note-move quasi-triads (6, 7, sus) and line cliches.
 
+### Etude design principles (current thinking)
+
+Status: drafts are not finished products, but "in striking range." A
+beginner learning triads would find the current best draft (v4 below)
+entertaining enough to build fluency.
+
+1. The harmony is the curriculum. Early etudes use only shapes the student
+   is learning: diatonic major and minor triads on one string set.
+
+2. Pick a progression where the next chord is always nearby. E B F#m A
+   works well: all diatonic, sounds good, minimal voice movement on
+   strings 3-2-1. It's an embellished E B A A: F#m (A C# F#) is an A6 in
+   disguise, so F#m to A is a one-note move (F# down to E).
+
+3. Cover every inversion. On one string set each chord has three shapes,
+   so a 12-bar section in three regions (low, middle, high; one phrase of
+   four bars each) shows every chord in all three inversions.
+
+4. Rhythm is the main lever, but not to excess. Use two templates, paired
+   as call and response, rather than a different pattern every bar:
+
+   - Call: eighth-note arpeggio on strings 3-2-1 grouped 3+3+2, ending
+     with a push (the next chord struck on the and-of-4 and tied over the
+     bar line).
+
+   - Response: the pushed chord rings, a syncopated hit on the and-of-2,
+     then a tail.
+
+5. Frame the etudes widely, not just for fingerstyle players. Playable
+   with pick or fingers: single-note arpeggios and three-string hits, no
+   finger markings. Keep bass-plus-melody coordination out of it; an
+   occasional bass note is fine at convenient spots (open strings on beat
+   1).
+
+6. Tail melodies for variety and transitions. Each response bar ends with
+   a short scale line on string 1 that leads by step into the next chord's
+   top note (a device Robertson uses: play the roll, then climb the scale
+   on the high E). The tails do double duty: they carry the hand between
+   regions (climb at the end of a phrase, descend before the repeat). They
+   also establish that triads are reference points in a larger network of
+   scales and bigger chords.
+
+7. One simple left-hand ornament: the one-note move (F#m to A) as a
+   pull-off. Across the three regions it falls on string 1, then 2, then
+   3, so the same idea is seen moving through the shapes.
+
+8. Keep it doable. Over-varied versions (bass on every beat, six
+   right-hand templates in eight bars) drifted toward
+   intermediate-to-advanced fingerstyle and were dropped.
+
 ### Etude experiments so far
 
-Two 8-bar A sections were drafted as MusicXML. Generator scripts and output
-are in `tmp/triads/` (`etude_a.py`, `etude_early.py`, plus `mxl2txt.py`,
-which converts MusicXML to readable text tab). Usage:
-`python3 etude_early.py out.xml`.
+All drafts are MusicXML. Generator scripts and output are in
+`tmp/triads/`. Shared writer: `mxl_writer.py` (two staves like Guitar
+Pro's exports; supports ties, pushes, pull-offs). `mxl2txt.py` converts
+MusicXML to readable text tab. Usage: run `python3 <script>.py out.xml`
+from that folder.
 
-- `triad-etude-a.xml`: E major, strings 3-2-1, line cliche E, E+, E6, E7,
-  then A, Am, B, B7 over E and A pedals. Judged "not bad," but it assumes
-  knowledge of quasi-triads, so it belongs late in the sequence.
+Earlier experiments:
 
-- `triad-etude-early-a.xml`: E, B, C#m, A (I-V-vi-IV) on strings 3-2-1 in
-  two inversion regions, open-string pedals, four rotating rhythm
-  templates. Lower musical appeal, as expected given the constraints.
+- `etude_a.py` / `triad-etude-a.xml`: line cliche E, E+, E6, E7, then A,
+  Am, B, B7 over pedals. Judged "not bad," but it assumes knowledge of
+  quasi-triads, so it belongs late in the sequence.
 
-Takeaway: making early, harmonically constrained etudes compelling is the
-open problem. Experimentation paused here.
+- `etude_early.py` / `triad-etude-early-a.xml`: E, B, C#m, A (I-V-vi-IV),
+  two regions, open-string pedals, four rhythm templates. Lower musical
+  appeal.
+
+The E B F#m A series:
+
+- v1 (`etude_ebfa.py`): two regions, true-root bass, six right-hand
+  templates (forward and backward rolls, steady thumb, tresillo bass,
+  stabs) plus pull-offs. Interesting, but too far down the
+  intermediate-to-advanced fingerstyle path.
+
+- v2 (`etude_ebfa2.py`): simplified to two call/response templates, pick
+  or fingers, open-string bass only. "In the ballpark."
+
+- v3 (`etude_ebfa3.py`): less bass (open E on E bars only), plus tail
+  melodies on string 1 as fills and region transitions.
+
+- v4 (`etude_ebfa4.py`, `triad-etude-ebfa-a4.xml`): 12 bars, three
+  regions, every chord in all three inversions. Current best.
+
+  Shapes on strings 3-2-1 (fret on 3, 2, 1):
+
+      Region      E          B          F#m        A
+      low         4-5-4      4-4-2      2-2-2      2-2-0
+      middle      9-9-7      8-7-7      6-7-5      6-5-5
+      high        13-12-12   11-12-11   11-10-9    9-10-9
+
+  Tails: bar 2 (A G# to F#), bar 4 (F# G# A to B, climbing), bar 6 (C# B
+  to A), bar 8 (B C# D# to E, climbing), bar 10 (E D# to C#), bar 12 (B A
+  to G#, descending for the repeat).
+
+Open items:
+
+- Possibly simplify further.
+
+- Bar 12's descent (fret 9 to fret 4) is the longest shift; a three-note
+  tail starting earlier might give it more room.
+
+- Beyond the A section: a B section, form, and a series covering other
+  string sets, keys, and chord qualities.
 
 Technical note: Guitar Pro's MusicXML import reads the notation staff, not
 the tab staff's string and fret numbers. A notation staff written an
