@@ -3,11 +3,11 @@ title: "Seeing the fretboard through triads"
 
 excerpt: >
 
-  For forty years I usually knew no more than a few voicings per chord,
-  clustered in familiar spots. Triads gave me many ways to play every chord,
-  up and down the neck, and they became the way I visualize the fretboard.
-  Here is a systematic route to them: why these shapes, how they connect
-  across the neck, how they grow into other chords, and how to start
+  For 40 years I usually knew no more than a few voicings per chord, clustered
+  in familiar spots. Triads gave me many ways to play every chord, up and down
+  the neck, and they became the way I visualize the fretboard. This essay
+  provides a systematic route to them: why these shapes, how they connect
+  across the neck, how they evolve into other chords, and how to start
   practicing them.
 
 ---
@@ -17,7 +17,7 @@ excerpt: >
   # Essay
     ## Why triads?
     ## Prerequisites
-    ## Building and arranging triads
+    ## Triad construction
     ## Triads on string sets
     ## Triad stacks
     ## Triad neighbors
@@ -25,10 +25,7 @@ excerpt: >
     ## A practice recipe
     ## Next stesp
   # Raw material
-    ## Planned structure
     ## Key points from discussion
-    ## Source material
-    ## Why this essay comes first
     ## Insights from the Brooks Robertson etudes
       ### What makes them compelling
       ### The harder problem for triad etudes
@@ -59,17 +56,16 @@ blues scales. Depending on a song's key, I could move around with some freedom
 on limited parts of the fretboard, but there were not many comforts zones and
 I could easily find myself lost.
 
-Now things are much better. Without hesitation I can fluidly play an Am using
-nine shapes that are immensely practical and that span all strings across the
-full neck. I can do the same for any major or minor chord. Those shapes are
-not just a collection of grips that one might see in a standard chord book. To
-the contrary, the 9 shapes are foundational: they play a substantial role in
-how I organize my knowledge of music theory and, even more important, they
-are the lens through which I visualize the fretboard. I tend to see most chord
-voicings in relation to the core major and minor triads. When learning songs I
-locate the melody or solo notes relative to the relevant triads. And when
-improvising, the triads provide likely landing spots and reference points that
-help me know what the nearby scale tones are.
+Now things are much better. I can fluidly play an Am using nine shapes, all of
+them practical, that span all strings across the full neck. I can do the same
+for any major or minor chord. Those shapes are not just a collection of grips
+that one might see in a standard chord book. To the contrary, the 9 shapes are
+foundational: they play a substantial role in how I organize my knowledge of
+music theory and, even more important, they are the lens through which I
+visualize the fretboard. I tend to see most chord voicings in relation to the
+major and minor triads. When learning songs I locate the melody or solo notes
+relative to the relevant triads. And when improvising, the triads provide
+likely landing spots and reference points.
 
 The internet has no shortage of triad lessons, some quite good. But most begin
 by handing you the shapes and telling you to memorize them. It is good advice,
@@ -79,54 +75,68 @@ you can make between triads and other chords.
 
 ## Prerequisites
 
-## Building and arranging triads
-
-## Triads on string sets
-
-## Triad stacks
-
-## Triad neighbors
-
-## Overlaying triads
-
-## A practice recipe
-
-## Next stesp
-
-# Raw material
-
-## Planned structure
-
-1. Introduction. The author's story: 40 years with two Am grips, then 9
-   shapes that now organize how the neck is seen. The claim: triads as the
-   lens for seeing the fretboard. What the essay offers: a systematic route
-   in, a practice recipe, and pointers onward.
-
 2. Prerequisites. Short. Name the assumed vocabulary (note names,
    intervals as fret distances, scale degrees) and delegate it (Marco
    Carillo and similar).
 
-3. Building and arranging triads. State the method: start from every
-   possibility, then explain why we narrow. Stacking two 3rds gives four
-   qualities; major and minor are the core, diminished and augmented named
-   with their roles noted briefly. Three tones have six orders; three are
-   practical as closed voicings on adjacent strings. Define inversion here,
-   without rotation language. Spread triads mentioned as the road not taken
-   and delegated (Alex Farran).
+## Triad construction
+
+A triad is a three-note chord built by stacking two 3rd intervals: start on a
+note (the chord root), add the note a 3rd above it (the chord's 3rd), then the
+note a 3rd above that (the chord's 5th). Stacking 3rds is the basis of most
+chord building in Western music, so triads are where nearly every chord
+begins. If intervals, chord tones, and scale degree are unfamiliar, Marco
+Carillo's [overview], an efficient music theory primer written for guitarists.
+
+A 3rd comes in two sizes: major (four frets) and minor (three frets). Stacking
+two of them gives exactly four combinations, and each produces a different
+kind of triad, called its quality:
+
+| 3rds | Triad quality | Chord tones
+| ---- | ------------- | -----------
+| M M  | Augmented     | 1 3 #5
+| M m  | Major (M)     | 1 3 5
+| m M  | Minor (m)     | 1 b3 5
+| m m  | Diminished    | 1 b3 b5
+
+This essay focuses on triads in close position (close triads, for short),
+where the three notes sit — you guessed it — as close together as
+possible, on adjacent strings. Close triads are easy to play, widely used, and
+readily connected to one another across the neck. Finally, there are three
+ways to arrange a triad's chord tones in a playable form on adjacent strings.
+Those arrangements are called inversions. [Footnote: how an inversion works --
+or delegate to a link.]
+
+| Triad tones | Inversion
+| ------------|----------
+| 1 3 5       | Root
+| 3 5 1       | First
+| 5 1 3       | Second
+
+## Triads on string sets
 
 4. Triads on the neck: string sets. Four string sets, three inversions
    each. The B-string adjustment explains why shapes change across sets.
    The 9-vs-12 framing lives here. Diagrams for major, then minor as a
    one-note change.
 
+The interval pairs inside each inversion (3rds and a 4th, as a recognition
+aid) belong in the string-set section, where the reader meets the shapes.
+
+## Triad stacks
+
 5. Triad stacks. Adjacent string sets join into regions of the neck. The
    open chords the reader knows contain these triads: an on-ramp from what
    they already play.
+
+## Triad neighbors
 
 6. More chords: triad neighbors. The table of 12 one-move neighbors, filtered
    to the useful ones. Emphasis on the two dom7 moves. Physical echoing: many
    neighbors are known triad shapes in disguise. Brief link to established
    terms (shell, rootless, upper structure).
+
+## Overlaying triads
 
 7. More chords: overlaying triads. Here the idea is to take basic triad (maj,
    min, dim, aug) and overlay it on top of some other harmony. This
@@ -138,14 +148,21 @@ you can make between triads and other chords.
    examples. A systematic listing of the options, highlighting the
    useful ones I know about, could be interesting. TBD.
 
+## A practice recipe
+
 8. A practice recipe. Pedal key, note-by-note playing, steady tempo.
    Stages: string sets, then stacks, then the 4ths cycle (later with the
    dom7 move). Harmonizing the major scale enters only as far as the cycle
    needs. Our own etudes go here if any make the cut.
 
+## Next stesp
+
 9. Where next. Musical applications delegated to Farran, Alon Albagli, and
    Jimmy Brewer, with a sentence or two on what each offers. Link to the
-   CAGED essay later.
+   CAGED essay later. Discuss some of the material they cover: spread
+   triads is one, for example.
+
+# Raw material
 
 ## Key points from discussion
 
@@ -240,62 +257,6 @@ Practice recipe:
 
 - Musical applications beyond the recipe are delegated to Farran,
   Albagli, Brewer.
-
-## Source material
-
-Existing notes: the `writing-vft` section of
-`~/00_docs/misc/guitar/notes/guitar-notes.txt` ("Visualize the fretboard
-through triads [VFT]"). Its content and form are not decisive. It mixes
-three genres:
-
-1. Personal testimony and the "why": 40 years with two Am grips, then 9
-   practical shapes that now organize how the fretboard is seen. The
-   strongest writing in the section and already close to finished.
-
-2. A conceptual primer: intervals, scales, chord types, building triads,
-   harmonizing the major scale. Much of this can be handed off to links
-   (Marco Carillo, Alex Farran), as the notes themselves suggest.
-
-3. A practice method: inversions, string sets, stacks, cycles, etudes,
-   dom7 voicings derived from triads. Tutorial material and the least
-   settled part.
-
-## Why this essay comes first
-
-The triads essay should precede the CAGED essay
-(`_drafts/caged-critiques.md`).
-
-- The CAGED essay ends by saying "learn triads instead." That advice is
-  much stronger if it points to a finished piece. Without one, the critique
-  is all teardown, which is the diatribe risk.
-
-- The CAGED essay gets shorter. Its benchmark section and coda can each be
-  a few lines plus a link, instead of explaining triads inside a critique.
-
-- Much of the "why triads" argument has migrated into the CAGED notes and
-  belongs here instead: the generative rule behind every shape; triads
-  teach the locations of 1, 3, and 5 rather than only roots; one-note
-  moves to other chord qualities (sus, 6, 7); physical echoing (many of
-  those voicings are the same shapes as known triads); triad stacks as
-  neck regions. Moving that material here gives this essay its argument
-  and slims the CAGED one.
-
-Scope: this essay should be a "why" essay about triads as a way of seeing
-the neck, built from genre 1 plus the material moved over from the CAGED
-notes. The practice method (genre 3) belongs in a later tutorial, or can be
-handled by linking to existing lessons for now. Writing "why" and "how"
-together is the bloat risk for this piece.
-
-The dependency is loose. The CAGED essay only needs the triad rule stated
-in about three lines, which works without a separate essay. If CAGED is
-finished first, publish it and add the link later. Keeping each essay to
-one genre matters more than the order.
-
-Detail to reconcile: the VFT notes say 9 distinct shapes per triad quality
-(shapes on strings 6-5-4 repeat those on 5-4-3); the CAGED comparison table
-says "12 per quality." Both are right (12 placements, 9 shapes to learn).
-The CAGED table should probably say 9, since the learning burden is the
-point.
 
 ## Insights from the Brooks Robertson etudes
 
@@ -524,8 +485,6 @@ the wrong strings.
 
 NOTE: These notes started as a direct copy of the material in the writing-vft
 section of my guitar-notes file.
-
-Intro and motivation
 
 The basics:
 
