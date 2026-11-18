@@ -14,6 +14,7 @@ excerpt: >
 
 <!-- TOC
 
+  # TODO
   # Essay
     ## Why triads?
     ## Prerequisites
@@ -35,6 +36,41 @@ excerpt: >
 
 -->
 
+# TODO
+
+Diagram script (`~/bin/inversions`). Current style: alternating shapes use
+solid dots, then tinted dots with a ring; roots amber, other tones slate.
+
+- Page size: check how the SVG (about 670px wide at 15 frets) scales in the
+  Minimal Mistakes content column. Adjust dot and label size, or the default
+  `--nfrets`, so labels stay readable.
+
+- Fret numbering: improved (lighter, smaller, more space above first neck)
+  but not settled.
+
+- Unified layout: spacing between necks; whether each neck gets a string-set
+  label or the essay text handles that.
+
+- Font: the flat glyph looks loose next to the digit. Pick a font stack that
+  renders well, since SVG text uses the reader's installed fonts.
+
+- Open strings: dots sit against the nut. Check that it looks intentional.
+
+- Partial shapes: shapes that don't fully fit in the fret range are omitted.
+  Decide whether to show partial shapes at the edges.
+
+- Overlap: two alternating styles work when only neighboring shapes overlap.
+  Add a third style if a wider voicing makes non-neighbors overlap.
+
+- Contrast: white label on solid amber root is 3.8:1. Fine so far; watch it
+  if sizes shrink.
+
+- File naming.
+
+- Maybe later: dots-only option; note-name labels; restore separate-file
+  output (`--separate`) if needed; a `--sets <s>...` option to request
+  specific string sets rather than all.
+
 # Essay
 
 ## Why triads?
@@ -45,9 +81,9 @@ options:
 
     [diag: standard Am voicings: open strings and at 5th]
 
-On an academic level I understood that there were other ways to voice the
-chord. But I had no fluency in playing them and they did not affect how I
-played or how I thought about what I was playing.
+I understood in an abstract way that there were other ways to voice the chord,
+but I had no fluency with them and they did not affect how I thought about
+what I was playing.
 
 At the same time, I lacked the ability to fluidity navigate the fretboard when
 trying to improvise. I had learned the common scale diagrams for the major
@@ -57,27 +93,21 @@ on limited parts of the fretboard, but there were not many comforts zones and
 I could easily find myself lost.
 
 Now things are much better. I can fluidly play an Am using nine shapes, all of
-them practical, that span all strings across the full neck. I can do the same
-for any major or minor chord. Those shapes are not just a collection of grips
-that one might see in a standard chord book. To the contrary, the 9 shapes are
-foundational: they play a substantial role in how I organize my knowledge of
-music theory and, even more important, they are the lens through which I
-visualize the fretboard. I tend to see most chord voicings in relation to the
-major and minor triads. When learning songs I locate the melody or solo notes
-relative to the relevant triads. And when improvising, the triads provide
-likely landing spots and reference points.
+them practical, spannning across the full neck. I can do the same for any
+major or minor chord. Those shapes are not just a collection of grips that one
+might see in a standard chord book. To the contrary, the shapes are
+foundational: they help to organize my knowledge of music theory and, even
+more important, provide a lens through which I visualize the fretboard. I tend
+to see most chord voicings in relation to the major and minor triads. When
+learning songs I locate the melody or solo notes relative to the relevant
+triads. And when improvising, the triads provide likely landing spots and
+reference points.
 
 The internet has no shortage of triad lessons, some quite good. But most begin
 by handing you the shapes and telling you to memorize them. It is good advice,
 as far as it goes, but this essay tries to provide a sharper rationale for the
 triad shapes that everyone teaches and points toward some of the connections
 you can make between triads and other chords.
-
-## Prerequisites
-
-2. Prerequisites. Short. Name the assumed vocabulary (note names,
-   intervals as fret distances, scale degrees) and delegate it (Marco
-   Carillo and similar).
 
 ## Triad construction
 
@@ -88,9 +118,11 @@ chord building in Western music, so triads are where nearly every chord
 begins. If intervals, chord tones, and scale degree are unfamiliar, Marco
 Carillo's [overview], an efficient music theory primer written for guitarists.
 
-A 3rd comes in two sizes: major (four frets) and minor (three frets). Stacking
-two of them gives exactly four combinations, and each produces a different
-kind of triad, called its quality:
+A 3rd interval comes in two sizes: major (four frets) and minor (three frets).
+Stacking two of them in every possible way yields four combinations, each
+producing a different kind of triad, called its quality. Triads vary in
+quality based on their 3 and 5 chord tones, which can be natural, flat (b3 and
+b5), or sharp (#5).
 
 | 3rds | Triad quality | Chord tones
 | ---- | ------------- | -----------
@@ -100,18 +132,17 @@ kind of triad, called its quality:
 | m m  | Diminished    | 1 b3 b5
 
 This essay focuses on triads in close position (close triads, for short),
-where the three notes sit — you guessed it — as close together as
-possible, on adjacent strings. Close triads are easy to play, widely used, and
-readily connected to one another across the neck. Finally, there are three
-ways to arrange a triad's chord tones in a playable form on adjacent strings.
-Those arrangements are called inversions. [Footnote: how an inversion works --
-or delegate to a link.]
+where the three notes sit — you guessed it — as close together as possible, on
+adjacent strings. Close triads are easy to play, widely used, and readily
+connected to one another across the neck. Finally, there are three ways to
+arrange a triad's chord tones in a playable form on adjacent strings. Those
+arrangements are called inversions.
 
 | Triad tones | Inversion
-| ------------|----------
-| 1 3 5       | Root
-| 3 5 1       | First
-| 5 1 3       | Second
+| ------------|-----------------
+| 1 3 5       | Root position
+| 3 5 1       | First inversion
+| 5 1 3       | Second inversion
 
 ## Triads on string sets
 
@@ -120,8 +151,27 @@ or delegate to a link.]
    The 9-vs-12 framing lives here. Diagrams for major, then minor as a
    one-note change.
 
-The interval pairs inside each inversion (3rds and a 4th, as a recognition
-aid) belong in the string-set section, where the reader meets the shapes.
+Work these into the discussion:
+
+    The interval pairs inside each inversion (3rds and a 4th, as a recognition
+    aid) belong in the string-set section, where the reader meets the shapes.
+
+    ----
+
+    On guitar, the easiest way to invert a chord voicing is string by string:
+    on each string, advance the chord tone to the next one up the neck. For
+    example, start with a root-position major triad, whose chord tones from
+    low to high are `1 3 5`. Advance each one to get `3 5 1`, the first
+    inversion. Do it again for `5 1 3`, the second inversion, and once more
+    for `1 3 5`, root position again, an octave above where we started. The
+    process works in the other direction too (down the neck), and for any
+    chord, not just triads. A common dom7 voicing is `1 x b7 3 5 x` (`x` marks
+    an unplayed string). Advance each chord tone to get `3 x 1 5 b7 x`, the
+    first inversion. Two more steps produce the second and third inversions.
+
+    ----
+
+    Note: the dom7 example above might be better in a footnote.
 
 ## Triad stacks
 
