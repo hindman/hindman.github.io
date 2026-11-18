@@ -40,6 +40,8 @@ excerpt: >
 
 Draft the essay.
 
+Create the resource page for all of the triad diagrams.
+
 # Essay
 
 ## Why triads?
@@ -93,12 +95,12 @@ producing a different kind of triad, called its quality. Triads vary in
 quality based on their 3 and 5 chord tones, which can be natural, flat (b3 and
 b5), or sharp (#5).
 
-| 3rds | Triad quality | Chord tones
-| ---- | ------------- | -----------
-| M M  | Augmented     | 1 3 #5
-| M m  | Major (M)     | 1 3 5
-| m M  | Minor (m)     | 1 b3 5
-| m m  | Diminished    | 1 b3 b5
+| 3rds | Triad quality | Chord tones |
+| ---- | ------------- | ----------- |
+| M M  | Augmented     | 1 3 #5      |
+| M m  | Major (M)     | 1 3 5       |
+| m M  | Minor (m)     | 1 b3 5      |
+| m m  | Diminished    | 1 b3 b5     |
 
 This essay focuses on triads in close position (close triads, for short),
 where the three notes sit — you guessed it — as close together as possible, on
@@ -107,53 +109,100 @@ connected to one another across the neck. Finally, there are three ways to
 arrange a triad's chord tones in a playable form on adjacent strings. Those
 arrangements are called inversions.
 
-| Triad tones | Inversion
-| ------------|-----------------
-| 1 3 5       | Root position
-| 3 5 1       | First inversion
-| 5 1 3       | Second inversion
+| Triad tones  | Inversion         |
+| ------------ | ----------------- |
+| 1 3 5        | Root position     |
+| 3 5 1        | First inversion   |
+| 5 1 3        | Second inversion  |
 
 ## Triads on string sets
 
-4. Triads on the neck: string sets. Four string sets, three inversions
-   each. The B-string adjustment explains why shapes change across sets.
-   The 9-vs-12 framing lives here. Diagrams for major, then minor as a
-   one-note change.
+PLANNING NOTES:
 
-{%
-    include figure
-    image_path="/assets/images/triad-inversions/major.svg"
-    alt="Major triad inversions on all four string sets"
-    caption="Major triad inversions on all four string sets"
-%}
+    1. The four string sets. 6-5-4, 5-4-3, 4-3-2, 3-2-1.
 
-Work these into the discussion:
+        A close triad occupies three adjacent strings, and the guitar has four such
+        groups of strings, called string sets:
 
-    The interval pairs inside each inversion (3rds and a 4th, as a recognition
-    aid) belong in the string-set section, where the reader meets the shapes.
+        | String set |
+        | ---------- |
+        | 6-5-4      |
+        | 5-4-3      |
+        | 4-3-2      |
+        | 3-2-1      |
 
-    ----
+        String sets are the organizing unit for the rest of this essay. On each set,
+        a triad of a given quality has three shapes, one per inversion, and those
+        three shapes repeat up the neck in a fixed order. Learning a triad means
+        learning those shapes on all four sets. Later sections join neighboring sets
+        into larger regions of the neck.
 
-    On guitar, the easiest way to invert a chord voicing is string by string:
-    on each string, advance the chord tone to the next one up the neck. For
-    example, start with a root-position major triad, whose chord tones from
-    low to high are `1 3 5`. Advance each one to get `3 5 1`, the first
-    inversion. Do it again for `5 1 3`, the second inversion, and once more
-    for `1 3 5`, root position again, an octave above where we started. The
-    process works in the other direction too (down the neck), and for any
-    chord, not just triads. A common dom7 voicing is `1 x b7 3 5 x` (`x` marks
-    an unplayed string). Advance each chord tone to get `3 x 1 5 b7 x`, the
-    first inversion. Two more steps produce the second and third inversions.
+        The shapes are easiest to understand by building them yourself, and on guitar
+        inverting a chord is a simple, mechanical process.
 
-    ----
+    2. How to invert on guitar. On each string, move the chord tone up to the
+       next chord tone. Note that this isn't rotation, which matters later for
+       spread triads and 7th chords. The dom7 example goes in a footnote.
 
-    Note: the dom7 example above might be better in a footnote.
+          On guitar, the easiest way to invert a chord voicing is string by
+          string: on each string, advance the chord tone to the next one up
+          the neck. For example, start with a root-position major triad, whose
+          chord tones from low to high are `1 3 5`. Advance each one to get `3
+          5 1`, the first inversion. Do it again for `5 1 3`, the second
+          inversion, and once more for `1 3 5`, root position again, an octave
+          above where we started. The process works in the other direction too
+          (down the neck).
+
+          FOOTNOTE: You can invert for any chord, not just triads. A common
+          dom7 voicing is `1 x b7 3 5 x` (`x` marks an unplayed string).
+          Advance each chord tone to get `3 x 1 5 b7 x`, the first inversion.
+          Two more steps produce the second and third inversions. When looking
+          at the triad inversions one might be tempted to think that inversion
+          is a process of rotating chord tones across the relevant strings;
+          and it is for close triads. But rotation does not describe the
+          process for different types of triads (eg spread triads) or bigger
+          chords (as shown in the dom7 example). So the correct way to think
+          about inversion is via the string-by-string method just described.
+
+    3. Diagram: major on all four sets. The syntax, when we need it:
+
+        {%
+            include figure
+            image_path="/assets/images/triad-inversions/major.svg"
+            alt="Major triad inversions on all four string sets"
+            caption="Major triad inversions on all four string sets"
+        %}
+
+    4. Note there are 12 maj triad voicings, but only 9 shapes to memorize
+       because 6-5-4 repeats the shapes on 5-4-3.
+
+    5. Use interval pairs as a recognition aid. When you learn triads, you
+       memorize the shapes pretty fast. But it can be easy to master the
+       shapes and overlook the need to know where the chord tones are within
+       each shape. M3, m3, P4 sit inside each shape.
+
+    6. Other triads are small adjustments from what you already know.
+
+       - Minor: flatten the 3 (show diagram for one string set; link to
+         resource page for the others).
+
+       - Dim: start with minor and flatten the 5 too.
+
+       - Aug: sharpen the 5. Also the shapes are the same across each string
+         set, due to the chord's perfect symmetry.
 
 ## Triad stacks
 
 5. Triad stacks. Adjacent string sets join into regions of the neck. The
    open chords the reader knows contain these triads: an on-ramp from what
    they already play.
+
+Stuff to include:
+
+    The B-string adjustment. Strings 3–2 are a M3 apart, not a P4, so the
+    shapes change as a set moves onto the B string. Triads are a good vehicle
+    for practicing you ability to transfer shapes from one string set to
+    another.
 
 ## Triad neighbors
 
