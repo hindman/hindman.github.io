@@ -38,38 +38,7 @@ excerpt: >
 
 # TODO
 
-Diagram script (`~/bin/inversions`). Current style: alternating shapes use
-solid dots, then tinted dots with a ring; roots amber, other tones slate.
-
-- Page size: check how the SVG (about 670px wide at 15 frets) scales in the
-  Minimal Mistakes content column. Adjust dot and label size, or the default
-  `--nfrets`, so labels stay readable.
-
-- Fret numbering: improved (lighter, smaller, more space above first neck)
-  but not settled.
-
-- Unified layout: spacing between necks; whether each neck gets a string-set
-  label or the essay text handles that.
-
-- Font: the flat glyph looks loose next to the digit. Pick a font stack that
-  renders well, since SVG text uses the reader's installed fonts.
-
-- Open strings: dots sit against the nut. Check that it looks intentional.
-
-- Partial shapes: shapes that don't fully fit in the fret range are omitted.
-  Decide whether to show partial shapes at the edges.
-
-- Overlap: two alternating styles work when only neighboring shapes overlap.
-  Add a third style if a wider voicing makes non-neighbors overlap.
-
-- Contrast: white label on solid amber root is 3.8:1. Fine so far; watch it
-  if sizes shrink.
-
-- File naming.
-
-- Maybe later: dots-only option; note-name labels; restore separate-file
-  output (`--separate`) if needed; a `--sets <s>...` option to request
-  specific string sets rather than all.
+Draft the essay.
 
 # Essay
 
@@ -150,6 +119,13 @@ arrangements are called inversions.
    each. The B-string adjustment explains why shapes change across sets.
    The 9-vs-12 framing lives here. Diagrams for major, then minor as a
    one-note change.
+
+{%
+    include figure
+    image_path="/assets/images/triad-inversions/major.svg"
+    alt="Major triad inversions on all four string sets"
+    caption="Major triad inversions on all four string sets"
+%}
 
 Work these into the discussion:
 
