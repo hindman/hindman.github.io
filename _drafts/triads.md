@@ -17,10 +17,11 @@ excerpt: >
   # TODO
   # Essay
     ## Why triads?
-    ## Prerequisites
     ## Triad construction
     ## Triads on string sets
     ## Triad stacks
+    ## Triad recognition
+    ## The power of triads
     ## Triad neighbors
     ## Overlaying triads
     ## A practice recipe
@@ -86,8 +87,11 @@ A triad is a three-note chord built by stacking two 3rd intervals: start on a
 note (the chord root), add the note a 3rd above it (the chord's 3rd), then the
 note a 3rd above that (the chord's 5th). Stacking 3rds is the basis of most
 chord building in Western music, so triads are where nearly every chord
-begins. If intervals, chord tones, and scale degree are unfamiliar, Marco
-Carillo's [overview], an efficient music theory primer written for guitarists.
+begins. If intervals, chord tones, and scale degree are unfamiliar, see Marco
+Carillo's [overview][yt_carillo], an efficient music theory primer written for
+guitarists.
+
+[yt_carillo]: https://www.youtube.com/watch?v=5EfGXzz3DGc
 
 A 3rd interval comes in two sizes: major (four frets) and minor (three frets).
 Stacking two of them in every possible way yields four combinations, each
@@ -117,92 +121,181 @@ arrangements are called inversions.
 
 ## Triads on string sets
 
-PLANNING NOTES:
+An effective way to organize your learning of the triad shapes is to begin
+horizontally along the neck — in other words, learn the triad inversions along
+one group of adjacent strings. There are four such string sets. I recommend
+starting on the highest string set, `3-2-1`, and working down. In many musical
+styles, the two upper string sets are where much of the action happens: chord
+voicings that cut through, plus the melodies and solos that sit on top of
+them.
 
-    1. The four string sets. 6-5-4, 5-4-3, 4-3-2, 3-2-1.
+| String set |
+| ---------- |
+| 3-2-1      |
+| 4-3-2      |
+| 5-4-3      |
+| 6-5-4      |
 
-        A close triad occupies three adjacent strings, and the guitar has four such
-        groups of strings, called string sets:
+We can start with a root position triad on string set `3-2-1`:
 
-        | String set |
-        | ---------- |
-        | 6-5-4      |
-        | 5-4-3      |
-        | 4-3-2      |
-        | 3-2-1      |
+    [img: C maj triad, root position, strings 3-2-1]
 
-        String sets are the organizing unit for the rest of this essay. On each set,
-        a triad of a given quality has three shapes, one per inversion, and those
-        three shapes repeat up the neck in a fixed order. Learning a triad means
-        learning those shapes on all four sets. Later sections join neighboring sets
-        into larger regions of the neck.
+Starting from any chord voicing, to find its next highest inversion is simple:
+on each string, advance the chord tone to the next one up the neck. In our
+current example, the `1` advances to `3` (on string 3), the `3` advances to
+`5` (on string 2), and the `5` advances, in wrap-around fashion, to `1` (on
+string 1). That gives us the first inversion C major triad with chord tones `3
+5 1`. Applying the same procedure again produces the second inversions, `5 1
+3`. Doing it again gives us `1 3 5`, a root position triad an octave above
+where we started.[^1]
 
-        The shapes are easiest to understand by building them yourself, and on guitar
-        inverting a chord is a simple, mechanical process.
+If we apply that inversion process to all four string sets, we can generate C
+major triads across the full neck.
 
-    2. How to invert on guitar. On each string, move the chord tone up to the
-       next chord tone. Note that this isn't rotation, which matters later for
-       spread triads and 7th chords. The dom7 example goes in a footnote.
+    [img: C maj triads, all string sets]
 
-          On guitar, the easiest way to invert a chord voicing is string by
-          string: on each string, advance the chord tone to the next one up
-          the neck. For example, start with a root-position major triad, whose
-          chord tones from low to high are `1 3 5`. Advance each one to get `3
-          5 1`, the first inversion. Do it again for `5 1 3`, the second
-          inversion, and once more for `1 3 5`, root position again, an octave
-          above where we started. The process works in the other direction too
-          (down the neck).
+Since a minor triad differs from a major triad by only one note (a `b3` rather
+than a natural `3`), the minor triads can be memorized as small variations of
+the major triads we started with. The other two triad qualities involve
+similar kinds of adjustments: the diminished triads are like the minor triads,
+but with a `b5`; and augmented triads are like major triads, but with a `#5`.[^2]
+The full listing of triads by string set can be found on a separate page:
 
-          FOOTNOTE: You can invert for any chord, not just triads. A common
-          dom7 voicing is `1 x b7 3 5 x` (`x` marks an unplayed string).
-          Advance each chord tone to get `3 x 1 5 b7 x`, the first inversion.
-          Two more steps produce the second and third inversions. When looking
-          at the triad inversions one might be tempted to think that inversion
-          is a process of rotating chord tones across the relevant strings;
-          and it is for close triads. But rotation does not describe the
-          process for different types of triads (eg spread triads) or bigger
-          chords (as shown in the dom7 example). So the correct way to think
-          about inversion is via the string-by-string method just described.
+| Quality    | Triads by string set |
+| ---------- | -------------------- |
+| Major      | [LINK]               |
+| Minor      | [LINK]               |
+| Diminished | [LINK]               |
+| Augmented  | [LINK]               |
 
-    3. Diagram: major on all four sets. The syntax, when we need it:
+[^1]: The inversion process also works in the other direction (down the neck)
+    and with larger chords. For example, a common dom7 voicing is `1 x b7 3 5
+    x` (`x` marks an unplayed string). Proceding string by string, advance
+    each chord tone to get `3 x 1 5 b7 x`, the first inversion. Two more steps
+    produce the second and third inversions. Also note that when looking at
+    the triad inversions one might be tempted to think that inversion is a
+    process of rotating chord tones across the relevant strings; and it is for
+    close triads. But rotation does not describe the process for different
+    types of triads (for example, spread triads) or bigger chords (as shown in
+    the dom7 example). So the correct way to think about inversion is via the
+    string-by-string method just described.
 
-        {%
-            include figure
-            image_path="/assets/images/triad-inversions/major.svg"
-            alt="Major triad inversions on all four string sets"
-            caption="Major triad inversions on all four string sets"
-        %}
-
-    4. Note there are 12 maj triad voicings, but only 9 shapes to memorize
-       because 6-5-4 repeats the shapes on 5-4-3.
-
-    5. Use interval pairs as a recognition aid. When you learn triads, you
-       memorize the shapes pretty fast. But it can be easy to master the
-       shapes and overlook the need to know where the chord tones are within
-       each shape. M3, m3, P4 sit inside each shape.
-
-    6. Other triads are small adjustments from what you already know.
-
-       - Minor: flatten the 3 (show diagram for one string set; link to
-         resource page for the others).
-
-       - Dim: start with minor and flatten the 5 too.
-
-       - Aug: sharpen the 5. Also the shapes are the same across each string
-         set, due to the chord's perfect symmetry.
+[^2]: The augmented triads are further simplified due to their internal
+    symmetry, where all of the chord tones are exactly 4 frets from their
+    neighbors. In practical terms, that translates into having to memorize
+    only one shape per string set.
 
 ## Triad stacks
 
-5. Triad stacks. Adjacent string sets join into regions of the neck. The
-   open chords the reader knows contain these triads: an on-ramp from what
-   they already play.
+RAW MATERIAL:
 
-Stuff to include:
+    1. **Purpose.** String sets give you horizontal motion along the neck.
+       Stacks give you vertical motion across strings, in one region of the
+       neck.
 
-    The B-string adjustment. Strings 3–2 are a M3 apart, not a P4, so the
-    shapes change as a set moves onto the B string. Triads are a good vehicle
-    for practicing you ability to transfer shapes from one string set to
-    another.
+    2. **What a stack is.** In one region, the triads on the four string sets
+       overlap, and neighboring triads share two notes. So a stack is a single
+       run of consecutive chord tones across all six strings, for example `3 5
+       1 3 5 1`. Every three-string window in it is a close triad.
+
+    3. **Why there are exactly three stacks.** That follows from point 2: the
+       only choice is which chord tone sits on string 6. Inverting a stack
+       uses the same string-by-string algorithm, and the three stacks cycle up
+       the neck just as the inversions do on one string set. This is the
+       section's main diagram: the three C major stacks.
+
+    4. **The on-ramp from open chords.** Open chords are stacks with a
+       substitution. For example, the open E chord is the `3 5 1 3 5 1` stack
+       (G# B E G# B E) with the low G# replaced by E. I checked this one.
+       Other open chords should work the same way, but I haven't worked
+       through them. This is also where to point to the CAGED essay later.
+
+    5. **Stacks are maps, not grips.** You visualize the whole stack and play
+       the triads inside it.
+
+    6. **Pointer to the reference page** for the other qualities.
+
+    Point 2 is the conceptual core. It reuses the inversion algorithm instead
+    of adding new machinery, in the same way the string-sets section did. The
+    keys to practice stacks in (E A D G C, from your raw notes) belong in the
+    practice recipe, not here.
+
+## Triad recognition
+
+RAW NOTES:
+
+    String shifting:
+
+        The B-string adjustment. Strings 3–2 are a M3 apart, not a P4, so the
+        shapes change as a set moves onto the B string. Triads are a good vehicle
+        for practicing you ability to transfer shapes from one string set to
+        another.
+
+    Interval shapes:
+
+       When you learn triads, you memorize the shapes pretty fast. But it can
+       be easy to master the shapes and overlook the need to know where the
+       chord tones are within each shape. M3, m3, P4 invervals sit inside each
+       shape.
+
+        While learning triads it can be helpful to think about the intervals within
+        the triads.
+
+            Tone pairs | Interval
+            -----------------------
+            1 3        | Major 3rd
+            3 5        | Minor 3rd
+            5 1        | Perfect 4th
+
+        You want to be able to quickly reconignize those intervals on the
+        fretboard. In standard tuning, most pairs of adjacent strings are separated
+        by a 4th interval (5 frets), but strings 2 and 3 are separated by a major
+        3rd (4 frets). Thus, for the intervals found in major triads, you need to
+        be able to recognize two shapes per interval.
+
+            Major 3rd: 1 to 3
+
+                |-----|-----|    |-----|
+                |-----|-----|    |  3  |
+                |-----|-----|    |  1  |
+                |  3  |-----|    |-----|
+                |-----|  1  |    |-----|
+                |-----|-----|    |-----|
+
+            Minor 3rd: 3 to 5
+
+                |-----|-----|-----|    |-----|-----|
+                |-----|-----|-----|    |  5  |-----|
+                |-----|-----|-----|    |-----|  3  |
+                |  5  |-----|-----|    |-----|-----|
+                |-----|-----|  3  |    |-----|-----|
+                |-----|-----|-----|    |-----|-----|
+
+            Perfect 4th: 5 to 1
+
+                |-----|     |-----|-----|
+                |-----|     |-----|  1  |
+                |  1  |     |  5  |-----|
+                |  5  |     |-----|-----|
+                |-----|     |-----|-----|
+                |-----|     |-----|-----|
+
+## The power of triads
+
+Because the technical explanation for triad construction is quite simple, and
+because some readers might already know this material, it is easy to gloss
+over how powerful this knowledge can be. We started with C major triads and we
+have 12 voicings to memorize (or 9 unique shapes, since the two lowest string
+sets are structurally identical). But those shapes are **moveable**, which
+means the same shapes work for all major triads. In other words, at the cost
+of memorizing a tiny amount of information, we have a way to play every major
+triad across the full neck. And the shapes are easy to play. Indeed, they are
+easier to play than most of the full-grip, open-position cowboy chords shoved
+at beginner guitarists in most guitar education. Easy to memorize, easy to
+play, versatile (all major triads, not just specific grips), and exhaustive
+(covering the full neck). If you have ever used an old-school guitar chord
+book, you realize how misconceived and impotent they were relative to teaching
+a beginner about triads.
 
 ## Triad neighbors
 
@@ -558,160 +651,7 @@ the wrong strings.
 
 ## Visualize the fretboard through triads
 
-NOTE: These notes started as a direct copy of the material in the writing-vft
-section of my guitar-notes file.
-
-The basics:
-
-    To discuss triads, we need a few building blocks. I will assume only a
-    little prior knowledge of music theory. To address any gaps, see Marco
-    Carillo's brief, practical, and guitar-focused overview.
-
-        https://www.youtube.com/watch?v=5EfGXzz3DGc
-
-    The first building block is an interval, which describes the difference in
-    pitch between two notes. That difference can be described in various ways,
-    but on a guitar perhaps the most natural measure is the number of frets.
-    Here are the core intervals, their numbers (often used when describing
-    chords and scales), their Roman numerical representations (often used when
-    describing chords in a progression), and their fret distances.
-
-        # What is the relevance of roman notation at this point??
-
-        Interval | N | Roman | Frets
-        ----------------------------
-        Unison   | 1 | I     | 0
-        2nd      | 2 | II    | 2
-        3rd      | 3 | III   | 4
-        4th      | 4 | IV    | 5
-        5th      | 5 | V     | 7
-        6th      | 6 | VI    | 9
-        7th      | 7 | VII   | 11
-        Octave   | 1 | I     | 12
-
-    The second building block is a scale, which is a musically useful
-    collection of notes. A scale can be characterized in terms of its intervals
-    -- specifically, the intervals between the first note of the scale (often
-    referred to as its root or key) and all of the other notes. The intervals
-    listed above coincide with the most prominent example: the major scale.
-
-    In many musical contexts, the major scale is the reference point against
-    which other scales are compared. For example, we could start with the major
-    scale intervals listed above and alter the 7th interval by lowering it one
-    fret (notated as b7). Or we could start with the major scale intervals and
-    then raise the 4th interval (notated as #4). Or we could create scales with
-    fewer notes, either with or without alterations. Such examples are listed
-    below using the interval numbers (also called scale degrees). Their names
-    are also shown in the table, but neither they nor the scale/mode
-    distinction are important for now.
-
-        Scale degrees  | Scale
-        ---------------------------------------
-        1 2 3 4 5 6 7  | Major scale
-        1 2 3 4 5 6 b7 | Mixolydian mode
-        1 2 3 #4 5 6 7 | Lydian mode
-        1 2 3 5 6      | Major pentatonic scale
-        1 b3 4 5 b7    | Minor pentatonic scale
-
-    The fourth building block is a chord. Like a scale, a chord is a musically
-    useful collection of notes that are played either simultaneously or nearly
-    so. A song's chords provide the harmonic context within which its melodies,
-    licks, and solos acquire their musical meaning. Like scales, chords can be
-    described in terms of their intervals -- again, the intervals formed
-    between a chord's key or root and each of the other chord tones. A chord's
-    3rd interval is often the most important and determines whether it has a
-    major or minor sound. Those two broad categories can be further divided
-    into finer classifications based on the other intervals contained in the
-    chord. You probably know various chord forms already. A few examples are
-    listed below with their names and symbols -- again, the examples are merely
-    illustrative, so don't get bogged down in the details.
-
-        Chord tones | Symbol     | Name
-        ---------------------------------------
-        1 3 5       | .         | Major
-        1 b3 5      | m         | Minor
-        1 3 5 7     | maj7      | Major 7
-        1 b3 5 b7   | m7        | Minor 7
-        1 3 5 b7    | 7 or dom7 | Dominant 7
-        1 3 5 b7 #9 | 7#9       | Dominant 7, #9
-        1 b3 5 6    | m6        | Minor 6
-
-Triads
-
-    The two most common chords (major and minor chords) are also known as
-    triads, which are three-note chords formed by stacking consecutive 3rd
-    intervals. Since a 3rd interval can be major (4 frets) or minor (3 frets)
-    we can derive four possible types of triads:
-
-        3rd intervals | Triad quality | Chord tones
-        ----------------------------------------
-        Major Major   | Augmented     | 1 3 #5
-        Major Minor   | Major         | 1 3 5
-        Minor Major   | Minor         | 1 b3 5
-        Minor Minor   | Diminished    | 1 b3 b5
-
-    Just as we can desribe a scale in terms of the intervals it contains, we
-    can do the same using a scale's triads. The procedure here is to build a
-    triad starting from each major scale tone (the first column). Each triad is
-    formed by starting with the triad root and then selecting the other two
-    scale tones in an every-other-one fashion (the second column). To determine
-    the type of each triad, we rewrite those scale tone from the perspective of
-    the triad's root (the third column). Those triad tones determine the
-    triad's quality (the last column). As shown in the table, the major scale
-    consists of seven triads: 3 major, 3 minor, and 1 diminished.
-
-        Root | Scale tones | Triad tones | Triad quality
-        ------------------------------------------------
-        1    | 1 3 5       | 1 3 5       | Major
-        2    | 2 4 6       | 1 b3 5      | Minor
-        3    | 3 5 7       | 1 b3 5      | Minor
-        4    | 4 6 1       | 1 3 5       | Major
-        5    | 5 7 2       | 1 3 5       | Major
-        6    | 6 1 3       | 1 b3 5      | Minor
-        7    | 7 2 4       | 1 b3 b5     | Diminished
-
 Learning the major triads: preliminaries:
-
-    The most practical way to start learning all the ways to play triads
-    is to organize the guitar into four sets of adjacent strings.
-
-        String set
-        ----------
-        6 5 4
-        5 4 3
-        4 3 2
-        3 2 1
-
-    Throughout this discussion we almost never learn a single chord grip;
-    rather, we will learn the chord's form (major triad in this case) and how
-    to play that chord in every possible arrangement of the chord tones on all
-    string sets.
-
-    There are six ways to arrange the tones in a major triad (135, 153, 315,
-    351, 513, 531) but only three of them have practical shapes on a
-    contiguous string set. Those three arrangements are also known as
-    inversions: we start with the root form, which has the chord root as the
-    lowest tone (135); and then create the other two arrangements by rotating
-    the tones.
-
-        Triad tones | Inversion
-        -----------------------
-        1 3 5       | Root
-        3 5 1       | First
-        5 1 3       | Second
-
-        ** NOTE regarding last sentence above. Inversions are not created via
-        rotation. You can see this by checking a chord with 4 tones. Notice
-        that the inversions are *not* rotations of the root-position chord.
-        Rather, to create inversions you must increment/decrement each voice --
-        a procedure that differs from rotation.
-
-            # Drop-2 maj7 voicings
-            # Source: https://www.jazzguitar.be/blog/drop-2-chords/
-            1 5 7 3
-            3 7 1 5
-            5 1 3 7
-            7 3 5 1
 
     While learning triads it can be helpful to think about the intervals within
     the triads.
