@@ -26,8 +26,6 @@ excerpt: >
     ## Overlaying triads
     ## Musical applications
     ## The power of triads
-  # Raw material
-      ### What makes etudes compelling
 
 -->
 
@@ -257,10 +255,12 @@ triads are an excellent vehicle to practice the skill.
 
 ## A practice recipe
 
-8. A practice recipe. Pedal key, note-by-note playing, steady tempo.
-   Stages: string sets, then stacks, then the 4ths cycle (later with the
-   dom7 move). Harmonizing the major scale enters only as far as the cycle
-   needs. Our own etudes go here if any make the cut.
+RAW MATERIAL:
+
+    SUMMARY. A practice recipe. Pedal key, note-by-note playing, steady tempo.
+    Stages: string sets, then stacks, then the 4ths cycle (later with the dom7
+    move). Harmonizing the major scale enters only as far as the cycle needs.
+    Our own etudes go here if any make the cut.
 
     Take your time and try to learn several things together:
 
@@ -272,7 +272,7 @@ triads are an excellent vehicle to practice the skill.
           - Its neighbor inversions on the same string set.
           - Its neighbor shapes within a triad stack.
 
-        Practice recipe:
+    Practice recipe:
 
         - Note-by-note playing ("pima" loosely; a pick works too), not strummed
           chords. Why: it keeps attention on chord tones rather than vague grips,
@@ -295,6 +295,64 @@ triads are an excellent vehicle to practice the skill.
 
         - Musical applications beyond the recipe are delegated to Farran,
           Albagli, Brewer.
+
+    What makes etudes compelling:
+
+        1. Each etude is a tune: title, style, sectional form, intro and outro, an
+           ending.
+
+        2. One fixed right-hand pattern; the left hand carries the variety.
+           Repetition is built in without boredom.
+
+        3. Groove from rhythmic variety, not a plodding stream of eighth notes. The
+           main devices:
+
+           - 3+3+2 grouping of a three-note roll in 4/4, so accents shift.
+
+           - Anticipations: a note on the and-of-4 tied over the bar line, so the
+             chord change arrives early (the push).
+
+           - Rests and stabs: bars that break off on beat 3 or 3.5; held block
+             chords as punctuation.
+
+           - Off-grid figures: grace-note slides that shift following notes onto
+             sixteenth-note offbeats; an occasional triplet.
+
+           The right-hand pattern is constant, but its placement in the bar keeps
+           changing. Listening again confirmed this is a main source of the
+           appeal.
+
+        4. Open-string pedals and drones give small shapes big harmony (maj7, add9,
+           sus colors).
+
+        5. Small left-hand moves: chromatic bass lines and line cliches change one
+           or two notes at a time. Little finger travel, sophisticated harmony
+           (diminished and augmented passing chords included).
+
+        6. Melody on top: a top-string note lands with the bass on the downbeat and
+           is held while the roll fills in, giving a melody-plus-accompaniment
+           illusion from one pattern.
+
+        7. Short repeated sections (4-8 bars), learned in chunks.
+
+        8. Rationed ornaments: a few slides, hammer-ons, grace notes.
+
+        9. A tempo worth reaching: sounds fine slow, exciting at speed.
+
+        The harder problem for triad etudes
+
+          - Robertson's etudes develop a physical skill (rolls), so he had free rein
+            over harmony.
+          - Triad etudes develop a mental and visual skill (seeing and knowing
+            shapes), and the student can't be assumed to know all triads and
+            quasi-triad forms (E6, E7, etc.) yet.
+          - So the early etudes are necessarily constrained harmonically: the harmony
+            is the curriculum.
+
+          - What still works under that constraint:
+
+            - Groove, form, pushes, rests, stabs, and drones are independent of shape
+              knowledge.
 
 ## Triad neighbors
 
@@ -500,64 +558,4 @@ play, versatile (all major triads, not just specific grips), and exhaustive
 (covering the full neck). If you have ever used an old-school guitar chord
 book, you realize how misconceived and impotent they were relative to teaching
 a beginner about triads.
-
-# Raw material
-
-### What makes etudes compelling
-
-1. Each etude is a tune: title, style, sectional form, intro and outro, an
-   ending.
-
-2. One fixed right-hand pattern; the left hand carries the variety.
-   Repetition is built in without boredom.
-
-3. Groove from rhythmic variety, not a plodding stream of eighth notes. The
-   main devices:
-
-   - 3+3+2 grouping of a three-note roll in 4/4, so accents shift.
-
-   - Anticipations: a note on the and-of-4 tied over the bar line, so the
-     chord change arrives early (the push).
-
-   - Rests and stabs: bars that break off on beat 3 or 3.5; held block
-     chords as punctuation.
-
-   - Off-grid figures: grace-note slides that shift following notes onto
-     sixteenth-note offbeats; an occasional triplet.
-
-   The right-hand pattern is constant, but its placement in the bar keeps
-   changing. Listening again confirmed this is a main source of the
-   appeal.
-
-4. Open-string pedals and drones give small shapes big harmony (maj7, add9,
-   sus colors).
-
-5. Small left-hand moves: chromatic bass lines and line cliches change one
-   or two notes at a time. Little finger travel, sophisticated harmony
-   (diminished and augmented passing chords included).
-
-6. Melody on top: a top-string note lands with the bass on the downbeat and
-   is held while the roll fills in, giving a melody-plus-accompaniment
-   illusion from one pattern.
-
-7. Short repeated sections (4-8 bars), learned in chunks.
-
-8. Rationed ornaments: a few slides, hammer-ons, grace notes.
-
-9. A tempo worth reaching: sounds fine slow, exciting at speed.
-
-The harder problem for triad etudes
-
-  - Robertson's etudes develop a physical skill (rolls), so he had free rein
-    over harmony.
-  - Triad etudes develop a mental and visual skill (seeing and knowing
-    shapes), and the student can't be assumed to know all triads and
-    quasi-triad forms (E6, E7, etc.) yet.
-  - So the early etudes are necessarily constrained harmonically: the harmony
-    is the curriculum.
-
-  - What still works under that constraint:
-
-    - Groove, form, pushes, rests, stabs, and drones are independent of shape
-      knowledge.
 
