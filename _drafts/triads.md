@@ -18,14 +18,14 @@ excerpt: >
   # Essay
     ## Why triads?
     ## Triad construction
-    ## Triads on string sets
-    ## Triad stacks
-    ## Triad recognition
-    ## The power of triads
+    ## Triads, by string set
+    ## Triads, by stack
+    ## Triads, by inversion
+    ## A practice recipe
     ## Triad neighbors
     ## Overlaying triads
-    ## A practice recipe
-    ## Next stesp
+    ## Musical applications
+    ## The power of triads
   # Raw material
     ## Key points from discussion
     ## Insights from the Brooks Robertson etudes
@@ -119,7 +119,7 @@ arrangements are called inversions.
 | 3 5 1        | First inversion   |
 | 5 1 3        | Second inversion  |
 
-## Triads on string sets
+## Triads, by string set
 
 An effective way to organize your learning of the triad shapes is to begin
 horizontally along the neck — in other words, learn the triad inversions along
@@ -159,14 +159,16 @@ than a natural `3`), the minor triads can be memorized as small variations of
 the major triads we started with. The other two triad qualities involve
 similar kinds of adjustments: the diminished triads are like the minor triads,
 but with a `b5`; and augmented triads are like major triads, but with a `#5`.[^2]
-The full listing of triads by string set can be found on a separate page:
 
-| Quality    | Triads by string set |
-| ---------- | -------------------- |
-| Major      | [LINK]               |
-| Minor      | [LINK]               |
-| Diminished | [LINK]               |
-| Augmented  | [LINK]               |
+The full listing of triads by string set can be found on the Triads Reference
+Page:
+
+| Quality    | Triads, by string set |
+| ---------- | --------------------- |
+| Major      | [LINK]                |
+| Minor      | [LINK]                |
+| Diminished | [LINK]                |
+| Augmented  | [LINK]                |
 
 [^1]: The inversion process also works in the other direction (down the neck)
     and with larger chords. For example, a common dom7 voicing is `1 x b7 3 5
@@ -185,42 +187,56 @@ The full listing of triads by string set can be found on a separate page:
     neighbors. In practical terms, that translates into having to memorize
     only one shape per string set.
 
-## Triad stacks
+<!--
 
-RAW MATERIAL:
+Figure syntax:
 
-    1. **Purpose.** String sets give you horizontal motion along the neck.
-       Stacks give you vertical motion across strings, in one region of the
-       neck.
+    {%
+        include figure
+        image_path="/assets/images/triad-inversions/invs.svg"
+        alt="Test image"
+        caption="Test image"
+    %}
 
-    2. **What a stack is.** In one region, the triads on the four string sets
-       overlap, and neighboring triads share two notes. So a stack is a single
-       run of consecutive chord tones across all six strings, for example `3 5
-       1 3 5 1`. Every three-string window in it is a close triad.
+-->
 
-    3. **Why there are exactly three stacks.** That follows from point 2: the
-       only choice is which chord tone sits on string 6. Inverting a stack
-       uses the same string-by-string algorithm, and the three stacks cycle up
-       the neck just as the inversions do on one string set. This is the
-       section's main diagram: the three C major stacks.
+## Triads, by stack
 
-    4. **The on-ramp from open chords.** Open chords are stacks with a
-       substitution. For example, the open E chord is the `3 5 1 3 5 1` stack
-       (G# B E G# B E) with the low G# replaced by E. I checked this one.
-       Other open chords should work the same way, but I haven't worked
-       through them. This is also where to point to the CAGED essay later.
+If string sets organize triads horizontally on the neck, stacks organize them
+vertically. A stack extends a triad's chord tones across all six strings, for
+example `1 3 5 1 3 5`, low string to high. Any three adjacent strings in a
+stack hold a close triad, so a stack is just four of the string-set shapes,
+overlapping in one region of the neck. And because a stack is a longer run of
+chord tones, the same string-by-string inversion process can be used to
+convert any stack into its neighbor. That is why there are three stacks: the
+six-string run of chord tones can start on `1`, `3`, or `5`.
 
-    5. **Stacks are maps, not grips.** You visualize the whole stack and play
-       the triads inside it.
+    [diag: maj triad stacks]
 
-    6. **Pointer to the reference page** for the other qualities.
+Although none of the stacks are easily played in full, four-string and
+five-string subsets of them are, and they overlap significantly with common
+chord grips you probably already know.
 
-    Point 2 is the conceptual core. It reuses the inversion algorithm instead
-    of adding new machinery, in the same way the string-sets section did. The
-    keys to practice stacks in (E A D G C, from your raw notes) belong in the
-    practice recipe, not here.
+Beyond playability, however, is the bigger point: the entire network of triad
+shapes — running horizontally on string sets and vertically in stacks —
+gives you a neck-spanning grid for visualizing the fretboard and keeping
+yourself oriented.
 
-## Triad recognition
+See the Triads Reference Page the full roster of triad stacks:
+
+| Quality    | Triads, by stack |
+| ---------- | ---------------- |
+| Major      | [LINK]           |
+| Minor      | [LINK]           |
+| Diminished | [LINK]           |
+| Augmented  | [LINK]           |
+
+## Triads, by inversion
+
+When you learn triads, you memorize the shapes pretty fast. But it can
+be easy to master the shapes and overlook the need to know where the
+chord tones are within each shape. M3, m3, P4 invervals sit inside each
+shape.
 
 RAW NOTES:
 
@@ -232,11 +248,6 @@ RAW NOTES:
         another.
 
     Interval shapes:
-
-       When you learn triads, you memorize the shapes pretty fast. But it can
-       be easy to master the shapes and overlook the need to know where the
-       chord tones are within each shape. M3, m3, P4 invervals sit inside each
-       shape.
 
         While learning triads it can be helpful to think about the intervals within
         the triads.
@@ -280,22 +291,12 @@ RAW NOTES:
                 |-----|     |-----|-----|
                 |-----|     |-----|-----|
 
-## The power of triads
+## A practice recipe
 
-Because the technical explanation for triad construction is quite simple, and
-because some readers might already know this material, it is easy to gloss
-over how powerful this knowledge can be. We started with C major triads and we
-have 12 voicings to memorize (or 9 unique shapes, since the two lowest string
-sets are structurally identical). But those shapes are **moveable**, which
-means the same shapes work for all major triads. In other words, at the cost
-of memorizing a tiny amount of information, we have a way to play every major
-triad across the full neck. And the shapes are easy to play. Indeed, they are
-easier to play than most of the full-grip, open-position cowboy chords shoved
-at beginner guitarists in most guitar education. Easy to memorize, easy to
-play, versatile (all major triads, not just specific grips), and exhaustive
-(covering the full neck). If you have ever used an old-school guitar chord
-book, you realize how misconceived and impotent they were relative to teaching
-a beginner about triads.
+8. A practice recipe. Pedal key, note-by-note playing, steady tempo.
+   Stages: string sets, then stacks, then the 4ths cycle (later with the
+   dom7 move). Harmonizing the major scale enters only as far as the cycle
+   needs. Our own etudes go here if any make the cut.
 
 ## Triad neighbors
 
@@ -316,19 +317,29 @@ a beginner about triads.
    examples. A systematic listing of the options, highlighting the
    useful ones I know about, could be interesting. TBD.
 
-## A practice recipe
-
-8. A practice recipe. Pedal key, note-by-note playing, steady tempo.
-   Stages: string sets, then stacks, then the 4ths cycle (later with the
-   dom7 move). Harmonizing the major scale enters only as far as the cycle
-   needs. Our own etudes go here if any make the cut.
-
-## Next stesp
+## Musical applications
 
 9. Where next. Musical applications delegated to Farran, Alon Albagli, and
    Jimmy Brewer, with a sentence or two on what each offers. Link to the
    CAGED essay later. Discuss some of the material they cover: spread
    triads is one, for example.
+
+## The power of triads
+
+Because the technical explanation for triad construction is quite simple, and
+because some readers might already know this material, it is easy to gloss
+over how powerful this knowledge can be. We started with C major triads and we
+have 12 voicings to memorize (or 9 unique shapes, since the two lowest string
+sets are structurally identical). But those shapes are **moveable**, which
+means the same shapes work for all major triads. In other words, at the cost
+of memorizing a tiny amount of information, we have a way to play every major
+triad across the full neck. And the shapes are easy to play. Indeed, they are
+easier to play than most of the full-grip, open-position cowboy chords shoved
+at beginner guitarists in most guitar education. Easy to memorize, easy to
+play, versatile (all major triads, not just specific grips), and exhaustive
+(covering the full neck). If you have ever used an old-school guitar chord
+book, you realize how misconceived and impotent they were relative to teaching
+a beginner about triads.
 
 # Raw material
 
@@ -697,16 +708,6 @@ Learning the major triads: preliminaries:
 
 Learning the major triads: by inversion:
 
-    ** See new plan for exercises and etudes [below]
-
-    With those preliminaries out of the way, start by learning the major triads
-    shapes according to their inversion. Grouping the triad shapes initially by
-    their inversion is a useful way to begin, because it focuses your attention
-    on the chord tones and intervals within the triads.
-
-    Here are the diagrams. Only 9 are needed, because the shapes on strings 654
-    (not shown) would be identical to those on strings 543 (shown).
-
         Major triad shapes, by inversion:
 
             Root position: 1 3 5
@@ -771,33 +772,6 @@ Learning the major triads: by inversion:
 
 Learning the major triads: by string set:
 
-    The material covered in the previous section focused attention on the core
-    material: the shapes and the associated inversion names, chord tones, and
-    note names.
-
-    You also want to become fluent in moving fluidly between triad voicings.
-    Here the focus is on horizontal motion on one string set.
-
-        Major triads, by string set:
-
-        # Strings 321
-
-        |  1  |-----|-----|-----|  3  |-----|-----|  5  |-----|-----|-----|-----|  1  |-----|
-        |  5  |-----|-----|-----|-----|  1  |-----|-----|-----|  3  |-----|-----|  5  |-----|
-        |-----|  3  |-----|-----|  5  |-----|-----|-----|-----|  1  |-----|-----|-----|  3  |
-
-        # Strings 432
-
-        |  5  |-----|-----|-----|-----|  1  |-----|-----|-----|  3  |-----|-----|  5  |-----|-----|
-        |-----|  3  |-----|-----|  5  |-----|-----|-----|-----|  1  |-----|-----|-----|  3  |-----|
-        |-----|-----|  1  |-----|-----|-----|  3  |-----|-----|  5  |-----|-----|-----|-----|  1  |
-
-        # Strings 654 and 543
-
-        |  1  |-----|-----|-----|  3  |-----|-----|  5  |-----|-----|-----|-----|  1  |-----|-----|
-        |  5  |-----|-----|-----|-----|  1  |-----|-----|-----|  3  |-----|-----|  5  |-----|-----|
-        |-----|-----|  3  |-----|-----|  5  |-----|-----|-----|-----|  1  |-----|-----|-----|  3  |
-
     As in the previous section, practice this material across all keys. At this
     point the shapes, chord tones, and note names are probably well in hand, so
     your attention can focus now on building fluency to move smoothly through
@@ -829,47 +803,6 @@ Learning the major triads: by string set:
     neck. Visually study and physically practice moving between the central
     triad and its two neighbors. By repeating this approach across all keys,
     you will cover all of the pairings multiple times.
-
-Learning the major triads: by triad-structure:
-
-    Some refer to these as: TRIAD STACKS.
-
-    The previous section focused on horizontal shifts. You also want to be
-    fluent in moving vertically (and diagonally), from one string set to
-    another. For this purpose, we can organize the triad shapes into larger
-    structures spanning all 6 strings. These structures contain many of the
-    full chord grips you probably already know.
-
-    With this material, practicing across every key is probably unnecessary,
-    since you will have already done a lot of that work in the prior two
-    sections. I would suggested practicing this material for a handful of
-    common guitar keys: E, A, D, G, and C.
-
-    Major triads, by triad-structure:
-
-    |  5  |-----|-----|-----|-----|-----|
-    |-----|-----|  3  |-----|-----|-----|
-    |-----|-----|  1  |-----|-----|-----|
-    |-----|-----|  5  |-----|-----|-----|
-    |-----|-----|-----|-----|  3  |-----|
-    |-----|-----|-----|-----|-----|  1  |
-
-                                  |  1  |-----|-----|-----|-----|
-                                  |  5  |-----|-----|-----|-----|
-                                  |-----|  3  |-----|-----|-----|
-                                  |-----|-----|  1  |-----|-----|
-                                  |-----|-----|  5  |-----|-----|
-                                  |-----|-----|-----|-----|  3  |
-
-                                                          |  3  |-----|-----|-----|
-                                                          |-----|  1  |-----|-----|
-                                                          |  5  |-----|-----|-----|
-                                                          |-----|-----|  3  |-----|
-                                                          |-----|-----|-----|  1  |
-                                                          |-----|-----|-----|  5  |
-
-    ####################################################################
-    ####################################################################
 
 This material is excellent and could be used as supporting info,
 lessening the need to do as much in my piece.
