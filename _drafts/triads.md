@@ -37,6 +37,8 @@ Draft the essay.
 
 Create the resource page for all of the triad diagrams.
 
+Create the other diagrams needed in the essay.
+
 # Essay
 
 ## Why triads?
@@ -228,38 +230,30 @@ See the Triads Reference Page the full roster of triad stacks:
 ## Triads, by inversion
 
 When you learn triads, memorizing the shapes tends to go reasonably fast. What
-tends to lag a bit is fluency regarding the chord tones within a known triad
-shape — or, to put it differently, knowing which inversion a shape is. Rather
-that grouping the triads by string set or by stack, now we are organizing them
-by the ordering of their chord tones.
+lags is knowing what is inside them: fluently grabbing a shape without
+immediately knowing which of its notes is the root, or which inversion you are
+playing. This diagram groups the triads by inversion (the rows) across all
+string sets (the columns):
 
     [diag: major triads, as a grid by inversion]
 
-Studying triads this way is helpful not only in its own right, but also
-because it can improve your ability to transfer any shape from one string set
-to another. Pay attention to how the shapes evolve as they transition across
-the string sets. The basic rule is simple enough to state: if a shape moves to
-a higher string set, the chord tone that lands on the B string increases its
-fret number by one; or for a downward shift across string sets, the chord tone
-landing on the G string decreases its fret by one. Becoming fluent in this
-kind of shape shifting is not easy, but close triads are an excellent vehicle
-to practice the skill.
+In each row, notice what stays the same and what changes. The constant is the
+intervals between each pair of chord tones. Pay attention to the shapes of
+those intervals and you will learn to connect the memorized shapes to the
+inversion name and, thus, its chord tones.
 
-Another way to connect learned triad shapes to fluent knowledge about the
-inversion and chord tones is to think explicitly about the intervals within
-triads. Consider the intervals within a major triad:
+| Inversion        | Chord tones | Intervals |
+| ---------------- | ----------- | --------- |
+| Root position    | 1 3 5       | M3, m3    |
+| First inversion  | 3 5 1       | m3, P4    |
+| Second inversion | 5 1 3       | P4, M3    |
 
-| Tone pairs | Interval    |
-| ---------- | ----------- |
-| 1 3        | Major 3rd   |
-| 3 5        | Minor 3rd   |
-| 5 1        | Perfect 4th |
-
-While learning the triads, think about the shapes of those intervals.
-For each there are only two shapes to memorize: the one for the G-B
-string pair; and the shape for all other string pairs.
-
-    [diag: interval shapes: eg `inversions 1 3 --grid --invs 0 --sets 1,2`]
+What varies within the rows are the shapes — due to the way a guitar is tuned.
+The rule is simple to state: when a shape moves to a higher string set, the
+chord tone that lands on the B string moves up one fret; and when moving to a
+lower string set, the chord tone that lands on the G string moves down one
+fret. Becoming fluent in this kind of shape shifting is not easy, but close
+triads are an excellent vehicle to practice the skill.
 
 ## A practice recipe
 
