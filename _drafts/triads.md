@@ -14,6 +14,10 @@ excerpt: >
 
 <!-- TOC
 
+NEXT:
+  - Improve --grid
+  - continue with drafting.
+
   # TODO
   # Essay
     ## Why triads?
@@ -233,10 +237,10 @@ See the Triads Reference Page the full roster of triad stacks:
 
 ## Triads, by inversion
 
-When you learn triads, you memorize the shapes pretty fast. But it can
-be easy to master the shapes and overlook the need to know where the
-chord tones are within each shape. M3, m3, P4 invervals sit inside each
-shape.
+When you learn triads, memorizing the shapes tends to go reasonably fast. What
+tends to lag a bit is fluency regarding the chord tones within a known triad
+shape — in other words, knowing the chord tones within the shape (or, to put
+it differently, which inversion the shape is).
 
 RAW NOTES:
 
