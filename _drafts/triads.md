@@ -21,7 +21,7 @@ excerpt: >
     ## Triads, by string set
     ## Triads, by stack
     ## Triads, by inversion
-    ## A practice recipe
+    ## Practice advice
     ## Triad neighbors
     ## Overlaying triads
     ## Musical applications
@@ -253,106 +253,71 @@ lower string set, the chord tone that lands on the G string moves down one
 fret. Becoming fluent in this kind of shape shifting is not easy, but close
 triads are an excellent vehicle to practice the skill.
 
-## A practice recipe
+## Practice advice
 
-RAW MATERIAL:
+You now have three ways to organize the major triads (by string set, by stack,
+and by inversion) and links to the same material for minor, diminished, and
+augmented. That might look like a big pile, but it is really one small set of
+shapes viewed from different angles. The practical questions are where to
+start and how to proceed.
 
-    SUMMARY. A practice recipe. Pedal key, note-by-note playing, steady tempo.
-    Stages: string sets, then stacks, then the 4ths cycle (later with the dom7
-    move). Harmonizing the major scale enters only as far as the cycle needs.
-    Our own etudes go here if any make the cut.
+Organize the practicing into stages:
 
-    Take your time and try to learn several things together:
+  - Major triads: string sets. Start with the highest string set and then work
+    your way down through the sets.
 
-        - The physical shape.
-        - The inversion name.
-        - The chord tones.
-        - The note names.
-        - Shifts from a triad to:
-          - Its neighbor inversions on the same string set.
-          - Its neighbor shapes within a triad stack.
+  - Major triads: stacks. At this point the shapes will be known; now you are
+    learning to connect them vertically.
 
-    Practice recipe:
+  - Minor triads. Repeat those two steps for minor triads as one-note
+    variations of the major shapes.
 
-        - Note-by-note playing ("pima" loosely; a pick works too), not strummed
-          chords. Why: it keeps attention on chord tones rather than vague grips,
-          and sets the stage for melody and soloing over triads.
+  - Diminished triads. Repeat again for diminished triads, this time as
+    one-note variations of minor shapes.
 
-        - What worked for the author: first the shapes on each string set, then
-          fluency moving vertically (stacks). The 4ths cycle is likely the most
-          pleasing and useful form. The author's earlier notes found progression
-          and triad-pair etudes less useful than cycle-2 and cycle-4 exercises.
+  - Augmented triads. Learn them last; they are less common, and there is only
+    one shape per string set.
 
-        - Each 4ths-cycle step is a V-I move, so lowering the current chord's root
-          to b7 makes it V7 of the next. That pairs the recipe with the most useful
-          neighbor.
+Learn more than just the chord shapes:
 
-        - Pedal: keys with open-string roots (E, A, D) need no retuning; retuning
-          (e.g., drop D) is optional.
+  - Chord tones and inversion name. Playing the triad's notes string by string
+    — fingerstyle or with a pick — is a good way to focus your mind on this
+    dimension.
 
-        - Open: diatonic cycle (C F Bdim Em Am Dm G C; stays over one pedal, brings
-          in minor and diminished) or chromatic (all keys, loses the pedal).
+  - Shifts to neighbors. Practice shifting from any triad to its same-triad
+    neighboring shapes, both along a string set and within a stack.
 
-        - Musical applications beyond the recipe are delegated to Farran,
-          Albagli, Brewer.
+  - Note names. Do not get bogged down in these details in the beginning.
+    Start with shapes, inversions, and chord tones — in other words, the
+    triads as generic, moveable units. That said, practicing triads in
+    specific keys, especially the common guitar keys, is a good way to build
+    up note name fluency across the fretboard.
 
-    What makes etudes compelling:
+Practice routines:
 
-        1. Each etude is a tune: title, style, sectional form, intro and outro, an
-           ending.
+  - Progression using every voicing. Start with any chord progression
+    involving triad qualities you have learned. For each chord in the
+    progression, play every triad voicing (either on a string set or within a
+    stack) at a steady tempo you can maintain.
 
-        2. One fixed right-hand pattern; the left hand carries the variety.
-           Repetition is built in without boredom.
+  - Harmonized major scale. If you know how to harmonize a major scale with
+    triads (see the [Carillo][yt_carillo] video), work on playing the full
+    triad scale on a string set. This can be done horizontally, along the full
+    neck, but even more useful is to play a chord scale as compactly as
+    possible within one position on the neck. For this type of practice, you
+    can stay on one string set or use a couple of them to keep the neckwise
+    motion even more confined to one position.
 
-        3. Groove from rhythmic variety, not a plodding stream of eighth notes. The
-           main devices:
+  - Cycle of 4ths. Start with any triad and then proceed through all triads by
+    moving up a perfect 4th (for example: C, F, Bb, Eb, Ab, Db, Gb, B, E, A,
+    D, G, and back to C). There are various ways to do this, but I find that
+    working within a position is especially useful, because it teaches you to
+    know where nearby chords reside. An interval cycle like this can be done
+    with any triad quality, but start with the most common: major and minor.
 
-           - 3+3+2 grouping of a three-note roll in 4/4, so accents shift.
-
-           - Anticipations: a note on the and-of-4 tied over the bar line, so the
-             chord change arrives early (the push).
-
-           - Rests and stabs: bars that break off on beat 3 or 3.5; held block
-             chords as punctuation.
-
-           - Off-grid figures: grace-note slides that shift following notes onto
-             sixteenth-note offbeats; an occasional triplet.
-
-           The right-hand pattern is constant, but its placement in the bar keeps
-           changing. Listening again confirmed this is a main source of the
-           appeal.
-
-        4. Open-string pedals and drones give small shapes big harmony (maj7, add9,
-           sus colors).
-
-        5. Small left-hand moves: chromatic bass lines and line cliches change one
-           or two notes at a time. Little finger travel, sophisticated harmony
-           (diminished and augmented passing chords included).
-
-        6. Melody on top: a top-string note lands with the bass on the downbeat and
-           is held while the roll fills in, giving a melody-plus-accompaniment
-           illusion from one pattern.
-
-        7. Short repeated sections (4-8 bars), learned in chunks.
-
-        8. Rationed ornaments: a few slides, hammer-ons, grace notes.
-
-        9. A tempo worth reaching: sounds fine slow, exciting at speed.
-
-        The harder problem for triad etudes
-
-          - Robertson's etudes develop a physical skill (rolls), so he had free rein
-            over harmony.
-          - Triad etudes develop a mental and visual skill (seeing and knowing
-            shapes), and the student can't be assumed to know all triads and
-            quasi-triad forms (E6, E7, etc.) yet.
-          - So the early etudes are necessarily constrained harmonically: the harmony
-            is the curriculum.
-
-          - What still works under that constraint:
-
-            - Groove, form, pushes, rests, stabs, and drones are independent of shape
-              knowledge.
+  - With either of the first two practice approaches, use a bass note as a
+    pedal tone, typically the root of the key you are working in. If needed,
+    alter the tuning of the low E or A strings to facilitate that.
 
 ## Triad neighbors
 
