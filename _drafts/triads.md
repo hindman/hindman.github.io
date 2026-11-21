@@ -22,6 +22,7 @@ excerpt: >
     ## Triads, by stack
     ## Triads, by inversion
     ## Practice advice
+    ## Triad neighbors -- reference tables
     ## Triad neighbors
     ## Overlaying triads
     ## Musical applications
@@ -337,7 +338,7 @@ Raise 1:
 | Tones    | Implies |
 | -------- | ------- |
 | `1 3 5`  | maj     |
-| `b9 3 5` | 7b9     |
+| `b9 3 5` | dom7b9  |
 | `9 3 5`  | add9    |
 
 Lower 3:
@@ -376,20 +377,20 @@ Starting from a minor triad:
 
 Lower 1:
 
-| Tones     | Implies |
-| --------- | ------- |
-| `1 b3 5`  | min     |
-| `7 b3 5`  | m(maj7) |
-| `b7 b3 5` | min7    |
-| `6 b3 5`  | m6      |
+| Tones     | Implies   |
+| --------- | --------- |
+| `1 b3 5`  | min       |
+| `7 b3 5`  | min(maj7) |
+| `b7 b3 5` | min7      |
+| `6 b3 5`  | min6      |
 
 Raise 1:
 
-| Tones     | Implies      |
-| --------- | ------------ |
-| `1 b3 5`  | min          |
-| `b9 b3 5` | m(b9) (rare) |
-| `9 b3 5`  | m(add9)      |
+| Tones     | Implies        |
+| --------- | -------------- |
+| `1 b3 5`  | min            |
+| `b9 b3 5` | min(b9) (rare) |
+| `9 b3 5`  | min(add9)      |
 
 Raise 3:
 
@@ -415,22 +416,46 @@ Lower 5:
 
 Raise 5:
 
-| Tones     | Implies |
-| --------- | ------- |
-| `1 b3 5`  | min     |
-| `1 b3 #5` | m(b6)   |
-| `1 b3 6`  | m6      |
-| `1 b3 b7` | min7    |
-| `1 b3 7`  | m(maj7) |
+| Tones     | Implies   |
+| --------- | --------- |
+| `1 b3 5`  | min       |
+| `1 b3 #5` | min(b6)   |
+| `1 b3 6`  | min6      |
+| `1 b3 b7` | min7      |
+| `1 b3 7`  | min(maj7) |
 
 ## Triad neighbors
 
-6. More chords: triad neighbors. The table of 12 one-move neighbors, filtered
-   to the useful ones. Emphasis on the two dom7 moves. Physical echoing: many
-   neighbors are known triad shapes in disguise. Brief link to established
-   terms (shell, rootless, upper structure).
+RAW MATERIAL:
 
-        Triad neighbors:
+    DRAFT PLAN:
+
+      1. Short opener. The space of alterations is large: quality, number of
+         tones moved, direction, distance, and which root you hear it against.
+         This section sticks to moving one tone, with the original root in
+         view.
+
+      2. Headline: lower the 1 or raise the 5 to reach the seventh chords.
+         - From major, that gives dom7 and maj7. From minor, it gives min7.
+         - This is where "rootless" and "shell" get introduced as terms, since
+           we took them out of the tables.
+         - Possibly one diagram per quality.
+
+      3. The line clichés as evidence. Following lower-1 or raise-5 fret by
+         fret gives C Cmaj7 C7 C6 and Am Am(maj7) Am7 Am6. That's the support
+         for "you can follow these sequences a long way."
+
+      4. Second tier (maj6, add9, sus2/sus4): a sentence, not a ranking. Then
+         link to the reference tables on the Triads Reference Page as a map
+         for exploring.
+
+      5. [SKIP: style-guide.md]. Handoff to "Overlaying triads." Many
+         neighbors are other triads in disguise, which is the different-root
+         view.
+
+      6. Optional: one sentence on two-tone moves, using `1 5 b7` as the example.
+
+    TRIAD NEIGHBORS:
 
           - The two one-move dom7 sounds from 1 3 5: lower the 1 to get b7 3 5
             (rootless; also a diminished triad), or raise the 5 to get 1 3 b7
