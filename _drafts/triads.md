@@ -319,6 +319,110 @@ Practice routines:
     pedal tone, typically the root of the key you are working in. If needed,
     alter the tuning of the low E or A strings to facilitate that.
 
+## Triad neighbors -- reference tables
+
+Starting from a major triad:
+
+Lower 1:
+
+| Tones    | Implies |
+| -------- | ------- |
+| `1 3 5`  | maj     |
+| `7 3 5`  | maj7    |
+| `b7 3 5` | dom7    |
+| `6 3 5`  | maj6    |
+
+Raise 1:
+
+| Tones    | Implies |
+| -------- | ------- |
+| `1 3 5`  | maj     |
+| `b9 3 5` | 7b9     |
+| `9 3 5`  | add9    |
+
+Lower 3:
+
+| Tones    | Implies |
+| -------- | ------- |
+| `1 3 5`  | maj     |
+| `1 b3 5` | min     |
+| `1 2 5`  | sus2    |
+
+Raise 3:
+
+| Tones   | Implies |
+| ------- | ------- |
+| `1 3 5` | maj     |
+| `1 4 5` | sus4    |
+
+Lower 5:
+
+| Tones    | Implies        |
+| -------- | -------------- |
+| `1 3 5`  | maj            |
+| `1 3 b5` | maj(b5) (rare) |
+
+Raise 5:
+
+| Tones    | Implies |
+| -------- | ------- |
+| `1 3 5`  | maj     |
+| `1 3 #5` | aug     |
+| `1 3 6`  | maj6    |
+| `1 3 b7` | dom7    |
+| `1 3 7`  | maj7    |
+
+Starting from a minor triad:
+
+Lower 1:
+
+| Tones     | Implies |
+| --------- | ------- |
+| `1 b3 5`  | min     |
+| `7 b3 5`  | m(maj7) |
+| `b7 b3 5` | min7    |
+| `6 b3 5`  | m6      |
+
+Raise 1:
+
+| Tones     | Implies      |
+| --------- | ------------ |
+| `1 b3 5`  | min          |
+| `b9 b3 5` | m(b9) (rare) |
+| `9 b3 5`  | m(add9)      |
+
+Raise 3:
+
+| Tones    | Implies |
+| -------- | ------- |
+| `1 b3 5` | min     |
+| `1 3 5`  | maj     |
+| `1 4 5`  | sus4    |
+
+Lower 3:
+
+| Tones    | Implies |
+| -------- | ------- |
+| `1 b3 5` | min     |
+| `1 2 5`  | sus2    |
+
+Lower 5:
+
+| Tones     | Implies |
+| --------- | ------- |
+| `1 b3 5`  | min     |
+| `1 b3 b5` | dim     |
+
+Raise 5:
+
+| Tones     | Implies |
+| --------- | ------- |
+| `1 b3 5`  | min     |
+| `1 b3 #5` | m(b6)   |
+| `1 b3 6`  | m6      |
+| `1 b3 b7` | min7    |
+| `1 b3 7`  | m(maj7) |
+
 ## Triad neighbors
 
 6. More chords: triad neighbors. The table of 12 one-move neighbors, filtered
@@ -450,6 +554,13 @@ Practice routines:
    own triad up 2 frets (ie, over Im play a IIm). There are many other
    examples. A systematic listing of the options, highlighting the
    useful ones I know about, could be interesting. TBD.
+
+        Same-notes observations moved from the neighbor tables (over C, Am):
+
+          - From C: 7 3 5 = Em; b7 3 5 = Edim; b9 3 5 = C#dim (rootless A7);
+            1 3 6 = Am.
+          - From Am: 7 b3 5 = Caug; b7 b3 5 = C; 6 b3 5 = F#dim;
+            1 b3 #5 = F; 1 b3 6 = F#dim; b9 b3 5 = C7 (no 5).
 
 ## Musical applications
 
