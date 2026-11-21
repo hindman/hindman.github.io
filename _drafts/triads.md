@@ -426,6 +426,65 @@ Raise 5:
 
 ## Triad neighbors
 
+ASSESS-REWRITE
+
+Once a triad shape is under your fingers, it becomes a starting point for
+other chords. Move one of its tones a fret or two and you have a new sound,
+often a common one. The possibilities multiply quickly: you can start from a
+major or minor triad, move one tone or two, go up or down, move one fret or
+several, and hear the result against the original root or a different one.
+This section keeps things manageable by moving one tone at a time and hearing
+the result against the triad's own root.
+
+Start with a C major triad and lower its root one fret at a time. The `1`
+becomes `7`, then `b7`, then `6`:
+
+    [diag: C maj triad, lowering the 1: C Cmaj7 C7 C6]
+
+Now go back to the triad and raise its `5` instead. The `5` becomes `#5`,
+then `6`, then `b7`, then `7`:
+
+    [diag: C maj triad, raising the 5: C Caug C6 C7 Cmaj7]
+
+Both paths pass through the same chords: maj6, dom7, and maj7. Starting from
+a minor triad works the same way, reaching m6, min7, and m(maj7):
+
+    [diag: Am triad, lowering the 1 and raising the 5]
+
+The two paths give you two kinds of three-note seventh chord, each with its
+own name. Lowering the `1` produces a rootless voicing: the chord's 7th
+replaces the root (`b7 3 5`). Raising the `5` produces a shell voicing: the
+7th replaces the 5th (`1 3 b7`). Both terms are standard, and both voicings
+are common in jazz, blues, and much else. The rootless dom7 has a further
+bonus: its three notes form a diminished triad, so a shape you already know
+does double duty.
+
+For my money, the two dom7 voicings are the most valuable things in this
+section. After major and minor, the dominant 7th is the most common sound in
+a great deal of music, and these two moves let you reach it from any triad on
+the neck with a one-finger adjustment.
+
+The paths are worth following past the 7th chords. Played in order, fret by
+fret, they produce some of the most familiar chord sequences in popular
+music, the line clichés:
+
+| Path            | Sequence                 |
+| --------------- | ------------------------ |
+| Major, lower 1  | C Cmaj7 C7 C6            |
+| Major, raise 5  | C Caug C6 C7             |
+| Minor, lower 1  | Am Am(maj7) Am7 Am6      |
+| Minor, raise 5  | Am Am(b6) Am6 Am7        |
+
+Moving the other tones yields fewer results, but some are useful: add9
+(raise the `1` two frets), sus2 and sus4 (move the `3` down or up), and the
+maj6 and m6 sounds already met along the way. The full set of one-tone moves,
+from major and minor starting points, is on the Triads Reference Page [LINK].
+Treat it as a map for exploration rather than a list to memorize.
+
+Moving two tones opens further options. One example: from the shell voicing
+`1 3 b7`, raise the `3` to the `5` and you get `1 5 b7`, a sparse dom7 sound
+that works well in blues.
+
 RAW MATERIAL:
 
     DRAFT PLAN:
