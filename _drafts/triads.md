@@ -426,206 +426,92 @@ Raise 5:
 
 ## Triad neighbors
 
-ASSESS-REWRITE
+Learning triads is useful not just the triads themselves are musically useful.
+They also supply a framework, or set of reference points, with which to build
+up your knowledge and fluency of major other chord types. The approach is
+based on a simple idea: learn a new chord in reference to a chord you already
+know.
 
-Once a triad shape is under your fingers, it becomes a starting point for
-other chords. Move one of its tones a fret or two and you have a new sound,
-often a common one. The possibilities multiply quickly: you can start from a
-major or minor triad, move one tone or two, go up or down, move one fret or
-several, and hear the result against the original root or a different one.
-This section keeps things manageable by moving one tone at a time and hearing
-the result against the triad's own root.
+We have applied this idea already by noting that the minor triads are one-note
+variations of the major triads. That transformation occurred by lowering the
+`3` by one fret, but we do not have to stop there. Repeating the same
+transformation yields another useful chord quality, a sus2.
 
-Start with a C major triad and lower its root one fret at a time. The `1`
-becomes `7`, then `b7`, then `6`:
+| Tones    | Implies |
+| -------- | ------- |
+| `1 3 5`  | maj     |
+| `1 b3 5` | min     |
+| `1 2 5`  | sus2    |
 
-    [diag: C maj triad, lowering the 1: C Cmaj7 C7 C6]
+The example of lowering the `3` illustrates the method. See the following
+links to the Triads Reference Page for a full listing of the chord qualities
+that can be implied via one-note adjustments to a major or minor triad.
 
-Now go back to the triad and raise its `5` instead. The `5` becomes `#5`,
-then `6`, then `b7`, then `7`:
+| Chord tone | Tranformation |
+| ---------- | ------------- |
+| `1`        | Lower         |
+| `1`        | Raise         |
+| `3`        | Lower         |
+| `3`        | Raise         |
+| `5`        | Lower         |
+| `5`        | Raise         |
 
-    [diag: C maj triad, raising the 5: C Caug C6 C7 Cmaj7]
+Two of those transformations are especially useful because they generate some
+of the most commonly planed chords beyond basic major and minor — namely,
+7-chords of various flavors and the nearby 6-chords.
 
-Both paths pass through the same chords: maj6, dom7, and maj7. Starting from
-a minor triad works the same way, reaching m6, min7, and m(maj7):
+Since we are aiming to reach the `7` and `6` chord tones, the relevant
+transformations are lowering the `1` or raising the `5`. If we start from
+major triads, we can create two ways each to play maj7, dom7, and maj6. Note
+that these 3-string voicings of 7-chords and 6-chords are necessarily partial
+because they omit either the `1` (a rootless voicing) or the `5` (a shell
+voicing). In the context of song, however, those omissions are often of little
+consquence. The playability of these simple voicings — and the fact that you
+can find them all over the neck — tends to outweigh their lack of
+completeness.
 
-    [diag: Am triad, lowering the 1 and raising the 5]
+| Tranformation | Tones    | Implies |
+| ------------- | -------- | ------- |
+| Lower `1`     | `1 3 5`  | maj     |
+| .             | `7 3 5`  | maj7    |
+| .             | `b7 3 5` | dom7    |
+| .             | `6 3 5`  | maj6    |
+| Raise `5`     | `1 3 5`  | maj     |
+| .             | `1 3 #5` | aug     |
+| .             | `1 3 6`  | maj6    |
+| .             | `1 3 b7` | dom7    |
+| .             | `1 3 7`  | maj7    |
 
-The two paths give you two kinds of three-note seventh chord, each with its
-own name. Lowering the `1` produces a rootless voicing: the chord's 7th
-replaces the root (`b7 3 5`). Raising the `5` produces a shell voicing: the
-7th replaces the 5th (`1 3 b7`). Both terms are standard, and both voicings
-are common in jazz, blues, and much else. The rootless dom7 has a further
-bonus: its three notes form a diminished triad, so a shape you already know
-does double duty.
+If we start from minor triads, the situation is roughly the same: we end up
+with two voicings each for min6, min7, and min(maj7) chords.
 
-For my money, the two dom7 voicings are the most valuable things in this
-section. After major and minor, the dominant 7th is the most common sound in
-a great deal of music, and these two moves let you reach it from any triad on
-the neck with a one-finger adjustment.
+| Tranformation | Tones     | Implies   |
+| ------------- | --------- | --------- |
+| Lower `1`     | `1 b3 5`  | min       |
+| .             | `7 b3 5`  | min(maj7) |
+| .             | `b7 b3 5` | min7      |
+| .             | `6 b3 5`  | min6      |
+| Raise `5`     | `1 b3 5`  | min       |
+| .             | `1 b3 #5` | min(b6)   |
+| .             | `1 b3 6`  | min6      |
+| .             | `1 b3 b7` | min7      |
+| .             | `1 b3 7`  | min(maj7) |
 
-The paths are worth following past the 7th chords. Played in order, fret by
-fret, they produce some of the most familiar chord sequences in popular
-music, the line clichés:
-
-| Path            | Sequence                 |
-| --------------- | ------------------------ |
-| Major, lower 1  | C Cmaj7 C7 C6            |
-| Major, raise 5  | C Caug C6 C7             |
-| Minor, lower 1  | Am Am(maj7) Am7 Am6      |
-| Minor, raise 5  | Am Am(b6) Am6 Am7        |
-
-Moving the other tones yields fewer results, but some are useful: add9
-(raise the `1` two frets), sus2 and sus4 (move the `3` down or up), and the
-maj6 and m6 sounds already met along the way. The full set of one-tone moves,
-from major and minor starting points, is on the Triads Reference Page [LINK].
-Treat it as a map for exploration rather than a list to memorize.
-
-Moving two tones opens further options. One example: from the shell voicing
-`1 3 b7`, raise the `3` to the `5` and you get `1 5 b7`, a sparse dom7 sound
-that works well in blues.
 
 RAW MATERIAL:
 
-    DRAFT PLAN:
+      The paths are worth following past the 7th chords. Played in order, fret by
+      fret, they produce some of the most familiar chord sequences in popular
+      music, the line clichés:
 
-      1. Short opener. The space of alterations is large: quality, number of
-         tones moved, direction, distance, and which root you hear it against.
-         This section sticks to moving one tone, with the original root in
-         view.
+      | Path            | Sequence                 |
+      | --------------- | ------------------------ |
+      | Major, lower 1  | C Cmaj7 C7 C6            |
+      | Major, raise 5  | C Caug C6 C7             |
+      | Minor, lower 1  | Am Am(maj7) Am7 Am6      |
+      | Minor, raise 5  | Am Am(b6) Am6 Am7        |
 
-      2. Headline: lower the 1 or raise the 5 to reach the seventh chords.
-         - From major, that gives dom7 and maj7. From minor, it gives min7.
-         - This is where "rootless" and "shell" get introduced as terms, since
-           we took them out of the tables.
-         - Possibly one diagram per quality.
-
-      3. The line clichés as evidence. Following lower-1 or raise-5 fret by
-         fret gives C Cmaj7 C7 C6 and Am Am(maj7) Am7 Am6. That's the support
-         for "you can follow these sequences a long way."
-
-      4. Second tier (maj6, add9, sus2/sus4): a sentence, not a ranking. Then
-         link to the reference tables on the Triads Reference Page as a map
-         for exploring.
-
-      5. [SKIP: style-guide.md]. Handoff to "Overlaying triads." Many
-         neighbors are other triads in disguise, which is the different-root
-         view.
-
-      6. Optional: one sentence on two-tone moves, using `1 5 b7` as the example.
-
-    TRIAD NEIGHBORS:
-
-          - The two one-move dom7 sounds from 1 3 5: lower the 1 to get b7 3 5
-            (rootless; also a diminished triad), or raise the 5 to get 1 3 b7
-            (shell). The 1 5 b7 voicing ("pow7") is two moves from the triad, or one
-            from the shell.
-
-          - Enumeration fits the systematic principle: each tone moves up or down a
-            half or whole step, giving exactly 12 neighbors. From major 1 3 5:
-
-                Tone   down 1/2    down whole   up 1/2      up whole
-                1      7 3 5       b7 3 5       b2 3 5      2 3 5
-                       (maj7)      (dom7)       (b9)        (add9)
-                3      1 b3 5      1 2 5        1 4 5       1 #4 5
-                       (minor)     (sus2)       (sus4)      (#11)
-                5      1 3 b5      1 3 4        1 3 #5      1 3 6
-                       (b5)        (add4)       (aug)       (6)
-
-            Minor gets its own table. Two-tone moves can be mentioned briefly.
-            Unverified: playability of each neighbor on every string set (some
-            half-step clusters may be awkward).
-
-          - Terminology: no standard term exists. Nearby terms: incomplete chord
-            (classical), partial voicing or chord fragment, three-note voicing,
-            shell voicing and rootless voicing (specific cases), upper-structure
-            triad (a triad over another root), implied harmony (the concept, not
-            the voicings). None names the procedure of moving one tone of a triad.
-            Candidates for our own term: triad neighbors, near-triads, one-move
-            voicings. Undecided.
-
-        - dom7 chords: a triadic approach.
-            - even though a dom7 chord is defined to have 4 notes, a musician
-              does not need to play all 4 in every context.
-            - other instruments might be involved
-            - and sometimes things sound better (or are more practical
-              to play) if notes are dropped
-            - By dropping 1 note from a dom7 chord, one can play
-              a triad-like approximation for the chord.
-            - There are four ways:
-                1 3 5 .     # triad
-                1 3 . b7    # shell voicing (drop the 5)
-                1 . 5 b7    # pow7
-                . 3 5 b7    # rootless (also dim triad)
-            - Each of those triadic approximations is musically useful
-              in a context where the dom7 sound is desired.
-            - It can be helpful to be able to express a desired harmony
-              with simpler fingerings (3 notes rather than 4).
-            - A good way to practice these voicings is
-              to play them sequentially up and down the neck
-              on a string set.
-
-            - And you can visualize the connections by starting from
-              the triad and then making small changes to get the
-              next chord in the sequence.
-
-              rootless       TRIAD       shell      power      rootless       NEXT-TRIAD
-                      b7 <= 1     5 => b7     3 => 5     1 => 3        b7 => 1
-
-            - It is a 12-shape sequence through all ways to play dom7 triads.
-
-            - Etude: Am => E7.
-
-        - Maj7 and min7 triads:
-
-            - Etudes.
-
-        - From triads to chord extensions and soloing:
-
-            - We visualized the dom7 triads as simple alterations
-              from the major triad shapes we already knew.
-
-            - The same approach can be taken to explore and ultimately become
-              fluent in most other types of chords.
-
-            - In this approach, the triads operate like prominent landmarks on
-              the fretboard. Other chords are generated either by adjusting one
-              of the triad tones, or by adding additional tone(s) to the triad.
-
-            - An example:
-                - Start with a minor triad on 432.
-                - Explore that position of the fretboard.
-                - Find the practical chord voicings in that area.
-
-            - Just as we can visualize many other chords in the neighborhood
-              surrounding any triad shape we know, we can so something similar
-              when creating melodies, playing solos, or improvising.
-
-            - An example:
-                - The underlying harmony for the current part
-                  of a song is Am.
-                - Start with a minor triad on 432.
-                - Explore that position of the fretboard thoroughly.
-                - Start experimenting with the position to find its strengths
-                  for creating interesting melodies, licks, etc.
-
-            - Repeat both types of exploration for all minor and major triad
-              shapes, especially those on strings 432 and 321.
-
-        - Other triads:
-
-            - dim:
-                - Another way to express dom7 shounds.
-                - [see notes for other use cases]
-                - A device to execute key changes.
-
-            - aug:
-                - Only one shape per string set.
-                - Alternative during dom7 sounds.
-                - [see notes for other use cases]
-
-            - spread:
-                - Some useful shapes.
+      Useful terms: rootless and shell voicings.
 
 ## Overlaying triads
 
