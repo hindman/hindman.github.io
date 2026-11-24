@@ -511,8 +511,6 @@ RAW MATERIAL:
       | Minor, lower 1  | Am Am(maj7) Am7 Am6      |
       | Minor, raise 5  | Am Am(b6) Am6 Am7        |
 
-      Useful terms: rootless and shell voicings.
-
 ## Overlaying triads
 
 7. More chords: overlaying triads. Here the idea is to take basic triad (maj,

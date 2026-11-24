@@ -197,3 +197,9 @@ nav.pagination[aria-label="Post pagination"] .pagination--pager:hover {
   padding: 0;
 }
 
+
+/* Table row groups: kramdown turns a mid-table separator line into a new
+   <tbody>. Draw a heavier rule between groups. */
+.page__content tbody + tbody {
+  border-top: 3px solid rgba(255, 255, 255, 0.45);
+}
