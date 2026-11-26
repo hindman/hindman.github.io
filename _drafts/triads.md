@@ -22,8 +22,7 @@ excerpt: >
     ## Triads, by stack
     ## Triads, by inversion
     ## Practice advice
-    ## Triad neighbors -- reference tables
-    ## Triad neighbors
+    ## Triad neighborhoods
     ## Overlaying triads
     ## Musical applications
     ## The power of triads
@@ -320,141 +319,28 @@ Practice routines:
     pedal tone, typically the root of the key you are working in. If needed,
     alter the tuning of the low E or A strings to facilitate that.
 
-## Triad neighbors -- reference tables
+## Triad neighborhoods
 
-Starting from a major triad:
-
-Lower 1:
-
-| Tones    | Implies |
-| -------- | ------- |
-| `1 3 5`  | maj     |
-| `7 3 5`  | maj7    |
-| `b7 3 5` | dom7    |
-| `6 3 5`  | maj6    |
-
-Raise 1:
-
-| Tones    | Implies |
-| -------- | ------- |
-| `1 3 5`  | maj     |
-| `b9 3 5` | dom7b9  |
-| `9 3 5`  | add9    |
-
-Lower 3:
-
-| Tones    | Implies |
-| -------- | ------- |
-| `1 3 5`  | maj     |
-| `1 b3 5` | min     |
-| `1 2 5`  | sus2    |
-
-Raise 3:
-
-| Tones   | Implies |
-| ------- | ------- |
-| `1 3 5` | maj     |
-| `1 4 5` | sus4    |
-
-Lower 5:
-
-| Tones    | Implies        |
-| -------- | -------------- |
-| `1 3 5`  | maj            |
-| `1 3 b5` | maj(b5) (rare) |
-
-Raise 5:
-
-| Tones    | Implies |
-| -------- | ------- |
-| `1 3 5`  | maj     |
-| `1 3 #5` | aug     |
-| `1 3 6`  | maj6    |
-| `1 3 b7` | dom7    |
-| `1 3 7`  | maj7    |
-
-Starting from a minor triad:
-
-Lower 1:
-
-| Tones     | Implies   |
-| --------- | --------- |
-| `1 b3 5`  | min       |
-| `7 b3 5`  | min(maj7) |
-| `b7 b3 5` | min7      |
-| `6 b3 5`  | min6      |
-
-Raise 1:
-
-| Tones     | Implies        |
-| --------- | -------------- |
-| `1 b3 5`  | min            |
-| `b9 b3 5` | min(b9) (rare) |
-| `9 b3 5`  | min(add9)      |
-
-Raise 3:
-
-| Tones    | Implies |
-| -------- | ------- |
-| `1 b3 5` | min     |
-| `1 3 5`  | maj     |
-| `1 4 5`  | sus4    |
-
-Lower 3:
-
-| Tones    | Implies |
-| -------- | ------- |
-| `1 b3 5` | min     |
-| `1 2 5`  | sus2    |
-
-Lower 5:
-
-| Tones     | Implies |
-| --------- | ------- |
-| `1 b3 5`  | min     |
-| `1 b3 b5` | dim     |
-
-Raise 5:
-
-| Tones     | Implies   |
-| --------- | --------- |
-| `1 b3 5`  | min       |
-| `1 b3 #5` | min(b6)   |
-| `1 b3 6`  | min6      |
-| `1 b3 b7` | min7      |
-| `1 b3 7`  | min(maj7) |
-
-## Triad neighbors
-
-Learning triads is useful not just the triads themselves are musically useful.
-They also supply a framework, or set of reference points, with which to build
-up your knowledge and fluency of major other chord types. The approach is
-based on a simple idea: learn a new chord in reference to a chord you already
-know.
+Learning triads is useful not just because the triads themselves are musically
+useful. They also supply a framework, or set of reference points, with which
+to build up your knowledge and fluency of many other chord types. The approach
+is based on a simple idea: learn a new chord in reference to a chord you
+already know.
 
 We have applied this idea already by noting that the minor triads are one-note
 variations of the major triads. That transformation occurred by lowering the
 `3` by one fret, but we do not have to stop there. Repeating the same
 transformation yields another useful chord quality, a sus2.
 
-| Tones    | Implies |
-| -------- | ------- |
-| `1 3 5`  | maj     |
-| `1 b3 5` | min     |
-| `1 2 5`  | sus2    |
+| Move      | Frets | Root voice | 3rd voice | 5th voice | Chord |
+| --------- | ----- | ---------- | --------- | --------- | ----- |
+| Lower `3` | 0     | `1`        | `3`       | `5`       | maj   |
+| "         | 1     | "          | `b3`      | "         | min   |
+| "         | 2     | "          | `2`       | "         | sus2  |
 
 The example of lowering the `3` illustrates the method. See the following
 links to the Triads Reference Page for a full listing of the chord qualities
 that can be implied via one-note adjustments to a major or minor triad.
-
-| Chord tone | Tranformation |
-| ---------- | ------------- |
-| `1`        | Lower         |
-| `1`        | Raise         |
-| `3`        | Lower         |
-| `3`        | Raise         |
-| `5`        | Lower         |
-| `5`        | Raise         |
 
 Two of those transformations are especially useful because they generate some
 of the most commonly planed chords beyond basic major and minor — namely,
@@ -470,33 +356,34 @@ consquence. The playability of these simple voicings — and the fact that you
 can find them all over the neck — tends to outweigh their lack of
 completeness.
 
-| Tranformation | Tones    | Implies |
-| ------------- | -------- | ------- |
-| Lower `1`     | `1 3 5`  | maj     |
-| .             | `7 3 5`  | maj7    |
-| .             | `b7 3 5` | dom7    |
-| .             | `6 3 5`  | maj6    |
-| Raise `5`     | `1 3 5`  | maj     |
-| .             | `1 3 #5` | aug     |
-| .             | `1 3 6`  | maj6    |
-| .             | `1 3 b7` | dom7    |
-| .             | `1 3 7`  | maj7    |
+| Move      | Frets | Root voice | 3rd voice | 5th voice | Chord  |
+| --------- | ----- | ---------- | --------- | --------- | ------ |
+| Lower `1` | 0     | `1`        | `3`       | `5`       | maj    |
+| "         | 1     | `7`        | "         | "         | maj7   |
+| "         | 2     | `b7`       | "         | "         | dom7   |
+| "         | 3     | `6`        | "         | "         | maj6   |
+| --------- | ----- | ---------- | --------- | --------- | ------ |
+| Raise `5` | 0     | `1`        | `3`       | `5`       | maj    |
+| "         | 1     | "          | "         | `#5`      | aug    |
+| "         | 2     | "          | "         | `6`       | maj6   |
+| "         | 3     | "          | "         | `b7`      | dom7   |
+| "         | 4     | "          | "         | `7`       | maj7   |
 
 If we start from minor triads, the situation is roughly the same: we end up
 with two voicings each for min6, min7, and min(maj7) chords.
 
-| Tranformation | Tones     | Implies   |
-| ------------- | --------- | --------- |
-| Lower `1`     | `1 b3 5`  | min       |
-| .             | `7 b3 5`  | min(maj7) |
-| .             | `b7 b3 5` | min7      |
-| .             | `6 b3 5`  | min6      |
-| Raise `5`     | `1 b3 5`  | min       |
-| .             | `1 b3 #5` | min(b6)   |
-| .             | `1 b3 6`  | min6      |
-| .             | `1 b3 b7` | min7      |
-| .             | `1 b3 7`  | min(maj7) |
-
+| Move     | Frets | Root voice | 3rd voice | 5th voice | Chord     |
+| ---------| ----- | ---------- | --------- | --------- | --------- |
+| Lower `1`| 0     | `1`        | `b3`      | `5`       | min       |
+| "        | 1     | `7`        | "         | "         | min(maj7) |
+| "        | 2     | `b7`       | "         | "         | min7      |
+| "        | 3     | `6`        | "         | "         | min6      |
+| ---------| ----- | -----------| ----------| ----------| --------- |
+| Raise `5`| 0     | `1`        | `b3`      | `5`       | min       |
+| "        | 1     | "          | "         | `#5`      | min(b6)   |
+| "        | 2     | "          | "         | `6`       | min6      |
+| "        | 3     | "          | "         | `b7`      | min7      |
+| "        | 4     | "          | "         | `7`       | min(maj7) |
 
 RAW MATERIAL:
 
